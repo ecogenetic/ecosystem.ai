@@ -6,11 +6,13 @@ description: API Access
 import Image from 'next/image'
 
 # Introduction
-The ecosystem.Ai runtime exposes APIs that can be used to access your deployed configuration.
+The ecosystem.Ai runtime exposes APIs that can be used to access and manage your deployed configuration.
 - The `/invocations` endpoint is used to access the deployment and receive a response based on the configured rules
 - The `/response` endpoint is used to send record successful interactions generated using the information returned by the `/invocations` call. This is used for logging and learning.
 - The `/refresh` endpoint is used to refresh the runtime and reload any data held in memory
 - The `/refreshWithOptions` endpoint is used to regenerate the [Options Store](/docs/configuration/dynamic/options) and then refresh the runtime.
+- The `/learning` endpoint is used to manually trigger the learning process for a Dynamic Interaction deployment. This process is normally triggered based on the [MONITORING_DELAY environment variable](/docs/runtime/environment_variables). Manually triggering the learning is useful for testing and simulation purposes
+- The `/updateCassandraConfig` endpoint is used to update the contents of the `conf` file that is use the detail the Cassandra connection information, if required. 
 
 [Custom APIs](/docs/runtime/apiconfiguration/index) can also be exposed.
 
@@ -634,3 +636,40 @@ If `cassandra_offer_query` is specified then `mongo_offer_database.mongo_offer_c
 <Callout type="tip" title="Note">
     The `/refreshWithOptions` API will reset the entire Options Store to its default values if `type` is set to the default value, i.e. until the Options Store is next updated by the ecosytem.Ai runtime, the history contained in the logging collections will be ignored.
 </Callout>
+
+## `/learning`
+The `/learning` API is called without a request body and will trigger the Dynamic Interaction learning process.
+```bash
+curl -X 'GET' \
+  'http://localhost:8091/learning' \
+  -H 'accept: */*'
+```
+
+## `/updateCassandraConfig`
+The `/updateCassandraConfig` API update the contents of the `conf` file which contains the details of the Cassandra connection to be used by the runtime. The `/refresh` API should be called in order for the new connection details to take effect.
+```bash
+curl -X 'POST' \
+  'http://localhost:8091/updateCassandraConfig' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '# ECOSYSTEM
+datastax-java-driver {
+  basic.session-name = my_session
+  basic.session-keyspace = my_keyspace
+  basic.config-reload-interval = 5 minutes
+
+  basic.request {
+    timeout = 5 seconds
+    consistency = LOCAL_ONE
+    page-size = 5000
+    serial-consistency = SERIAL
+    default-idempotence = false
+  }
+
+  basic.load-balancing-policy {
+    class = DefaultLoadBalancingPolicy
+    local-datacenter = datacenter1
+  }
+'
+```
+
