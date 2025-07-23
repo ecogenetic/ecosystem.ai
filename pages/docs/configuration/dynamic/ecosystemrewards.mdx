@@ -301,6 +301,66 @@ To view the `exploration_probability` split by contextual variable values, use t
 ```
 This functionality can also be access using the `ecosystem_rewards_explore_approx` and `ecosystem_rewards_explore_approx_context` functions in the python package.
 
+## Selecting contextual variables
+
+Selecting contextual variables is similar to traditional feature engineering. Here we outline two approaches that can be taken:
+1. Using Mutual Information to rank features
+2. Build static models and using variable importance to rank the features
+
+Calculating the mutual information between your response variable and your features will give you a measure of the information about the response variable contained in each of the features. This can then be used to rank the features when choosing features to as contextual variables. It is important to note that the algorithm considers each option individually so the mutual information should be calculated for the features for each option and the common high ranking features should be used as contextual variables. The mutual information calculation can be performed in python using the following code:
+```python
+# Import the packages and connect to the ecosystem environment
+from prediction.apis import data_management_engine as dme
+from prediction import jwt_access
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.metrics import adjusted_mutual_info_score
+
+auth = jwt_access.Authenticate("http://ecosystem-server:3001/api", "username", "ecosystempassword")
+
+# Calculate and display the mutual information. Note, it is assumed that a list of possible
+# options, the database and collection of the historical data, a projection of the 
+# relevant fields and a list of the features to compare are defined prior to running this 
+# code block
+for offer_iter in offer_list:
+    print(f"\n{offer_iter.upper()}\n")
+    # Get the historical data for the option
+    feature_store = pd.DataFrame(dme.post_mongo_db_aggregate_pipeline(auth,
+                {
+                "database":db
+                ,"collection":feature_store_collection
+                ,"pipeline":[
+                    {"$match":{"offer_name":offer_iter}}
+                    ,{"$project":project_dict}
+                ]
+                }
+            ))
+    
+    # Get the features to compare and encode any that have string values
+    feature_subset = feature_store[feature_list]
+    enc.fit(feature_subset)
+    ordinal_array = enc.transform(feature_subset)
+    
+    print(f"{'Feature':<20}Mutual Information")
+    print("======================================")
+    mi_data = []
+    # Loop through the encoded historical data and calculate the mutual information
+    for index, col in enumerate(ordinal_array.T):
+        mi = adjusted_mutual_info_score(feature_store["offer_taken_up"].to_numpy(), col)
+        feature_label = feature_list[index]
+        mi_data.append((feature_label,mi))
+    # Sort the features by descending mutual information and display the results
+    mi_data.sort(key=lambda tup: tup[1], reverse=True)
+    for i in mi_data:
+        print(f"{i[0]:<20}{i[1]:.3f}")
+```
+
+Building static models to select the variables will follow a similar approach. A model needs to be trained for each option using the features that are being evaluated and the features that have the highest variable importance across the options should be used as contextual variables.
+
+<Callout type="tip" title="Note">
+    While only two variables can be selected as contextual variables, more than two base variables can be used by concatenating variables using the Virtual Variables functionality. When combining multiple variables it is important to check that the volume of data is sufficient to achieve the desired rate of learning given the number of contextual variables segments.
+</Callout>
+
+
 ## Offline evaluation
 
 Evaluating the performance of the Ecosystem Rewards algorithm using historical data is challenging as the algorithm learns by interacting with the environment. In general, when considering historical data, the option presented to the client will not be the same as the option recommended by the algorithm which will both distort the learing and make it impossible to determine if the option would have been taken up by the client if it was presented.
