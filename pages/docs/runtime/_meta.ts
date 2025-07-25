@@ -10,5 +10,7 @@ export default {
   access: 'API Access',
   logging: 'Logging & Reporting',
   externalruntimecalls: 'External Runtime Calls',
+  mcp: "MCP Support",
+  mlflowintegration: 'MLFlow Integration',
   runtimeversion: 'Release Notes'
 }

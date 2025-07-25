@@ -1,0 +1,23 @@
+---
+title: MLFlow Integration
+description: Import models from the MLFlow model registry
+---
+
+# MLFlow Integration
+
+If models are not trained using the ecosystem Server, the trained models need to be made available to the ecosystem Runtime as part of the deployment process. The supported approach to do this is to use MLFlow as a model registry and import the models from MLFlow into the runtime.
+
+<Callout type="tip" title="Note">
+    Integration is currently supported from models trained using H2O where the mojo is stored as an artifact in MLFlow
+</Callout>
+
+
+## Configuration
+
+MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api interface. The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the `runtime_config.json` file using the following format
+```json
+{
+    "mlflow_models": [{"name":"recommender-demo","version":7,"mojo_artifact_path":"mojo"}]
+}
+```
+Calling the `/refresh` API on the Runtime MCP will, in addition to the standard `/refresh` functionality, downloaded and load the models from MLFlow.

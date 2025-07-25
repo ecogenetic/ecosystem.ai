@@ -1,0 +1,92 @@
+---
+title: MCP Support
+description: MCP and custom API configuration
+---
+
+# Ecosystem Runtime MCP
+
+The Ecosystem Runtime MCP provides an MCP interface to the ecosystem Runtime as well as providing a python interface which can be used to provide custom APIs to the ecosystem Runtime.
+
+## Installing the Runtime MCP
+
+The Runtime MCP can be added to your ecosystem environment using a configuration similar to the docker compose snippet below
+
+```sh
+  ecosystem-runtime-solo:
+    image: ecosystemai/ecosystem-runtime-mcp:arm64
+    container_name: ecosystem-runtime
+    restart: unless-stopped
+    environment:
+      RUNTIME_URL: 'http://ecosystem-runtime-back:8081'
+      PORT: 8091
+    networks:
+      - ecosystem
+    ports:
+      - "8091:8091"
+    depends_on:
+      - ecosystem-runtime-solo-back
+```
+
+For this configuration the OpenAPI style docs can be accessed at `http://ecosystem-runtime:8091/docs` and the MCP interface can be access at `http://ecosystem-runtime:8091/mcp`.
+
+## Environment Variables
+
+The following environment variables can be used to set the behaviour of the Runtime MCP:
+- **RUNTIME_URL**: The master key for the ecosystem.Ai instance.
+- **PORT**: The port exposed by the Runtime MCP
+- **MLFLOW_TRACKING_URI**: The MLFlow link to use for downloading models
+- **MONGO_CONNECT**: The mongo connect string used by the runtime
+
+## Custom APIs
+
+Custom APIs can be set up by creating a python file aligned with the following template
+```python
+from fastapi import APIRouter, Body
+from .custom_api_super import invocations, response
+from ..type_models import Invocation, Response
+import logging
+
+# Create a logger instance
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
+
+
+@router.post(
+    "/myCustomInvocationsName",
+    operation_id="custom_invocations_call",
+    description="Get a list of responses from the runtime",
+    tags=["Predictors"]
+    )
+async def my_custom_invocations(
+    customer: str = Body(..., description="The customer ID for the custom invocation."),
+    params: str = Body(..., description="Parameters for the custom invocation, typically a JSON string.")
+):
+    """
+    Custom endpoint to call /invocations on the runtime
+    """
+    body = Invocation(
+        customer=customer,
+        params=params
+    )
+    logger.info(f"Received request for custom invocations: {body}")
+    return await invocations(body)
+
+
+@router.post(
+    "/myCustomResponseName",
+    operation_id="custom_response_call",
+    description="Send a response to the ecosystem.Ai runtime if the customer reaction generated using the result from the /invocations endpoint is a success",
+    tags=["Predictors"]
+    )
+async def my_custom_response(
+    body: Response = Body(..., description="The response to send to the runtime")
+):
+    """
+    Customer endpoint to call /response on the runtime
+    """
+    logger.info(f"Received request for custom response: {body}")
+    return await response(body)
+```
+
+This python file can be passed to the MCP using the workbench. When configuring [plugins in a deployment](/docs/configuration/deployment/parameters), place your python file in the editor in the API tab and push the Compile button.
