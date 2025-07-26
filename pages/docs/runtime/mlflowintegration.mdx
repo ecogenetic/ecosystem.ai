@@ -14,10 +14,12 @@ If models are not trained using the ecosystem Server, the trained models need to
 
 ## Configuration
 
-MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api interface. The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the `runtime_config.json` file using the following format
+MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api interface. The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format
 ```json
 {
     "mlflow_models": [{"name":"recommender-demo","version":7,"mojo_artifact_path":"mojo"}]
 }
 ```
-Calling the `/refresh` API on the Runtime MCP will, in addition to the standard `/refresh` functionality, downloaded and load the models from MLFlow.
+The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file.
+
+Calling the `/refresh` API on the Runtime MCP will, in addition to the standard `/refresh` functionality, download and load the models from MLFlow.
