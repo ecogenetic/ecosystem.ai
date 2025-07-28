@@ -17,14 +17,20 @@ The Runtime MCP can be added to your ecosystem environment using a configuration
     container_name: ecosystem-runtime
     restart: unless-stopped
     environment:
-      RUNTIME_URL: 'http://ecosystem-runtime-back:8081'
+      RUNTIME_URL: 'http://ecosystem-runtime-backend:8081'
       PORT: 8091
+      MLFLOW_TRACKING_URI: 'http://mlflowurl:8085'
+      RUNTIME_CONFIG: '/data/config/runtime_config.json'
+      MONGO_CONNECT: ${MONGO_CONNECT_STRING}
+    volumes:
+      - ${DATA_PATH}:/data
     networks:
       - ecosystem
     ports:
       - "8091:8091"
     depends_on:
-      - ecosystem-runtime-solo-back
+      ecosystem-runtime-backend:
+        condition: service_healthy
 ```
 
 For this configuration the OpenAPI style docs can be accessed at `http://ecosystem-runtime:8091/docs` and the MCP interface can be access at `http://ecosystem-runtime:8091/mcp`.

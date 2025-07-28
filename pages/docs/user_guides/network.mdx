@@ -1,27 +1,25 @@
 ---
-title: Network
-description: The Runtime Network Selector offers a comprehensive overview of the network configuration for the ecosystem.Ai platform. It provides a detailed view of the network settings, including the network name, type, and other relevant parameters.
+title: Network Selector
+description: The Network Selector enables routing of calls to the ecosystem.Ai runtime to different logic configurations.
 ---
 
 import Image from 'next/image'
 
 # Network Selector
 
-The Runtime Network Selector offers a comprehensive overview of the network configuration for the ecosystem.Ai platform. It provides a detailed view of the network settings, including the network name, type, and other relevant parameters. The network selector is a powerful tool that allows you to define and manage the routing of requests based on various criteria. It provides flexibility in configuring the network and allows for easy integration with external services.
+The Network Selector is a powerful tool that allows you to define and manage the routing of requests based on various criteria. It provides flexibility in configuring the network and allows for easy integration with external services.
 
 ![Netowrk Configuration](/images/runtime/network.png)
 
-The network selector in ecosystem.ai uses an experiment’s configuration to dynamically route each prediction or interaction request to one of multiple ecosystem runtime configurations (e.g., Configuration A, B, or C). This lets you easily compare different model versions, capture feedback and logs, and adapt to evolving experiments—all managed under a single, unified API.
+The network selector in ecosystem.ai uses an experiment’s configuration to dynamically route each prediction or interaction request to one of multiple ecosystem runtime configurations (e.g., Configuration A, B, or C). This lets you easily compare different model versions, capture feedback and logs, and adapt to evolving experiments - all managed under a single, unified API.
 
-When setting up a project to support network routing, you will need to configure the network selector. This involves defining the network configuration and specifying the routing criteria. The network selector uses a switch key to determine which network configuration to use for each request. The switch key is a unique identifier that is used to route requests based on specific criteria.
+When setting up a project to support network routing, you will need to configure the network selector. This involves defining the network configuration and specifying the routing criteria. 
 
-***Note***
-Use `PostScoreNetwork` plugin in your project deployment to enable the network selector.
+The network selector uses a switch key to determine which network configuration to use for each request. The switch key is a unique identifier that is used to route requests based on specific criteria.
 
-## Key Features
-
-- **Network Configuration**: The name of the network configuration including type.
-- **Network Nodes**: The number of nodes and configuration in the network.
+<Callout type="tip" title="Note">
+  Use the `PostScoreNetwork` postscore plugin in your project deployment to enable the network selector.
+</Callout>
 
 ## Network Types
 
@@ -31,24 +29,20 @@ Here are the different types of network selectors, that will perform different r
 Calls an external model selector to get a sorted list of options based on scores. It then calls other runtimes in sequence based on the model selector's score.
 
 - **no_logging_router**:
-Routes requests without logging. It uses a switch key to determine the network configuration and calls an external service based on this configuration.
+Routes requests without logging. It uses a switch key in a data lookup to determine the network configuration and calls an external service based on this configuration.
 
 - **experiment_selector**:
-Routes requests based on an experiment setup. It uses the experiment assigned in the dynamic corpora network setup to call an external service.
+Routes requests based on an experiment setup. Customers are randomly allocated to experimental groups on first interaction with the experiment and then follow the same routing on subsequent interactions.
 
 - **lookup_passthrough**:
-Looks up a value with result pass-through. It uses a switch key to determine the network configuration and calls an external service based on this configuration. It also checks for network validity and applies default values if necessary.
+Looks up a value with result pass-through. It uses a switch key in a data lookup to determine the network configuration and calls an external service based on this configuration. 
 
 - **default**:
-The default routing mechanism. It uses a switch key to determine the network configuration and calls an external service based on this configuration.
+The default routing mechanism. It uses a switch key in a data lookup to determine the network configuration and calls an external service based on this configuration. 
 
 ## Network Configuration
 
-There are two configuration settings that need to be done for the selector to work. Configure a network of client pulse responders by changing configuration based on lookup, scoring and other criteria. Ensure that the lookup settings coordinate and that default have been set or removed. Example, if there's a customer, or other settings in the __network collection, it will use those. If you want customer to go straight through, then remove that default.
-
-These configurations are used to route requests based on the switch_key and to set up the network of client pulse responders by changing configuration based on lookup, scoring, and other criteria.
-
-Here is an explanation of the configuration files `network` and `network_config`.
+There are two configuration settings that need to be created for the selector to work, `network` and `network_config`. `network_config` specifies the type of the network and any network level settings. `network` is a collection of documents specifying the parameters for the network nodes. `network` contains one document for each node in the network.
 
 ## Model Selector
 
@@ -151,3 +145,15 @@ In this example the network configuration is set to route requests based on assi
   "url": "http://localhost:8015"
 }
 ```
+
+## Logging
+
+Besides the `no_logging_router` network type, both the Network Selector runtime and the node runtime will generate contact and response logs, so both the performance of the node and the network as a whole can be easily monitored. In order for this to occur the following process is followed:
+1. When a response to the Network Selector `/invocations` API is received, it will contain the UUID of the contact logged by the node runtime
+2. The contact logged by the node runtime will contain the UUID of the Network Selector contact as a field in the `in_params` object
+3. When the `/response` API is called on the Network Selector with the `/invocations` UUID it will first log a response for the node runtime and then use the UUID in `in_params` of the node contact to create a response for the Network Selector. 
+
+<Callout type="tip" title="Note">
+  - The Network Selector and nodes should use the same contacts and response collections
+  - The `/response` API should be called on the Network Selector runtime rather than the node runtime
+</Callout>
