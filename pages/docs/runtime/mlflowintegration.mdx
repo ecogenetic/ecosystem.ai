@@ -4,22 +4,91 @@ description: Import models from the MLFlow model registry
 ---
 
 # MLFlow Integration
-
 If models are not trained using the ecosystem Server, the trained models need to be made available to the ecosystem Runtime as part of the deployment process. The supported approach to do this is to use MLFlow as a model registry and import the models from MLFlow into the runtime.
 
 <Callout type="tip" title="Note">
-    Integration is currently supported from models trained using H2O where the mojo is stored as an artifact in MLFlow
+    Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the Runtime MCP has access to an h2o server used by MLFlow
 </Callout>
 
-
 ## Configuration
-
-MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api interface. The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format
+MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api interface. The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format:
 ```json
 {
-    "mlflow_models": [{"name":"recommender-demo","version":7,"mojo_artifact_path":"mojo"}]
+    "mlflow_models": [
+                    {"name":"recommender-demo","version":7,"type":"h2o_mojo","mojo_artifact_path":"mojo"},
+                    {"name":"recommender-demo","version":7,"type":"h2o_model","h2o_url":"http://localhost:54321"}
+                    ]
 }
 ```
-The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file.
+The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file. The currently supported types in the config file are `h2o_mojo` and `h2o_model`. `h2o_mojo` is preferred and requires that the mojo is stored as an artifact in MLFlow. `h2o_model` can be used when the mojo is not stored in MLFlow but it requires that the Runtime MCP have access to the H2O server used by MLFlow so that the model can be loaded into MLFlow and the mojo can be downloaded.
 
 Calling the `/refresh` API on the Runtime MCP will, in addition to the standard `/refresh` functionality, download and load the models from MLFlow.
+
+<Callout type="tip" title="Logging a mojo to MLFlow">
+    Below we give a minimal example showing how a mojo can be logged to MLFlow as part of the model logging process:
+```python
+# Import packages
+import mlflow
+from pathlib import Path
+import h2o
+from h2o.estimators import H2OGradientBoostingEstimator
+
+# Train the model
+
+# Connect to H2O
+h2o.init()
+
+# Import the prostate dataset into H2O:
+prostate = h2o.import_file("http://s3.amazonaws.com/h2o-public-test-data/smalldata/prostate/prostate.csv")
+
+# Set the predictors and response; set the factors:
+prostate["CAPSULE"] = prostate["CAPSULE"].asfactor()
+predictors = ["ID","AGE","RACE","DPROS","DCAPS","PSA","VOL","GLEASON"]
+response = "CAPSULE"
+
+# Build and train the model:
+pros_gbm = H2OGradientBoostingEstimator(nfolds=5,
+                                        seed=1111,
+                                        keep_cross_validation_predictions = True)
+pros_gbm.train(x=predictors, y=response, training_frame=prostate)
+
+# Eval performance:
+perf = pros_gbm.model_performance()
+
+# Download the mojo the be logged as an artifact to MLFlow
+mojo_path = pros_gbm.download_mojo()
+
+# Log the model to MLFlow
+
+# Connect to MLFlow
+mlflow.set_tracking_uri(uri="http://localhost:8085")
+
+# Create a new MLflow Experiment
+mlflow.set_experiment("MLflow Quickstart")
+
+# Start an MLflow run
+with mlflow.start_run():
+    # Log the hyperparameters
+    mlflow.log_param("nfolds", 5)
+    mlflow.log_param("seed", 1111)
+
+    # Log the loss metric
+    mlflow.log_metric("accuracy",perf.accuracy()[0][1])
+
+    # Log the mojo for scoring
+    mlflow.log_artifact(Path(mojo_path))
+    
+    # Log the model, which inherits the parameters and metric
+    model_info = mlflow.h2o.log_model(
+        h2o_model=pros_gbm,
+        name="prostate_model",
+        registered_model_name="tracking-quickstart"
+    )
+
+    # Set a tag that we can use to remind ourselves what this model was for
+    mlflow.set_logged_model_tags(
+        model_info.model_id, {"Training Info": "Basic GBM model for prostate data"}
+    )
+```
+    When viewing the model in MLFlow you should now be able to see the mojo as well as the standard H2O artifacts.
+</Callout>
