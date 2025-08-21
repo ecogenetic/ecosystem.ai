@@ -5,7 +5,14 @@ description: The release notes of the ecosystem runtime from version 0.9.0.0
 
 # ecosystem.Ai runtime release history
 
-## 0.9.6.1 Preview
+## 0.9.6.2 Preview
+
+### New functionality
+- Updates to batch process to improve response logging functionality
+- Asymmetric custom rewards for Ecosystem Rewards Dynamic Interactions
+
+
+## 0.9.6.1
 
 ### New functionality
 - External runtime data lookups. Parameter access and additional corpora can be configured to get data from an external runtime. This allows for data to be pulled from different data stores into a single runtime and can be used to reduce the number of connection sockets if many runtimes connect to the same tables.
@@ -20,6 +27,9 @@ description: The release notes of the ecosystem runtime from version 0.9.0.0
 - Miscellaneous
   - Fixed issue where Dynamic Interaction configurations behind network runtimes would intermittently stop learning
   - Changed scaling of Bayesian Probabilistic scoring results
+
+### Updated dependencies
+- org.springframework.boot: 3.5.0
 
 ## 0.9.6.0
 
