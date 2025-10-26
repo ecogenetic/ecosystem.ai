@@ -1,0 +1,534 @@
+# Kubernetes
+
+ecosystem.Ai can be installed on Kubernetes. This can be tested locally using Minikube. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
+
+## Environment Variables
+
+A number of environment variables can be used when starting up the ecosystem.Ai Deployments. These can be set in a ConfigMap. In addition, you should create a secret containing your license key.
+
+<Callout type="note" title="Environment Variable Config Map" emoji='✏️' collapsible>
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecosystem-env
+  namespace: ecosystem
+data:
+  # Server
+  ECOSYSTEM_SERVER_PORT: "3001"
+  ECOSYSTEM_SERVER_IP: "http://server.ecosystem.svc.cluster.local"
+  ECOSYSTEM_PROP_FILE: "/config/ecosystem.properties"
+  CLI_SETTINGS: "-Dserver.port=3001"
+  RESET_USER: "true"
+  NO_WORKBENCH: "true"
+
+  # Runtime
+  MONITORING_DELAY: "240"
+  ECOSYSTEM_RUNTIME_PORT: "8091"
+
+  # Workbench
+  WORKBENCH_IP: "http://127.0.0.1"
+  WORKBENCH_PORT: "3001"
+
+  # Grafana
+  GF_SECURITY_ALLOW_EMBEDDING: "true"
+  GF_INSTALL_PLUGINS: "marcusolsson-json-datasource,volkovlabs-echarts-panel"
+```
+</Callout>
+
+
+## Persistent Volume Claims
+
+Ideally you should create a ReadWriteMany PVC to mount to the various ecosystem.Ai Deployments as it makes management easier. This is illustrated here. If you're Kubernetes instance does not support ReadWriteMany PVCs  then you will need to create multiple PVCs.
+
+<Callout type="note" title="Persistent Volume Claim" emoji='✏️' collapsible>
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ecosystem-data-pvc
+  namespace: ecosystem
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: /desired storage capacity/Gi
+```
+</Callout>
+
+## Server Deployment
+
+The server Deployment and services are below. Here, and in the subsequent components:
+- Images are pulled from Docker Hub. Generally, the images should be stored in a local repository and that repository should be referenced in the Deployment.
+- LoadBalancer services are created. This exposes the services externally in Minikube. The Ingress approach supported by your Kuberenetes instance should be used to expose the services.
+
+<Callout type="note" title="Server Deployment" emoji='✏️' collapsible>
+```yaml
+###############################################################################
+# 1) ECOSYSTEM-SERVER (SINGLE INSTANCE)
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-server
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-server
+  template:
+    metadata:
+      labels:
+        app: ecosystem-server
+    spec:
+      containers:
+      - name: ecosystem-server
+        image: docker.io/ecosystemai/ecosystem-server-mongo8:arm64
+        imagePullPolicy: Always
+        env:
+          - name: MASTER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: master-key
+                key: master-key
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: ECOSYSTEM_SERVER_PORT
+          - name: IP
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: ECOSYSTEM_SERVER_IP
+          - name: ECOSYSTEM_PROP_FILE
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: ECOSYSTEM_PROP_FILE
+          - name: CLI_SETTINGS
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: CLI_SETTINGS
+          - name: RESET_USER
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: RESET_USER
+          - name: NO_WORKBENCH
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: NO_WORKBENCH
+        ports:
+          - containerPort: 3001
+            name: http
+          - containerPort: 54321
+            name: htwoo
+          - containerPort: 54445
+            name: mongo
+        volumeMounts:
+          - name: ecosystem-data
+            subPath: data
+            mountPath: /data
+          - name: ecosystem-data
+            subPath: serverconfig
+            mountPath: /config
+      volumes:
+      - name: ecosystem-data
+        persistentVolumeClaim:
+          claimName: ecosystem-data-pvc
+
+---
+###############################################################################
+# 2) SERVICES
+###############################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-server
+  ports:
+    - name: http
+      port: 3001
+      targetPort: 3001
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-server
+  ports:
+    - name: mongo
+      port: 54445
+      targetPort: 54445
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: htwoo
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-server
+  ports:
+    - name: htwoo
+      port: 54321
+      targetPort: 54321
+
+---
+```
+</Callout>
+
+## Notebooks and Grafana Deployments
+
+<Callout type="note" title="Notebooks and Grafana Deployments" emoji='✏️' collapsible>
+```yaml
+###############################################################################
+# 1) ECOSYSTEM-NOTEBOOKS
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-notebooks
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-notebooks
+  template:
+    metadata:
+      labels:
+        app: ecosystem-notebooks
+    spec:
+      containers:
+      - name: ecosystem-notebooks
+        image: docker.io/ecosystemai/ecosystem-notebooks:arm64
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8000
+            name: notebooks
+          - containerPort: 8010
+            name: pythonserver
+        volumeMounts:
+          - name: ecosystem-data
+            mountPath: "/app/Shared Projects"
+            subPath: "notebooks-users/notebooks"
+          - name: ecosystem-data
+            mountPath: "/home"
+            subPath: "notebooks-users"
+          - name: ecosystem-data
+            subPath: data
+            mountPath: "/data"
+      volumes:
+        - name: ecosystem-data
+          persistentVolumeClaim:
+            claimName: ecosystem-data-pvc
+      restartPolicy: Always
+
+---
+
+###############################################################################
+# 2) ECOSYSTEM-GRAFANA
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-grafana
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-grafana
+  template:
+    metadata:
+      labels:
+        app: ecosystem-grafana
+    spec:
+      containers:
+      - name: ecosystem-grafana
+        image: docker.io/ecosystemai/ecosystem-grafana:nojwt
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: GF_SECURITY_ALLOW_EMBEDDING
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_SECURITY_ALLOW_EMBEDDING
+        ports:
+          - containerPort: 3000
+            name: grafana
+        volumeMounts:
+          - name: ecosystem-data
+            mountPath: /var/lib/grafana
+      volumes:
+        - name: ecosystem-data
+          persistentVolumeClaim:
+            claimName: ecosystem-data-pvc
+      restartPolicy: Always
+
+---
+
+###############################################################################
+# 3) SERVICES
+###############################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: notebooks
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-notebooks
+  ports:
+    - name: notebooks
+      port: 8000
+      targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pythonserver
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-notebooks
+  ports:
+    - name: pythonserver
+      port: 8010
+      targetPort: 8010
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-grafana
+  ports:
+    - name: grafana
+      port: 3000
+      targetPort: 3000
+
+---
+```
+</Callout>
+
+## Workbench and Runtime Deployments
+
+The workbench Deployment utilises a ConfigMap which sets the port on which the workbench starts up. In this case we start up the workbench on port 8008.
+
+A single runtime Deployment is created. Separate Deployments should be created for each use case that needs to be pushed to a runtime. The replica count is not specified in the runtime Deployment, this assumes that a HorizontalPodAutoscaler will be created for the runtime. Alternatively the replica count can be set at a volume that can handle the anticipated load.
+
+<Callout type="note" title="Workbench and Runtime Deployments" emoji='✏️' collapsible>
+```yaml
+###############################################################################
+# 1) ECOSYSTEM-WORKBENCH (SINGLE INSTANCE)
+###############################################################################
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: ecosystem
+data:  
+  default.conf: |
+    server {
+        listen 8008 default_server;
+        listen [::]:8008 default_server;
+
+        root /usr/share/nginx/html;
+
+        index index.html;
+
+        server_name _;
+
+        location / {
+            try_files $uri$args $uri$args/ /index.html;
+        }
+
+        location ~* .(js|css|ttf|ttc|otf|eot|woff|woff2)$ {
+                add_header access-control-allow-origin "*";
+                expires max;
+        }
+    }
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-workbench
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-workbench
+  template:
+    metadata:
+      labels:
+        app: ecosystem-workbench
+    spec:
+      containers:
+      - name: ecosystem-workbench
+        image: docker.io/ecosystemai/ecosystem-workbench:arm64
+        volumeMounts:
+        - name: nginx-config
+          mountPath: "/etc/nginx/conf.d"
+        securityContext:
+          runAsGroup: 0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: IP
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: WORKBENCH_IP
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: WORKBENCH_PORT
+        ports:
+          - containerPort: 8008
+            name: http
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+      restartPolicy: Always
+
+---
+
+###############################################################################
+# 2) ecosystem-runtime
+###############################################################################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-runtime1
+  namespace: ecosystem
+spec:
+  #replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-runtime1
+  template:
+    metadata:
+      labels:
+        app: ecosystem-runtime1
+    spec:
+      containers:
+      - name: ecosystem-runtime1
+        image: docker.io/ecosystemai/ecosystem-runtime-solo:arm64
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - name: ecosystem-data
+            subPath: data
+            mountPath: /data
+        env:
+          - name: MASTER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: master-key
+                key: master-key
+          - name: MONITORING_DELAY
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: MONITORING_DELAY
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: ECOSYSTEM_RUNTIME_PORT
+        ports:
+          - containerPort: 8091
+            name: http
+        resources:
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+      volumes:
+      - name: ecosystem-data
+        persistentVolumeClaim:
+          claimName: ecosystem-data-pvc
+      restartPolicy: Always
+
+---
+
+###############################################################################
+# 3) SERVICES
+###############################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: workbench
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-workbench
+  ports:
+    - name: http
+      port: 8008
+      targetPort: 8008
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: runtime1
+  namespace: ecosystem
+spec:
+  type: LoadBalancer
+  selector:
+    app: ecosystem-runtime1
+  ports:
+    - name: runtime1
+      port: 8091
+      targetPort: 8091
+
+---
+
+```
+</Callout>
+
+## Conclusion
+
+**That's it!** You have now configured your ecosystem.Ai instance on Kubernetes.

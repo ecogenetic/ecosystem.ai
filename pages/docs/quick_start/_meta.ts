@@ -3,4 +3,5 @@ export default {
   local_setup: 'Local Setup',
   marketplace: 'Marketplace Apps',
   docker: 'Docker Compose',
+  kubernetes: 'Kubernetes'
 }
