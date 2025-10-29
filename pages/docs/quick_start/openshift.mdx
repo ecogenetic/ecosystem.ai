@@ -1,6 +1,6 @@
-# Kubernetes
+# OpenShift
 
-ecosystem.Ai can be installed on Kubernetes. This can be tested locally using Minikube. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
+ecosystem.Ai can be installed on OpenShift. This can be tested locally using `crc`. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
 
 ## Environment Variables
 
@@ -25,9 +25,10 @@ data:
   # Runtime
   MONITORING_DELAY: "240"
   ECOSYSTEM_RUNTIME_PORT: "8091"
+  NO_MONGODB: "true"
 
   # Workbench
-  WORKBENCH_IP: "http://127.0.0.1"
+  WORKBENCH_IP: /route for server deployment/
   WORKBENCH_PORT: "3001"
 
   # Grafana
@@ -36,10 +37,15 @@ data:
 ```
 </Callout>
 
+<Callout type="note" title="Commands to Create Config Map" emoji='✏️' collapsible>
+```bash
+oc apply -f ecosystem_configmap.yaml
+```
+</Callout>
 
 ## Persistent Volume Claims
 
-Ideally you should create a ReadWriteMany PVC to mount to the various ecosystem.Ai Deployments as it makes management easier. This is illustrated here. If your Kubernetes instance does not support ReadWriteMany PVCs then you will need to create multiple PVCs.
+Ideally you should create a ReadWriteMany PVC to mount to the various ecosystem.Ai Deployments as it makes management easier. This is illustrated here. If your OpenShift instance does not support ReadWriteMany PVCs then you will need to create multiple PVCs.
 
 <Callout type="note" title="Persistent Volume Claim" emoji='✏️' collapsible>
 ```yaml
@@ -57,17 +63,20 @@ spec:
 ```
 </Callout>
 
+<Callout type="note" title="Commands to Create Persistent Volume Claim" emoji='✏️' collapsible>
+```bash
+oc apply -f ecosystem_pvc.yaml
+```
+</Callout>
+
 ## Server Deployment
 
-The server Deployment and services are below. Here, and in the subsequent components:
+For the server, and in the subsequent components:
 - Images are pulled from Docker Hub. Generally, the images should be stored in a local repository and that repository should be referenced in the Deployment.
-- LoadBalancer services are created. This exposes the services externally in Minikube. The Ingress approach supported by your Kuberenetes instance should be used to expose the services.
+- Resources are not specified as they will be specific to the environment.
 
 <Callout type="note" title="Server Deployment" emoji='✏️' collapsible>
 ```yaml
-###############################################################################
-# 1) ECOSYSTEM-SERVER (SINGLE INSTANCE)
-###############################################################################
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -86,7 +95,7 @@ spec:
       containers:
       - name: ecosystem-server
         image: docker.io/ecosystemai/ecosystem-server-mongo8:arm64
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
           - name: MASTER_KEY
             valueFrom:
@@ -141,69 +150,30 @@ spec:
       - name: ecosystem-data
         persistentVolumeClaim:
           claimName: ecosystem-data-pvc
+```
+</Callout>
 
----
-###############################################################################
-# 2) SERVICES
-###############################################################################
+<Callout type="note" title="Commands to Server" emoji='✏️' collapsible>
+```bash
+oc apply -f server-deployment-openshift.yaml
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: server
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-server
-  ports:
-    - name: http
-      port: 3001
-      targetPort: 3001
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongo
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-server
-  ports:
-    - name: mongo
-      port: 54445
-      targetPort: 54445
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: htwoo
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-server
-  ports:
-    - name: htwoo
-      port: 54321
-      targetPort: 54321
-
----
+oc expose deployment ecosystem-server --port=3001 --name=server
+oc expose deployment ecosystem-server --port=54445 --name=mongo
+oc expose deployment ecosystem-server --port=54321 --name=htwoo
+oc expose svc server --port=3001
+oc expose svc mongo --port=54445
+oc expose svc htwoo --port=54321
 ```
 </Callout>
 
 ## Notebooks and Grafana Deployments
 
+For the notebooks deployment, we configure `runAsUser: 1001570001`. This is a UID with a pre-created user in the Jupyter Notebooks environment. We pre-create the user as user creation will require the pod to run as root. If this `runAsUser` is not allowed by your serviceAccount then you will need to contact ecosystem.Ai to have an allowed UID preconfigured as a user.
+
+The grafana deployment uses the `nojwt` image tag. This requires some manual configuration of the connection between grafana and the server. Automating the connection between grafana and the server can cause permission issues in OpenShift.
+
 <Callout type="note" title="Notebooks and Grafana Deployments" emoji='✏️' collapsible>
 ```yaml
-###############################################################################
-# 1) ECOSYSTEM-NOTEBOOKS
-###############################################################################
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -221,13 +191,15 @@ spec:
     spec:
       containers:
       - name: ecosystem-notebooks
-        image: docker.io/ecosystemai/ecosystem-notebooks:arm64
-        imagePullPolicy: Always
+        securityContext:
+          runAsUser: 1001570001
+        image: docker.io/ecosystemai/ecosystem-notebooks:latest
+        imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 8000
             name: notebooks
           - containerPort: 8010
-            name: pythonserver
+            name: alt
         volumeMounts:
           - name: ecosystem-data
             mountPath: "/app/Shared Projects"
@@ -246,9 +218,6 @@ spec:
 
 ---
 
-###############################################################################
-# 2) ECOSYSTEM-GRAFANA
-###############################################################################
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -276,71 +245,33 @@ spec:
                 key: GF_SECURITY_ALLOW_EMBEDDING
         ports:
           - containerPort: 3000
-            name: grafana
+            name: http
         volumeMounts:
           - name: ecosystem-data
+            subPath: grafana
             mountPath: /var/lib/grafana
       volumes:
         - name: ecosystem-data
           persistentVolumeClaim:
             claimName: ecosystem-data-pvc
       restartPolicy: Always
-
----
-
-###############################################################################
-# 3) SERVICES
-###############################################################################
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: notebooks
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-notebooks
-  ports:
-    - name: notebooks
-      port: 8000
-      targetPort: 8000
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: pythonserver
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-notebooks
-  ports:
-    - name: pythonserver
-      port: 8010
-      targetPort: 8010
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: grafana
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-grafana
-  ports:
-    - name: grafana
-      port: 3000
-      targetPort: 3000
-
----
 ```
 </Callout>
+
+<Callout type="note" title="Commands to Create Notebooks and Grafana" emoji='✏️' collapsible>
+```bash
+oc apply -f notebooks-grafana-deployment-openshift.yaml
+
+oc expose deployment ecosystem-grafana --port=3000
+oc expose svc ecosystem-grafana --port=3000
+
+oc expose deployment ecosystem-notebooks --port=8000 --name=jupyter
+oc expose deployment ecosystem-notebooks --port=8010 --name=pythonserver
+oc expose svc jupyter --port=8000
+oc expose svc pythonserver --port=8010
+```
+</Callout>
+
 
 ## Workbench and Runtime Deployments
 
@@ -350,10 +281,6 @@ A single runtime Deployment is created. Separate Deployments should be created f
 
 <Callout type="note" title="Workbench and Runtime Deployments" emoji='✏️' collapsible>
 ```yaml
-###############################################################################
-# 1) ECOSYSTEM-WORKBENCH (SINGLE INSTANCE)
-###############################################################################
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -400,7 +327,7 @@ spec:
     spec:
       containers:
       - name: ecosystem-workbench
-        image: docker.io/ecosystemai/ecosystem-workbench:arm64
+        image: docker.io/ecosystemai/ecosystem-workbench:latest
         volumeMounts:
         - name: nginx-config
           mountPath: "/etc/nginx/conf.d"
@@ -429,17 +356,13 @@ spec:
 
 ---
 
-###############################################################################
-# 2) ecosystem-runtime
-###############################################################################
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ecosystem-runtime1
   namespace: ecosystem
 spec:
-  #replicas: 1
+  replicas: 1
   selector:
     matchLabels:
       app: ecosystem-runtime1
@@ -450,7 +373,7 @@ spec:
     spec:
       containers:
       - name: ecosystem-runtime1
-        image: docker.io/ecosystemai/ecosystem-runtime-solo:arm64
+        image: docker.io/ecosystemai/ecosystem-runtime-solo:latest
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: ecosystem-data
@@ -462,6 +385,11 @@ spec:
               secretKeyRef:
                 name: master-key
                 key: master-key
+          - name: NO_MONGODB
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: NO_MONGODB
           - name: MONITORING_DELAY
             valueFrom:
               configMapKeyRef:
@@ -471,64 +399,30 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: ecosystem-env
-                key: ECOSYSTEM_RUNTIME_PORT
+                key: PORT
         ports:
           - containerPort: 8091
             name: http
-        resources:
-          requests:
-            cpu: "1"
-            memory: "2Gi"
-          limits:
-            cpu: "1"
-            memory: "2Gi"
       volumes:
       - name: ecosystem-data
         persistentVolumeClaim:
           claimName: ecosystem-data-pvc
       restartPolicy: Always
+```
+</Callout>
 
----
+<Callout type="note" title="Commands to Create Workbench and Runtime" emoji='✏️' collapsible>
+```bash
+oc apply -f workbench-runtime-deployment-openshift.yaml
 
-###############################################################################
-# 3) SERVICES
-###############################################################################
+oc expose deployment ecosystem-workbench --port=8008
+oc expose svc ecosystem-workbench --port=8008
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: workbench
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-workbench
-  ports:
-    - name: http
-      port: 8008
-      targetPort: 8008
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: runtime1
-  namespace: ecosystem
-spec:
-  type: LoadBalancer
-  selector:
-    app: ecosystem-runtime1
-  ports:
-    - name: runtime1
-      port: 8091
-      targetPort: 8091
-
----
-
+oc expose deployment ecosystem-runtime1 --port=8091
+oc expose svc ecosystem-runtime1 --port=8091
 ```
 </Callout>
 
 ## Conclusion
 
-**That's it!** You have now configured your ecosystem.Ai instance on Kubernetes.
+**That's it!** You have now configured your ecosystem.Ai instance on OpenShift. Superset and Airflow components can be added using helm charts if required.
