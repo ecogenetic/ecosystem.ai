@@ -11,10 +11,6 @@ The Parameter Access and Additional Corpora components of a [Deployment](/docs/c
 Below we outline the implementation of each of these approaches to highlight to advantages and disadvantages of each approach.
 
 <Callout type="tip" title="Note">
-    This functionality is currently only available when creating a deployment using the python package. The functionality will be made available in the workbench before the release of 0.9.6.1.
-</Callout>
-
-<Callout type="tip" title="Note">
     - Only `static` and `dynamic` type Additional Corpora can be configured to use a runtime as a data source. The `dynamic_engagement` and `experiment` types cannot be configured to use a runtime as a data source.
     - The Additional Corpora types should be the same across the two runtimes.
     - The `/refresh` endpoint needs to be called on both runtimes for all of the data to be refreshed.
