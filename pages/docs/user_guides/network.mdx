@@ -44,6 +44,10 @@ The default routing mechanism. It uses a switch key in a data lookup to determin
 
 There are two configuration settings that need to be created for the selector to work, `network` and `network_config`. `network_config` specifies the type of the network and any network level settings. `network` is a collection of documents specifying the parameters for the network nodes. `network` contains one document for each node in the network.
 
+<Callout type="tip" title="Note">
+  By default all network selector types will use the original incoming API call JSON structure and then overwrite with values from the `network` config file. **e.g.** A call may be made with parameters `'campaign': 'recommender-a'` and `'customer': '1005'`. If the `network` config file that this calls gets routed to specifies `'campaign': 'recommender-b'` and doesn't specify a value for the customer field then the call made to the selected runtime would have parameters `'campaign': 'recommender-b'` and `'customer': '1005'`.
+</Callout>
+
 ## Model Selector
 
 The model selector is a network configuration that calls an external model selector to get a sorted list of options based on scores. It then calls other runtimes in sequence based on the model selector's score.
