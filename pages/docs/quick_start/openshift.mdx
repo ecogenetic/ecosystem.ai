@@ -92,9 +92,68 @@ spec:
       labels:
         app: ecosystem-server
     spec:
+      initContainers:
+      - name: init-ecosystem-config
+        image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            cat << 'EOF' > /config/ecosystem.properties
+            # ========
+            logging.level=5
+            cross.origin=ecosystem.ai
+            date.format=yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX
+            logger.level=500
+            # these only needed for mongoexport and import
+            mongo.ingestion.threads=7
+            mongo.export.compress=true
+            mongo.port=54445
+            mongo.server=127.0.0.1
+            mongo.data.port=54445
+            mongo.data.server=127.0.0.1
+            mongo.authentication.source=admin
+            mongo.secure.data=true
+            mongo.secure.workbench=true
+            mongo.ecosystem.user=ecosystem_user
+            mongo.ecosystem.password=EcoEco321
+            mongo.profiles.user=ecosystem_user
+            mongo.profiles.password=EcoEco321
+            # this is primary connection string
+            #user.profiles=profilesMaster
+            user.profiles=ecosystem_meta
+            mongo.connect=mongodb://ecosystem_user:EcoEco321@127.0.0.1:54445/?authSource=admin
+            #mongo.connect=mongodb://ecosystem_user:EcoEco321@ecosystem-mongo:54445/?authSource=admin
+            # prediction server
+            prediction.server.h2o.mode=local
+            prediction.server.h2o=http://127.0.0.1:54321
+            prediction.server.pytorch={"train_model":"http://ecosystem-worker-pytorch:5010/train_model","training_status":"http://ecosystem-worker-pytorch:5010/get_model","download_model":"http://ecosystem-worker-pytorch:5010/download_model","get_model":"http://ecosystem-worker-pytorch:5010/get_model","load_model":"http://ecosystem-worker-pytorch:5000/load_model","get_current_model":"http://ecosystem-worker-pytorch:5000/get_current_model","score_document_info_formatted_h2o":"http://ecosystem-worker-pytorch:5000/score_document_info_formatted_h2o"}
+            prediction.server.orbit={"server":"http://ecosystem-worker-orbit:5100/","connect":"mongodb://ecosystem_user:EcoEco321@ecosystem-server:54445/?authSource=admin"}
+            prediction.server.prophet={"server":"http://ecosystem-worker-prophet:5110/","connect":"mongodb://ecosystem_user:EcoEco321@ecosystem-server:54445/?authSource=admin"}
+            prediction.server.ecosystem=http://127.0.0.1:8080
+            model.list.generative={"default":{"model":"llama3.2", "url":"http://host.docker.internal:11434/api/chat"}}
+            # data and model storage
+            user.home=./
+            user.data=/data/
+            user.generated.models=/data/models/
+            user.deployed.models=/data/deployed/
+            # apply for new application password in google: https://support.google.com/accounts/answer/185833
+            user.email={"smtp":"smtp.gmail.com","port":587,"login":"","password":"","admin":"","cc":"","rule":"super_only"}
+            # used for code generation of runtime
+            sourcecontrol.runtime=[{"server":"https://github.com/ecosystemai/ecosystem-runtime.git","branch":"workbench","user":"ecosystemai","password":""}]
+            # presto server
+            presto.url=jdbc:trino://ecosystem-worker-trino:8084/
+            presto.connection=local/master?user=admin
+            logging.database=logging
+            logging.collection=ecosystemruntime
+            logging.collection.response=ecosystemruntime_response
+            EOF
+        volumeMounts:
+          - name: ecosystem-data
+            subPath: serverconfig
+            mountPath: /config
       containers:
       - name: ecosystem-server
-        image: docker.io/ecosystemai/ecosystem-server-mongo8:arm64
+        image: docker.io/ecosystemai/ecosystem-server:arm64
         imagePullPolicy: IfNotPresent
         env:
           - name: MASTER_KEY
@@ -243,6 +302,21 @@ spec:
               configMapKeyRef:
                 name: ecosystem-env
                 key: GF_SECURITY_ALLOW_EMBEDDING
+            name: $GF_AUTH_JWT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_AUTH_JWT_URL
+            name: $GF_AUTH_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_AUTH_USERNAME
+            name: $GF_AUTH_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_AUTH_PASSWORD
         ports:
           - containerPort: 3000
             name: http
