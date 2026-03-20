@@ -1,40 +1,24 @@
 import Image from 'next/image'
-import { getPagesUnderRoute } from 'nextra/context'
-import { Page } from 'nextra'
-
-type AuthorPage = Page & {
-  frontMatter: {
-    name: string
-    ogImage: string
-    authorid: string
-  }
-}
+import { getAuthor } from '@/lib/authors'
 
 export const AuthorSmall = ({ authorid }: { authorid: string }) => {
-  const authorPages = getPagesUnderRoute('/authors')
-  const page = authorPages?.find(
-    (page) => (page as AuthorPage).frontMatter.authorid === authorid,
-  ) as AuthorPage
+  const author = getAuthor(authorid)
 
-  if (!page) {
-    // Handle the case when the author page is not found
-    console.error('Author page not found for authorid:', authorid)
+  if (!author) {
     return null
   }
 
-  const { name, ogImage } = page.frontMatter
-
   return (
-    <div className="group shrink-0" key={name}>
+    <div className="group shrink-0" key={author.name}>
       <div className="flex items-center gap-4">
         <Image
-          src={ogImage}
+          src={author.ogImage}
           width={20}
           height={20}
           className="rounded-full"
-          alt={`Picture ${name}`}
+          alt={`Picture ${author.name}`}
         />
-        <span className="text-primary/60 whitespace-nowrap">{name}</span>
+        <span className="text-primary/60 whitespace-nowrap">{author.name}</span>
       </div>
     </div>
   )

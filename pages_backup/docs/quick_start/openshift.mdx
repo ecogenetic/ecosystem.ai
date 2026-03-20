@@ -1,0 +1,502 @@
+# OpenShift
+
+ecosystem.Ai can be installed on OpenShift. This can be tested locally using `crc`. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
+
+## Environment Variables
+
+A number of [environment variables](/docs/runtime/environment_variables) can be used when starting up the ecosystem.Ai Deployments. These can be set in a ConfigMap. In addition, you should create a secret containing your license key.
+
+<Callout type="note" title="Environment Variable Config Map" emoji='✏️' collapsible>
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecosystem-env
+  namespace: ecosystem
+data:
+  # Server
+  ECOSYSTEM_SERVER_PORT: "3001"
+  ECOSYSTEM_SERVER_IP: "http://server.ecosystem.svc.cluster.local"
+  ECOSYSTEM_PROP_FILE: "/config/ecosystem.properties"
+  CLI_SETTINGS: "-Dserver.port=3001"
+  RESET_USER: "true"
+  NO_WORKBENCH: "true"
+
+  # Runtime
+  MONITORING_DELAY: "240"
+  ECOSYSTEM_RUNTIME_PORT: "8091"
+  NO_MONGODB: "true"
+
+  # Workbench
+  WORKBENCH_IP: /route for server deployment/
+  WORKBENCH_PORT: "3001"
+
+  # Grafana
+  GF_SECURITY_ALLOW_EMBEDDING: "true"
+  GF_INSTALL_PLUGINS: "marcusolsson-json-datasource,volkovlabs-echarts-panel"
+```
+</Callout>
+
+<Callout type="note" title="Commands to Create Config Map" emoji='✏️' collapsible>
+```bash
+oc apply -f ecosystem_configmap.yaml
+```
+</Callout>
+
+## Persistent Volume Claims
+
+Ideally you should create a ReadWriteMany PVC to mount to the various ecosystem.Ai Deployments as it makes management easier. This is illustrated here. If your OpenShift instance does not support ReadWriteMany PVCs then you will need to create multiple PVCs.
+
+<Callout type="note" title="Persistent Volume Claim" emoji='✏️' collapsible>
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ecosystem-data-pvc
+  namespace: ecosystem
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: /desired storage capacity/Gi
+```
+</Callout>
+
+<Callout type="note" title="Commands to Create Persistent Volume Claim" emoji='✏️' collapsible>
+```bash
+oc apply -f ecosystem_pvc.yaml
+```
+</Callout>
+
+## Server Deployment
+
+For the server, and in the subsequent components:
+- Images are pulled from Docker Hub. Generally, the images should be stored in a local repository and that repository should be referenced in the Deployment.
+- Resources are not specified as they will be specific to the environment.
+
+<Callout type="note" title="Server Deployment" emoji='✏️' collapsible>
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-server
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-server
+  template:
+    metadata:
+      labels:
+        app: ecosystem-server
+    spec:
+      initContainers:
+      - name: init-ecosystem-config
+        image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            cat << 'EOF' > /config/ecosystem.properties
+            # ========
+            logging.level=5
+            cross.origin=ecosystem.ai
+            date.format=yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX
+            logger.level=500
+            # these only needed for mongoexport and import
+            mongo.ingestion.threads=7
+            mongo.export.compress=true
+            mongo.port=54445
+            mongo.server=127.0.0.1
+            mongo.data.port=54445
+            mongo.data.server=127.0.0.1
+            mongo.authentication.source=admin
+            mongo.secure.data=true
+            mongo.secure.workbench=true
+            mongo.ecosystem.user=ecosystem_user
+            mongo.ecosystem.password=EcoEco321
+            mongo.profiles.user=ecosystem_user
+            mongo.profiles.password=EcoEco321
+            # this is primary connection string
+            #user.profiles=profilesMaster
+            user.profiles=ecosystem_meta
+            mongo.connect=mongodb://ecosystem_user:EcoEco321@127.0.0.1:54445/?authSource=admin
+            #mongo.connect=mongodb://ecosystem_user:EcoEco321@ecosystem-mongo:54445/?authSource=admin
+            # prediction server
+            prediction.server.h2o.mode=local
+            prediction.server.h2o=http://127.0.0.1:54321
+            prediction.server.pytorch={"train_model":"http://ecosystem-worker-pytorch:5010/train_model","training_status":"http://ecosystem-worker-pytorch:5010/get_model","download_model":"http://ecosystem-worker-pytorch:5010/download_model","get_model":"http://ecosystem-worker-pytorch:5010/get_model","load_model":"http://ecosystem-worker-pytorch:5000/load_model","get_current_model":"http://ecosystem-worker-pytorch:5000/get_current_model","score_document_info_formatted_h2o":"http://ecosystem-worker-pytorch:5000/score_document_info_formatted_h2o"}
+            prediction.server.orbit={"server":"http://ecosystem-worker-orbit:5100/","connect":"mongodb://ecosystem_user:EcoEco321@ecosystem-server:54445/?authSource=admin"}
+            prediction.server.prophet={"server":"http://ecosystem-worker-prophet:5110/","connect":"mongodb://ecosystem_user:EcoEco321@ecosystem-server:54445/?authSource=admin"}
+            prediction.server.ecosystem=http://127.0.0.1:8080
+            model.list.generative={"default":{"model":"llama3.2", "url":"http://host.docker.internal:11434/api/chat"}}
+            # data and model storage
+            user.home=./
+            user.data=/data/
+            user.generated.models=/data/models/
+            user.deployed.models=/data/deployed/
+            # apply for new application password in google: https://support.google.com/accounts/answer/185833
+            user.email={"smtp":"smtp.gmail.com","port":587,"login":"","password":"","admin":"","cc":"","rule":"super_only"}
+            # used for code generation of runtime
+            sourcecontrol.runtime=[{"server":"https://github.com/ecosystemai/ecosystem-runtime.git","branch":"workbench","user":"ecosystemai","password":""}]
+            # presto server
+            presto.url=jdbc:trino://ecosystem-worker-trino:8084/
+            presto.connection=local/master?user=admin
+            logging.database=logging
+            logging.collection=ecosystemruntime
+            logging.collection.response=ecosystemruntime_response
+            EOF
+        volumeMounts:
+          - name: ecosystem-data
+            subPath: serverconfig
+            mountPath: /config
+      containers:
+      - name: ecosystem-server
+        image: docker.io/ecosystemai/ecosystem-server:arm64
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: MASTER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: master-key
+                key: master-key
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: ECOSYSTEM_SERVER_PORT
+          - name: IP
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: ECOSYSTEM_SERVER_IP
+          - name: ECOSYSTEM_PROP_FILE
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: ECOSYSTEM_PROP_FILE
+          - name: CLI_SETTINGS
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: CLI_SETTINGS
+          - name: RESET_USER
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: RESET_USER
+          - name: NO_WORKBENCH
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: NO_WORKBENCH
+        ports:
+          - containerPort: 3001
+            name: http
+          - containerPort: 54321
+            name: htwoo
+          - containerPort: 54445
+            name: mongo
+        volumeMounts:
+          - name: ecosystem-data
+            subPath: data
+            mountPath: /data
+          - name: ecosystem-data
+            subPath: serverconfig
+            mountPath: /config
+      volumes:
+      - name: ecosystem-data
+        persistentVolumeClaim:
+          claimName: ecosystem-data-pvc
+```
+</Callout>
+
+<Callout type="note" title="Commands to Create Server" emoji='✏️' collapsible>
+```bash
+oc apply -f server-deployment-openshift.yaml
+
+oc expose deployment ecosystem-server --port=3001 --name=server
+oc expose deployment ecosystem-server --port=54445 --name=mongo
+oc expose deployment ecosystem-server --port=54321 --name=htwoo
+oc expose svc server --port=3001
+oc expose svc mongo --port=54445
+oc expose svc htwoo --port=54321
+```
+</Callout>
+
+## Notebooks and Grafana Deployments
+
+For the notebooks deployment, we configure `runAsUser: 1001570001`. This is a UID with a pre-created user in the Jupyter Notebooks environment. We pre-create the user as user creation will require the pod to run as root. If this `runAsUser` is not allowed by your serviceAccount then you will need to contact ecosystem.Ai to have an allowed UID preconfigured as a user.
+
+The grafana deployment uses the `nojwt` image tag. This requires some manual configuration of the connection between grafana and the server. Automating the connection between grafana and the server can cause permission issues in OpenShift.
+
+<Callout type="note" title="Notebooks and Grafana Deployments" emoji='✏️' collapsible>
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-notebooks
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-notebooks
+  template:
+    metadata:
+      labels:
+        app: ecosystem-notebooks
+    spec:
+      containers:
+      - name: ecosystem-notebooks
+        securityContext:
+          runAsUser: 1001570001
+        image: docker.io/ecosystemai/ecosystem-notebooks:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8000
+            name: notebooks
+          - containerPort: 8010
+            name: alt
+        volumeMounts:
+          - name: ecosystem-data
+            mountPath: "/app/Shared Projects"
+            subPath: "notebooks-users/notebooks"
+          - name: ecosystem-data
+            mountPath: "/home"
+            subPath: "notebooks-users"
+          - name: ecosystem-data
+            subPath: data
+            mountPath: "/data"
+      volumes:
+        - name: ecosystem-data
+          persistentVolumeClaim:
+            claimName: ecosystem-data-pvc
+      restartPolicy: Always
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-grafana
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-grafana
+  template:
+    metadata:
+      labels:
+        app: ecosystem-grafana
+    spec:
+      containers:
+      - name: ecosystem-grafana
+        image: docker.io/ecosystemai/ecosystem-grafana:nojwt
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: GF_SECURITY_ALLOW_EMBEDDING
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_SECURITY_ALLOW_EMBEDDING
+            name: $GF_AUTH_JWT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_AUTH_JWT_URL
+            name: $GF_AUTH_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_AUTH_USERNAME
+            name: $GF_AUTH_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: GF_AUTH_PASSWORD
+        ports:
+          - containerPort: 3000
+            name: http
+        volumeMounts:
+          - name: ecosystem-data
+            subPath: grafana
+            mountPath: /var/lib/grafana
+      volumes:
+        - name: ecosystem-data
+          persistentVolumeClaim:
+            claimName: ecosystem-data-pvc
+      restartPolicy: Always
+```
+</Callout>
+
+<Callout type="note" title="Commands to Create Notebooks and Grafana" emoji='✏️' collapsible>
+```bash
+oc apply -f notebooks-grafana-deployment-openshift.yaml
+
+oc expose deployment ecosystem-grafana --port=3000
+oc expose svc ecosystem-grafana --port=3000
+
+oc expose deployment ecosystem-notebooks --port=8000 --name=jupyter
+oc expose deployment ecosystem-notebooks --port=8010 --name=pythonserver
+oc expose svc jupyter --port=8000
+oc expose svc pythonserver --port=8010
+```
+</Callout>
+
+
+## Workbench and Runtime Deployments
+
+The workbench Deployment utilises a ConfigMap which sets the port on which the workbench starts up. In this case we start up the workbench on port 8008.
+
+A single runtime Deployment is created. Separate Deployments should be created for each use case that needs to be pushed to a runtime. The replica count is not specified in the runtime Deployment, this assumes that a HorizontalPodAutoscaler will be created for the runtime. Alternatively the replica count can be set at a volume that can handle the anticipated load.
+
+<Callout type="note" title="Workbench and Runtime Deployments" emoji='✏️' collapsible>
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: ecosystem
+data:  
+  default.conf: |
+    server {
+        listen 8008 default_server;
+        listen [::]:8008 default_server;
+
+        root /usr/share/nginx/html;
+
+        index index.html;
+
+        server_name _;
+
+        location / {
+            try_files $uri$args $uri$args/ /index.html;
+        }
+
+        location ~* .(js|css|ttf|ttc|otf|eot|woff|woff2)$ {
+                add_header access-control-allow-origin "*";
+                expires max;
+        }
+    }
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-workbench
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-workbench
+  template:
+    metadata:
+      labels:
+        app: ecosystem-workbench
+    spec:
+      containers:
+      - name: ecosystem-workbench
+        image: docker.io/ecosystemai/ecosystem-workbench:latest
+        volumeMounts:
+        - name: nginx-config
+          mountPath: "/etc/nginx/conf.d"
+        securityContext:
+          runAsGroup: 0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: IP
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: WORKBENCH_IP
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: WORKBENCH_PORT
+        ports:
+          - containerPort: 8008
+            name: http
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+      restartPolicy: Always
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecosystem-runtime1
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecosystem-runtime1
+  template:
+    metadata:
+      labels:
+        app: ecosystem-runtime1
+    spec:
+      containers:
+      - name: ecosystem-runtime1
+        image: docker.io/ecosystemai/ecosystem-runtime-solo:latest
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - name: ecosystem-data
+            subPath: data
+            mountPath: /data
+        env:
+          - name: MASTER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: master-key
+                key: master-key
+          - name: NO_MONGODB
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: NO_MONGODB
+          - name: MONITORING_DELAY
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: MONITORING_DELAY
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ecosystem-env
+                key: PORT
+        ports:
+          - containerPort: 8091
+            name: http
+      volumes:
+      - name: ecosystem-data
+        persistentVolumeClaim:
+          claimName: ecosystem-data-pvc
+      restartPolicy: Always
+```
+</Callout>
+
+<Callout type="note" title="Commands to Create Workbench and Runtime" emoji='✏️' collapsible>
+```bash
+oc apply -f workbench-runtime-deployment-openshift.yaml
+
+oc expose deployment ecosystem-workbench --port=8008
+oc expose svc ecosystem-workbench --port=8008
+
+oc expose deployment ecosystem-runtime1 --port=8091
+oc expose svc ecosystem-runtime1 --port=8091
+```
+</Callout>
+
+## Conclusion
+
+**That's it!** You have now configured your ecosystem.Ai instance on OpenShift. Superset and Airflow components can be added using helm charts if required.

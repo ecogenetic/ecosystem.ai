@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { MediaPlayer, MediaOutlet, useMediaRemote, useMediaStore } from '@vidstack/react'
 import { Play } from 'lucide-react'

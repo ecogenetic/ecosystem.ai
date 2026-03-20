@@ -1,0 +1,112 @@
+---
+title: Long-Tail Boost MF
+description: Long-Tail Boost Matrix Factorization for dynamic interactions in ecosystem.Ai
+---
+
+import { Callout } from 'nextra/components'
+
+# Long-Tail Boost MF
+
+**Weighted Regularized Matrix Factorization (WRMF)** on implicit feedback, with a **long-tail reweighting** term that down-weights frequently exposed items so latent collaborative signal is combined with catalog diversity.
+
+## Algorithm
+
+**Config value:** `"approach": "behaviorAlgos"`, `"sub_approach": "longTailBoostMF"`
+
+The learner fits latent factors for users and items using **Alternating Least Squares (ALS)** on implicit feedback matrices. The final score blends the dot product of user and item vectors with an inverse-exposure factor:
+
+$\text{score} = (\mathbf{u} \cdot \mathbf{v}) \cdot \frac{1}{(\text{exposure} + 1)^{\gamma}} \cdot \text{variableMultiplier}$
+
+Here $\mathbf{u}$ and $\mathbf{v}$ are the user and item latent vectors, $\gamma$ controls how strongly popularity is penalized, and `variableMultiplier` carries any configured scaling from the deployment.
+
+## Parameters
+
+- **latentDim** ($k$): Latent factor dimensionality. Default: `6`.
+- **numIters**: ALS iterations. Default: `8`.
+- **regLambda** ($\lambda_{\text{reg}}$): L2 regularization for factors. Default: `0.05`.
+- **gamma** ($\gamma$): Long-tail / inverse-exposure exponent. Default: `0.4`.
+- **entropyW**: Optional entropy-related weighting term (default `0.0` when unused).
+- **Processing Window**: Time window in milliseconds for historical data.
+- **Historical Count**: Max records to process per update cycle.
+
+## Cold Start
+
+**Recommendations are always returned.** The real-time training path in `RollingBehavior` always produces a scored options array:
+
+- **No history:** Every offer in the options store receives a uniform random score. All offers are ranked and passed to the post-score class.
+- **Sparse history:** The model initializes **unseen users and items** with small Gaussian noise ($\mathcal{N}(0, 0.01^2)$), so algorithm-level scores cluster near zero. Unscored offers receive a random fallback score.
+- **Sufficient history:** The ALS-learned latent factors produce meaningful collaborative-filtering scores, amplified by the long-tail reweighting.
+
+The scored options are then sorted by `arm_reward` and handed to the configured **dynamic post-score class**, which controls the final offer selection and response formatting.
+
+<Callout type="info" title="Always Returns Offers">
+The runtime always returns recommendations. During cold start, offers are ranked randomly. Long-Tail Boost MF requires substantial interaction volume before the matrix factorization scores become meaningful. The post-score class determines the final presentation.
+</Callout>
+
+## When To Use
+
+- **Collaborative filtering** with many user–item events and a desire to **promote the long tail**
+- Catalogs where **popularity bias** should be counteracted after you already have interaction volume
+
+## When NOT To Use
+
+- **Cold start** deployments or very sparse interaction logs
+- **Few interactions** per user or item (use simpler bandit methods first)
+- **Simple** recommendation problems where matrix factorization is unnecessary
+
+## Example
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import online_learning_management as ol
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-long-tail-boost-mf"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Long-Tail Boost MF configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=5000,
+        randomisation_processing_window=604800000,
+        contextual_variables_offer_key="offer",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Long-Tail Boost MF demo deployment",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+<Callout type="tip" title="Deployment pattern">
+Set `approach` to `behaviorAlgos` and `sub_approach` to `longTailBoostMF` in the `randomisation` object. Tune `latentDim`, `numIters`, `regLambda`, and `gamma` for your traffic volume and catalog size.
+</Callout>

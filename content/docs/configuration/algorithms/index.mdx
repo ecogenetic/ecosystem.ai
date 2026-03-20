@@ -1,0 +1,377 @@
+---
+title: Algorithms Overview
+description: Overview of all dynamic interaction algorithms available in the ecosystem.Ai runtime, including comparison tables, cold-start behavior, and scenario guides.
+---
+
+import { Callout } from 'nextra/components'
+
+# Algorithms Overview
+
+The ecosystem.Ai runtime includes a comprehensive library of dynamic interaction algorithms for real-time offer scoring and recommendation. Each algorithm implements a different strategy for learning which offers, actions, or content to present to users.
+
+All algorithms share the same operational architecture: a background **rolling process** periodically updates offer statistics in the **options store**, and real-time scoring reads those pre-computed statistics to rank offers for each API request.
+
+## Architecture
+
+Algorithm selection is driven by the `randomisation` object stored in the dynamic recommender configuration document in MongoDB:
+
+```json
+{
+  "randomisation": {
+    "approach": "binaryThompson",
+    "sub_approach": "",
+    "epsilon": 0.0,
+    "success_reward": 1.0,
+    "fail_reward": 1.0,
+    "processing_window": 86400000,
+    "processing_count": 5000,
+    "decay_gamma": 1.0,
+    "interaction_count": 0
+  }
+}
+```
+
+The `approach` field selects the top-level algorithm. When `approach` is `behaviorAlgos`, the `sub_approach` field selects the specific behavioral economics algorithm.
+
+### Algorithm Routing
+
+| `approach` Value | Algorithm | Rolling Processor |
+|------------------|-----------|-------------------|
+| `binaryThompson` | [Ecosystem Rewards (Thompson Sampling)](/docs/configuration/algorithms/ecosystemrewards) | `RollingEcosystemRewards` |
+| `epsilonGreedy` | [Epsilon Greedy](/docs/configuration/algorithms/epsilongreedy) | `RollingEcosystemRewards` |
+| `naiveBayes` | [Bayesian Probabilistic](/docs/configuration/algorithms/baysianprobabilistic) | `RollingNaiveBayes` |
+| `QLearning` | [Q-Learning](/docs/configuration/algorithms/qlearning) | `RollingQLearning` |
+| `Network` | [Network Analysis (PageRank)](/docs/configuration/algorithms/networkanalysis) | `RollingNetwork` |
+| `behaviorAlgos` | Behavioral Economics (see sub_approach) | `RollingBehavior` |
+
+### Behavioral Sub-Approaches
+
+When `approach = "behaviorAlgos"`, the `sub_approach` field selects one of:
+
+| `sub_approach` Value | Algorithm |
+|----------------------|-----------|
+| `lossAversion` | [Loss Aversion](/docs/configuration/algorithms/lossaversion) |
+| `riskAversion` | [Risk Aversion](/docs/configuration/algorithms/riskaversion) |
+| `prospectTheory` | [Prospect Theory](/docs/configuration/algorithms/prospecttheory) |
+| `sentimentalEquilibrium` | [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium) |
+| `coverageAwareThompson` | [Coverage-Aware Thompson](/docs/configuration/algorithms/coveragethompson) |
+| `longTailBoostMF` | [Long-Tail Boost MF](/docs/configuration/algorithms/longtailmf) |
+| `generative` | [Generative Model](/docs/configuration/algorithms/generativemodel) |
+
+---
+
+## Exploration
+
+All algorithms share a **deployment-level epsilon** exploration mechanism. On each API request, the runtime rolls a random number against the configured `epsilon`. When exploration is triggered (`explore = 1`), the algorithm is bypassed entirely and all offers receive **uniform random scores**. This applies to every algorithm without exception.
+
+In addition, some algorithms have their own **built-in exploration** that operates during normal (non-explore) scoring:
+
+| Algorithm | Deployment Epsilon | Algorithm-Level Exploration |
+|-----------|-------------------|----------------------------|
+| **Ecosystem Rewards (Thompson)** | Yes | Automatic via Beta distribution overlap |
+| **Epsilon Greedy** | Yes | Epsilon IS the algorithm (fixed-rate random arm selection) |
+| **Loss Aversion** | Yes | UCB exploration term boosts under-sampled offers |
+| **Risk Aversion** | Yes | None -- relies on deployment epsilon for exploration |
+| **Prospect Theory** | Yes | Adaptive drift + built-in epsilon-greedy mixing |
+| **Sentimental Equilibrium** | Yes | N/A (aggregate equilibrium, not per-offer) |
+| **Coverage-Aware Thompson** | Yes | Thompson sampling + inverse-popularity boost + optional epsilon mixing |
+| **Long-Tail Boost MF** | Yes | Inverse-popularity reweighting (diversity, not explicit exploration) |
+| **Network Analysis (PageRank)** | Yes | None -- relies on deployment epsilon for exploration |
+| **Q-Learning** | Yes | Epsilon-greedy policy within Q-table |
+| **Bayesian Probabilistic** | Yes | Uniform sampling for missing offers (if configured) |
+| **Generative Model** | Yes | LLM temperature controls stochasticity |
+
+## Algorithm Comparison
+
+| Algorithm | Convergence Speed | Computational Cost | Stochastic | Context-Aware | Best Use Case |
+|-----------|-------------------|--------------------|-----------|--------------|--------------| 
+| **Ecosystem Rewards (Thompson)** | Medium | Low | Yes | No | General-purpose recommendations |
+| **Epsilon Greedy** | Fast (exploit) | Very Low | Partial | No | Simple A/B testing, low complexity |
+| **Loss Aversion** | Medium-Fast | Low | No | Yes | High-cost-of-rejection scenarios |
+| **Risk Aversion** | Fast | Very Low | No | No | Consistency-valued domains |
+| **Prospect Theory** | Medium | Low | Partial | No | Marketing with psychological modeling |
+| **Sentimental Equilibrium** | Single-shot | Low | No | No | Engagement intensity optimization |
+| **Coverage-Aware Thompson** | Slow | Medium | Yes | Yes | Fairness / catalog coverage |
+| **Long-Tail Boost MF** | Medium | High (ALS) | No | Yes | Collaborative filtering with diversity |
+| **Network Analysis (PageRank)** | Fast | Medium | No | No | Inter-offer relationships |
+| **Q-Learning** | Slow | High | Partial | Yes (state) | Sequential decision-making |
+| **Bayesian Probabilistic** | Very Fast | Low | No | Yes | Feature-rich contexts |
+| **Generative Model** | N/A | Very High (API) | Yes | Yes | Complex reasoning, experimental |
+
+---
+
+## Cold-Start Behavior
+
+**Recommendations are always returned**, regardless of algorithm or data availability. The `RollingBehavior` (and equivalent Rolling classes) always produces a scored options array that is passed to the post-score class:
+
+- **No history at all:** Every offer in the options store receives a **uniform random score**.
+- **Partial history:** Offers scored by the algorithm use their computed scores; unscored offers receive a **random fallback score**.
+- **Explore triggered:** When deployment-level epsilon triggers exploration, all offers receive random scores regardless of available history.
+
+The post-score class then controls the final offer selection, eligibility filtering, and response formatting. The table below documents **what each algorithm contributes** on top of this platform-level behavior.
+
+### Cold-Start Summary
+
+| Algorithm | Algorithm-Level Cold Start Behavior | Prior / Seed Mechanism | Quality of Early Recommendations |
+|-----------|-------------------------------------|----------------------|----------------------------------|
+| **Ecosystem Rewards (Thompson)** | Beta(1,1) samples uniformly in [0,1]. All arms get equal random chance. | Configurable `alpha_zero` and `beta_zero` per arm. Default Beta(1,1) is uninformative. | **Good.** Uniform exploration by design. |
+| **Epsilon Greedy** | All arms start with `arm_reward = 0` and tie. Exploit phase picks randomly among ties. | None beyond deployment epsilon. | **Moderate.** Set epsilon >= 0.1 for better early coverage. |
+| **Loss Aversion** | New offers get smoothing alpha = 1.5. UCB gives under-sampled offers a boost. | Smoothing alpha = 1.5 + UCB exploration term. | **Moderate.** UCB helps under-sampled offers surface. |
+| **Risk Aversion** | Does not score offers without history. Platform random fallback applies. | None. Relies on platform-level random scoring. | **Random until data accumulates.** Algorithm begins influencing after sufficient history. |
+| **Prospect Theory** | Seeds all known offers with `baseDriftRate` (default 0.05). Adaptive drift + epsilon-greedy mixing. | `baseDriftRate` seed + drift + epsilon. | **Good.** Seeding gives all offers non-zero scores from day one. |
+| **Sentimental Equilibrium** | Computes aggregate engagement equilibrium, not per-offer scores. | Model parameters serve as the "prior". | **N/A.** Does not rank individual offers. |
+| **Coverage-Aware Thompson** | Beta(1,1) + `exposure=0` gives maximum inverse-popularity boost for unseen offers. | Beta(1,1) prior + max coverage boost. | **Excellent.** Best cold-start of all behavioral algorithms. |
+| **Long-Tail Boost MF** | Random latent vectors (~0.01 Gaussian noise) for unseen users/items. Near-zero scores. | Random Gaussian initialization. | **Random until data accumulates.** Needs substantial interaction volume. |
+| **Network Analysis (PageRank)** | Cannot build a graph without co-occurrence data. Platform random fallback applies. | Personalization based on acceptance weight (once data exists). | **Random until data accumulates.** Needs co-occurrence data. |
+| **Q-Learning** | Q-table is empty. First iteration uses random state/action. | `initial_q = 0` + epsilon-greedy policy. | **Random until data accumulates.** Needs sequential interactions. |
+| **Bayesian Probabilistic** | Random score for all offers, or uniform sampling for missing offers if configured. | Laplace smoothing (`alpha = 1.0`) for unseen feature combinations. | **Good.** Laplace handles unseen combinations well. |
+| **Generative Model** | Sends minimal context to LLM. Output depends on LLM behavior and prompt. | Prompt and system instructions serve as the "prior". | **Variable.** Depends on LLM quality with minimal context. |
+
+### Recommended Cold-Start Strategies
+
+| Scenario | Recommended Algorithm | Why |
+|----------|----------------------|-----|
+| Brand new deployment, zero data | **Ecosystem Rewards (Thompson)** | Beta(1,1) prior gives uniform exploration. Converges naturally as data arrives. |
+| New deployment, need guaranteed coverage | **Coverage-Aware Thompson** | Maximum boost for unseen items. Thompson + inverse-popularity + optional epsilon. |
+| Adding new offers to existing catalog | **Ecosystem Rewards** or **Coverage-Aware Thompson** | New offers get default priors and are naturally explored. |
+| New customer segment, have general history | **Prospect Theory** | Seeds all offers from product data. Adaptive drift ensures variety. |
+| Need immediate results, no tolerance for randomness | **Epsilon Greedy** with high epsilon (0.3-0.5) | Simple, predictable. Reduce epsilon over time. |
+| Fastest algorithm-level convergence | **Risk Aversion**, **Long-Tail Boost MF**, **PageRank** | These converge quickly once data is available, but rely on platform random scoring during cold start. |
+
+### Configuring Priors for Thompson Sampling
+
+The `alpha_zero` and `beta_zero` fields in the options store control the Thompson Sampling prior. Different priors can be set per offer to encode domain knowledge:
+
+| Prior | alpha_zero | beta_zero | Meaning |
+|-------|-----------|----------|---------|
+| Uninformative | 1.0 | 1.0 | No prior belief. Uniform sampling. Default. |
+| Optimistic | 2.0 | 1.0 | Assume the offer is probably good. Explore less. |
+| Pessimistic | 1.0 | 2.0 | Assume the offer is probably bad. Explore more. |
+| Strong prior (popular offer) | 10.0 | 5.0 | Equivalent to 10 successes and 5 failures. Stable from start. |
+| Weak but positive | 1.5 | 1.0 | Slight optimism. Good for offers you believe will perform above average. |
+
+---
+
+## Rolling Process and Background Learning
+
+Every dynamic interaction algorithm follows the same two-phase architecture:
+
+1. **Background learning (write path):** A scheduled process periodically reads logging data (offers presented) and response data (offers accepted), computes updated statistics for each offer arm, and writes the results to the **options store** in MongoDB.
+
+2. **Real-time scoring (read path):** When an API request arrives, the runtime reads the pre-computed arm statistics from the options store, applies the explore/exploit logic for the selected algorithm, and returns ranked offers. No database writes occur during scoring.
+
+This separation means learning is decoupled from serving. The options store acts as the bridge.
+
+### Scheduling
+
+Background learning is triggered in two ways:
+
+**Automatic Scheduler (recommended for production):** The `MultiCampaignScheduler` runs on a Spring `@Scheduled` fixed-delay loop controlled by the `monitoring.delay` property (in seconds, default 60).
+
+**On-Demand via `/learning` API:** Useful for forcing an immediate update after bulk data loads, testing, or manual intervention.
+
+```bash
+curl -X POST http://localhost:8091/learning
+```
+
+### Options Store Update Cycle
+
+Each background learning cycle performs these steps for every option:
+
+1. **Read current options** from the options store
+2. **Aggregate logging data** (presentations) -- filtered by time window, count limit, decay
+3. **Aggregate response data** (acceptances) within the same window
+4. **Compute arm_reward** using the algorithm-specific reward strategy
+5. **Write updated options** back to the options store via upsert
+
+### Process vs Score
+
+| Aspect | `process()` (Background) | `score()` (Real-Time) |
+|--------|-------------------------|----------------------|
+| **When called** | Scheduler or `/learning` API | Every API scoring request |
+| **Purpose** | Update arm statistics | Rank offers for a customer |
+| **Reads from** | Logging + response collections | Options store only |
+| **Writes to** | Options store + time series | Nothing (read-only) |
+| **Latency** | Seconds to minutes | Milliseconds |
+| **Explore/exploit** | Not applied | Applied |
+
+For more detail on the options store structure, see [Options Store](/docs/configuration/dynamic/options). For the processing pipeline configuration, see [Process](/docs/configuration/dynamic/process).
+
+---
+
+## Scenario Guide
+
+### Scenario 1: New Product Launch (Cold Start)
+
+**Problem:** New catalog of offers with no interaction history.
+
+**Recommended:** `binaryThompson` with default priors
+
+```json
+{
+  "approach": "binaryThompson",
+  "epsilon": 0.0,
+  "success_reward": 1.0,
+  "fail_reward": 1.0,
+  "processing_window": 86400000,
+  "processing_count": 1000,
+  "decay_gamma": 1.0
+}
+```
+
+### Scenario 2: Mature Catalog with Popularity Bias
+
+**Problem:** Top offers get disproportionate impressions. Long-tail offers are never shown.
+
+**Recommended:** `behaviorAlgos` with `coverageAwareThompson`
+
+```json
+{
+  "approach": "behaviorAlgos",
+  "sub_approach": "coverageAwareThompson",
+  "epsilon": 0.05,
+  "processing_count": 5000,
+  "decay_gamma": 1.0
+}
+```
+
+### Scenario 3: High Cost of Rejection
+
+**Problem:** Showing irrelevant offers damages customer trust (financial products, insurance).
+
+**Recommended:** `behaviorAlgos` with `lossAversion`
+
+```json
+{
+  "approach": "behaviorAlgos",
+  "sub_approach": "lossAversion",
+  "processing_count": 5000,
+  "processing_window": 604800000,
+  "decay_gamma": 1.0
+}
+```
+
+### Scenario 4: Conservative / Regulated Industry
+
+**Problem:** Consistency and predictability matter more than maximizing acceptance rate.
+
+**Recommended:** `behaviorAlgos` with `riskAversion`
+
+```json
+{
+  "approach": "behaviorAlgos",
+  "sub_approach": "riskAversion",
+  "processing_count": 5000,
+  "processing_window": 2592000000,
+  "decay_gamma": 1.0
+}
+```
+
+### Scenario 5: Simple A/B Testing
+
+**Problem:** Basic performance tracking with minimal complexity.
+
+**Recommended:** `epsilonGreedy` with epsilon between 0.05 and 0.20
+
+```json
+{
+  "approach": "epsilonGreedy",
+  "epsilon": 0.1,
+  "processing_count": 1000,
+  "processing_window": 86400000,
+  "decay_gamma": 1.0
+}
+```
+
+### Scenario 6: Sequential Customer Journey
+
+**Problem:** Optimal next offer depends on what the customer has already seen/accepted.
+
+**Recommended:** `QLearning`
+
+```json
+{
+  "approach": "QLearning",
+  "learning_rate": 0.25,
+  "discount_factor": 0.75,
+  "random_action": 0.2,
+  "max_reward": 10,
+  "processing_count": 5000,
+  "training_data_source": "logging"
+}
+```
+
+### Scenario 7: Marketing Campaign with Behavioral Nudging
+
+**Problem:** Recommendations should be informed by how humans actually make decisions.
+
+**Recommended:** `behaviorAlgos` with `prospectTheory`
+
+```json
+{
+  "approach": "behaviorAlgos",
+  "sub_approach": "prospectTheory",
+  "epsilon": 0.1,
+  "processing_count": 5000,
+  "processing_window": 604800000,
+  "decay_gamma": 1.0
+}
+```
+
+### Scenario 8: Engagement Fatigue Analysis
+
+**Problem:** Determine optimal frequency and intensity of customer engagement.
+
+**Recommended:** `behaviorAlgos` with `sentimentalEquilibrium`
+
+```json
+{
+  "approach": "behaviorAlgos",
+  "sub_approach": "sentimentalEquilibrium",
+  "processing_count": 5000,
+  "decay_gamma": 1.0
+}
+```
+
+---
+
+## Configuration Reference
+
+### Common Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `approach` | string | Top-level algorithm: `binaryThompson`, `epsilonGreedy`, `behaviorAlgos`, `Network`, `QLearning`, `naiveBayes` |
+| `sub_approach` | string | Behavioral sub-algorithm (only when `approach=behaviorAlgos`) |
+| `epsilon` | double | Exploration probability. Range: 0.0 to 1.0. Typical: 0.05-0.20 |
+| `success_reward` | double | Weight for successful interactions when updating alpha. Default: 1.0 |
+| `fail_reward` | double | Weight for failed interactions when updating beta. Default: 1.0 |
+| `processing_window` | long | Time window in milliseconds. 0 = no limit. E.g. 86400000 (24h), 604800000 (7d) |
+| `processing_count` | int | Max records per update cycle. 0 = no limit. Typical: 1000-10000 |
+| `decay_gamma` | double | Geometric decay for older interactions. 1.0 = no decay |
+| `interaction_count` | int | Cap on interactions per customer. 0 = no cap |
+
+### Processing Window Examples
+
+| Use Case | `processing_window` | `processing_count` | `decay_gamma` | Effect |
+|----------|--------------------|--------------------|---------------|--------|
+| Last 24 hours only | 86400000 | 0 | 1.0 | Fresh data, responsive to changes |
+| Last 7 days, max 5000 | 604800000 | 5000 | 1.0 | Balanced freshness and volume |
+| Last 30 days with decay | 2592000000 | 0 | 1.5 | Long history, recent data weighted more |
+| Last 1000 interactions | 0 | 1000 | 1.0 | Fixed sample size, most recent |
+| All time, no limit | 0 | 0 | 1.0 | Maximum data, slowest adaptation |
+
+### Reward Strategy Factory
+
+The `RewardStrategyFactory` maps the approach to a reward computation:
+
+| Approach | Strategy | Computation |
+|----------|----------|-------------|
+| `binaryThompson` | `ThompsonReward` | `Beta(alpha + success * responses, beta + fail * (logs - responses)).sample()` |
+| `epsilonGreedy` | `EpsilonGreedyReward` | `response_count / logging_count` |
+| `Network` | `NetworkReward` | Returns 1.0 (PageRank handles scoring) |
+| `behaviorAlgos` | `BehaviorReward` | Returns 1.0 (behavioral algorithms handle scoring) |
+| `QLearning` | `QLearningReward` | Returns 1.0 (Q-table handles scoring) |
+| `naiveBayes` | `NaiveBayesReward` | Returns 1.0 (Naive Bayes handles scoring) |
+
+For custom formulas, see [Custom Reward Functions](/docs/configuration/dynamic/customrewards).

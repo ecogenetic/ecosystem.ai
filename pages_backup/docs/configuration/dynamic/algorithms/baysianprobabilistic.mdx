@@ -1,0 +1,84 @@
+---
+title: Bayesian Probabilistic
+description: Bayesian Probabilistic
+---
+
+# Bayesian Probabilistic
+
+The Bayesian Probabilistic algorithm implements a version of the Naive Bayes algorithm for solving classification problems.
+
+## Algorithm
+
+The Naive Bayes algorithm assigns a score for each offer using the following formula:
+$P(\text{offer}|X) = P(\text{offer}) \prod_{i=1}^{n} P(x_i|\text{offer})$
+Where $X$ are the features used to score the offers. The Baysian Probabilistic algorithm supports discrete features and with the resulting $P(X|\text{offer})$ distributions being multinomial. Laplace smoothing with $alpha=1$ is used to avoid zeroing out probabilities if an offer and feature value do not occur together in the training data set.
+
+The historical data used to train the algorithm can be windowed by either time and or the number of events. It is stongly recommended that a window approach be configured, both for performance reasons and to prevent historical data from overwhelming changes in the current state of the system. If no historical data is available when training the algorithm then all of the offers are assigned a score by sampling from a uniform distribution. This can occur either because it is the first time the API is being called or because the available historical data falls outside of the configured window. If historical data is present but an offer is not present in the historical data then the algorithm can be configured to either ignore the offer or to score the offer by sampling from a uniform distribution.
+
+## Parameters
+
+- **Processing Window**: Restricts the data used when the model updates based on a time period from the present going back a specified in milliseconds.
+- **Historical Count**: Restricts the data used when the model updates based on a count of interactions. This is an overall interaction count rather than a count per offer and segment as used in the Ecosystem Rewards algorithm.
+- **randomisation_missing_offers**: (only supported through python package) The approach to take when an offer is not present in the training data. The options are:
+  - **none**: Ignore the offer and do not score it.
+  - **uniform**: Score the missing offer by sampling from a uniform distribution.
+- **Lookup Defaults**: The features to be used when training and scoring the offers.
+
+## Example
+
+Below is an example configuration of the Bayesian Probabilistic algorithm in python
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import ecosystem_generation_engine as ge
+from prediction.apis import data_management_engine as dme
+from prediction.apis import online_learning_management as ol
+from prediction.apis import prediction_engine as pe
+from prediction.apis import worker_file_service as fs
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-deployment"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="bayesian_probabilistic",
+        name=deployment_id,
+        description="Demo deployment for illustrating python configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=500,
+        randomisation_processing_window=604800000,
+        randomisation_missing_offers="uniform",
+        contextual_variables_offer_key="offer"
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb",
+    defaults=["feature_one", "feature_two", "feature_three"]
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Demo project for illustrating python configuration",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```

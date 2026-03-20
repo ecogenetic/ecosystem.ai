@@ -1,0 +1,130 @@
+---
+title: Prospect Theory
+description: Prospect Theory algorithm for dynamic interactions in ecosystem.Ai
+---
+
+import { Callout } from 'nextra/components'
+
+# Prospect Theory
+
+Implements Kahneman and Tversky's Prospect Theory, the Nobel Prize-winning model of how humans actually evaluate risk. It differs from standard expected utility in three ways: (1) outcomes are evaluated relative to a reference point, (2) losses loom larger than gains, and (3) people overweight small probabilities and underweight large ones. The algorithm also includes adaptive drift and epsilon-greedy exploration to ensure catalog coverage.
+
+## Algorithm
+
+**Config value:** `"approach": "behaviorAlgos"`, `"sub_approach": "prospectTheory"`
+
+**Value function:**
+
+$v(x) = \begin{cases} x^\alpha & \text{if } x \geq 0 \text{ (gains)} \\ -\lambda \cdot (-x)^\beta & \text{if } x < 0 \text{ (losses)} \end{cases}$
+
+Where $\alpha = 0.88$ (diminishing sensitivity for gains), $\beta = 0.88$ (diminishing sensitivity for losses), and $\lambda = 2.25$ (loss aversion coefficient).
+
+**Probability weighting:**
+
+$w(p) = \exp(-(-\ln p)^\gamma)$
+
+With $\gamma_{\text{gain}} = 0.61$ and $\gamma_{\text{loss}} = 0.69$.
+
+**Prospect value:** $PT = v(x) \times w(p)$
+
+**Exploration (scoring phase):**
+
+$\text{drifted} = (1 - \text{effectiveDrift}) \times \text{normalized} + \text{effectiveDrift} \times \text{uniform}$
+
+$\text{finalScore} = (1 - \epsilon) \times \text{drifted} + \epsilon \times \text{uniform}$
+
+## Parameters
+
+- **alpha**: Diminishing sensitivity for gains. Default: 0.88.
+- **beta**: Diminishing sensitivity for losses. Default: 0.88.
+- **lambda**: Loss aversion coefficient. Default: 2.25. Higher values increase the penalty for under-performing offers.
+- **gammaGain**: Probability weighting for gains. Default: 0.61.
+- **gammaLoss**: Probability weighting for losses. Default: 0.69.
+- **epsilon**: Epsilon-greedy exploration rate. Default: 0.1.
+- **enableAdaptiveDrift**: Enable drift toward uniform distribution for diversity. Default: true.
+- **baseDriftRate**: Base rate of drift toward uniform distribution. Default: 0.05. Also used as the seed score for new offers.
+- **Processing Window**: Time window in milliseconds for historical data.
+- **Historical Count**: Max records to process per update cycle.
+
+## Cold Start
+
+Prospect Theory has **good cold-start handling** through its seeding mechanism:
+
+- All known offers from product data are seeded with `score = baseDriftRate` (default 0.05)
+- Even without interaction history, offers get a non-zero score
+- Adaptive drift mixes scores toward uniform, ensuring catalog diversity
+- Epsilon-greedy provides additional random exploration
+
+<Callout type="warning" title="Note">
+If both `offerProbs` and `productData` are empty (no offers configured at all), a division by zero can occur. Ensure the options store has offers before deploying.
+</Callout>
+
+## When To Use
+
+- When human decision-making biases should inform the recommendation strategy
+- When you want to model the psychological impact of offer rejection
+- When rare positive outcomes should be given more weight than raw statistics suggest
+- Marketing campaigns where "fear of missing out" (FOMO) dynamics are relevant
+
+## When NOT To Use
+
+- When you want a pure statistical optimum (use [Ecosystem Rewards](/docs/configuration/dynamic/algorithms/ecosystemrewards))
+- When the problem is well-modeled by simple expected value
+- When you need fast convergence to a single best offer
+
+## Example
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import online_learning_management as ol
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-prospect-theory"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Prospect Theory configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=5000,
+        randomisation_processing_window=604800000,
+        contextual_variables_offer_key="offer",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0.1, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Prospect Theory demo deployment",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+<Callout type="tip" title="Note">
+The `approach` should be set to `behaviorAlgos` and `sub_approach` to `prospectTheory` in the `randomisation` object. The Prospect Theory parameter defaults (alpha, beta, lambda, gamma values) match the original Kahneman-Tversky experimental findings.
+</Callout>

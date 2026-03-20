@@ -1,0 +1,122 @@
+---
+title: Loss Aversion
+description: Loss Aversion algorithm for dynamic interactions in ecosystem.Ai
+---
+
+import { Callout } from 'nextra/components'
+
+# Loss Aversion
+
+Based on the behavioral economics principle that people feel losses roughly twice as strongly as equivalent gains, this algorithm amplifies the perceived failure rate for under-performing offers, making the system more aggressive about avoiding offers that customers tend to reject. It combines a loss-adjusted learned probability with an Upper Confidence Bound (UCB) exploration term.
+
+## Algorithm
+
+**Config value:** `"approach": "behaviorAlgos"`, `"sub_approach": "lossAversion"`
+
+**Training phase:**
+
+For each offer, the raw acceptance rate is adjusted using the loss aversion factor:
+
+$\text{adjustedRate} = \begin{cases} \text{rawRate} & \text{if rawRate} \geq 0.5 \\ \text{rawRate} \times \text{lossAversionFactor} & \text{if rawRate} < 0.5 \end{cases}$
+
+An Upper Confidence Bound exploration term provides additional exploration for under-sampled offers:
+
+$\text{UCB} = \text{adjustedRate} + \text{explorationDecay} \times \sqrt{\frac{2 \ln(\text{totalCount})}{\text{count}}}$
+
+Where explorationDecay is 1.0 for under-performing offers (rawRate < 0.5) and $(1 - \text{rawRate})$ otherwise.
+
+**Scoring phase:**
+
+$\text{finalScore} = \text{ucbWeight} \times \text{learnedProb} + (1 - \text{ucbWeight}) \times \text{UCB}$
+
+Scores are then normalized across all offers to sum to 1.0.
+
+## Parameters
+
+- **lossAversionFactor**: Multiplier for under-performing offers (rawRate < 0.5). Default: 2.0. Higher values penalize poor performers more aggressively.
+- **ucbWeight**: Balance between learned probability and UCB exploration. Default: 0.5. Range: 0.0 (pure UCB) to 1.0 (pure learned probability).
+- **explorationFactor**: Controls UCB exploration term magnitude. Default: 2.0.
+- **Processing Window**: Time window in milliseconds for historical data.
+- **Historical Count**: Max records to process per update cycle.
+
+## Cold Start
+
+Loss Aversion has **moderate cold-start handling** with some risks:
+
+- With completely empty history, `offerProbs` is empty and normalization can divide by zero
+- New offers get a smoothing alpha of 1.5 added to their first observation
+- The UCB exploration term gives under-sampled offers a natural boost
+
+<Callout type="warning" title="Cold Start Warning">
+Loss Aversion requires at least one interaction record to function. With completely empty history and interactions, the normalization step can produce division by zero errors.
+</Callout>
+
+## When To Use
+
+- When the cost of showing a rejected offer is high (customer churn risk)
+- When you want the system to quickly stop recommending poor performers
+- When you prefer conservative recommendations
+- Financial services, insurance, or high-stakes offer environments
+
+## When NOT To Use
+
+- When you want to give new or unpopular offers a fair chance (use [Coverage-Aware Thompson](/docs/configuration/dynamic/algorithms/coveragethompson))
+- When acceptance rates are naturally low across all offers
+- When you need built-in cold-start handling from day zero
+
+## Example
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import online_learning_management as ol
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-loss-aversion"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Loss Aversion configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=5000,
+        randomisation_processing_window=604800000,
+        contextual_variables_offer_key="offer",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Loss Aversion demo deployment",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+<Callout type="tip" title="Note">
+The `approach` should be set to `behaviorAlgos` and `sub_approach` to `lossAversion` in the `randomisation` object of the dynamic recommender configuration in MongoDB.
+</Callout>

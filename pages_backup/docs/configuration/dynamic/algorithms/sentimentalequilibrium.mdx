@@ -1,0 +1,125 @@
+---
+title: Sentimental Equilibrium
+description: Sentimental Equilibrium algorithm for dynamic interactions in ecosystem.Ai
+---
+
+import { Callout } from 'nextra/components'
+
+# Sentimental Equilibrium
+
+Models the equilibrium between customer engagement utility and the effort or cost of engagement. The algorithm uses a dynamic system where a stock of engagement capital accumulates through effort and decays over time, then finds the steady-state equilibrium where marginal utility of engagement equals marginal cost, using Newton–Raphson optimization.
+
+The formulation is inspired by economic models of habit formation and sentimental capital accumulation.
+
+## Algorithm
+
+**Config value:** `"approach": "behaviorAlgos"`, `"sub_approach": "sentimentalEquilibrium"`
+
+**State dynamics** (engagement capital $x$ with effort $c$):
+
+$\frac{dx}{dt} = a \cdot c - r \cdot x$
+
+Engagement capital accumulates with effort at efficiency $a$ and decays at rate $r$.
+
+**Equilibrium** (steady state with $x^* = \frac{a}{r} \cdot c^*$):
+
+$a \cdot U'(x^*) = (r + \rho) \cdot D'(c^*)$
+
+Here $\rho$ is the discount rate (time preference). The equilibrium $(x^*, c^*)$ is found with Newton–Raphson iteration.
+
+**Utility functions** (configurable via `utilityType`):
+
+- `sqrt`: $U(x) = \sqrt{x}$
+- `linear`: $U(x) = x$
+- `log`: $U(x) = \ln(1 + x)$
+
+**Disutility of effort** (configurable via `disutilityType`):
+
+- `quadratic`: $D(c) = \frac{1}{2} c^2$
+- `linear`: $D(c) = c$
+
+## Parameters
+
+- **decayRate** ($r$): Rate at which engagement capital depreciates. Default: `0.1`.
+- **effortEfficiency** ($a$): How effectively effort converts into engagement capital. Default: `1.0`.
+- **discountRate** ($\rho$): Time preference / impatience. Default: `0.05`.
+- **utilityType**: Shape of $U$: `"sqrt"`, `"linear"`, or `"log"`. Default: `"sqrt"`.
+- **disutilityType**: Shape of $D$: `"quadratic"` or `"linear"`. Default: `"quadratic"`.
+- **Processing Window**: Time window in milliseconds for historical data (when used with rolling updates).
+- **Historical Count**: Max records to process per update cycle.
+
+## Cold Start
+
+Not applicable in the usual sense: Sentimental Equilibrium computes an **aggregate engagement equilibrium**, not per-offer scores. Output is independent of interaction history in the sense that $x^*_{\text{equilibrium}}$ and $c^*_{\text{equilibrium}}$ are derived from the configured model parameters. It does not produce a ranked list of offers like Thompson-style algorithms.
+
+## When To Use
+
+- Optimizing **engagement intensity** or relationship-level engagement vs. cost
+- Modeling **long-term customer relationship** dynamics and fatigue
+- **Research and analytics** on customer lifecycle and equilibrium engagement levels
+
+## When NOT To Use
+
+- When you need **per-offer rankings** (this path returns aggregate equilibrium values, not arm-level scores)
+- When you need **real-time scoring of individual offers** in a multi-armed bandit sense
+
+## Example
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import online_learning_management as ol
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-sentimental-equilibrium"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Sentimental Equilibrium configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=5000,
+        randomisation_processing_window=604800000,
+        contextual_variables_offer_key="offer",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Sentimental Equilibrium demo deployment",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+<Callout type="tip" title="Deployment pattern">
+Set `approach` to `behaviorAlgos` and `sub_approach` to `sentimentalEquilibrium` in the `randomisation` object of the dynamic recommender configuration in MongoDB.
+</Callout>
+
+<Callout type="info" title="Training data">
+Sentimental Equilibrium parameters (for example `decayRate`, `effortEfficiency`, `discountRate`, `utilityType`, and `disutilityType`) are supplied through the **training data** pipeline so the rolling learner can read them consistently with your feature and options stores. Align field names with your ingestion job and runtime configuration.
+</Callout>

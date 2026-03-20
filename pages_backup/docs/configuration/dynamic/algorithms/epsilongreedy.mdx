@@ -1,0 +1,118 @@
+---
+title: Epsilon Greedy
+description: Epsilon Greedy algorithm for dynamic interactions in ecosystem.Ai
+---
+
+import { Callout } from 'nextra/components'
+
+# Epsilon Greedy
+
+The Epsilon Greedy algorithm is the simplest multi-armed bandit strategy for dynamic interactions. With probability epsilon, it explores by selecting a random arm. With probability $1 - \epsilon$, it exploits by selecting the arm with the highest observed success rate.
+
+## Algorithm
+
+**Config value:** `"approach": "epsilonGreedy"`
+
+The rolling process computes the empirical probability for each offer:
+
+$\text{arm\_reward} = \frac{\text{response\_count}}{\text{logging\_count}}$
+
+The arm with the maximum propensity is flagged with `epsilon_nominated = 1`. At scoring time:
+
+- With probability $\epsilon$: select a random arm (explore)
+- With probability $1 - \epsilon$: select the arm with the highest propensity (exploit)
+
+Unlike Thompson Sampling, the exploit phase is deterministic -- the same arm is always selected when not exploring. This makes behavior more predictable but less adaptive.
+
+## Parameters
+
+- **epsilon**: The probability of random exploration. Range: 0.0 (pure exploit) to 1.0 (pure explore). Typical values are 0.05–0.20. Higher values explore more but converge slower. Default: 0.0.
+- **Processing Window**: Restricts the data used when the model updates based on a time period from the present going back a specified number of milliseconds.
+- **Historical Count**: Restricts the data used when the model updates based on a count of interactions. The count used is per offer and segment.
+
+## Cold Start
+
+Epsilon Greedy has **poor cold-start handling** without careful tuning:
+
+- With no history, all arms get `arm_reward = 0` and tie at zero
+- New offers only surface if epsilon exploration randomly selects them
+- Without a high epsilon (`>= 0.1`), new offers may never be presented
+
+<Callout type="warning" title="Cold Start Warning">
+Set epsilon to at least 0.1 during initial deployment to ensure new offers receive traffic. You can gradually reduce epsilon as data accumulates.
+</Callout>
+
+## When To Use
+
+- When you want simple, predictable behavior
+- When you can tune epsilon based on domain knowledge
+- When computational cost must be minimal
+- Simple A/B testing scenarios
+
+## When NOT To Use
+
+- When you want automatic exploration adaptation (use [Ecosystem Rewards](/docs/configuration/dynamic/algorithms/ecosystemrewards) instead)
+- When cold-start performance matters without manual epsilon tuning
+- When you need stochastic rankings for diversity
+
+## Example
+
+Below is an example configuration of the Epsilon Greedy algorithm in Python:
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import online_learning_management as ol
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-deployment"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Epsilon Greedy configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=1000,
+        randomisation_processing_window=86400000,
+        contextual_variables_offer_key="offer",
+        contextual_variables_contextual_variable_one_name="customer_segment",
+        contextual_variables_contextual_variable_one_from_data_source = True,
+        contextual_variables_contextual_variable_one_lookup = "customer_segment",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0.1, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Epsilon Greedy demo deployment",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+<Callout type="tip" title="Note">
+The `epsilon` parameter in `define_deployment_multi_armed_bandit` sets the exploration rate. The algorithm identifier in the dynamic recommender configuration should have `approach` set to `epsilonGreedy` in the `randomisation` object.
+</Callout>

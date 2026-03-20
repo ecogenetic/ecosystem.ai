@@ -1,3 +1,5 @@
+'use client'
+
 import { Check, Plus, Minus, X } from 'lucide-react'
 import { Disclosure } from '@headlessui/react'
 import { BorderBeam } from '../magicui/border-beam'

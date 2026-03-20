@@ -1,0 +1,89 @@
+---
+title: Pre-Score Lookup Plugin
+description: Pre-Score Lookup Plugin
+---
+
+# Pre-Score Lookup Plugin
+The Pre-Score Lookup plugin is a template plugin showing how a lookup to a MongoDB collection can be performed in the Pre Scoring Logic and stored in `params` to be used in the remainder of the runtime structure.
+
+<Callout type="tip" title="Note">
+    The preferred approach to load data into the ecosystem runtime is using either [Parameters From Data Source](/docs/configuration/deployment/parameters) or [Additional Corpora](/docs/configuration/deployment/parameters). Explicit lookups coded in the Pre or Post Scoring logic should be avoided where possible.
+</Callout>
+
+
+## How does it work?
+The Pre-Score Lookup plugin is passed the MongoDB connection. An aggregation pipeline can then be used to return the desired data. The result of the aggregation pipeline is then stored in `params`, making it available for use in the remainder of the runtime process. Data from the contacts and response logging collections can be accessed using the `getContactsLoggingDetails` and `getResponseLoggingDetails` functions respectively.
+
+## Java Code
+This Java class named `PreScoreLookup` extends `PreScoreSuper`, which provides functionality that can be used across different pre-scoring plugins. 
+
+Then, there is a static method named `getPrePredict(MongoClient mongoClient, JSONObject params, CqlSession session)`. This function takes three parameters: a `MongoClient` object (which is used to interact with a MongoDB database), a `JSONObject` object `params` (which is used the pass data through the runtime process), and a `CqlSession` object `session` (which provides a session for executing CQL commands on a Cassandra database.)
+
+The `getContactsLoggingDetails` and `getResponseLoggingDetails` functions can be used to access data from the contacts and responses logging collections respectively. These functions take the following arguments
+```java
+getContactsLoggingDetails(MongoClient mongoClient, JSONObject params, boolean customer_match, boolean predictor_match, boolean unwind_offers, String limit, String offer, String start_date)
+```
+- `mongoClient` is the mongo connection passed to `getPrePredict`
+- `params` is the params object used to pass information through the runtime process
+- `customer_match` is a boolean indicating whether the logs should be matched to the current customer number
+- `predictor_match` is a boolean indicating whether the logs should be matched to the current predictor
+- `unwind_offers` is a boolean indicating whether the offers object returned from the logs should be unwound before returning the results
+- `limit` set the number of items to be returned, use an empty string to set no limit
+- `start_date` is the date and time before which the logs should not be matched, use an empty string to set no start date
+The full `PreScoreLookup` class is shown below:
+```java
+package com.ecosystem.plugin.customer;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.mongodb.client.MongoClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+/**
+ * Perform a mongo lookup and store the results in params for subsequent usage
+ */
+public class PreScoreLookup extends PreScoreSuper {
+
+    public PreScoreLookup() throws Exception {
+
+    }
+
+    /**
+     * Pre-pre predict
+     */
+    public void getPrePredict() {
+    }
+
+    /**
+     * getPrePredict
+     * @param mongoClient The mongo connection
+     * @param params The params object used to pass data through the runtime process
+     * @param session The cassandra connection
+     * @return params
+     */
+    public static JSONObject getPrePredict(MongoClient mongoClient, JSONObject params, CqlSession session) throws IOException {
+        try {
+            /* Get the data from the logs */
+            JSONArray resultArrayContacts = getContactsLoggingDetails(mongoClient, params, true, true, false, "100", "", "");
+            JSONArray resultArrayResponses = getResponseLoggingDetails(mongoClient, params, true, true, true, "100", "", "");
+
+            /* Write the results to params to be passed through the runtime */
+            JSONObject loggingDetails = new JSONObject();
+            loggingDetails.put("resultArrayContacts", resultArrayContacts);
+            loggingDetails.put("resultArrayResponses", resultArrayResponses);
+            params.put("prescore_data_lookup",loggingDetails);
+        } catch (Exception e) {
+            LOGGER.error("PreScoreLookup:E001:UUID: Lookup failed, prescore data lookup not written to params." + e.getMessage());
+        }
+        return params;
+    }
+
+}
+```
+
+<Callout type="tip" title="Note">
+    The name of the class used must include either `PreScoreLookup` or `PreScoreDynamic` in order for `mongoClient` to be passed to the prescore. For versions prior to `0.9.4.3` for `PreScoreDynamic` and `0.9.6.0` for `PreScoreLookup` a mongo connection will need to be opened manually.
+</Callout>
+

@@ -1,0 +1,109 @@
+---
+title: Generative Model
+description: Generative Model (LLM-based) algorithm for dynamic interactions in ecosystem.Ai
+---
+
+import { Callout } from 'nextra/components'
+
+# Generative Model
+
+Sends **interaction history**, **contextual variables**, and **priors** to an external **large language model** (LLM) via a compatible API (for example Groq or OpenAI). The runtime parses **JSON scores** returned by the model and uses them like other dynamic scores.
+
+## Algorithm
+
+**Config value:** `"approach": "behaviorAlgos"`, `"sub_approach": "generative"`
+
+1. Build a prompt from the current entity context, historical interactions, and configured priors.
+2. Call the external LLM with **sampling parameters** (for example **temperature**).
+3. Parse structured **JSON** with per-offer or per-arm scores from the response.
+4. Feed parsed scores into the same ranking path as other behavioral algorithms.
+
+Stochasticity and ranking behavior depend on the **model**, **prompt**, and **temperature**.
+
+## Parameters
+
+- **temperature** (inside `prompt_parameters` or equivalent): Controls randomness of the LLM; default **`1.0`**. Lower values tend to be more deterministic; higher values increase variety.
+- **Processing Window** / **Historical Count**: Bound how much history is included in prompts when configured on the deployment.
+
+## Cold Start
+
+**Recommendations are always returned.** The real-time training path always produces a scored options array:
+
+- **No history:** Every offer in the options store receives a uniform random score. The prompt sent to the LLM contains empty or minimal interaction context.
+- **With history:** The LLM receives interaction data and contextual variables, and returns per-offer JSON scores. The quality of scores depends on the model, prompt, and richness of the logs.
+- Offers not scored by the LLM receive a random fallback score and are still included in the result.
+
+The scored options are then sorted by `arm_reward` and handed to the configured **dynamic post-score class**, which controls the final offer selection and response formatting.
+
+## When To Use
+
+- **Complex offer selection** where natural-language reasoning or unstructured context helps
+- **Rich unstructured context** (notes, policies, descriptions) that is expensive to hand-engineer into features
+- **Experimental or hybrid** setups combining LLM judgment with the ecosystem.Ai pipeline
+
+## When NOT To Use
+
+- When you need **deterministic**, auditable scores on every request
+- **Latency-sensitive** production paths (each score may require a network round trip)
+- **Cost-sensitive** environments where per-request LLM calls are prohibitive
+
+## Example
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import online_learning_management as ol
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-generative-model"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Generative Model (LLM) configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=5000,
+        randomisation_processing_window=604800000,
+        contextual_variables_offer_key="offer",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Generative Model demo deployment",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+<Callout type="tip" title="Deployment pattern">
+Set `approach` to `behaviorAlgos` and `sub_approach` to `generative` in the `randomisation` object. Place **temperature** and other LLM knobs under the configured `prompt_parameters` (or your deployment’s equivalent) so they travel with the dynamic recommender document.
+</Callout>
+
+<Callout type="warning" title="Latency and cost">
+This path typically performs an **external API call per scoring request**, adding **latency** and **per-token cost**. Plan for **timeouts**, **retries**, and **caching** of stable prompt fragments or model outputs where safe.
+</Callout>

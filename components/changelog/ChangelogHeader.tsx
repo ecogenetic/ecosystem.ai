@@ -1,38 +1,39 @@
 import Image from 'next/image'
-import { useRouter } from 'next/router'
-import { Page } from 'nextra'
-import { getPagesUnderRoute } from 'nextra/context'
 import { Author } from '../Author/Authors'
 import { Video } from '../Video'
 
-export const ChangelogHeader = () => {
-  const router = useRouter()
-  const changelogPages = getPagesUnderRoute('/changelog')
-  const page = changelogPages.find((page) => page.route === router.pathname) as Page & {
-    frontMatter: any
-  }
+interface ChangelogHeaderProps {
+  title?: string
+  description?: string
+  ogImage?: string
+  ogVideo?: string
+  gif?: string
+  date?: string
+  authorid?: string
+}
 
-  const {
-    title,
-    description,
-    ogImage,
-    ogVideo,
-    gif,
-    date,
-    authorid = 'ecosystem',
-  } = page.frontMatter
-
+export const ChangelogHeader = ({
+  title,
+  description,
+  ogImage,
+  ogVideo,
+  gif,
+  date,
+  authorid = 'ecosystem',
+}: ChangelogHeaderProps) => {
   return (
     <div className="md:mt-10 flex flex-col gap-10">
       <div>
-        <div className="text-lg text-primary/60 mb-3">
-          {new Date(date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            timeZone: 'UTC',
-          })}
-        </div>
+        {date && (
+          <div className="text-lg text-primary/60 mb-3">
+            {new Date(date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              timeZone: 'UTC',
+            })}
+          </div>
+        )}
         <div className="flex flex-col gap-5 md:gap-10 md:flex-row justify-between md:items-center">
           <div>
             <h1 className="text-2xl md:text-3xl text-pretty font-mono">{title}</h1>
@@ -45,18 +46,15 @@ export const ChangelogHeader = () => {
       ) : ogImage ? (
         <Image
           src={gif ?? ogImage}
-          alt={title}
+          alt={title ?? ''}
           width={1200}
           height={630}
           className="border"
           style={{ borderRadius: 20 }}
-          unoptimized={
-            page.frontMatter.gif !== undefined || page.frontMatter.ogImage?.endsWith('.gif')
-          }
+          unoptimized={gif !== undefined || ogImage?.endsWith('.gif')}
         />
       ) : null}
-
-      <p className="text-[17px]">{description}</p>
+      {description && <p className="text-[17px]">{description}</p>}
     </div>
   )
 }

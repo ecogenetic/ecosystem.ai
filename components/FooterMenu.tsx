@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { SocialIcon } from 'react-social-icons'
 
@@ -102,50 +104,50 @@ const FooterMenu = () => {
             </ul>
           </div>
         ))}
-        <div className="flex items-center justify-between md:col-span-6">
-          <div className="font-sans text-sm">© {new Date().getFullYear()} ecosystem.Ai</div>
-          <div className="flex ml-auto">
+        <div className="flex items-center justify-between md:col-span-6 pt-8 border-t border-neutral-800">
+          <div className="font-sans text-sm text-neutral-400">© {new Date().getFullYear()} ecosystem.Ai</div>
+          <div className="flex gap-1">
             <SocialIcon
               url="https://github.ecosystem.ai/"
-              className="absolute inset-0 w-full h-full transform scale-100 transition-transform opacity-100 hover:scale-90"
-              style={{ height: 40, width: 40 }}
-              bgColor="background"
-              fgColor="#9B9B9B80"
+              className="transition-transform hover:scale-90"
+              style={{ height: 36, width: 36 }}
+              bgColor="transparent"
+              fgColor="#9B9B9B"
             />
             <SocialIcon
               url="https://discord.ecosystem.ai/"
-              className="absolute inset-0 w-full h-full transform scale-100 transition-transform opacity-100 hover:scale-90"
-              style={{ height: 40, width: 40 }}
-              bgColor="background"
-              fgColor="#9B9B9B80"
+              className="transition-transform hover:scale-90"
+              style={{ height: 36, width: 36 }}
+              bgColor="transparent"
+              fgColor="#9B9B9B"
             />
             <SocialIcon
               url="https://linkedin.ecosystem.ai/"
-              className="absolute inset-0 w-full h-full transform scale-100 transition-transform opacity-100 hover:scale-90"
-              style={{ height: 40, width: 40 }}
-              bgColor="background"
-              fgColor="#9B9B9B80"
+              className="transition-transform hover:scale-90"
+              style={{ height: 36, width: 36 }}
+              bgColor="transparent"
+              fgColor="#9B9B9B"
             />
             <SocialIcon
               url="https://x.com/ecosystemAI"
-              className="absolute inset-0 w-full h-full transform scale-100 transition-transform opacity-100 hover:scale-90"
-              style={{ height: 40, width: 40 }}
-              bgColor="background"
-              fgColor="#9B9B9B80"
+              className="transition-transform hover:scale-90"
+              style={{ height: 36, width: 36 }}
+              bgColor="transparent"
+              fgColor="#9B9B9B"
             />
             <SocialIcon
               url="https://www.youtube.com/@ecosystemai6786"
-              className="absolute inset-0 w-full h-full transform scale-100 transition-transform opacity-100 hover:scale-90"
-              style={{ height: 40, width: 40 }}
-              bgColor="background"
-              fgColor="#9B9B9B80"
+              className="transition-transform hover:scale-90"
+              style={{ height: 36, width: 36 }}
+              bgColor="transparent"
+              fgColor="#9B9B9B"
             />
             <SocialIcon
               url="mailto:amy@ecosystem.ai"
-              className="absolute inset-0 w-full h-full transform scale-100 transition-transform opacity-100 hover:scale-90"
-              style={{ height: 40, width: 40 }}
-              bgColor="background"
-              fgColor="#9B9B9B80"
+              className="transition-transform hover:scale-90"
+              style={{ height: 36, width: 36 }}
+              bgColor="transparent"
+              fgColor="#9B9B9B"
             />
           </div>
         </div>

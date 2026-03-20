@@ -1,0 +1,115 @@
+---
+title: Coverage-Aware Thompson
+description: Coverage-Aware Thompson Sampling for dynamic interactions in ecosystem.Ai
+---
+
+import { Callout } from 'nextra/components'
+
+# Coverage-Aware Thompson
+
+An extension of Thompson Sampling that **boosts under-exposed offers** so niche and long-tail items get a fair chance alongside popular ones. It adjusts priors by exposure, draws from Beta posteriors, and applies an inverse-popularity factor; optional $\epsilon$ mixing adds uniform exploration across the catalog.
+
+## Algorithm
+
+**Config value:** `"approach": "behaviorAlgos"`, `"sub_approach": "coverageAwareThompson"`
+
+**Prior adjustment** (exposure-shaping of the Beta prior):
+
+$\beta_{\text{prior}} = 1.0 + \text{exposure}^{\gamma}$
+
+**Thompson draw:**
+
+$\theta \sim \mathrm{Beta}(\alpha, \beta)$
+
+**Score** (inverse popularity and optional multipliers):
+
+$\text{score} = \theta \cdot \frac{1}{(\text{exposure} + 1)^{\gamma}} \cdot \text{variableMultiplier}$
+
+**Optional $\epsilon$ exploration** (after normalization):
+
+$\text{finalScore} = (1 - \epsilon) \cdot \text{normalized} + \frac{\epsilon}{|\text{offers}|}$
+
+Higher $\epsilon$ allocates more mass uniformly across arms, improving coverage at the cost of short-term exploitation.
+
+## Parameters
+
+- **gamma** ($\gamma$): Popularity-penalty exponent; controls how strongly under-exposed offers are boosted. Default: `1.0`.
+- **epsilon** ($\epsilon$): Additional uniform exploration over the offer set. Default: `0.0`. Typical values for extra coverage: `0.05`–`0.1`.
+- **Processing Window**: Time window in milliseconds for historical data.
+- **Historical Count**: Max records to process per update cycle.
+
+## Cold Start
+
+**Excellent** among behavioral algorithms:
+
+- Default $\alpha = 1.0$, $\beta = 1.0$, and $\text{exposure} = 0$ yield $\mathrm{Beta}(1,1)$ — effectively uniform sampling for the draw.
+- Inverse-popularity $(\text{exposure}+1)^{-\gamma}$ is **maximized** when exposure is zero, so unseen offers receive the strongest relative boost.
+- Together, this makes Coverage-Aware Thompson the strongest cold-start choice when catalog fairness and tail coverage matter.
+
+## When To Use
+
+- **Catalog coverage** or fairness requirements (every offer should eventually get trials)
+- Promoting the **long tail** of niche offers
+- Mitigating **popularity bias** where raw counts dominate rankings
+
+## When NOT To Use
+
+- When you want to **converge quickly** to a single best offer with minimal exploration
+- When **catalog coverage** is not a business concern and raw performance ranking is enough
+
+## Example
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import online_learning_management as ol
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-coverage-aware-thompson"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Coverage-Aware Thompson configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_processing_count=5000,
+        randomisation_processing_window=604800000,
+        contextual_variables_offer_key="offer",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0.05, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Coverage-Aware Thompson demo deployment",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+<Callout type="tip" title="Deployment pattern">
+Set `approach` to `behaviorAlgos` and `sub_approach` to `coverageAwareThompson` in the `randomisation` object. Configure `gamma` and `epsilon` there to tune inverse-popularity strength and uniform exploration; the Python `define_deployment_multi_armed_bandit(epsilon=...)` API controls deployment-level epsilon separately—keep both layers consistent with your intent.
+</Callout>

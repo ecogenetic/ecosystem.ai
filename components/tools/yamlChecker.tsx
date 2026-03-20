@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect, useRef } from 'react'
 import AceEditor, { IMarker } from 'react-ace'
 import 'ace-builds/src-noconflict/mode-yaml'

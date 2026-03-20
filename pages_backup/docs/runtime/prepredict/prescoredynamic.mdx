@@ -1,0 +1,87 @@
+---
+title: Pre-Score Dynamic Plugin
+description: Pre-Score Dynamic Plugin
+---
+
+import Image from 'next/image'
+
+# Pre-Score Dynamic Plugin
+
+The Pre-Score Dynamic plugin is a plugin that is used to format the input to the predictor before when using Dynamic Interaction configurations. The Pre-Score Dynamic plugin is a default pre-predict plugin that is available in the ecosystem.Ai platform and can be extended to create custom pre-scoring logic plugins.
+
+## How does it work?
+
+The Pre-Score Dynamic plugin loads the Dynamic Interaction configurations. It then uses these configurations to set any Virtual Variables that have been configured and then adds the values of the contextual variables to the params object that is carried through the runtime process.
+
+## Java Code
+
+This Java class named `PreScoreDynamic` extends `PreScoreSuper`, which provides functionality that can be used across different pre-scoring plugins. 
+
+Then, there is a static method named `getPrePredict(MongoClient mongoClient, JSONObject params, CqlSession session)`. This function takes three parameters: a `MongoClient` object (which is used to interact with a MongoDB database), a `JSONObject` object `params` (which is used the pass data through the runtime process), and a `CqlSession` object `session` (which provides a session for executing CQL commands on a Cassandra database.)
+
+The function first checks if `lookupDatabase` is null, if it is then it returns the input `params` as is.
+
+If `lookupDatabase` isn't null, then the function uses `getDynamicSettings` to get the Dynamic Interaction configuration from the MongoDB database using the locations for the configurations contained in `params`. It uses the configuration to populate the Virtual variables using `getVirtualVariables` and populate the contextual variables using `getPrepopulateContextualVariables`.
+
+If any exception occurs during the execution of the function, it logs the error message (`LOGGER.error()`) including the UUID from the params and specifics of the failed dynamic parameters, also prints the stack trace of the exception (`e.printStackTrace();`). The function then returns the params object.
+
+The following is an example of the Post Score Basic plugin implemented in Java:
+
+```java
+package com.ecosystem.plugin.customer;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.ecosystem.data.mongodb.MongoDBWorkerRead;
+import com.ecosystem.utils.GlobalSettings;
+import com.mongodb.client.MongoClient;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+/**
+ * Add key/value to properties predictor.param.lookup to allow for contextual variable lookup:
+ * dynamic_lookup: 'dynamic_lookup_just4u_v1'
+ */
+public class PreScoreDynamic extends PreScoreSuper {
+
+    public PreScoreDynamic() throws Exception {
+
+    }
+
+    /**
+     * Pre-pre predict
+     */
+    public void getPrePredict() {
+    }
+
+    /**
+     * getPostPredict
+     * example setting in properties file (look for dynamic_lookup: 'dynamic_lookup_just4u'):
+     * predictor.param.lookup={predictor:'justforyou',mojo:1,database:'mongodb',db:'vodacom',table:'fs_score_all_estore_gsm_recommender_rel_1',dynamic_lookup: 'dynamic_lookup_just4u',lookup:{"value":123,"key":"msisdn"},result:{parm1:'field1', parm2:'field2'}}
+     * @param params
+     * @param session
+     * @return
+     */
+    public static JSONObject getPrePredict(MongoClient mongoClient, JSONObject params, CqlSession session) throws IOException {
+
+        if (lookupDatabase == null) return params;
+
+        try {
+
+            /** Get dynamic properties and add virtual variables to the feature store. */
+            params = getDynamicSettings(mongoClient, params);
+            params = getVirtualVariables(params);
+
+            /** Pupulate contextual variables by default based on settings. */
+            params = getPrepopulateContextualVariables(params);
+
+        } catch (Exception e) {
+            LOGGER.error("PreScoreDynamic:E001:UUID: " + params.get("uuid") + " Dynamic parameters failed: " + params.toString());
+            e.printStackTrace();
+        }
+
+        return params;
+    }
+
+}
+```

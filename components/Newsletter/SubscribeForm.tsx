@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import validator from 'validator'

@@ -1,0 +1,41 @@
+---
+title: Dynamic Interactions Runtime Settings
+description: Dynamic Interactions Runtime Settings
+---
+
+# Runtime Settings
+
+There are a number of settings that relate to dynamic interactions. Certain algorithms will build models in real-time for example the Bayesian Probabilistic algorithm will train models in real-time if the customer level tracking is turned on.
+
+<Callout type="warning" title="Real-time Models">
+    Bayesian Probabilistic algorithm will train models in real-time if the customer level tracking is turned on.
+</Callout>
+
+## Configuration
+As part of the configuration of the Dynamic Interaction and the Deployment a number of artifacts will be created that are used by the ecosystem.Ai runtime. 
+
+When the [Dynamic Interaction configuration](/docs/configuration/dynamic/parameters) is created, a document containing the details of the deployment will be created in the `ecosystem_meta.dynamic_engagement` collection. The field in the document which uniquely identifies the document is the `uuid`. Additionally, the [Options Store](/docs/configuration/dynamic/options) should be created as part of the Dynamic Interaction configuration. The Options Store is a MongoDB collection. The collection name and database where the Options Store is stored is specified in the `Settings` tab of the Dynamic Interaction configuration. This information can also be found in the document stored in the `dynamic_engagement` collection; the relevant fields are `options_store_collection` and `options_store_database`.
+
+When the Dynamic Interaction [Deployment](/docs/configuration/deployment) is created, the Dynamic Interaction configuration is linked to the Deployment by selecting the desired Dynamic Interaction configuration in the New Knowledge corpora. When the Deployment is pushed to the runtime, the document in `dynamic_engagement` and the Options Store will be referenced as Additional Corpora in the `ecosystem.properties` file that is created.
+```properties
+predictor.corpora=[{"database":"mongodb","name":"dynamic_engagement","update":true,"type":"dynamic_engagement","uuid":"ef931e11-b504-4c4d-958e-47d97c8361af","db":"ecosystem_meta","table":"dynamic_engagement"},{"database":"mongodb","name":"dynamic_engagement","update":true,"type":"dynamic_engagement_options","uuid":"ef931e11-b504-4c4d-958e-47d97c8361af","db":"recommender_demos","table":"recommender_options"}]
+```
+If the Dynamic Interaction and Deployment configurations have been created correctly there should be no need to manually edit the `ecosystem.properties` file. However, it can be useful to review when troubleshooting.
+
+When a Dynamic Interaction algorithm is scoring or learning it query the [Options Store](/docs/configuration/dynamic/options) and the [logs](/docs/runtime/logging) in order to get the data that is required to complete these processes. For these processes to run correctly requires that these configurations be correctly set up. There are a number of items to check if either the scoring or learning is not proceeding as expected.
+- The generated `ecosystem.properties` file should contain the `dynamic_enagement` items above and the `uuid` should align with the `uuid` for the Dynamic Interaction configuration
+- The `logging` collection should contain the default fields. In particular, the `predictor` and `date_log` fields and a `final_result` object containing; `final_result.result.offer_name`, `final_result.result.contextual_variable_one`, `final_result.result.contextual_variable_two` (if contextual variables are used in the configuration). The `api_params.customer` field should also be present if any sort of customer level processing is being used. These fields should all be present if the default `getTopScores` function is used in the post scoring logic
+- The `predictor` field in the logging collection should be the same as the name of the Dynamic Interaction configuration
+- The post scoring logic may be filtering all the offers out. This can be checked by using the debugging functionality in IntelliJ or by checking the runtime logs to see the number of options passed to the post scoring logic
+
+## Processing Interval
+All algorithms have a background process that train models and update the options store. This process is controlled by an environmental variable:
+```text
+MONITORING_DELAY=120
+```
+The internal default is 240 seconds if the variable is not set. If you have multiple instances of a use-case running, only set the variable for one instance and disable for all others by setting the time to a very large number.
+
+## Considerations
+The background process will interrogate the priors as recorded in the runtime logs and responses. This means that the settings for time window and historical count can have a big impact on your processing time and cost. If you dynamic interactions are slow and infrequent then the settings will not be as impactful as a high-volume engagement environment.
+
+![image](/images/configuration/dynamic/dynamic-05.png)

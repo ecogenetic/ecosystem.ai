@@ -1,0 +1,470 @@
+---
+title: Ecosystem Rewards
+description: Ecosystem Rewards
+---
+
+# Ecosystem Rewards
+
+The Ecosystem Rewards algorithm implements a version of the Thompson Sampling algorithm for solving multi-armed bandit style problems.
+
+## Algorithm
+
+The Ecosystem Rewards algorithm stores and updates a beta distribution for each offer in each segment in the system. When offers need to be scored for an entity in a given segment, the beta distributions for the offers in the segment are sampled and the samples are used as the scores for the offers. Segements can be specified using up to two discrete contextual variables or segmentation can be done at the entity level - i.e. each entity has it's own beta distribution for for each offer.
+
+The beta distributions are specified using an alpha and beta parameter. When an offer is presented and accetped then the alpha parameter for the relevant distribution is incremented. When and offer is presented and not accepted then the beta parameter for the relevant distribution is incremented. The size of the increment in each case is a parameter that can be set when configurating the algorithm. The historical data used for this updating of alpha and beta can be windowed by either time and or the number of events for each offer in a specific segment. It is stongly recommended that a window approach be configured, both for performance reasons and to prevent historical data from overwhelming changes in the current state of the system.
+
+By default the algorithm will assume initial values of one for both alpha and beta for all of the distributions. This corresponds to a uniform distribution, which is a reasonable assumption when no data is available. However, it is possible to specify different initial values for alpha and beta for each offer in each segment. This can be useful when there is some prior knowledge about the performance of the offers in the system.
+
+## Parameters
+
+- **Processing Window**: Restricts the data used when the model updates based on a time period from the present going back a specified in milliseconds.
+- **Historical Count**: Restricts the data used when the model updates based on a count of interactions. The count used is per offer and segment.
+- **Decay Parameter**: Used to treat repeated interactions from the same customer differently from one off interactions from individual customers. The weight of each interaction from a customer is reduced by a factor of one over the decay parameter, i.e. the latest interaction has a weight of one, the interaction before that has a weight of one over the decay parameter and the interaction before that has a weight of one over the decay parameter squared
+- **Max interactions**: Used to treat repeated interactions from the same customer differently from one off interactions from individual customers. Restricts the number of interactions from an individual customer that will be used when updating the model - the latest interactions will be used.
+- **Success Reward**: The size of the increment to the alpha parameter of the beta distributions used in the Thompson Sampling when an interaction is successful. This impacts the rate of convergence.
+- **Fail Reward**: The size of the increment to the beta parameter of the beta distributions used in the Thompson Sampling when an interaction is not successful. This impacts the rate of convergence.
+- **Prior Success Reward**: The size of the increment to the alpha parameter of the beta distributions used in the Thompson Sampling when an interaction is successful in the historical data. Used when historical data is used to train the algorithm before deployment.
+- **Prior Fail Reward**: The size of the increment to the beta parameter of the beta distributions used in the Thompson Sampling when an interaction is not successful in the historical data. Used when historical data is used to train the algorithm before deployment.
+- **Test options across segments**: If there are options that are configured to only be available for specific values of the contextual variables, electing to test options across segments will occasionally predict those options for contextual variable values where they are not available.
+- **epsilon**: The proportion of API calls that will be allocated for exploration. This exploration is done be sampling from a uniform distribution rather than the beta distribution when scoring.
+
+## Example
+
+Below is an example configuration of the Ecosystem Rewards algorithm in python
+
+```python
+from prediction.apis import deployment_management as dm
+from prediction.apis import ecosystem_generation_engine as ge
+from prediction.apis import data_management_engine as dme
+from prediction.apis import online_learning_management as ol
+from prediction.apis import prediction_engine as pe
+from prediction.apis import worker_file_service as fs
+from prediction import jwt_access
+
+auth = jwt_access.Authenticate("http://localhost:3001/api", ecosystem_username, ecosystem_password)
+
+deployment_id = "demo-deployment"
+
+online_learning_uuid = ol.create_online_learning(
+        auth,
+        algorithm="ecosystem_rewards",
+        name=deployment_id,
+        description="Demo deployment for illustrating python configuration",
+        feature_store_collection="set_up_features",
+        feature_store_database="my_mongo_database",
+        options_store_database="my_mongo_database",
+        options_store_collection="demo-deployment_options",
+        randomisation_success_reward=0.5,
+        randomisation_fail_reward=0.05,
+        randomisation_processing_count=200,
+        randomisation_processing_window=604800000,
+        contextual_variables_offer_key="offer",
+        contextual_variables_contextual_variable_one_name="customer_segment",
+        contextual_variables_contextual_variable_one_from_data_source = True,
+        contextual_variables_contextual_variable_one_lookup = "customer_segment",
+        create_options_index=True,
+        create_covering_index=True
+)
+
+online_learning = dm.define_deployment_multi_armed_bandit(epsilon=0, dynamic_interaction_uuid=online_learning_uuid)
+
+parameter_access = dm.define_deployment_parameter_access(
+    auth,
+    lookup_key="customer_id",
+    lookup_type="string",
+    database="my_mongo_database",
+    table_collection="customer_feature_store",
+    datasource="mongodb"
+)
+
+deployment_step = dm.create_deployment(
+    auth,
+    project_id="demo-project",
+    deployment_id=deployment_id,
+    description="Demo project for illustrating python configuration",
+    version="001",
+    plugin_post_score_class="PlatformDynamicEngagement.java",
+    plugin_pre_score_class="PreScoreDynamic.java",
+    scoring_engine_path_dev="http://localhost:8091",
+    mongo_connect=f"mongodb://{mongo_user}:{mongo_password}@localhost:54445/?authSource=admin",
+    parameter_access=parameter_access,
+    multi_armed_bandit=online_learning
+)
+```
+
+## Inspecting Beta distributions
+
+To understand the behaviour of the Ecosystem Rewards algorithm, it is important to inspect the Beta distributions the are produced by the algorithm scoring. There are two ways to do this, using the simulation functionality or by producing box and whisker plots from the information contained in the Options Store. 
+
+Use the [simulation](/docs/configuration/simulations) functionality when setting up your configuration. The simulation results will include plots of the Beta dsitributions which can be used to understand the behaviour of the algorithm in the simulated environment.
+
+Use the `/postEcosystemRewardsBetaDistributionBoxPlots` API on the ecosystem.Ai server to examine the distributions contained in the Options Store. The response to the API call will contain the parameters required to produce box and whisker plots of the Beta Distributions. The API is called with a json payload with the following structure:
+```json
+{
+    "options_store_collection": "demo_options",
+    "options_store_database": "recommender",
+    "contextual_variable_one": "segment_one_value",
+    "contextual_variable_two": "segment_two_value",
+    "outlier_threshold": 0.1,
+    "show_low_data": "false"
+}
+```
+`options_store_collection` and `options_store_database` specify the location of the Options Store in MongoDB. `contextual_variable_one` and `contextual_variable_two` specify the values of the contextual variables for which you want to inspect the beta distributions. `outlier_threshold` specifies the threshold for determining the max and min values for the box and whisker plots, the max is taken to be the value of the $X$ where the CDF is 1 - `outlier_threshold` and the min is taken to be the value of the $X$ where the CDF is `outlier_threshold`. `show_low_data` specifies whether to show the data for options without contacts or responses. The response from the API will be a json object with the following structure:
+```json
+[
+  {
+    "q1": 0.20900000000000016,
+    "q3": 0.2590000000000002,
+    "min": 0.18800000000000014,
+    "median": 0.23419203747072595,
+    "max": 0.2830000000000002,
+    "category": "Bulk Purchase Discount"
+  },
+  {
+    "q1": 0.20900000000000016,
+    "q3": 0.2590000000000002,
+    "min": 0.18800000000000014,
+    "median": 0.23419203747072595,
+    "max": 0.2830000000000002,
+    "category": "Bundle Purchase Discount"
+  },
+  {
+    "q1": 0.23200000000000018,
+    "q3": 0.2840000000000002,
+    "min": 0.21100000000000016,
+    "median": 0.25816249050873197,
+    "max": 0.3080000000000002,
+    "category": "Get 10% Off For The Next Hour"
+  },
+  {
+    "q1": 0.004,
+    "q3": 0.01900000000000001,
+    "min": 0.002,
+    "median": 0.013568521031207597,
+    "max": 0.03200000000000002,
+    "category": "Rewards Booster"
+  },
+  {
+    "q1": 0.17100000000000012,
+    "q3": 0.21900000000000017,
+    "min": 0.1510000000000001,
+    "median": 0.19559902200488996,
+    "max": 0.2430000000000002,
+    "category": "Save 10% By Paying Upfront"
+  }
+]
+```
+The same functionality can be use to produce box and whisker plots using the python package, as shown in the following truncated example.
+```python
+from prediction.apis import data_munging_engine as mu
+import matplotlib.pyplot as plt
+
+boxes = mu.ecosystem_rewards_beta_box_plots(auth,options_store_collection,options_store_database,contextual_variable_one,contextual_variable_two)
+
+fig, ax = plt.subplots()  
+ax.bxp(boxes, showfliers=False)
+ax.set_ylabel("PDF")
+plt.xticks(rotation=90)
+plt.show()
+```
+
+## Quantifying exploration
+
+Exploration and exploitation are not split explicitly in Thompson Sampling style algorithms. Instead, exploration occurs automatically when the beta distributions overlap. However, there are situations where it is useful to have a measure of the degree of exploration being performed by the algorithm. Here we outline two approaches for acheiving this:
+1. Popular Offer Comparison: The basis of this approach is the assumption that if the top option selected by the algorithm is not the option with the highest take up rate, then the algorithm is exploring.
+2. Beta Distribution Overlap: In this approach we consider the score produced for each option and determine the probability that it is higher than the scores sampled from the set of options with higher take up rates than the option under consideration. The average of these probabilities will give a measure of the degree of exploration being performed by the algorithm.
+
+It is important to note that while we can use these approaches to quantify the number of recommendations where exploration is occuring, the exploration is of a different character than when using [$\epsilon$-based exploration](/docs/user_guides/epsilon_exploration/). During an instance of $\epsilon$-based exploration the options will be ranked randomly. In contrast when the Ecosystem Rewards algorithm explores it will still take into account the information it has about the system, making it much more likely to interchange similarly performing offers when exploring rather than ranking completely randomly. In this sense, an instance of $\epsilon$-based exploration is more extreme than an instance of Ecosystem Rewards based exploration.
+
+### Popular Offer Comparison
+In this approach we determine the proportion of recommendations made where the top option recommended is not the option with the highest take up rate, given any contextual variable values for the recommendation being made. There are two ways to do this:
+1. Using the logging data once recommendations have already been made.
+2. By performing the check in the post scoring logic while the recommendation is being made and logging the results.
+We will outline the both of these approaches here. 
+
+#### Using the logging data
+To use logging data for the popular offer comparison, we make use of the `/postEcosystemRewardsExploration` API on the ecosystem.Ai server. This APi is called with a json payload with the following structure:
+```json
+{
+    "start_time": "2025-04-23T08:24:16"
+    ,"end_time": "2025-04-25T08:24:17"
+    ,"options_store_collection": "dynamic_set_up_feature_store_options"
+    ,"options_store_database": "recommender_demos"
+    ,"logging_collection": "ecosystemruntime"
+    ,"logging_database": "logging"
+    ,"predictor": "offer_recommend_dynamic"
+    ,"sample_size": "1000"
+    ,"check_indexes": "true"
+}
+```
+`start_time` and `end_time` specify the time period over which the logs should be considered. The Options Store and logging parameters specify the location of the Options Store and contacts logging collections in MongoDB. `predictor` specifies the name of the case for which you want to quantify the exploration. `check_indexes` specifies whether the API should check for the required indexes on the Options Store and logging collections. If the indexes are not present, the API will create them. `sample_size` specifies the number of documents to retrieve from the logs, the items are selected randomly. Set `sample_size` to 0 to retrieve all of the relevant logs.
+
+The response from the API will be a json object with the following structure:
+```json
+[
+  {
+    "number_of_explore_offers": 7954,
+    "_id": "None",
+    "number_of_offers": 13803,
+    "exploration_ratio": 0.5762515395203941
+  }
+]
+```
+`exploration_ratio` is the proportion of recommendations made where the top option recommended is not the option with the highest take up rate, i.e. options where we assume that exploration is taking place. 
+
+In order to produce this result two MongoDB aggregation pipelines are run. The first determines the most popular offer for each combination of contextual variable values. This is done using the `propensity` field contained in the Options Store. The second pipeline then aggregates over the contact logs for the specified time period and determines when the first option with an `arm_reward` field in the response does not match the option with the highest `propensity`. Recommendations where no options are returned, i.e. `final_result` is empty, are ignored. The specific pipelines run and their results can be seen in the logs of the ecosystem.Ai server.
+
+This functionality can also be access using the `ecosystem_rewards_explore` function in the python package.
+
+While this is the simplest and most easily interpretable exploration quantification, there are two potential issues to be aware of with this approach:
+- If the sorting of the option is modified in the post scoring logic such that the top option is not necessarily the option with the score from the Ecosystem Rewards algorithm, then the exploration ratio will be artificially inflated.
+- Only the top Option in the logs is considered. This means that exploration could be underestimated if there is less data or separation of propensities for options which have a lower propensity. 
+
+The first issue can be addressed by performing the check in the post scoring logic while the recommendation is being made.
+
+<Callout type="tip" title="Note">
+    The offer popularity is determined using the propensity in the Options Store. This is impacted by the Processing Window and Historical Count parameters in the Ecosystem Rewards algorithm rather than the `start_time` and `end_time` specified in the API call.
+</Callout>
+
+#### Using the post scoring logic
+The popular offer comparison can be performed in the post scoring logic by using the Options Store detail passed to the post score in the `params` object. This can be done using the `getOptions` function.
+```java
+JSONArray options = getOptions(params);
+```
+`options` is a JSONArray of the scored options returned by the Ecosystem Rewards algorithm. Each scored options is represented using a JSONObject. The key fields in the JSONObject for this purpose are `propensity` and `arm_reward`. To determine if the recommendation should be marked as exploration, check whether the options with highest `arm_reward` also has the highest `propensity`. The result can then be added to `predictModelMojoResult` so that it will be stored in the logs. 
+
+<Callout type="tip" title="Note">
+    Do not use the key `explore` when adding the exploration indicator to `predictModelMojoResult` as that is the default key used to indicate epsilon based exploration.
+</Callout>
+
+The contact logs with the exploration indicator can then be counted to determine the exploration rate of the Ecosystem Rewards algorithm.
+
+While this approach addresses the issue of modified sorting in the post scoring logic, it still has the drawback of only considering the highest scored option returned by the Ecosystem Rewards algorithm.
+
+### Beta Distribution Overlap
+In this approach we consider the score produced for each option and determine the probability that it is higher than the scores sampled from the set of options with higher take up rates than the Option under consideration. The average of these probabilities will give a measure of the degree of exploration being performed by the algorithm.
+
+To illustrate the appraoch followed, consider a single option in the contacts logging collection. Let $r$ be the `arm_reward` for the item. For each option in the Options Store with a higher `propensity` than the option, $\theta$, under consideration, we determine the probability $P_{i}(X < r)$, i.e. the probability that the `arm_reward` generated for $\theta$ is greater then the `arm_reward` generated for option $i$, despite the fact the $i$ has a higher propensity. To take into account the fact that we may not want to measure exploration between similarly performing offers, we replace $r$ with $r_t=r+t$ where $t>0$. We, combine the probability $P_{i}(X < r_t)$, $\forall i$ to deteremine the probability that $\theta$ is an exploration option $P_{explore}$. This is done using the following formula:
+
+$P_{explore} = P_0(X < r_t) + P_0(X > r_t)[P_1(X < r_t) + P_1(X > r_t)[P_2(X < r_t) + ...]]$
+
+Options where either $\alpha=\alpha_0$ or $\beta=\beta_0$ are allocated avalue of $P_{explore} = 1$. $P_{explore}$ is calculated for each option in the contacts logging collection and the exploration rate of the Ecosystem Rewards algorithm is taken to be the average of the $P_{explore}$ values. 
+
+To access the result of this calculation, make use of the `/postEcosystemRewardsExplorationApprox` API on the ecosystem.Ai server. This APi is called with a json payload with the following structure:
+```json
+{
+    "start_time": "2025-04-23T08:24:16"
+    ,"end_time": "2025-04-25T08:24:17"
+    ,"options_store_collection": "dynamic_set_up_feature_store_options"
+    ,"options_store_database": "recommender_demos"
+    ,"logging_collection": "ecosystemruntime"
+    ,"logging_database": "logging"
+    ,"predictor": "offer_recommend_dynamic"
+    ,"check_indexes": "true"
+    ,"sample_size": "1000"
+    ,"score_filter": "1"
+    ,"threshold": "0.001"
+}
+```
+`start_time` and `end_time` specify the time period over which the logs should be considered. The Options Store and logging parameters specify the location of the Options Store and contacts logging collections in MongoDB. `predictor` specifies the name of the case for which you want to quantify the exploration. `check_indexes` specifies whether the API should check for the required indexes on the Options Store and logging collections. If the indexes are not present, the API will create them. `sample_size` specifies the number of documents to retrieve from the logs, the items are selected randomly. Set `sample_size` to 0 to retrieve all of the relevant logs. `score_filter` will filter out offers with the given score which can be useful if offers are being manually inserted in the post scoring logic, set to `false` to include all scores. `threshold` sets the value of $t$ in $r_t=r+t$. 
+
+The response from the API will be a json object with the following structure:
+```json
+{
+    "exploration_probability": 0.27273470649093373
+}
+```
+`exploration_probability` is the average of the $P_{explore}$ values.
+
+To view the `exploration_probability` split by contextual variable values, use the `/getEcosystemRewardsExploreApproxContext` API. The API is called with the same payload as the `/postEcosystemRewardsExplorationApprox` API. The response from the API will be a json object with the following structure:
+```json
+[
+  {
+    "contextual_variable_two": "All",
+    "contextual_variable_one": "All",
+    "number_of_interactions": 1000,
+    "exploration_probability": 0.07521690966398219
+  },
+  {
+    "contextual_variable_two": "Diploma",
+    "contextual_variable_one": "Intentional",
+    "number_of_interactions": 25,
+    "exploration_probability": 0.034429999360797686
+  },
+  {
+    "contextual_variable_two": "Grade12",
+    "contextual_variable_one": "Intentional",
+    "number_of_interactions": 165,
+    "exploration_probability": 0.1975850836543586
+  }
+]
+```
+This functionality can also be access using the `ecosystem_rewards_explore_approx` and `ecosystem_rewards_explore_approx_context` functions in the python package.
+
+## Selecting contextual variables
+
+Selecting contextual variables is similar to traditional feature engineering. Here we outline two approaches that can be taken:
+1. Using Mutual Information to rank features
+2. Build static models and using variable importance to rank the features
+
+Calculating the mutual information between your response variable and your features will give you a measure of the information about the response variable contained in each of the features. This can then be used to rank the features when choosing features to as contextual variables. It is important to note that the algorithm considers each option individually so the mutual information should be calculated for the features for each option and the common high ranking features should be used as contextual variables. The mutual information calculation can be performed in python using the following code:
+```python
+# Import the packages and connect to the ecosystem environment
+from prediction.apis import data_management_engine as dme
+from prediction import jwt_access
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.metrics import adjusted_mutual_info_score
+
+auth = jwt_access.Authenticate("http://ecosystem-server:3001/api", "username", "ecosystempassword")
+
+# Calculate and display the mutual information. Note, it is assumed that a list of possible
+# options, the database and collection of the historical data, a projection of the 
+# relevant fields and a list of the features to compare are defined prior to running this 
+# code block
+for offer_iter in offer_list:
+    print(f"\n{offer_iter.upper()}\n")
+    # Get the historical data for the option
+    feature_store = pd.DataFrame(dme.post_mongo_db_aggregate_pipeline(auth,
+                {
+                "database":db
+                ,"collection":feature_store_collection
+                ,"pipeline":[
+                    {"$match":{"offer_name":offer_iter}}
+                    ,{"$project":project_dict}
+                ]
+                }
+            ))
+    
+    # Get the features to compare and encode any that have string values
+    feature_subset = feature_store[feature_list]
+    enc.fit(feature_subset)
+    ordinal_array = enc.transform(feature_subset)
+    
+    print(f"{'Feature':<20}Mutual Information")
+    print("======================================")
+    mi_data = []
+    # Loop through the encoded historical data and calculate the mutual information
+    for index, col in enumerate(ordinal_array.T):
+        mi = adjusted_mutual_info_score(feature_store["offer_taken_up"].to_numpy(), col)
+        feature_label = feature_list[index]
+        mi_data.append((feature_label,mi))
+    # Sort the features by descending mutual information and display the results
+    mi_data.sort(key=lambda tup: tup[1], reverse=True)
+    for i in mi_data:
+        print(f"{i[0]:<20}{i[1]:.3f}")
+```
+
+Building static models to select the variables will follow a similar approach. A model needs to be trained for each option using the features that are being evaluated and the features that have the highest variable importance across the options should be used as contextual variables.
+
+<Callout type="tip" title="Note">
+    While only two variables can be selected as contextual variables, more than two base variables can be used by concatenating variables using the Virtual Variables functionality. When combining multiple variables it is important to check that the volume of data is sufficient to achieve the desired rate of learning given the number of contextual variables segments.
+</Callout>
+
+
+## Offline evaluation
+
+Evaluating the performance of the Ecosystem Rewards algorithm using historical data is challenging as the algorithm learns by interacting with the environment. In general, when considering historical data, the option presented to the client will not be the same as the option recommended by the algorithm which will both distort the learing and make it impossible to determine if the option would have been taken up by the client if it was presented.
+
+This issue is partially mitigated when multiple offers were presented to the client, particularly if the number of offers presented represent a significant proporition of the number of offers available at that point. In this case we can consider the ranking of the offers generated by the Ecosystem Rewards algorithm and use the Mean Reciprocal Rank to evaulate the effectiveness of the configuration.
+
+An example of how this evaluation can be performed is shown in Python below. The historical data set is assumed to have one row for each option presented to a client, i.e. if multiple options are presented at once then there will be multiple rows for each interaction. The outlined approach requires that a number of fields are available in the historical data set, a preparation step may be required in order to add these fields. In particular the following are required:
+- A customer identifier
+- An interaction identifier
+- An indicator of whether any offer was accepted during an interaction
+- An indicator of whether an individual option was accepted
+- A list of the options presented during the interaction
+- The name of the offer accepted during the interaction
+
+```python
+# Import packages and connect to the runtime
+from prediction.apis import data_management_engine as dme
+from runtime.apis import predictor_engine as o
+from runtime import access
+auth_runtime = access.Authenticate("http://ecosystem-runtime:8091")
+
+# Details of the historical data
+# The location of the historical data
+historical_db = "interaction_science"
+historical_collection = "multiple_offer_history"
+# The names of the fields required to perform the historical evaluation
+interaction_key = "interaction"
+customer_key = "customer"
+interaction_level_offer_accept = "offer_taken_up"
+option_level_offer_accept = "offer_accepted"
+offers_presented_in_interaction = "presented_offers"
+# The number of interactions to include in the evaluation
+interaction_sample_size = 1000
+
+# Details of the evaluation
+# Number of interactions before manually triggering the Dynamic Interaction learning
+learning_interval = 10
+
+# Get the list of interactions to evaluate
+interaction_detail_list = dme.post_mongo_db_aggregate_pipeline(auth,
+            {
+            "database":historical_db
+            ,"collection":historical_collection
+            ,"pipeline":[
+                {"$group":{
+                    "_id":{"interaction":f"${interaction_key}","customer":f"${customer_key}"}
+                    ,"is_taken_up":{"$max":f"${interaction_level_offer_accept}"}
+                    ,"offer_accepted":{"$first":f"${option_level_offer_accept}"}
+                    ,"presented_offers":{"$first":f"${offers_presented_in_interaction}"}
+                }}
+                ,{"$project":{
+                    "interaction":"$_id.interaction"
+                    ,"customer":"$_id.customer"
+                    ,"is_taken_up":1
+                    ,"offer_accepted":1
+                    ,"presented_offers":1
+                    ,"_id":0
+                }}
+                ,{"$sample":{"size":interaction_sample_size}}
+            ]
+            }
+        )
+
+# Evaluate the performance of the algorithm and print the Mean Reciprocal Rank
+iteraction_count = 1
+interactions_with_take_up = 0
+interactions_with_dynamic_interaction_take_up = 0
+mean_reciprocal_rank = 0
+for i in interaction_customer_list:
+    presented_offers = i["presented_offers"]
+    eligible_offers = {}
+    for j in presented_offers:
+        eligible_offers[j] = 1
+    offer_response = o.invocations(
+        auth_runtime
+        ,{
+            "customer":i["customer"]
+            , "numberoffers": 3
+            , "params":f"{{'eligible_offers':{eligible_offers}}}"
+        }
+    )
+    ranked_offers = []
+    for j in offer_response["final_result"]:
+        ranked_offers.append(j["result"]["offer"])
+    if i["is_taken_up"] == 1:
+        interactions_with_take_up += 1
+        if i["offer_accepted"] in ranked_offers:
+            interactions_with_dynamic_interaction_take_up += 1
+            uuid = offer_response["uuid"]
+            response_body = {"uuid": uuid, "offers_accepted": [{"offer_name": i["offer_accepted"]}]}
+            o.response(auth_runtime,response_body)
+            mean_reciprocal_rank += 1/(ranked_offers.index(i["offer_accepted"])+1)
+                             
+    iteraction_count += 1
+    if iteraction_count % learning_interval == 0:
+        o.learning(auth_runtime)
+mean_reciprocal_rank = mean_reciprocal_rank/interactions_with_take_up
+
+print(f"Number of interactions processed: {iteraction_count}")
+print(f"Interactions where an offer was taken up: {interactions_with_take_up}")
+print(f"Interactions where the Dynamic Interaction Configuration presented offer was taken up: {interactions_with_dynamic_interaction_take_up}")
+print(f"Mean Reciprocal Rank: {mean_reciprocal_rank}")
+```
+
+Note that this approach assumes that only a single option can be accepted during each interaction. If this is not the case the the approach will need to be adjusted accordingly and a metric which take this in account (for example, Mean Averate Precision) could be used instead of Mean Reciprocal Rank.
+
+

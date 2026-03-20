@@ -1,3 +1,5 @@
+'use client'
+
 export function ThemesAnimation(props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-50 0 268 250" {...props}>

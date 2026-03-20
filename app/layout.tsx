@@ -1,0 +1,91 @@
+import { Footer, Layout, Navbar } from 'nextra-theme-docs'
+import { Banner, Head } from 'nextra/components'
+import { getPageMap } from 'nextra/page-map'
+import 'nextra-theme-docs/style.css'
+import '../style.css'
+import '../src/overrides.css'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
+import { Logo } from '@/components/logo'
+import FooterMenu from '@/components/FooterMenu'
+import { AnalyticsProviders } from '@/components/analytics/AnalyticsProviders'
+import Link from 'next/link'
+
+export const metadata = {
+  metadataBase: new URL('https://ecosystem.ai'),
+  title: {
+    template: '%s - ecosystem.Ai',
+    default: 'ecosystem.Ai',
+  },
+  description: 'Prediction platform - Life happens in the moment and not in batches.',
+  applicationName: 'ecosystem.Ai',
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
+  twitter: {
+    card: 'summary_large_image',
+    site: 'https://ecosystem.ai',
+  },
+  openGraph: {
+    siteName: 'ecosystem.Ai',
+    url: 'https://ecosystem.ai',
+  },
+  other: {
+    'msapplication-TileColor': '#da532c',
+  },
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const pageMap = await getPageMap()
+  return (
+    <html
+      lang="en"
+      dir="ltr"
+      suppressHydrationWarning
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+    >
+      <Head>
+        <meta name="theme-color" content="#111111" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `html { --font-geist-sans: ${GeistSans.style.fontFamily}; }`,
+          }}
+        />
+      </Head>
+      <body>
+        <Layout
+          banner={
+            <Banner storageKey="new-docs" dismissible>
+              <Link href="#">
+                <span className="sm:hidden">Meet the New ecosystem.Ai Resources Hub! 🚀</span>
+                <span className="hidden sm:inline">Meet the New ecosystem.Ai Resources Hub! 🚀</span>
+              </Link>
+            </Banner>
+          }
+          navbar={
+            <Navbar
+              logo={<Logo />}
+              projectLink="https://github.com/ecosystemai/ecosystem.ai"
+              chatLink="https://discord.ecosystem.ai"
+            />
+          }
+          footer={<Footer><FooterMenu /></Footer>}
+          editLink="Edit this page on GitHub"
+          docsRepositoryBase="https://github.com/ecosystemai/ecosystem.ai/tree/main"
+          sidebar={{ defaultMenuCollapseLevel: 1, toggleButton: true }}
+          toc={{ backToTop: true }}
+          pageMap={pageMap}
+        >
+          {children}
+        </Layout>
+        <AnalyticsProviders />
+      </body>
+    </html>
+  )
+}

@@ -1,20 +1,12 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
-import { getPagesUnderRoute } from 'nextra/context'
-import { type Page } from 'nextra'
 import { SocialIcon } from 'react-social-icons'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getAllAuthors, type AuthorData } from '@/lib/authors'
 
-interface AuthorMetadata {
-  authorid: string
-  subtitle: string
-  name: string
-  bio: string
-  ogImage: string
-  socials?: Record<string, string>
-}
-
-const AuthorCard: React.FC<{ author: AuthorMetadata }> = ({ author }) => {
+const AuthorCard: React.FC<{ author: AuthorData }> = ({ author }) => {
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -67,9 +59,7 @@ const AuthorCard: React.FC<{ author: AuthorMetadata }> = ({ author }) => {
 }
 
 const AuthorPage: React.FC = () => {
-  const allAuthors = getPagesUnderRoute('/authors') as Array<Page & { frontMatter: AuthorMetadata }>
-
-  const authors = allAuthors.filter((author) => !!author.frontMatter.authorid)
+  const allAuthors = getAllAuthors().filter((author) => !!author.authorid)
 
   return (
     <section className="max-w-4xl mx-auto mt-12 mb-24 md:mb-32">
@@ -77,8 +67,8 @@ const AuthorPage: React.FC = () => {
         Our Authors
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {authors.map((author) => (
-          <AuthorCard key={author.frontMatter.authorid} author={author.frontMatter} />
+        {allAuthors.map((author) => (
+          <AuthorCard key={author.authorid} author={author} />
         ))}
       </div>
     </section>

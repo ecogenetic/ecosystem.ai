@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react'
 import useCredentialsGenerator from './credentialsGenerator' // Adjust the path based on your project structure
 

@@ -1,0 +1,127 @@
+---
+title: Docker
+description: How to install ecosystem.Ai locally with Docker
+---
+
+# Local Installation of ecosystem.Ai with Docker
+
+For most scenarios, Docker Compose is the recommended installation method due to its simplicity, ease of use, and reliability.
+
+## Prerequisites
+
+- [`Git`](https://git-scm.com/downloads)
+- [`Docker`](https://www.docker.com/products/docker-desktop/)
+
+---
+
+## Installation Steps
+
+Follow these steps to set up ecosystem.Ai with the default configuration:
+
+## Step 1. Download the Installation Files
+
+### Manual Download
+
+1. **Go to the Install Option for your Architecture**
+ - Project Install Page for x86**: Visit [docker-x86](https://github.com/ecosystemai/ecosystem/tree/main/docker-x86).
+ - Project Install Page for ARM64**: Visit [docker-arm](https://github.com/ecosystemai/ecosystem/tree/main/docker-arm).
+ - Project Install Page for Windows**: Visit [docker-windows](https://github.com/ecosystemai/ecosystem/tree/main/docker-windows).
+
+2. **Download the ZIP File**: Click the green "Code" button, then click "Download ZIP."
+
+3. **Extract the ZIP File**: Find the downloaded ZIP file, right-click, and select "Extract All...".
+
+### Using Git
+
+Run the following [git](https://git-scm.com/) command in your terminal, from the desired parent directory:
+
+```bash
+git clone https://github.com/ecosystemai/ecosystem.git
+```
+
+To update to the latest install options and files:
+```bash
+git pull
+```
+
+## Step 2. Install Docker
+
+1. **Download**: Go to [Docker Desktop Download Page](https://www.docker.com/products/docker-desktop) and download Docker Desktop.
+2. **Install**: Open the installer and follow the instructions.
+3. **Run**: Open Docker Desktop to ensure it is running.
+
+**Notes:**
+- Docker Desktop is recommended for most users.
+- Podman configurations will be available in the future.
+- You may need to restart your computer after installation.
+
+## Step 3. Run the App
+
+1. **Navigate to the Project Directory**
+ - ARM64
+ ```bash
+ cd ecosystem/docker-arm
+```
+
+ - x86
+ ```bash
+ cd ecosystem/docker-x86
+```
+
+ - Windows
+ ```bash
+ cd ecosystem\docker-windows
+```
+
+2. **Create and Configure .env File**:
+ - Copy the contents of `ecosystem_env.txt` to a new file named `.env`.
+ - Fill in any necessary values.
+
+<Callout type="tip" title="Note">
+    - The .env file is hidden on unix as it starts with a ".". On Mac use Shift CMD . to list hidden files.
+    - Ensure that there are enough resources assigned to Docker. Use ```ulimit -a``` to check the limits. Assign 128000 to "file descriptors".
+</Callout>
+
+**Add your keys** for **OPENAI_API_KEY** and **ECOSYSTEM_API_KEY**.
+```
+DATA_PATH=./data
+OPENAI_API_KEY=
+ECOSYSTEM_API_KEY=
+```
+An optional variable is used to assign an initial password on startup.
+```
+INITIAL_PASSWORD=
+```
+
+3. **Start the Application**:
+Find your correct install folder. Run the following command from within the install directory:
+ - ARM64
+ ```bash
+ ./start.sh
+```
+
+ - x86
+ ```bash
+ ./start_x86.sh
+```
+
+ - Windows
+ ```bash
+ start.bat
+```
+
+## Additional Setup
+
+Unlock additional features by exploring our configuration guides to learn how to set up:
+
+- Custom endpoints
+- Other advanced configuration options
+- And more
+
+This will enable you to customize your ecosystem.Ai experience with optional features.
+
+**see also:**
+- [Runtime Variables](/docs/runtime/environment_variables)
+- [Docker Compose](/docs/quick_start/docker)
+- [AWS Marketplace Apps](/docs/marketplace/aws)
+- [Azure Marketplace Apps](/docs/marketplace/azure)
