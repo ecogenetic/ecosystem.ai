@@ -71,13 +71,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           navbar={
             <Navbar
               logo={<Logo />}
-              projectLink="https://github.com/ecosystemai/ecosystem.ai"
+              projectLink="https://github.com/ecogenetic/ecosystem.ai"
               chatLink="https://discord.gg/8dNyCq4e"
             />
           }
           footer={<Footer><FooterMenu /></Footer>}
           editLink="Edit this page on GitHub"
-          docsRepositoryBase="https://github.com/ecosystemai/ecosystem.ai/tree/main"
+          docsRepositoryBase="https://github.com/ecogenetic/ecosystem.ai/tree/main"
           sidebar={{ defaultMenuCollapseLevel: 1, toggleButton: true }}
           toc={{ backToTop: true }}
           pageMap={pageMap}

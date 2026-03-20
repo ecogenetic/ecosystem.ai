@@ -58,7 +58,7 @@ export function Hero() {
           </Link>
           <a
             className={styles.secondaryAction}
-            href="https://github.com/ecosystemai"
+            href="https://github.com/ecogenetic"
             target="_blank"
             rel="noopener noreferrer"
           >

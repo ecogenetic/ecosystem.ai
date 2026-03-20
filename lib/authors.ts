@@ -15,7 +15,7 @@ export const authors: Record<string, AuthorData> = {
     bio: 'ecosystem.Ai is a platform that empowers you to harness the capabilities of cutting-edge AI.',
     ogImage: '/images/people/ecosystem.png',
     socials: {
-      GitHub: 'https://github.com/ecosystemai',
+      GitHub: 'https://github.com/ecogenetic',
       LinkedIn: 'https://www.linkedin.com/company/ecosystem.ai/',
       X: 'https://x.com/ecosystem_ai',
       Discord: 'https://discord.gg/8dNyCq4e',
@@ -30,7 +30,7 @@ export const authors: Record<string, AuthorData> = {
     bio: 'Jay is a computational social scientist and technologist with a passion for real-time interventions and complex predictive analytic.',
     ogImage: '/images/people/jayvanzyl.png',
     socials: {
-      GitHub: 'https://github.com/ecosystemai',
+      GitHub: 'https://github.com/ecogenetic',
       LinkedIn: 'https://www.linkedin.com/in/jayvanzyl/',
       email: 'mailto:jay@ecosystem.ai',
     },
@@ -42,7 +42,7 @@ export const authors: Record<string, AuthorData> = {
     bio: 'Applied Math and technologist with a passion for real-time interventions and complex predictive analytics. Eric is a computational social scientist and technologist with a passion for real-time interventions and complex predictive analytics.',
     ogImage: '/images/people/eric.png',
     socials: {
-      GitHub: 'https://github.com/ecosystemai',
+      GitHub: 'https://github.com/ecogenetic',
       LinkedIn: 'https://www.linkedin.com/company/ecosystem.ai/',
       email: 'mailto:eric@ecosystem.ai',
     },
@@ -54,7 +54,7 @@ export const authors: Record<string, AuthorData> = {
     bio: 'Lead Developer.',
     ogImage: '/images/people/francois.png',
     socials: {
-      GitHub: 'https://github.com/ecosystemai',
+      GitHub: 'https://github.com/ecogenetic',
       LinkedIn: 'https://www.linkedin.com/company/ecosystem.ai/',
       email: 'mailto:francois@ecosystem.ai',
     },

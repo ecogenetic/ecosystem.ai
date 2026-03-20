@@ -15,7 +15,7 @@ const config: DocsThemeConfig = {
   logo: <Logo />,
   logoLink: '/',
   project: {
-    link: 'https://github.com/ecosystemai/ecosystem.ai',
+    link: 'https://github.com/ecogenetic/ecosystem.ai',
   },
   chat: {
     link: 'https://discord.gg/8dNyCq4e',
@@ -39,7 +39,7 @@ const config: DocsThemeConfig = {
   toc: {
     backToTop: true,
   },
-  docsRepositoryBase: 'https://github.com/ecosystemai/ecosystem.ai/tree/main',
+  docsRepositoryBase: 'https://github.com/ecogenetic/ecosystem.ai/tree/main',
   footer: {
     content: <FooterMenu />,
   },
