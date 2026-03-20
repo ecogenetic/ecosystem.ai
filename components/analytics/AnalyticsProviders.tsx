@@ -5,8 +5,6 @@ import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CrispWidget } from '@/components/supportChat'
 import { hsPageView } from '@/components/analytics/hubspot'
 
@@ -31,8 +29,6 @@ export function AnalyticsProviders() {
 
   return (
     <PostHogProvider client={posthog}>
-      <Analytics />
-      <SpeedInsights />
       {process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID ? <CrispWidget /> : null}
       <Script
         src="https://app.termly.io/resource-blocker/26739b38-1a89-4742-ab53-d8d724b77f51?autoBlock=on"

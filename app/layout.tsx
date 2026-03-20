@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <style
           dangerouslySetInnerHTML={{
-            __html: `html { --font-geist-sans: ${GeistSans.style.fontFamily}; }`,
+            __html: `:root { --font-geist-sans: ${GeistSans.style.fontFamily}; --font-geist-mono: ${GeistMono.style.fontFamily}; --x-font-sans: ${GeistSans.style.fontFamily}; --x-font-mono: ${GeistMono.style.fontFamily}; }`,
           }}
         />
       </Head>
@@ -72,7 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Navbar
               logo={<Logo />}
               projectLink="https://github.com/ecosystemai/ecosystem.ai"
-              chatLink="https://discord.ecosystem.ai"
+              chatLink="https://discord.gg/8dNyCq4e"
             />
           }
           footer={<Footer><FooterMenu /></Footer>}

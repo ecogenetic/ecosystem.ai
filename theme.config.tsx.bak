@@ -18,7 +18,7 @@ const config: DocsThemeConfig = {
     link: 'https://github.com/ecosystemai/ecosystem.ai',
   },
   chat: {
-    link: 'https://discord.ecosystem.ai',
+    link: 'https://discord.gg/8dNyCq4e',
   },
   search: {
     placeholder: 'Search...',

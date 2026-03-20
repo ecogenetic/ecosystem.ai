@@ -89,14 +89,19 @@ const menuItems: {
 const FooterMenu = () => {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-2 md:grid-cols-6 text-base gap-y-8 gap-x-2">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-y-8 gap-x-2">
         {menuItems.map((menu) => (
           <div key={menu.heading}>
-            <p className="pb-2 font-mono font-bold text-primary">{menu.heading}</p>
+            <p className="pb-2 text-sm font-semibold text-current">
+              {menu.heading}
+            </p>
             <ul className="flex flex-col gap-2">
               {menu.items.map((item) => (
                 <li key={item.name}>
-                  <Link href={item.href} className="text-sm leading-tight hover:text-primary/80">
+                  <Link
+                    href={item.href}
+                    className="text-sm text-gray-500 hover:text-gray-300 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                  >
                     {item.name}
                   </Link>
                 </li>
@@ -105,47 +110,49 @@ const FooterMenu = () => {
           </div>
         ))}
         <div className="flex items-center justify-between md:col-span-6 pt-8 border-t border-neutral-800">
-          <div className="font-sans text-sm text-neutral-400">© {new Date().getFullYear()} ecosystem.Ai</div>
+          <div className="text-sm text-gray-500 dark:text-neutral-500">
+            © {new Date().getFullYear()} ecosystem.Ai
+          </div>
           <div className="flex gap-1">
             <SocialIcon
               url="https://github.ecosystem.ai/"
-              className="transition-transform hover:scale-90"
-              style={{ height: 36, width: 36 }}
+              className="transition-opacity hover:opacity-70"
+              style={{ height: 32, width: 32 }}
               bgColor="transparent"
               fgColor="#9B9B9B"
             />
             <SocialIcon
-              url="https://discord.ecosystem.ai/"
-              className="transition-transform hover:scale-90"
-              style={{ height: 36, width: 36 }}
+              url="https://discord.gg/8dNyCq4e"
+              className="transition-opacity hover:opacity-70"
+              style={{ height: 32, width: 32 }}
               bgColor="transparent"
               fgColor="#9B9B9B"
             />
             <SocialIcon
               url="https://linkedin.ecosystem.ai/"
-              className="transition-transform hover:scale-90"
-              style={{ height: 36, width: 36 }}
+              className="transition-opacity hover:opacity-70"
+              style={{ height: 32, width: 32 }}
               bgColor="transparent"
               fgColor="#9B9B9B"
             />
             <SocialIcon
               url="https://x.com/ecosystemAI"
-              className="transition-transform hover:scale-90"
-              style={{ height: 36, width: 36 }}
+              className="transition-opacity hover:opacity-70"
+              style={{ height: 32, width: 32 }}
               bgColor="transparent"
               fgColor="#9B9B9B"
             />
             <SocialIcon
               url="https://www.youtube.com/@ecosystemai6786"
-              className="transition-transform hover:scale-90"
-              style={{ height: 36, width: 36 }}
+              className="transition-opacity hover:opacity-70"
+              style={{ height: 32, width: 32 }}
               bgColor="transparent"
               fgColor="#9B9B9B"
             />
             <SocialIcon
               url="mailto:amy@ecosystem.ai"
-              className="transition-transform hover:scale-90"
-              style={{ height: 36, width: 36 }}
+              className="transition-opacity hover:opacity-70"
+              style={{ height: 32, width: 32 }}
               bgColor="transparent"
               fgColor="#9B9B9B"
             />
