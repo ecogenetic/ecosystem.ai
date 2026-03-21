@@ -1,6 +1,6 @@
 ### Use a multi-stage build for a smaller final image
 # Build stage
-FROM node:22-slim AS builder
+FROM node:25-slim AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:22-slim AS runner
+FROM node:25-slim AS runner
 
 WORKDIR /app
 

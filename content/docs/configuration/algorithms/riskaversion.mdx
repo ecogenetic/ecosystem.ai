@@ -15,11 +15,11 @@ Uses mean-variance utility from financial portfolio theory. Each offer's score i
 
 For each offer, the algorithm computes a risk-adjusted utility score:
 
-$p = \frac{\text{response\_count}}{\text{count}}$
+`p = response_count / count`
 
-$\text{variance} = p \times (1 - p)$
+`variance = p × (1 - p)`
 
-$\text{utility} = p - \frac{\gamma}{2} \times \text{variance}$
+`utility = p - (γ / 2) × variance`
 
 Where $\gamma$ is the risk aversion coefficient. Scores are aggregated per offer and normalized to sum to 1.0.
 

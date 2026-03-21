@@ -15,7 +15,7 @@ The Epsilon Greedy algorithm is the simplest multi-armed bandit strategy for dyn
 
 The rolling process computes the empirical probability for each offer:
 
-$\text{arm\_reward} = \frac{\text{response\_count}}{\text{logging\_count}}$
+`arm_reward = response_count / logging_count`
 
 The arm with the maximum propensity is flagged with `epsilon_nominated = 1`. At scoring time:
 
