@@ -302,17 +302,17 @@ spec:
               configMapKeyRef:
                 name: ecosystem-env
                 key: GF_SECURITY_ALLOW_EMBEDDING
-            name: $GF_AUTH_JWT_URL
+          - name: $GF_AUTH_JWT_URL
             valueFrom:
               configMapKeyRef:
                 name: ecosystem-env
                 key: GF_AUTH_JWT_URL
-            name: $GF_AUTH_USERNAME
+          - name: $GF_AUTH_USERNAME
             valueFrom:
               configMapKeyRef:
                 name: ecosystem-env
                 key: GF_AUTH_USERNAME
-            name: $GF_AUTH_PASSWORD
+          - name: $GF_AUTH_PASSWORD
             valueFrom:
               configMapKeyRef:
                 name: ecosystem-env
@@ -496,6 +496,200 @@ oc expose deployment ecosystem-runtime1 --port=8091
 oc expose svc ecosystem-runtime1 --port=8091
 ```
 </Callout>
+
+## Workbench2 Deployments
+
+The workbench2 incorporates the generative AI enabled UI and the notebooks functionality through which the python package can be used.
+
+<Callout type="note" title="Workbench2 Deployments" emoji='✏️' collapsible>
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workbench2-config
+  namespace: ecosystem
+data:
+  MONGODB_URI: "mongo_connection_string"
+  MONGODB_DATABASE: "ecosystem_meta"
+  ECOSYSTEM_SERVER: "http://server-ecosystem.apps-crc.testing"
+  BACKEND_PORT: "8001"
+  CORS_ORIGINS: "http://localhost:5270,http://workbench2.ecosystem.svc.cluster.local:5270"
+  LOG_LEVEL: "INFO"
+  H2O_URL: "http://htwoo.ecosystem.svc.cluster.local:54321"
+  H2O_CONTAINER_DATA_PATH: "/data"
+  LOCAL_DATA_PATH: "/data"
+  H2O_MODELS: "/data/models"
+  H2O_SCORER_PORT: "9090"
+  H2O_MODELS_DIR: "/data/models"
+  H2O_OFFLINE: "http://localhost:9090"
+  H2O_PREFER_OFFLINE_SCORING: "true"
+  TRINO_HOST: "trino.ecosystem.svc.cluster.local"
+  TRINO_PORT: "8080"
+  TRINO_USER: "ecosystem_user"
+  TRINO_CATALOG: "mongodb"
+  TRINO_SCHEMA: "master"
+  CHAT_SERVER: "https://bedrock-runtime.us-west-2.amazonaws.com"
+  CHAT_SERVER_TYPE: "bedrock"
+  CHAT_SERVER_MODEL: "qwen.qwen3-coder-480b-a35b-v1:0"
+  NGINX_PORT: "5270"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workbench2-nginx-config
+  namespace: ecosystem
+data:  
+  supervisord.conf: |
+    [supervisord]
+    nodaemon=true
+    logfile=/var/log/supervisor/supervisord.log
+    pidfile=/tmp/supervisord.pid
+    childlogdir=/var/log/supervisor
+
+    [unix_http_server]
+    file=/tmp/supervisor.sock
+    chmod=0700
+
+    [rpcinterface:supervisor]
+    supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+    [supervisorctl]
+    serverurl=unix:///tmp/supervisor.sock
+
+    # ==============================================================================
+    # H2O Java Scorer
+    # ==============================================================================
+    [program:h2o-scorer]
+    command=java -jar /app/h2o/h2o-scorer-1.0.0.jar --port %(ENV_H2O_SCORER_PORT)s --models %(ENV_H2O_MODELS_DIR)s
+    directory=/app/h2o
+    autostart=true
+    autorestart=true
+    startsecs=10
+    stopwaitsecs=30
+    stdout_logfile=/var/log/supervisor/h2o-scorer.log
+    stderr_logfile=/var/log/supervisor/h2o-scorer-error.log
+    stdout_logfile_maxbytes=50MB
+    stderr_logfile_maxbytes=50MB
+    environment=JAVA_OPTS="-Xmx2g -Xms512m"
+    priority=100
+
+    # ==============================================================================
+    # Backend FastAPI
+    # ==============================================================================
+    [program:backend]
+    command=python -m uvicorn app.main:app --host 0.0.0.0 --port %(ENV_BACKEND_PORT)s
+    directory=/app/backend
+    autostart=true
+    autorestart=true
+    startsecs=5
+    stopwaitsecs=30
+    stdout_logfile=/dev/stdout
+    stdout_logfile_maxbytes=0
+    stderr_logfile=/dev/stderr
+    stderr_logfile_maxbytes=0
+    environment=PYTHONPATH="/app/backend/src",PYTHONUNBUFFERED="1"
+    priority=200
+
+    # ==============================================================================
+    # Nginx (Frontend)
+    # ==============================================================================
+    [program:nginx]
+    command=/usr/sbin/nginx -g "daemon off;"
+    autostart=true
+    autorestart=true
+    startsecs=5
+    stopwaitsecs=10
+    stdout_logfile=/var/log/supervisor/nginx.log
+    stderr_logfile=/var/log/supervisor/nginx-error.log
+    stdout_logfile_maxbytes=50MB
+    stderr_logfile_maxbytes=50MB
+    priority=300
+
+    # ==============================================================================
+    # Group all services
+    # ==============================================================================
+    [group:ecosystem]
+    programs=h2o-scorer,backend,nginx
+    priority=999
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: workbench2-secrets
+  namespace: ecosystem
+type: Opaque
+stringData:
+  CHAT_SERVER_KEY: "INSERTKEYHERE"
+  VITE_GOOGLE_MAPS_API_KEY: "INSERTKEYHERE"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workbench2
+  namespace: ecosystem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workbench2
+  template:
+    metadata:
+      labels:
+        app: workbench2
+    spec:
+      containers:
+        - name: workbench2
+          image: docker.io/ecosystemai/ecosystem-workbench2:amd64
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 5270
+          envFrom:
+            - configMapRef:
+                name: workbench2-config
+            - secretRef:
+                name: workbench2-secrets
+          resources:
+            requests:
+              memory: 1Gi
+            limits:
+              memory: 2Gi
+          volumeMounts:
+            - name: nginx-config
+              mountPath: "/etc/supervisor/conf.d/supervisord.conf"
+              subPath: supervisord.conf
+            - name: ecosystem-data
+              subPath: data
+              mountPath: /data
+            - name: ecosystem-data
+              subPath: workbench2-logs
+              mountPath: /var/log/supervisor
+          securityContext:
+            runAsGroup: 0
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: workbench2-nginx-config
+        - name: ecosystem-data
+          persistentVolumeClaim:
+            claimName: ecosystem-data-pvc
+```
+</Callout>
+
+<Callout type="note" title="Commands to Create Workbench2" emoji='✏️' collapsible>
+```bash
+oc apply -f new-workbench.yaml
+
+oc expose deployment workbench2 --port=5270
+oc expose svc workbench2 --port=5270
+```
+</Callout>
+
 
 ## Conclusion
 
