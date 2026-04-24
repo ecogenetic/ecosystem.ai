@@ -61,7 +61,7 @@
     "nextra": "^4.6.1",
     "nextra-theme-docs": "^4.6.1",
     "openai-edge": "^1.2.2",
-    "postcss": "^8.4.38",
+    "postcss": "^8.5.10",
     "posthog-js": "^1.131.4",
     "react": "^18.2.0",
     "react-ace": "^11.0.1",
