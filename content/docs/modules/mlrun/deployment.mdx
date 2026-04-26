@@ -5,16 +5,22 @@ description: Deploy trained models alongside the Java ecosystem-runtime onto Doc
 
 # Kubernetes Deployment
 
-When `K8S_ENABLED=true`, the **Deployments** tab in the MLRun console
-exposes two actions:
+The **Deployments** tab is always visible inside the configuration
+editor, but its behaviour depends on the K8s feature flag:
 
-1. **Deploy model server** — schedules the trainer image with the
-   model id baked in; exposes a `/invocations` endpoint inside the
-   `ecosystem-workbench` namespace.
-2. **Deploy ecosystem-runtime** — schedules the Java
-   `ecosystem-runtime` pod with a sidecar volume that mounts the
-   trained model artifact, so scoring calls go through the same audit
-   path as production.
+- `K8S_ENABLED=false` (default) — the tab renders a **Kubernetes
+  status** banner stating *“Kubernetes integration disabled (set
+  K8S_ENABLED=true).”* and a disabled **Deploy ecosystem-runtime**
+  button. A **Refresh** button is still available so the same view
+  can pick up a config change without a page reload.
+- `K8S_ENABLED=true` — the tab activates two actions:
+  1. **Deploy model server** — schedules the trainer image with the
+     model id baked in; exposes a `/invocations` endpoint inside the
+     `ecosystem-workbench` namespace.
+  2. **Deploy ecosystem-runtime** — schedules the Java
+     `ecosystem-runtime` pod with a sidecar volume that mounts the
+     trained model artifact, so scoring calls go through the same
+     audit path as production.
 
 Both actions are backed by `/api/v1/k8s/*` endpoints implemented in
 `backend/src/app/k8s/service.py`.

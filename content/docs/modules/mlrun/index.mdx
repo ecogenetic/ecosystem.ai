@@ -10,12 +10,24 @@ import { Callout } from 'nextra/components'
 ## Overview
 
 The **MLRun module** turns the Ecosystem.Ai Workbench2 console into a
-full ML lifecycle hub: pull data from MongoDB, generate engineered
-feature pipelines through natural language, train **sklearn**,
-**xgboost**, **lightgbm**, or **pytorch** (tabular wrapper) models
-against a containerised trainer, and deploy the trained model — alongside
-the Java-based `ecosystem-runtime` — onto Docker Desktop Kubernetes with
+full ML lifecycle hub: pull data from MongoDB, draft engineered
+feature pipelines through a natural-language **AI pipeline assistant**,
+train **sklearn**, **xgboost**, **lightgbm**, or **pytorch** (tabular
+wrapper) models against a containerised trainer, emit the entire
+lifecycle as a runnable **Python project** (feature pipeline, training,
+scoring, K8s deploy), and deploy the trained model — alongside the
+Java-based `ecosystem-runtime` — onto Docker Desktop Kubernetes with
 two clicks.
+
+The configuration editor is a **13-tab IDE** for one MLRun
+configuration:
+
+`Overview · Project · Data Source · Features · H2O Frame · Training ·
+Models · Training Runs · Adapters · Python · Runs · Deployments ·
+Generate`
+
+For a screenshot-led walkthrough of every tab see
+[Console Tour](/docs/modules/mlrun/console_tour).
 
 Two opinionated reference use-cases ship out of the box and seed
 real training runs on first install:
@@ -32,12 +44,22 @@ real training runs on first install:
 
 - **Single-pane lifecycle**: feature engineering, training, scoring,
   and deployment in one console.
+- **AI pipeline assistant**: describe the target collection and the
+  prediction goal in plain English; the assistant samples the schema,
+  drafts the aggregation pipeline, infers the target column / problem
+  type, persists the configuration, and (optionally) trains every
+  selected framework end-to-end. Seven `pipeline_kind` presets
+  (`auto`, `numeric`, `categorical`, `temporal`, `mixed`,
+  `aggregates`, `type_coercion`) shape the generated MongoDB
+  aggregation.
 - **Bring-your-own framework**: sklearn, xgboost, lightgbm, and a
   pytorch tabular wrapper using identical contracts.
 - **Reproducible by design**: every console action is exposed in a
   generated Python project (`feature_pipeline.py`, `train_model.py`,
   `score_model.py`, `deploy_to_k8s.py`) so the same lifecycle can run
-  in CI, in a notebook, or in an MLRun job.
+  in CI, in a notebook, or in an MLRun job. The Python tab adds
+  toggles for **training scripts**, the **scoring driver**, and the
+  **Kubernetes deployer**, so you only emit what you need.
 - **Coexistence with MLRun CE**: when **MLRun Community Edition** is
   enabled, runs land in the MLRun project store and the trainer
   sidecar continues to handle compute. See
@@ -46,6 +68,10 @@ real training runs on first install:
   `ecosystem-runtime`-compatible logging payloads, so production
   scoring goes through the same audited paths as the rest of the
   platform.
+- **Cascade-safe configurations**: deleting a configuration removes
+  the linked feature pipelines, feature sets, training runs, and any
+  K8s deployments scoped to its `project_id`, with a confirmation
+  dialog that prints the final delete counts.
 
 ## Architecture
 
@@ -101,11 +127,12 @@ lightgbm / pytorch) per use-case. With both use-cases enabled you get:
 ## Where to next
 
 - [Installation](/docs/modules/mlrun/install)
+- [Console Tour](/docs/modules/mlrun/console_tour) — visual walkthrough of every tab.
 - [Use-Case Definition](/docs/modules/mlrun/definition)
 - [Data Preparation](/docs/modules/mlrun/data)
 - [Model Training](/docs/modules/mlrun/training)
 - [Kubernetes Deployment](/docs/modules/mlrun/deployment)
-- [Python Generator](/docs/modules/mlrun/generator)
+- [Python & AI Generator](/docs/modules/mlrun/generator)
 - [MLRun Community Edition](/docs/modules/mlrun/community_edition)
 - [Access & Scoring](/docs/modules/mlrun/access)
 

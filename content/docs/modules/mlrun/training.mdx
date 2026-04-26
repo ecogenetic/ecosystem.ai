@@ -24,11 +24,43 @@ treat them interchangeably.
 
 1. Open `/mlrun-console`, select the configuration row.
 2. Switch to the **Training** tab.
-3. Choose the framework and click **Train**.
+3. Choose the framework and click **Train** (the project, source
+   database, and source/target collections are pre-filled from the
+   configuration).
 4. The run lands in **Training Runs** and, once successful, appears in
    **Models**.
 
-![MLRun console — training tab](/images/modules/mlrun/mlrun-console-training-tab.png)
+![MLRun console — Training tab](/images/modules/mlrun/mlrun-console-training-tab.png)
+
+## Models tab — score and deploy
+
+After a successful training run, the **Models** tab lists every
+trained model bound to the configuration’s `project_id`. Each row
+shows the framework, model id, adapter id, and the headline metrics
+(`accuracy`, `f1`, `roc_auc`, and — for binary problems —
+`precision_at_k`). Two row actions:
+
+- **Score** — issues a sample `/invocations` call against the
+  trainer sidecar and shows the response inline. Useful for smoke
+  tests immediately after training.
+- **Deploy** — schedules the model on Docker Desktop Kubernetes via
+  `/api/v1/k8s/*` (only available when `K8S_ENABLED=true`); on
+  success the configuration switches to the **Deployments** tab so
+  you can confirm the pod is `Running`.
+
+![MLRun console — Models tab](/images/modules/mlrun/mlrun-console-models.png)
+
+## Training Runs tab — audit and retry
+
+The **Training Runs** tab is the append-only history of every
+`POST /train` call made for this configuration. Each row prints the
+framework, status (`succeeded` / `failed`), elapsed seconds, and a
+**Retry** action that re-submits with the same hyperparameters. Use
+this tab to compare frameworks side-by-side — sklearn, xgboost,
+lightgbm, and pytorch each emit the same metrics shape so the columns
+are directly comparable.
+
+![MLRun console — Training Runs tab](/images/modules/mlrun/mlrun-console-training-runs.png)
 
 ## Running all four frameworks per use-case
 

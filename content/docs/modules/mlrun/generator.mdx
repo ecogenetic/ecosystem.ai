@@ -1,16 +1,37 @@
 ---
-title: MLRun Module — Python Generator
-description: Reproduce the entire MLRun lifecycle (feature engineering, training, scoring, ecosystem-runtime adapter logging, and Kubernetes deployment) as a runnable Python project generated from the console.
+title: MLRun Module — Python & AI Generator
+description: Reproduce the entire MLRun lifecycle (feature engineering, training, scoring, ecosystem-runtime adapter logging, and Kubernetes deployment) as a runnable Python project — either from the AI pipeline assistant on the Generate tab or from the manual Python tab.
 ---
 
-# Python Generator
+# Python & AI Generator
 
 Every action available in the MLRun console can be reproduced as a
-self-contained Python project. The generator is invoked from the
-**Generated Python** tab and emits a set of files matched to the
-options you tick.
+self-contained Python project. There are two complementary paths:
 
-## Generator inputs
+- The **AI pipeline assistant** on the **Generate** tab takes a
+  natural-language prompt and emits the same multi-file Python
+  project — alongside a persisted configuration and (optionally)
+  trained models. See
+  [Console Tour — Generate tab](/docs/modules/mlrun/console_tour#13-generate-ai-pipeline-assistant)
+  and [Data Preparation — AI assistant inputs](/docs/modules/mlrun/data#ai-assistant-inputs).
+- The **Python** tab is the deterministic emitter. Three checkboxes
+  pick which files land in the project; a multi-file picker lets you
+  inspect each emitted file in turn (the primary file is marked).
+
+## Python tab inputs
+
+| Checkbox | Adds to the project |
+| -------- | ------------------- |
+| Include training scripts (auto-loads runs for project) | `train_model.py` per framework, dispatched through `train_all()`. |
+| Include scoring driver | `score_model.py` calling `/invocations` with sample payloads. |
+| Include Kubernetes deployer | `deploy_to_k8s.py` driving the workbench `/api/v1/k8s/*` endpoints. |
+
+When **Include training scripts** is enabled and the configuration’s
+training list is empty, the backend auto-resolves the most recent
+successful runs for the configuration’s `project_id` so the frontend
+doesn’t have to pass them explicitly.
+
+## Generator inputs (full reference)
 
 | Field                         | Default                       | Effect |
 | ----------------------------- | ----------------------------- | ------ |
@@ -27,6 +48,16 @@ When `include_training=true` and the **Training** list is empty, the
 backend auto-resolves the most recent successful runs for the
 configuration’s `project_id` so the frontend doesn’t have to pass them
 explicitly.
+
+## Generated Python tab UI
+
+After clicking **Generate Python**, the tab populates a multi-file
+project. A `<select>` dropdown lets you switch between files (the
+**primary** file is marked), and the read-only editor below shows the
+selected file’s contents — so you can review every emitted module
+without leaving the console.
+
+![MLRun console — Python tab](/images/modules/mlrun/mlrun-console-python.png)
 
 ## Generated files
 
@@ -75,6 +106,22 @@ Every generated module accepts a `--config configuration.json` flag
 so the same files can be checked into a CI pipeline and parametrised
 per environment.
 
+## Generate tab (AI pipeline assistant)
+
+The **Generate** tab is the one-click counterpart to the manual flow.
+The same payload that the Python tab builds from the form fields is
+also produced from a natural-language prompt:
+
+- **Draft only** — fills the form fields without persisting; review,
+  then click **Save** or run the manual flow when ready.
+- **Generate everything** — runs the entire lifecycle: NL → schema
+  sample → configuration → persist → train selected frameworks →
+  emit the Python project. The result panel prints the inferred
+  target column, problem type, feature counts, and one pill per
+  training run.
+
+![MLRun console — Generate tab](/images/modules/mlrun/mlrun-console-generator.png)
+
 ## What the generator does **not** do
 
 - It does **not** spin up a trainer sidecar or Kubernetes cluster —
@@ -84,5 +131,3 @@ per environment.
   successful runs when auto-resolution is enabled).
 - It does **not** write to MongoDB unless explicitly invoked through
   `feature_pipeline.py`.
-
-![MLRun console — generated python tab](/images/modules/mlrun/mlrun-console-generator.png)

@@ -74,9 +74,19 @@ A configuration row in `ecosystem_meta.mlrun_configurations` looks like:
 }
 ```
 
-Configurations are immutable references; deletion is a cascade that
-removes the configuration row, the linked feature pipeline, the
-feature set, all training runs, and any K8s deployments tied to the
-project id (see [Access](/docs/modules/mlrun/access)).
+Configurations are versioned but **structurally immutable** by
+project / pipeline name (a new configuration is created if you change
+either). Deletion is a cascade that removes the configuration row,
+the linked feature pipeline, the feature set, all training runs, and
+any K8s deployments tied to the project id; the confirmation dialog
+prints the final delete counts (see
+[Access & Scoring — Deleting an MLRun configuration](/docs/modules/mlrun/access#deleting-an-mlrun-configuration)).
 
-![MLRun configuration form](/images/modules/mlrun/mlrun-console-configuration-form.png)
+![MLRun configurations list — every configuration with row actions and quick-access tiles](/images/modules/mlrun/mlrun-console-configurations.png)
+
+The configuration editor opens with a sticky header that shows
+`project_id · pipeline_name`, the current `state`
+(`draft` / `active` / `archived`), the version, a *N/5 lifecycle
+sections ready* badge, and three actions (**Back**, **Generate**,
+**Save version**). Below the header is the 13-tab strip described in
+the [Console Tour](/docs/modules/mlrun/console_tour).

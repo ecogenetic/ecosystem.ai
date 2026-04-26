@@ -123,7 +123,9 @@ it, the artifact URI, and the deployment id (when deployed).
 
 ## Deleting an MLRun configuration
 
-The **Delete** action on a configuration row triggers a cascade
+The **Delete** action on a configuration row (the trash icon in the
+[Configurations list](/docs/modules/mlrun/console_tour#configurations-list))
+opens a confirmation dialog and, on confirm, triggers a cascade
 delete that removes:
 
 - The configuration row in `ecosystem_meta.mlrun_configurations`.
@@ -134,18 +136,15 @@ delete that removes:
 - All K8s deployments in
   `ecosystem_meta.mlrun_k8s_deployments` for that `project_id`.
 
-A `DELETE_MLRUN_CONFIGURATION` activity row is written to
-`ecosystem_meta.activities` with the deleted counts and the user
-that requested the delete.
+The toast that appears after the cascade prints the per-collection
+counts (e.g.
+*“Removed 1 configuration, 1 pipeline(s), 1 feature set(s), 4
+run(s).”*), and a `DELETE_MLRUN_CONFIGURATION` activity row is
+written to `ecosystem_meta.activities` with the same counts and the
+user that requested the delete.
 
 <Callout type="warn" title="Deletion is permanent">
   The cascade does not soft-delete. To re-create the use-case after a
   delete, re-run `python scripts/seed_mlrun_use_cases.py
   --use-case <name>`.
-</Callout>
-
-<Callout type="info" title="Screenshot pending">
-  A live screenshot of the delete confirmation modal will be added once
-  the seed has run end-to-end against the trainer sidecar. The flow is
-  fully covered by `backend/tests/test_mlrun_runtime.py::test_delete_configuration_cascade`.
 </Callout>
