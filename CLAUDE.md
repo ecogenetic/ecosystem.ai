@@ -131,4 +131,4 @@ No test framework is configured in this documentation site. Testing is primarily
 ## Related Resources
 - [ecosystem.Ai Platform Docs](/docs)
 - [GitHub Repository](https://github.com/ecogenetic/ecosystem.ai)
-- [Discord Community](https://discord.gg/8dNyCq4e)
+- [Discord Community](https://discord.com/channels/1465898795949756458/1468558966513598526)

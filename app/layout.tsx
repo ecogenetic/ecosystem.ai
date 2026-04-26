@@ -68,7 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Navbar
               logo={<Logo />}
               projectLink="https://github.com/ecogenetic/ecosystem.ai"
-              chatLink="https://discord.gg/8dNyCq4e"
+              chatLink="https://discord.com/channels/1465898795949756458/1468558966513598526"
             />
           }
           footer={<Footer><FooterMenu /></Footer>}

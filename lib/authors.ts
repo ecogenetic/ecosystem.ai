@@ -18,7 +18,7 @@ export const authors: Record<string, AuthorData> = {
       GitHub: 'https://github.com/ecogenetic',
       LinkedIn: 'https://www.linkedin.com/company/ecosystem.ai/',
       X: 'https://x.com/ecosystem_ai',
-      Discord: 'https://discord.gg/8dNyCq4e',
+      Discord: 'https://discord.com/channels/1465898795949756458/1468558966513598526',
       YouTube: 'https://www.youtube.com/@ecosystemai6786',
       email: 'mailto:amy@ecosystem.ai',
     },

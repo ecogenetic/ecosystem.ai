@@ -122,7 +122,7 @@ const FooterMenu = () => {
               fgColor="#9B9B9B"
             />
             <SocialIcon
-              url="https://discord.gg/8dNyCq4e"
+              url="https://discord.com/channels/1465898795949756458/1468558966513598526"
               className="transition-opacity hover:opacity-70"
               style={{ height: 32, width: 32 }}
               bgColor="transparent"
