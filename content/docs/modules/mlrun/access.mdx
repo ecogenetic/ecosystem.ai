@@ -1,0 +1,151 @@
+---
+title: MLRun Module — Access & Scoring
+description: How to invoke trained MLRun models — directly through the trainer sidecar, through the deployed model server, or through the Java ecosystem-runtime — and how to clean up MLRun configurations.
+---
+
+import { Callout } from 'nextra/components'
+
+# Access & Scoring
+
+There are three reachable scoring paths once a model has been trained
+and (optionally) deployed:
+
+1. **Trainer sidecar** at `http://localhost:8003/invocations` —
+   useful for smoke tests and the Generated Python `score_model.py`.
+2. **Model server NodePort** at `http://localhost:30092/invocations`
+   — created when the model is deployed via the **Deployments** tab.
+3. **Ecosystem-runtime** at `http://localhost:30091/invocate` — the
+   recommended production path; applies logging, audit, and the
+   campaign / sub-campaign contract.
+
+All three accept the same payload shape because the trainer sidecar
+emits an `InvocationsRequest` consistent with `ecosystem-runtime`.
+
+## Sample scoring call (Customer Spend Risk)
+
+```bash
+curl -s http://localhost:8003/invocations -H 'content-type: application/json' \
+  -d '{
+    "model_id": "spend_risk_xgboost_v1",
+    "instances": [
+      {
+        "amount_sum": 24500,
+        "amount_mean": 322,
+        "amount_std": 215,
+        "declined_count": 4,
+        "is_high_risk_categories": ["gambling"]
+      }
+    ]
+  }'
+```
+
+Response:
+
+```json
+{
+  "model_id": "spend_risk_xgboost_v1",
+  "framework": "xgboost",
+  "predictions": [{ "label": 1, "probability": 0.87 }]
+}
+```
+
+## Sample scoring call (Customer Personality)
+
+```bash
+curl -s http://localhost:8003/invocations -H 'content-type: application/json' \
+  -d '{
+    "model_id": "customer_personality_lightgbm_v1",
+    "instances": [
+      {
+        "age_band": "35_44",
+        "gender": "F",
+        "income_band": "high",
+        "region": "metro",
+        "life_stage": "family",
+        "marital_status": "married",
+        "dependents": 2,
+        "tenure_months": 84
+      }
+    ]
+  }'
+```
+
+Response (multiclass):
+
+```json
+{
+  "model_id": "customer_personality_lightgbm_v1",
+  "framework": "lightgbm",
+  "predictions": [{
+      "label": "Industrious",
+      "probabilities": {
+          "Industrious": 0.51,
+          "Intentional": 0.31,
+          "Experiential": 0.12,
+          "Enthusiastic": 0.06
+      }
+  }]
+}
+```
+
+## Scoring through ecosystem-runtime
+
+Use the runtime when you want logging + audit. Map the project to a
+`campaign` / `sub-campaign` pair when configuring runtime
+deployment, then:
+
+```bash
+curl -s http://localhost:30091/invocate -H 'content-type: application/json' \
+  -d '{
+    "campaign": "customer_personality",
+    "sub-campaign": "lightgbm",
+    "channel": "web",
+    "responses": 1,
+    "in_params": {
+      "input": ["age_band", "gender", "income_band", "region", "life_stage"],
+      "value": ["35_44", "F", "high", "metro", "family"]
+    }
+  }'
+```
+
+The runtime writes a presented row to `ecosystemruntime` and an
+accepted row to `ecosystemruntime_response` (see
+[Logging & Reporting](/docs/runtime/logging)).
+
+## Listing models for a project
+
+```bash
+curl -s http://localhost:8001/api/v1/mlrun-runtime/models?project_id=customer_personality
+```
+
+The response lists every successful run, the framework that produced
+it, the artifact URI, and the deployment id (when deployed).
+
+## Deleting an MLRun configuration
+
+The **Delete** action on a configuration row triggers a cascade
+delete that removes:
+
+- The configuration row in `ecosystem_meta.mlrun_configurations`.
+- The bound feature pipeline in
+  `ecosystem_meta.mlrun_feature_pipelines`.
+- The feature set in `ecosystem_meta.mlrun_feature_sets`.
+- All training runs in `ecosystem_meta.mlrun_training_runs`.
+- All K8s deployments in
+  `ecosystem_meta.mlrun_k8s_deployments` for that `project_id`.
+
+A `DELETE_MLRUN_CONFIGURATION` activity row is written to
+`ecosystem_meta.activities` with the deleted counts and the user
+that requested the delete.
+
+<Callout type="warn" title="Deletion is permanent">
+  The cascade does not soft-delete. To re-create the use-case after a
+  delete, re-run `python scripts/seed_mlrun_use_cases.py
+  --use-case <name>`.
+</Callout>
+
+<Callout type="info" title="Screenshot pending">
+  A live screenshot of the delete confirmation modal will be added once
+  the seed has run end-to-end against the trainer sidecar. The flow is
+  fully covered by `backend/tests/test_mlrun_runtime.py::test_delete_configuration_cascade`.
+</Callout>

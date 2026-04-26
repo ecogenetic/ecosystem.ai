@@ -1,0 +1,85 @@
+---
+title: MLRun Module — Model Training
+description: Train sklearn / xgboost / lightgbm / pytorch (tabular) models from the Workbench2 MLRun console or from generated Python code, against the bundled mlrun-trainer sidecar.
+---
+
+# Model Training
+
+The trainer sidecar accepts a uniform `POST /train` contract and
+dispatches internally based on `framework`:
+
+| `framework` | Library                                         | Default model |
+| ----------- | ----------------------------------------------- | ------------- |
+| `sklearn`   | `scikit-learn`                                   | `GradientBoostingClassifier` / `GradientBoostingRegressor` |
+| `xgboost`   | `xgboost.sklearn.XGBClassifier`                  | Histogram tree booster |
+| `lightgbm`  | `lightgbm.sklearn.LGBMClassifier`                | GBDT |
+| `pytorch`   | Tabular MLP wrapper (`torch.nn.Sequential`)      | Two-layer MLP, CPU only |
+
+All four frameworks expose the same response payload — `run_id`,
+`model_id`, `adapter_id`, metrics (`accuracy`, `f1`, `roc_auc`,
+`mse`, …), and an `artifact_uri` — so the UI and generated code can
+treat them interchangeably.
+
+## Triggering a run from the console
+
+1. Open `/mlrun-console`, select the configuration row.
+2. Switch to the **Training** tab.
+3. Choose the framework and click **Train**.
+4. The run lands in **Training Runs** and, once successful, appears in
+   **Models**.
+
+![MLRun console — training tab](/images/modules/mlrun/mlrun-console-training-tab.png)
+
+## Running all four frameworks per use-case
+
+The seed script runs all four for both reference use-cases:
+
+```bash
+cd backend
+./venv/bin/python scripts/seed_mlrun_use_cases.py --use-case all
+```
+
+After completion the **Training Runs** tab lists 8 successful rows
+(4 per use-case). Each row links back to the trainer’s
+`/invocations` URL so a smoke test scoring call can be issued
+directly from the UI.
+
+## Multiclass classification (Customer Personality)
+
+The customer-personality target carries 4–6 labels. The trainer:
+
+- One-hot encodes categorical features (`gender`, `income_band`,
+  `region`, `life_stage`, `marital_status`).
+- Uses a stratified 80/20 split on `personality`.
+- Reports `accuracy` and weighted `f1` (instead of `roc_auc`, which
+  is binary-only).
+- For sklearn / xgboost / lightgbm, the model exposes
+  `predict_proba` so the runtime can return a per-label probability
+  vector when scoring.
+- For pytorch, the wrapper writes an output layer with
+  `out_features=len(classes)` and a softmax head; the adapter
+  serialises the class index back to the original label string.
+
+## Binary classification (Customer Spend Risk)
+
+`is_high_risk` is the target. The trainer reports `accuracy`,
+`roc_auc`, `f1`, and `precision_at_k` (top-decile precision, useful
+for fraud-style review queues). All four frameworks emit the same
+shape so the UI can compare them in the **Models** tab.
+
+## Programmatic training
+
+The same training run can be reproduced from generated Python (see
+[Python Generator](/docs/modules/mlrun/generator)):
+
+```python
+from train_model import train_all
+
+results = train_all(trainer_url="http://localhost:8003")
+for run in results:
+    print(run.run_id, run.framework, run.metrics)
+```
+
+Each call hits `POST /train` on the trainer; the response is parsed
+into a `MlrunTrainingResponse` and returned alongside the framework
+label.

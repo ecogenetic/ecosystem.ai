@@ -1,0 +1,118 @@
+---
+title: MLRun Module
+description: End-to-end ML lifecycle (feature engineering → training → deployment) for the Ecosystem.Ai Workbench powered by an MLRun-compatible trainer sidecar and Docker Desktop Kubernetes.
+---
+
+import { Callout } from 'nextra/components'
+
+# MLRun Module
+
+## Overview
+
+The **MLRun module** turns the Ecosystem.Ai Workbench2 console into a
+full ML lifecycle hub: pull data from MongoDB, generate engineered
+feature pipelines through natural language, train **sklearn**,
+**xgboost**, **lightgbm**, or **pytorch** (tabular wrapper) models
+against a containerised trainer, and deploy the trained model — alongside
+the Java-based `ecosystem-runtime` — onto Docker Desktop Kubernetes with
+two clicks.
+
+Two opinionated reference use-cases ship out of the box and seed
+real training runs on first install:
+
+- **Customer Spend Risk** — binary classification on
+  `master.bank_transactions`, demonstrating numeric + categorical
+  feature engineering and risk scoring against an `ecosystem-runtime`
+  pod.
+- **Customer Personality** — multiclass classification on
+  `master.bank_customer`, predicting `personality` from generic
+  demographic fields (age, gender, income band, region, life stage).
+
+## Benefits
+
+- **Single-pane lifecycle**: feature engineering, training, scoring,
+  and deployment in one console.
+- **Bring-your-own framework**: sklearn, xgboost, lightgbm, and a
+  pytorch tabular wrapper using identical contracts.
+- **Reproducible by design**: every console action is exposed in a
+  generated Python project (`feature_pipeline.py`, `train_model.py`,
+  `score_model.py`, `deploy_to_k8s.py`) so the same lifecycle can run
+  in CI, in a notebook, or in an MLRun job.
+- **Coexistence with MLRun CE**: when **MLRun Community Edition** is
+  enabled, runs land in the MLRun project store and the trainer
+  sidecar continues to handle compute. See
+  [MLRun Community Edition](/docs/modules/mlrun/community_edition).
+- **Runtime-native scoring**: trained adapters generate
+  `ecosystem-runtime`-compatible logging payloads, so production
+  scoring goes through the same audited paths as the rest of the
+  platform.
+
+## Architecture
+
+```text
+                ┌──────────────────────────────┐
+                │  Workbench2 frontend          │
+                │  /mlrun-console               │
+                └──────────────┬───────────────┘
+                               │
+                               ▼
+                ┌──────────────────────────────┐
+                │  Workbench2 backend (FastAPI) │
+                │  /api/v1/mlrun-runtime/*       │
+                │  /api/v1/k8s/*                 │
+                └─────┬──────────┬──────────────┘
+        feature pipe  │          │  k8s api
+                      ▼          ▼
+        ┌──────────────────┐   ┌────────────────────────────┐
+        │ MongoDB           │   │ Docker Desktop Kubernetes   │
+        │  master.*          │   │  ┌──────────────┐           │
+        │  ecosystem_meta.*  │   │  │ mlrun-trainer │ (8003)    │
+        └──────────────────┘   │  │  sklearn / xgb │           │
+                                │  │  lgbm / pytorch│           │
+                                │  └──────────────┘           │
+                                │  ┌──────────────────────┐    │
+                                │  │ ecosystem-runtime     │ (8091)
+                                │  │  Java Spring scoring  │    │
+                                │  └──────────────────────┘    │
+                                │  ┌──────────────────────┐    │
+                                │  │ MLRun Community Ed.   │    │
+                                │  │  (optional, Helm)     │    │
+                                │  └──────────────────────┘    │
+                                └────────────────────────────┘
+```
+
+## What ships in the seed
+
+The seeder script (`backend/scripts/seed_mlrun_use_cases.py`) creates
+one **project**, one **feature pipeline**, one **feature set**, one
+**configuration**, and four **training runs** (sklearn / xgboost /
+lightgbm / pytorch) per use-case. With both use-cases enabled you get:
+
+| Asset                | Spend Risk | Customer Personality |
+| -------------------- | ---------- | -------------------- |
+| Source collection    | `master.bank_transactions` | `master.bank_customer` |
+| Target derivation    | aggregation pipeline (frequent / declined) | `$personality` |
+| Problem type         | `binary_classification` (per use-case) | `multiclass_classification` |
+| Frameworks trained   | sklearn · xgboost · lightgbm · pytorch | sklearn · xgboost · lightgbm · pytorch |
+| Activity log entry   | `SEED_MLRUN_USE_CASE` | `SEED_MLRUN_USE_CASE` |
+
+![MLRun console — configurations list](/images/modules/mlrun/mlrun-console-configurations.png)
+
+## Where to next
+
+- [Installation](/docs/modules/mlrun/install)
+- [Use-Case Definition](/docs/modules/mlrun/definition)
+- [Data Preparation](/docs/modules/mlrun/data)
+- [Model Training](/docs/modules/mlrun/training)
+- [Kubernetes Deployment](/docs/modules/mlrun/deployment)
+- [Python Generator](/docs/modules/mlrun/generator)
+- [MLRun Community Edition](/docs/modules/mlrun/community_edition)
+- [Access & Scoring](/docs/modules/mlrun/access)
+
+<Callout type="tip" title="Related: MLFlow Integration">
+  When the goal is purely to import already-trained mojo models from
+  an MLFlow registry into the Java runtime, see
+  [MLFlow Integration](/docs/runtime/mlflowintegration). The MLRun
+  module is the right choice when you also want to **train** models
+  in-platform from feature-engineered MongoDB collections.
+</Callout>

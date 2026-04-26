@@ -6,6 +6,15 @@ description: Import models from the MLFlow model registry
 # MLFlow Integration
 If models are not trained using the ecosystem Server, the trained models need to be made available to the ecosystem Runtime as part of the deployment process. The supported approach to do this is to use MLFlow as a model registry and import the models from MLFlow into the runtime.
 
+<Callout type="tip" title="Looking to train models in-platform?">
+  This page is for **importing** models from an external MLFlow
+  registry. To train sklearn / xgboost / lightgbm / pytorch models
+  directly from a MongoDB collection through the Workbench2 console
+  — and optionally deploy them onto Docker Desktop Kubernetes
+  alongside `ecosystem-runtime` — see the
+  [MLRun module](/docs/modules/mlrun).
+</Callout>
+
 <Callout type="tip" title="Note">
     Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the Runtime MCP has access to an h2o server used by MLFlow
 </Callout>

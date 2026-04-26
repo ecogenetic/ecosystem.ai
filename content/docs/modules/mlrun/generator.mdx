@@ -1,0 +1,88 @@
+---
+title: MLRun Module — Python Generator
+description: Reproduce the entire MLRun lifecycle (feature engineering, training, scoring, ecosystem-runtime adapter logging, and Kubernetes deployment) as a runnable Python project generated from the console.
+---
+
+# Python Generator
+
+Every action available in the MLRun console can be reproduced as a
+self-contained Python project. The generator is invoked from the
+**Generated Python** tab and emits a set of files matched to the
+options you tick.
+
+## Generator inputs
+
+| Field                         | Default                       | Effect |
+| ----------------------------- | ----------------------------- | ------ |
+| `include_adapter`             | `true`                        | Emit a runtime-compatible adapter skeleton. |
+| `include_h2o_frame`           | `true`                        | Emit the H2OFrame request stub used by the runtime. |
+| `include_training`            | `false` (UI: opt-in)          | Emit `train_model.py` and call `POST /train` per framework. |
+| `include_scoring`             | `false`                       | Emit `score_model.py` to call `POST /invocations`. |
+| `include_k8s_deploy`          | `false`                       | Emit `deploy_to_k8s.py` driving `/api/v1/k8s/*`. |
+| `adapter_log_policy`          | `null`                        | When supplied, emit `adapter_with_logging.py` instead of the bare skeleton. |
+| `trainer_url`                 | `http://localhost:8003`       | Base URL for the trainer sidecar. |
+| `workbench_api_url`           | `http://localhost:8001`       | Base URL for the workbench backend (used by the K8s deploy script). |
+
+When `include_training=true` and the **Training** list is empty, the
+backend auto-resolves the most recent successful runs for the
+configuration’s `project_id` so the frontend doesn’t have to pass them
+explicitly.
+
+## Generated files
+
+A fully-ticked generator request emits:
+
+| File                          | Purpose |
+| ----------------------------- | ------- |
+| `feature_pipeline.py`         | MongoDB aggregation that produces the engineered feature collection. |
+| `h2o_frame_request.py`        | Stub showing how to send the engineered frame to the runtime. |
+| `adapter_skeleton.py` *or* `adapter_with_logging.py` | Either a bare adapter skeleton or one wired with the chosen log policy. |
+| `train_model.py`              | One `train_*` per framework, all dispatched through `train_all()`. |
+| `score_model.py`              | Calls `/invocations` with sample payloads built from the feature set. |
+| `deploy_to_k8s.py`            | Idempotent deploy script using `/api/v1/k8s/*`. |
+
+The `primary_file` field in the response always points at
+`feature_pipeline.py`.
+
+## Adapter logging
+
+When `adapter_log_policy` is provided, the adapter writes a payload
+that `ecosystem-runtime` can pick up via its standard logging
+collectors. The policy fields mirror
+`MlrunAdapterLogPolicy`:
+
+| Field             | Description |
+| ----------------- | ----------- |
+| `presented_collection` | MongoDB collection where presentation rows go (default `ecosystemruntime`). |
+| `accepted_collection`  | MongoDB collection where accepted-response rows go (default `ecosystemruntime_response`). |
+| `decision_log_enabled` | Toggle decision logs. |
+| `redact_pii`            | Strip configured PII keys before writing. |
+
+## Running the generated project
+
+```bash
+mkdir mlrun-spend-risk && cd mlrun-spend-risk
+# (paste files from the Generated Python tab)
+python -m venv venv && source venv/bin/activate
+pip install motor httpx pydantic
+python feature_pipeline.py        # build the engineered collection
+python train_model.py             # train sklearn / xgboost / lightgbm / pytorch
+python score_model.py             # smoke-test scoring
+python deploy_to_k8s.py           # only when K8S_ENABLED on the workbench
+```
+
+Every generated module accepts a `--config configuration.json` flag
+so the same files can be checked into a CI pipeline and parametrised
+per environment.
+
+## What the generator does **not** do
+
+- It does **not** spin up a trainer sidecar or Kubernetes cluster —
+  those are bootstrapped via `run_mlrun.sh` and `setup-k8s.sh`.
+- It does **not** decide which framework to use; it generates code
+  for each framework that has a row in the Training list (or for all
+  successful runs when auto-resolution is enabled).
+- It does **not** write to MongoDB unless explicitly invoked through
+  `feature_pipeline.py`.
+
+![MLRun console — generated python tab](/images/modules/mlrun/mlrun-console-generator.png)

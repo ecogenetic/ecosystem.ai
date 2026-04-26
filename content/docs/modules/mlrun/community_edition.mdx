@@ -1,0 +1,109 @@
+---
+title: MLRun Module — Community Edition
+description: Install MLRun Community Edition on Docker Desktop Kubernetes alongside the Workbench2 trainer sidecar; understand the coexistence model adopted in ADR 0006 §Phase 5.
+---
+
+import { Callout } from 'nextra/components'
+
+# MLRun Community Edition
+
+The Workbench2 MLRun module ships with an **opt-in** Helm install of
+the official MLRun Community Edition (CE) chart. CE provides the
+MLRun project store, Web UI, and MinIO-backed artifact bucket; the
+**custom trainer sidecar continues to handle compute**. This is the
+coexistence model adopted in
+[ADR 0006 §Phase 5](https://github.com/ecosystem-ai/ecosystem-workbench2/blob/main/docs/adr/0006-k8s-deploy-and-model-training.md).
+
+## Why coexistence (not replacement)?
+
+| Capability                                 | Trainer sidecar (this module) | MLRun CE |
+| ------------------------------------------ | ----------------------------- | -------- |
+| sklearn / xgboost / lightgbm / pytorch tabular | ✅ first-class                 | ❌ requires custom job spec |
+| Reproducible Python generator              | ✅                            | ❌ |
+| MongoDB-native feature pipelines           | ✅                            | indirect |
+| `ecosystem-runtime` adapter logging        | ✅                            | indirect |
+| Project store / Web UI                     | ❌                            | ✅ |
+| MinIO artifact store                       | ❌                            | ✅ |
+| K8s scheduling for ad-hoc jobs             | indirect                     | ✅ |
+
+When CE is enabled, both systems run side-by-side: the workbench
+backend prefers the CE API URL for project lookups
+(`Settings.select_mlrun_api_url`), while the trainer sidecar continues
+to receive every `POST /train` and `POST /invocations` call.
+
+## Installation
+
+```bash
+cd backend
+./scripts/setup-mlrun-ce.sh
+```
+
+The script:
+
+1. Verifies `kubectl` and `helm` are present.
+2. Switches the Kube context to `docker-desktop`.
+3. Creates the `mlrun` namespace.
+4. Resolves `MLRUN_CE_DBPATH` (default `LOCAL_DATA_PATH/mlrun-ce`)
+   and writes a values overlay merged with
+   `backend/k8s/mlrun-ce-values.yaml`.
+5. Adds the `mlrun-ce` Helm repo (idempotent).
+6. Runs `helm upgrade --install mlrun-ce mlrun/mlrun-ce`.
+7. Waits for the MLRun API pod to become `Ready`.
+
+Service URLs (NodePort-based):
+
+| Service     | URL                       | Purpose |
+| ----------- | ------------------------- | ------- |
+| MLRun API   | `http://localhost:30070`  | Programmatic project / run access |
+| MLRun UI    | `http://localhost:30060`  | Web UI |
+| MinIO       | `http://localhost:30090`  | Artifact bucket |
+
+## Settings
+
+Workbench2 picks up CE through the following `backend/.env` keys:
+
+```dotenv
+MLRUN_CE_ENABLED=true
+MLRUN_CE_NAMESPACE=mlrun
+MLRUN_CE_RELEASE=mlrun-ce
+MLRUN_CE_API_URL=http://localhost:30070
+MLRUN_CE_UI_URL=http://localhost:30060
+MLRUN_CE_MINIO_URL=http://localhost:30090
+# Optional persistence overrides (default: $LOCAL_DATA_PATH/mlrun-ce)
+# MLRUN_CE_DBPATH=/Users/me/data/mlrun-ce
+# MLRUN_CE_ARTIFACT_PATH=/Users/me/data/mlrun-ce/artifacts
+```
+
+`Settings.select_mlrun_api_url()` returns the CE URL when CE is
+enabled and non-blank, otherwise falls back to
+`MLRUN_SIDECAR_URL`, then to `MLRUN_TRAINER_URL`.
+
+## Teardown
+
+```bash
+cd backend
+./scripts/teardown-mlrun-ce.sh
+```
+
+The script uninstalls the Helm release and removes the `mlrun`
+namespace. **Persistent host paths are preserved** so the same
+DBPATH can be reused across reinstalls — delete them manually if you
+want a clean slate.
+
+## Operational notes
+
+- **Nuclio / Jupyter / Pipelines disabled**: the bundled values file
+  disables Nuclio, Jupyter, and Kubeflow Pipelines to keep the local
+  install lightweight. Re-enable them in
+  `backend/k8s/mlrun-ce-values.yaml` if you need them.
+- **arm64 only**: the local install is opinionated for Apple Silicon.
+  On Intel hardware update the image tags before running the script.
+- **CE storage size**: MinIO is given a 10 GiB `hostPath` PVC; raise
+  it for non-trivial artifact stores.
+
+<Callout type="info" title="Screenshot pending">
+  A live screenshot of the MLRun CE Web UI will be added once the
+  Helm install has been run via `./scripts/setup-mlrun-ce.sh`. The
+  default deployment is opt-in (`MLRUN_CE_ENABLED=false`) so this
+  screenshot is captured separately from the seed lifecycle.
+</Callout>

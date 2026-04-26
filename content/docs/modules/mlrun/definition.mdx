@@ -1,0 +1,82 @@
+---
+title: MLRun Module — Use-Case Definition
+description: How an MLRun configuration is structured in the Workbench2 console and how the two reference use-cases (Spend Risk + Customer Personality) bind to MongoDB.
+---
+
+# Use-Case Definition
+
+An MLRun configuration is the top-level object in the console. It binds:
+
+1. A **project** (logical grouping; reused across runs and deployments).
+2. A **feature pipeline** (MongoDB aggregation that produces an
+   engineered feature set).
+3. A **feature set** (the materialised collection used as training input).
+4. **Training run history** (sklearn / xgboost / lightgbm / pytorch results).
+5. **Deployments** (when Kubernetes is enabled).
+
+The same shape is used for both reference use-cases; only the source
+collection, target derivation, and problem type differ.
+
+## Reference use-case: Customer Spend Risk
+
+| Field                | Value |
+| -------------------- | ----- |
+| Project id           | `spend_risk` |
+| Source DB            | `master` |
+| Source collection    | `bank_transactions` |
+| Output collection    | `bank_transactions_mlrun` |
+| Feature set name     | `spend_risk_features` |
+| Pipeline name        | `spend_risk_pipeline` |
+| Problem type         | `binary_classification` |
+| Target field         | `is_high_risk` (derived from frequent declined / risky merchant categories) |
+
+The target derivation runs as a `$lookup` + `$group` aggregation: any
+customer with ≥3 declined transactions in the last 30 days, or any
+transaction tagged with a high-risk merchant category (`gambling`,
+`crypto`, `cash_advance`), is flagged.
+
+## Reference use-case: Customer Personality
+
+| Field                | Value |
+| -------------------- | ----- |
+| Project id           | `customer_personality` |
+| Source DB            | `master` |
+| Source collection    | `bank_customer` |
+| Output collection    | `bank_customer_mlrun` |
+| Feature set name     | `customer_personality_features` |
+| Pipeline name        | `customer_personality_pipeline` |
+| Problem type         | `multiclass_classification` |
+| Target field         | `personality` |
+| Demographic features | `age`, `gender`, `income_band`, `region`, `life_stage`, `marital_status`, `dependents`, `tenure_months` |
+
+The personality target carries 4–6 distinct labels (typically
+`Industrious`, `Intentional`, `Experiential`, `Enthusiastic`); the
+seeder validates there are at least 2 distinct labels in the source
+collection before training.
+
+## Configuration anatomy
+
+A configuration row in `ecosystem_meta.mlrun_configurations` looks like:
+
+```json
+{
+  "_id": "configuration_id",
+  "name": "Customer Spend Risk",
+  "project_id": "spend_risk",
+  "pipeline_name": "spend_risk_pipeline",
+  "feature_set_name": "spend_risk_features",
+  "source": { "database": "master", "collection": "bank_transactions" },
+  "destination": { "database": "master", "collection": "bank_transactions_mlrun" },
+  "problem_type": "binary_classification",
+  "target_field": "is_high_risk",
+  "feature_fields": ["amount", "merchant_category", "channel", "..."],
+  "tags": ["seed", "spend_risk"]
+}
+```
+
+Configurations are immutable references; deletion is a cascade that
+removes the configuration row, the linked feature pipeline, the
+feature set, all training runs, and any K8s deployments tied to the
+project id (see [Access](/docs/modules/mlrun/access)).
+
+![MLRun configuration form](/images/modules/mlrun/mlrun-console-configuration-form.png)

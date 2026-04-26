@@ -1,0 +1,78 @@
+---
+title: MLRun Module — Kubernetes Deployment
+description: Deploy trained models alongside the Java ecosystem-runtime onto Docker Desktop Kubernetes using the K8s router and the Deployments tab.
+---
+
+# Kubernetes Deployment
+
+When `K8S_ENABLED=true`, the **Deployments** tab in the MLRun console
+exposes two actions:
+
+1. **Deploy model server** — schedules the trainer image with the
+   model id baked in; exposes a `/invocations` endpoint inside the
+   `ecosystem-workbench` namespace.
+2. **Deploy ecosystem-runtime** — schedules the Java
+   `ecosystem-runtime` pod with a sidecar volume that mounts the
+   trained model artifact, so scoring calls go through the same audit
+   path as production.
+
+Both actions are backed by `/api/v1/k8s/*` endpoints implemented in
+`backend/src/app/k8s/service.py`.
+
+## Manifests
+
+The bootstrap script (`backend/scripts/setup-k8s.sh`) creates:
+
+- A namespace `ecosystem-workbench`.
+- A `PersistentVolumeClaim` mounted at the workbench’s
+  `LOCAL_DATA_PATH/mlrun-artifacts` host path so trained models are
+  shared across pods.
+- A `Service` (NodePort 30091) for the deployed `ecosystem-runtime`.
+- A `Service` (NodePort 30092) per model server, allocated on first
+  deploy.
+
+When CE is also enabled, the chart installs into the `mlrun`
+namespace (separate from `ecosystem-workbench`) so the two systems
+can be torn down independently.
+
+## Deploy a model from the console
+
+1. In **Training Runs**, find a successful run.
+2. Click **Deploy to Kubernetes** → confirm.
+3. The row gains a **Deployment id** column.
+4. The **Deployments** tab now shows the model server pod with status
+   `Running`, the NodePort it bound, and a quick **Test scoring** link.
+
+![MLRun console — deployments](/images/modules/mlrun/mlrun-console-deployments.png)
+
+## Scoring through `ecosystem-runtime`
+
+Once the runtime pod is up, the model is reachable via two paths:
+
+- **Direct**: `POST http://localhost:30092/invocations` (model
+  server NodePort).
+- **Through ecosystem-runtime**: `POST
+  http://localhost:30091/invocate` with the
+  `campaign`/`sub-campaign` parameters that map back to the MLRun
+  project / configuration. This is the recommended path because it
+  applies the runtime’s logging, audit, and contract checks.
+
+## Coexistence with MLRun CE
+
+When `MLRUN_CE_ENABLED=true`, the Helm release lives in the `mlrun`
+namespace, while model servers and `ecosystem-runtime` continue to
+deploy in `ecosystem-workbench`. The console’s **Deployments** tab
+uses the workbench namespace; CE deployments are visible in the
+MLRun UI at `http://localhost:30060`. There is no cross-talk between
+the two — the trainer sidecar continues to handle compute regardless
+of CE status.
+
+## Cleanup
+
+Delete a deployment from the **Deployments** tab to remove the pod,
+service, and any associated PVCs scoped to that deployment id. The
+configuration row, training runs, and stored adapter remain
+untouched, so the same model can be redeployed later. To remove
+everything for a use-case (configuration, runs, deployments,
+generated artifacts), use the **Delete** action on the configuration
+row (see [Access](/docs/modules/mlrun/access)).
