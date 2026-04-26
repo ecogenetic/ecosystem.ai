@@ -1,13 +1,13 @@
 import { Hero } from './Hero'
 import Feature from './feature'
-import NewsletterForm from '@/components/Newsletter/SubscribeForm'
+import { EcosystemCTA } from './EcosystemCTA'
 
 export const Home = () => (
   <>
     <main className="relative overflow-hidden w-full">
       <Hero />
       <Feature locate={''} />
-      <NewsletterForm />
+      <EcosystemCTA />
     </main>
   </>
 )

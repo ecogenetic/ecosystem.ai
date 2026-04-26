@@ -1,5 +1,5 @@
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
-import { Banner, Head } from 'nextra/components'
+import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 import '../style.css'
@@ -9,7 +9,6 @@ import { GeistMono } from 'geist/font/mono'
 import { Logo } from '@/components/logo'
 import FooterMenu from '@/components/FooterMenu'
 import { AnalyticsProviders } from '@/components/analytics/AnalyticsProviders'
-import Link from 'next/link'
 
 export const metadata = {
   metadataBase: new URL('https://ecosystem.ai'),
@@ -60,14 +59,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </Head>
       <body>
         <Layout
-          banner={
-            <Banner storageKey="new-docs" dismissible>
-              <Link href="#">
-                <span className="sm:hidden">Meet the New ecosystem.Ai Resources Hub! 🚀</span>
-                <span className="hidden sm:inline">Meet the New ecosystem.Ai Resources Hub! 🚀</span>
-              </Link>
-            </Banner>
-          }
           navbar={
             <Navbar
               logo={<Logo />}

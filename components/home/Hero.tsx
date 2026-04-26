@@ -16,12 +16,6 @@ export function Hero() {
 
   return (
     <div className={styles.root}>
-      <div className="overlay">
-        <div className={styles.grid}>
-          <div className={styles.gridfade}></div>
-          <div className={styles.gridlines}></div>
-        </div>
-      </div>
       <div className={styles.content}>
         <h1 className={styles.headline}>
           <p className={styles.head}>
