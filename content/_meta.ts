@@ -40,7 +40,7 @@ export default {
   demo: {
     type: 'page',
     title: 'Demo',
-    href: 'http://customer.ecosystem.ai:85/',
+    href: 'https://medemo.ecosystem.ai',
     // display: 'hidden',
   },
   changelog: {
