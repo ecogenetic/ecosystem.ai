@@ -4,6 +4,7 @@ import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 import '../style.css'
 import '../src/overrides.css'
+import Script from 'next/script'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Logo } from '@/components/logo'
@@ -58,6 +59,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </Head>
       <body>
+        <Script
+          src="https://app.termly.io/resource-blocker/26739b38-1a89-4742-ab53-d8d724b77f51?autoBlock=on"
+          strategy="afterInteractive"
+        />
         <Layout
           navbar={
             <Navbar

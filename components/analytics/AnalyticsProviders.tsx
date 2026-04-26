@@ -30,11 +30,6 @@ export function AnalyticsProviders() {
   return (
     <PostHogProvider client={posthog}>
       {process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID ? <CrispWidget /> : null}
-      <Script
-        src="https://app.termly.io/resource-blocker/26739b38-1a89-4742-ab53-d8d724b77f51?autoBlock=on"
-        strategy="beforeInteractive"
-        type="text/javascript"
-      />
       <Script src="https://js-eu1.hs-scripts.com/143255669.js" strategy="afterInteractive" />
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-56R16ZWNK6"
