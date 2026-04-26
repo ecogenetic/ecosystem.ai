@@ -93,6 +93,7 @@ export default {
   },
   '404': {
     type: 'page',
+    display: 'hidden',
     theme: {
       typesetting: 'article',
       timestamp: false,
