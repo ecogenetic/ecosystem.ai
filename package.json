@@ -56,7 +56,7 @@
     "maverick.js": "^0.37.0",
     "mongodb": "^6.21.0",
     "mongoose": "^8.23.1",
-    "next": "^16.2.4",
+    "next": "^16.2.6",
     "next-auth": "^4.24.14",
     "next-sitemap": "^4.2.3",
     "nextra": "^4.6.1",
