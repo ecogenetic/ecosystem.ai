@@ -7,15 +7,13 @@ import Image from 'next/image'
 
 # Network Selector
 
-The Network Selector is a powerful tool that allows you to define and manage the routing of requests based on various criteria. It provides flexibility in configuring the network and allows for easy integration with external services.
+The Network Selector is a powerful tool that allows you to define and manage the routing of requests based on various criteria.
 
-![Netowrk Configuration](/images/runtime/network.png)
+![Network Configuration](/images/runtime/network.png)
 
-The network selector in ecosystem.ai uses an experiment’s configuration to dynamically route each prediction or interaction request to one of multiple ecosystem runtime configurations (e.g., Configuration A, B, or C). This lets you easily compare different model versions, capture feedback and logs, and adapt to evolving experiments - all managed under a single, unified API.
+The network selector in ecosystem.ai uses a configuration to dynamically route each prediction or interaction request to one of multiple ecosystem runtime configurations (e.g., Configuration A, B, or C). This lets you easily compare different model versions, capture feedback and logs, and adapt to evolving experiments - all managed under a single, unified API.
 
 When setting up a project to support network routing, you will need to configure the network selector. This involves defining the network configuration and specifying the routing criteria. 
-
-The network selector uses a switch key to determine which network configuration to use for each request. The switch key is a unique identifier that is used to route requests based on specific criteria.
 
 <Callout type="tip" title="Note">
   Use the `PostScoreNetwork` postscore plugin in your project deployment to enable the network selector.
@@ -49,12 +47,11 @@ There are two configuration settings that need to be created for the selector to
 The model selector is a network configuration that calls an external model selector to get a sorted list of options based on scores. It then calls other runtimes in sequence based on the model selector's score.
 
 ### **network_config**:
-This configuration file contains settings for the network configuration. It includes a switch_key that determines which key in the feature store to use for routing, and a selector object that specifies the default values for various parameters.
+The network_config should have a `type` of `model_selector` and include a `selector` object which contains the details of the runtime to call to get the ordering of external runtimes to call to generate the final result set.
 
 Example:
 ```json
 {
-  "switch_key": "marital",
   "name": "network_config",
   "type": "model_selector",
   "selector": {
@@ -71,7 +68,7 @@ Example:
 ```
 
 ### **network**:
-This configuration file contains the actual network options. Each entry corresponds to a possible value of the switch_key specified in network_config. It includes parameters such as numberoffers, subcampaign, channel, campaign, in_params, value, userid, url, and customer.
+This configuration file contains the actual network options. Each entry corresponds to a possible value of the offers returned by the selector specified in the network_config. It includes parameters such as numberoffers, subcampaign, channel, campaign, in_params, value, userid, url, and customer.
 
 Example:
 ```json
@@ -88,9 +85,13 @@ Example:
 }
 ```
 
+<Callout type="tip" title="Note">
+  If you pass `exclude_category` as a key in the `params` of the original API call then the corresponding value will be exclude even if it is included in the response from the selector
+</Callout>
+
 ## Lookup Passthrough, Default and No Logging Router
 
-The lookup passthrough is a network configuration that looks up a value with result pass-through. It uses a switch_key to determine the network configuration and calls an external service based on this configuration. It also checks for network validity and applies default values if necessary.
+The lookup passthrough default and no logging routers uses a switch_key to determine the network configuration and call an external service based on this configuration. The switch key is the name of a feature in the `parameter access` configured for the network runtime. The `lookup_passthrough` type will pass the exact response received by the network runtime, `default` will standardise the formatting of the responses and `no_logging_router` will not log the network runtime interactions.
 
 ### **network_config**:
 ```json
