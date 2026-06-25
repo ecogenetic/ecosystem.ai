@@ -3,4 +3,5 @@ export default {
   postscorebasic: 'Post-Score Basic',
   platformdynamicengagement: 'Platform Dynamic Engagement',
   postscorerecommenderoffers: 'Offer Recommender',
+  postscorenetwork: 'Post Score Network',
 }
