@@ -1,0 +1,82 @@
+---
+title: Two-Tower Module
+description: Dual-encoder (two-tower) recommendation for ecosystem.Ai — train a user tower and an item tower into a shared embedding space, export embeddings, and score in real time through the runtime using cosine / dot-product similarity.
+---
+
+import { Callout } from 'nextra/components'
+
+# Two-Tower Module
+
+## Overview
+
+The **Two-Tower module** brings the **dual-encoder** retrieval pattern to
+ecosystem.Ai. It trains two neural "towers":
+
+- a **user (customer) tower** that maps a customer's features into a
+  *p*-dimensional vector, and
+- an **item (offer/product) tower** that maps each candidate offer into the
+  **same** *p*-dimensional space.
+
+Compatibility between a customer and an offer is the **similarity of their two
+vectors** — a dot product (or, on unit-normalized vectors, the cosine). Because
+the two towers are independent at inference time, item vectors can be
+**precomputed once** and a customer is matched against thousands of offers with
+nothing more than vector math. This is what makes two-tower models the standard
+choice for large-scale **candidate retrieval**.
+
+```mermaid
+flowchart LR
+  cust["Customer features"] --> ut["User tower"]
+  off["Offer features"] --> it["Item tower"]
+  ut --> uv["User vector (p-dim)"]
+  it --> iv["Item vector (p-dim)"]
+  uv --> sim["similarity = dot / cosine"]
+  iv --> sim
+  sim --> rank["Ranked offers"]
+```
+
+## Where it fits in ecosystem.Ai
+
+| Stage | Component | Repo |
+| --- | --- | --- |
+| Train towers + export embeddings | Two-Tower algorithm (H2O Deep Learning) | `ecosystem-workbench2` |
+| PyTorch training + serving (optional) | `/pytorch` sidecar | `ecosystem-notebooks` |
+| Real-time scoring | `similarity` model type + `SimilarityScorer` + `PostScoreTwoTower` | `ecosystem-runtime` |
+| Storage | embedding collections in MongoDB | shared |
+
+The module is **engine-agnostic**: towers may be trained with **H2O Deep
+Learning** (the built-in workbench path) or **PyTorch** (the notebooks sidecar).
+Either way the runtime consumes **embedding vectors**, never the model itself, so
+real-time scoring carries no model-inference cost in the hot path.
+
+<Callout type="info" title="Two stages, one objective">
+  "Two-tower" refers to the **two encoders** trained against a single
+  similarity objective. It is distinct from the "two-stage"
+  (retrieval-then-ranking) system architecture, although two-tower models are
+  the usual choice for the *retrieval* stage of such systems.
+</Callout>
+
+## Lifecycle at a glance
+
+1. **[Data Preparation](/docs/modules/two_tower/data)** — interaction rows in
+   `logging.ecosystemruntime_flatten` become a training frame.
+2. **[Model Training](/docs/modules/two_tower/training)** — dual towers are
+   trained and embeddings are produced.
+3. **[Offline Scoring](/docs/modules/two_tower/scoring)** — concept tests and
+   batch scoring validate the run and write recommendations.
+4. **[Real-Time Scoring](/docs/modules/two_tower/runtime)** — the runtime ranks
+   offers per request using precomputed (or live PyTorch) embeddings.
+5. **[PyTorch Serving](/docs/modules/two_tower/pytorch)** and
+   **[API Reference](/docs/modules/two_tower/api)** cover the serving sidecar
+   and the full request/response contracts.
+
+## Key properties
+
+- **Shared embedding space** — both towers output the same dimension
+  (`embedding_dim`, default `32`).
+- **Similarity score** — dot product of L2-normalized vectors (equivalent to
+  cosine). See [Architecture & Theory](/docs/modules/two_tower/concepts).
+- **Decoupled inference** — item vectors precomputed; only the user vector is
+  needed per request.
+- **Runtime integration** — a dedicated `similarity` model type bypasses H2O and
+  dynamic scoring and routes to the reusable `SimilarityScorer`.

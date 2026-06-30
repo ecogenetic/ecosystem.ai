@@ -1,0 +1,117 @@
+---
+title: Two-Tower Module — Model Training
+description: Training the dual towers — H2O Deep Learning estimators, hyperparameters, deepfeatures embeddings, MOJO export, and the two_tower_runs metadata document. PyTorch training is also supported via the notebooks sidecar.
+---
+
+import { Callout } from 'nextra/components'
+
+# Model Training
+
+## Dual H2O Deep Learning towers
+
+The built-in trainer fits **two `H2ODeepLearningEstimator` models** against the
+same training frame:
+
+```text
+user tower:  model_id = two_tower_user_{run_id}
+item tower:  model_id = two_tower_item_{run_id}
+```
+
+Both share the same configuration:
+
+- `hidden = [embedding_dim]` — a single hidden layer whose width **is** the
+  embedding dimension.
+- `activation = "Rectifier"`
+- `categorical_encoding = "one_hot_internal"`
+- `stopping_metric = "AUC"` (binomial classification on `accepted`)
+- `seed = 42`, with an 80/20 train/validation split.
+
+## Hyperparameters
+
+| Parameter | Default | Range | Meaning |
+| --- | --- | --- | --- |
+| `embedding_dim` | `32` | 4–256 | width of the shared embedding space |
+| `epochs` | `5` | 1–500 | training epochs per tower |
+| `stopping_rounds` | `3` | 0–50 | early-stopping patience |
+| `predictor` | *(required)* | — | which interactions to train on |
+| `from_date` / `to_date` | `null` | — | optional date window |
+| `run_id` | auto | — | identifier for this training run |
+
+## Producing embeddings
+
+After training, an embedding for any customer or offer is obtained by reading the
+**first hidden layer** of the relevant tower:
+
+```python
+# user embedding
+u = user_model.deepfeatures(user_frame, layer=0)   # p-dim activations
+u = u / norm(u)                                     # L2 normalize
+
+# item embedding
+v = item_model.deepfeatures(item_frame, layer=0)
+v = v / norm(v)
+
+score = dot(u, v)                                   # cosine on unit vectors
+```
+
+This is the exact computation the offline concept test and batch scoring use.
+
+## Artifacts
+
+| Artifact | Format | Location |
+| --- | --- | --- |
+| In-cluster models | H2O model objects | H2O cluster (used for `deepfeatures`) |
+| MOJO files | `{model_id}.zip` | `H2O_MODELS` directory |
+| Run metadata | MongoDB document | `ecosystem_meta.two_tower_runs` |
+
+The `two_tower_runs` document records everything needed to reproduce or score a
+run:
+
+```json
+{
+  "run_id": "tt_abc123",
+  "database": "logging",
+  "flatten_collection": "ecosystemruntime_flatten",
+  "user_column": "customer_id",
+  "item_column": "offer",
+  "predictor": "my_predictor",
+  "embedding_dim": 32,
+  "epochs": 5,
+  "stopping_rounds": 3,
+  "user_model_id": "two_tower_user_tt_abc123",
+  "item_model_id": "two_tower_item_tt_abc123",
+  "user_auc": 0.72,
+  "item_auc": 0.68,
+  "n_rows": 150000,
+  "updated_at": "2026-06-30T00:00:00Z"
+}
+```
+
+## Exporting embeddings for the runtime
+
+Real-time scoring reads **precomputed embedding vectors** from MongoDB (see
+[Real-Time Scoring](/docs/modules/two_tower/runtime)). The expected collections:
+
+| Collection | Document shape |
+| --- | --- |
+| `two_tower_user_embeddings` | `{ run_id, customer_id, embedding: [floats] }` |
+| `two_tower_item_embeddings` | `{ run_id, offer, embedding: [floats] }` |
+
+Item vectors may alternatively ride on the offer matrix as an `embedding` field.
+
+<Callout type="info" title="Exporting vectors">
+  The training run produces the towers; populating the embedding collections is a
+  batch-export step (run `deepfeatures` over all customers/offers and write the
+  vectors). Until those collections are populated, configure the runtime to fetch
+  the user vector live from the [PyTorch sidecar](/docs/modules/two_tower/pytorch).
+</Callout>
+
+## Training with PyTorch (alternative)
+
+Instead of H2O, you can train the towers with **PyTorch** through the
+ecosystem-notebooks `/pytorch/train` endpoint. The model type `two_tower`
+produces user/item embeddings of `embedding_dim` width that the runtime consumes
+identically. See [PyTorch Serving](/docs/modules/two_tower/pytorch) and the
+[API Reference](/docs/modules/two_tower/api) for the exact request body.
+
+Next: [Offline Scoring](/docs/modules/two_tower/scoring).
