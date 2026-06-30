@@ -14,12 +14,55 @@ and (optionally) deployed:
    useful for smoke tests and the Generated Python `score_model.py`.
 2. **Model server NodePort** at `http://localhost:30092/invocations`
    — created when the model is deployed via the **Deployments** tab.
-3. **Ecosystem-runtime** at `http://localhost:30091/invocate` — the
+3. **Ecosystem-runtime** at `http://localhost:30091/invocations` — the
    recommended production path; applies logging, audit, and the
-   campaign / sub-campaign contract.
+   campaign / sub-campaign contract. The runtime calls the configured
+   trainer or deployed-server URL for `api:` model entries and
+   normalizes the response into the canonical mojoScore shape, so
+   existing post-score plugins keep working unchanged.
 
 All three accept the same payload shape because the trainer sidecar
 emits an `InvocationsRequest` consistent with `ecosystem-runtime`.
+
+## Configuring `mojo.key` for an MLRun model
+
+The runtime supports three model backends through a single
+`mojo.key` comma list (1-based `mojo` request indices preserved
+across types):
+
+| Prefix          | Backend                                      |
+| --------------- | -------------------------------------------- |
+| *(none)*        | H2O MOJO file at `user.generated.models`     |
+| `tensorflow:` / `pytorch:` | DJL TensorFlow / PyTorch model    |
+| `api:`          | MLRun trainer or deployed model server (new) |
+
+Add an `api:` entry of the form:
+
+```
+api:<framework>:<base_url>:<model_id>
+```
+
+For example:
+
+```properties
+mojo.key=GLM_v1.zip,api:xgboost:http://ecosystem-mlrun-trainer:8003:spend_risk_xgboost_v1
+```
+
+In `ecosystem-workbench2`, do not hand-edit `mojo.key` — instead,
+pick MOJO files and MLRun models in the **Static Model** section of
+the Deployment Editor. The backend joins
+`model_configuration.models_load` (MOJO filenames) with
+`model_configuration.api_models[]` (MLRun rows) into the final
+`mojo.key` value on push.
+
+The MOJO picker lists `.zip` files at the deployment step's
+`paths.models_path` (with a fallback to `settings.h2o_models`),
+preserving order so the 1-based `mojo` request index stays stable.
+The API model picker queries
+`GET /api/v1/deployments/api-model-options` which joins
+`mlrun_models` with `mlrun_k8s_deployments` so deployed models
+surface their NodePort URL while not-yet-deployed runs fall back to
+the trainer sidecar URL.
 
 ## Sample scoring call (Customer Spend Risk)
 
