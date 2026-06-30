@@ -1,0 +1,76 @@
+---
+title: Two-Tower Module — Access & Operations
+description: Operating the Two-Tower module — RBAC, the Solutions hub route, deployment configuration, the embedding/sidecar prerequisites, and a deployment checklist.
+---
+
+import { Callout } from 'nextra/components'
+
+# Access & Operations
+
+## Access control
+
+The module is gated by the `two_tower` capability. Grant it to the roles that
+should train, batch-score, and deploy two-tower recommenders. The workbench
+Solutions hub surfaces the module at the `/two-tower` route.
+
+## Deployment configuration
+
+Real-time scoring is configured entirely through campaign properties (no model
+file is loaded):
+
+```properties
+predictor.model.type=similarity
+plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
+plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
+
+# optional live user embedding via the PyTorch sidecar
+predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:two_tower_user_v1
+```
+
+| Property | Required | Meaning |
+| --- | --- | --- |
+| `predictor.model.type=similarity` | yes | bypass H2O + dynamic; use cosine/dot scoring |
+| `plugin.prescore` | yes | `PrePredictTwoTower` (loads embeddings) |
+| `plugin.postscore` | yes | `PostScoreTwoTower` (ranks offers) |
+| `predictor.twotower.user.embed` | optional | live user vector via api:pytorch |
+| `mojo.key` | omit | not used in similarity mode |
+
+## Prerequisites
+
+1. **A trained run** (`two_tower_runs`) from workbench2 or the PyTorch sidecar.
+2. **Embeddings available** to the runtime, via either:
+   - precomputed vectors in `two_tower_user_embeddings` /
+     `two_tower_item_embeddings`, or
+   - a reachable PyTorch sidecar for the user vector plus precomputed item
+     vectors.
+
+<Callout type="warn" title="Populate embeddings before deploying">
+  In `similarity` mode the runtime computes scores purely from vectors. If neither
+  precomputed embeddings nor the sidecar are available, offers cannot be ranked.
+  Confirm the embedding collections are populated (or the sidecar responds) before
+  routing traffic.
+</Callout>
+
+## Deployment checklist
+
+- [ ] Train towers (H2O via workbench2, or PyTorch via the sidecar).
+- [ ] Export user/item embeddings to MongoDB (or stand up the sidecar).
+- [ ] Set `predictor.model.type=similarity` and the two plugin properties.
+- [ ] (Optional) Set `predictor.twotower.user.embed` for live user vectors.
+- [ ] Smoke test with `POST /invocations` and confirm `final_result` ranks offers.
+- [ ] Verify logging rows are written (see
+  [Logging & Reporting](/docs/runtime/logging)).
+
+## Operations notes
+
+- **Latency** is dominated by vector math and (optionally) a single sidecar call
+  per request; it is independent of model size.
+- **Retraining** produces a new `run_id`; re-export embeddings and update the
+  collections. The runtime reads the latest vectors keyed by `customer_id` /
+  `offer`.
+- **Cold-start offers** without an embedding are skipped during ranking (logged
+  and continued), so a missing vector never fails a request.
+
+Related pages: [Real-Time Scoring](/docs/modules/two_tower/runtime),
+[PyTorch Serving](/docs/modules/two_tower/pytorch),
+[API Reference](/docs/modules/two_tower/api).

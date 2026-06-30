@@ -1,0 +1,206 @@
+---
+title: Two-Tower Module — API Reference
+description: Complete request and response JSON for two-tower training and scoring across the stack — workbench2 algorithm endpoints, the ecosystem-notebooks PyTorch sidecar, and the ecosystem-runtime invocations contract.
+---
+
+import { Callout } from 'nextra/components'
+
+# API Reference
+
+Every endpoint below shows a **copy-pasteable** request body and a sample
+response. Endpoints are grouped by component.
+
+## Workbench2 — two-tower algorithm
+
+Base prefix: `/api/v1`.
+
+| Method | Path | Sync/Async |
+| --- | --- | --- |
+| `GET` | `/algorithms/two-tower/health` | sync |
+| `GET` | `/algorithms/two-tower/predictors` | sync |
+| `GET` | `/algorithms/two-tower/predictor-date-bounds` | sync |
+| `POST` | `/algorithms/two-tower/train` | async job |
+| `POST` | `/algorithms/two-tower/batch-score` | async job |
+| `POST` | `/algorithms/two-tower/concept-test` | sync |
+
+### Train
+
+Request:
+
+```json
+{
+  "database": "logging",
+  "flatten_collection": "ecosystemruntime_flatten",
+  "predictor": "my_predictor",
+  "from_date": "2026-01-01",
+  "to_date": "2026-06-01",
+  "embedding_dim": 32,
+  "epochs": 5,
+  "stopping_rounds": 3,
+  "run_id": "tt_abc123"
+}
+```
+
+Response (job accepted) and final job result:
+
+```json
+{ "job_id": "job_789" }
+```
+
+```json
+{
+  "run_id": "tt_abc123",
+  "user_model_id": "two_tower_user_tt_abc123",
+  "item_model_id": "two_tower_item_tt_abc123",
+  "user_auc": 0.72,
+  "item_auc": 0.68,
+  "n_rows": 150000
+}
+```
+
+### Batch score
+
+Request:
+
+```json
+{ "run_id": "tt_abc123", "top_k": 10, "max_users": 5000, "scores_collection": "two_tower_scores" }
+```
+
+Response (per-customer document written to MongoDB):
+
+```json
+{
+  "run_id": "tt_abc123",
+  "customer_id": "user_1",
+  "ranked": [ { "offer": "ProductB", "score": 0.87 }, { "offer": "ProductC", "score": 0.41 } ],
+  "created_at": "2026-06-30T00:00:00Z"
+}
+```
+
+### Concept test
+
+Request:
+
+```json
+{ "run_id": "tt_abc123", "customer_id": "user_1", "offers": ["ProductA", "ProductB"] }
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "run_id": "tt_abc123",
+  "customer_id": "user_1",
+  "ranked": [ { "offer": "ProductB", "score": 0.87 }, { "offer": "ProductA", "score": 0.12 } ]
+}
+```
+
+## ecosystem-notebooks — PyTorch sidecar
+
+Base URL: `http://<notebooks-host>:8010`.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/pytorch/train` | train MLP or two-tower model |
+| `POST` | `/pytorch/invocations` | score / embed by `model_id` |
+| `GET` | `/pytorch/models` | list trained model ids |
+| `GET` | `/pytorch/health` | health check |
+
+### Train
+
+Request:
+
+```json
+{
+  "model_id": "two_tower_user_v1",
+  "model_type": "two_tower",
+  "problem_type": "binary_classification",
+  "data": {
+    "source": { "database": "logging", "collection": "ecosystemruntime_flatten", "pipeline": [], "limit": 100000 },
+    "csv_path": null,
+    "inline": null,
+    "target_column": "accepted",
+    "feature_columns": ["customer_id", "price", "rank", "score"],
+    "categorical_columns": ["customer_id"],
+    "train_test_split": 0.2,
+    "random_state": 42
+  },
+  "hyperparameters": {
+    "epochs": 25, "batch_size": 256, "hidden": 64, "learning_rate": 0.001,
+    "embedding_dim": 32,
+    "user_features": ["customer_id", "price", "rank", "score"],
+    "item_features": ["offer", "price", "rank", "score"],
+    "user_id_column": "customer_id", "item_id_column": "offer"
+  }
+}
+```
+
+Response:
+
+```json
+{
+  "run_id": "run_2f1c",
+  "status": "succeeded",
+  "model_id": "two_tower_user_v1",
+  "metrics": { "user_auc": 0.71, "item_auc": 0.67 },
+  "rows_total": 100000
+}
+```
+
+### Invocations (score / embed)
+
+Request:
+
+```json
+{
+  "model_id": "two_tower_user_v1",
+  "instances": [
+    { "customer_id": "user_1", "price": 0, "rank": 1, "score": 0, "tower": "user" }
+  ]
+}
+```
+
+Response:
+
+```json
+{
+  "predictions": [ { "prediction": 0.87, "embedding": [0.11, 0.20, 0.07] } ],
+  "final_result": [ { "prediction": 0.87, "embedding": [0.11, 0.20, 0.07] } ],
+  "framework": "pytorch"
+}
+```
+
+<Callout type="info" title="Embedding shape">
+  `ApiModelClient.embed()` accepts the embedding at `predictions[0].embedding`,
+  or top-level `embedding` / `vector` / `outputs[0]`.
+</Callout>
+
+## ecosystem-runtime — invocations
+
+Request (`POST /invocate`):
+
+```json
+{
+  "campaign": "two_tower_demo",
+  "sub-campaign": "default",
+  "channel": "web",
+  "customer": "user_1",
+  "numberoffers": 3,
+  "userid": "ecosystem",
+  "in_params": { "input": ["customer_id"], "value": ["user_1"] }
+}
+```
+
+Response (trimmed):
+
+```json
+{
+  "final_result": [
+    { "rank": 1, "result": { "offer": "ProductB", "offer_name": "ProductB", "score": 0.87 } },
+    { "rank": 2, "result": { "offer": "ProductC", "offer_name": "ProductC", "score": 0.41 } }
+  ],
+  "explore": 0,
+  "uuid": "..."
+}
+```
