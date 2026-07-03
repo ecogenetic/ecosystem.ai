@@ -19,9 +19,72 @@ Base prefix: `/api/v1`.
 | `GET` | `/algorithms/two-tower/health` | sync |
 | `GET` | `/algorithms/two-tower/predictors` | sync |
 | `GET` | `/algorithms/two-tower/predictor-date-bounds` | sync |
+| `GET` | `/algorithms/two-tower/configs` | sync |
+| `POST` | `/algorithms/two-tower/configs` | sync |
+| `POST` | `/algorithms/two-tower/configs/{config_id}/prediction-link` | sync |
+| `GET` | `/algorithms/two-tower/configs/{config_id}/jobs` | sync |
 | `POST` | `/algorithms/two-tower/train` | async job |
 | `POST` | `/algorithms/two-tower/batch-score` | async job |
+| `POST` | `/algorithms/two-tower/export-embeddings` | async job |
 | `POST` | `/algorithms/two-tower/concept-test` | sync |
+
+### Saved configuration
+
+Request (`POST /algorithms/two-tower/configs`):
+
+```json
+{
+  "config_id": "customer_offer_retrieval_v1",
+  "name": "Customer Offer Retrieval v1",
+  "engine": "pytorch_notebooks",
+  "source": {
+    "database": "logging",
+    "collection": "ecosystemruntime_flatten",
+    "predictor": "my_predictor",
+    "from_date": "2026-01-01",
+    "to_date": "2026-06-01"
+  },
+  "features": {
+    "target_column": "accepted",
+    "user_features": ["customer_id", "price", "rank", "score"],
+    "item_features": ["offer", "price", "rank", "score"],
+    "categorical_columns": ["customer_id", "offer"]
+  },
+  "keys": { "customer_key_field": "customer_id", "offer_key_field": "offer" },
+  "training": {
+    "embedding_dim": 32,
+    "epochs": 25,
+    "stopping_rounds": 3,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "hidden": [128, 64]
+  },
+  "embedding_export": {
+    "database": "ecosystem_meta",
+    "user_collection": "two_tower_user_embeddings",
+    "item_collection": "two_tower_item_embeddings",
+    "metric": "cosine",
+    "normalized": true
+  }
+}
+```
+
+Saved configurations are listed in the `/two-tower` table. Jobs should include
+`context.config_id` so the page can show all jobs for the selected config.
+
+The deployable Workbench asset is still a prediction entity. Link or create it
+from the saved config:
+
+```json
+{
+  "config_id": "customer_offer_retrieval_v1",
+  "predict_id": "customer_offer_retrieval_v1",
+  "create_if_missing": true
+}
+```
+
+The linked prediction stores compact `two_tower` metadata while detailed run
+history remains in `two_tower_runs` and async jobs.
 
 ### Train
 
@@ -29,6 +92,8 @@ Request:
 
 ```json
 {
+  "config_id": "customer_offer_retrieval_v1",
+  "engine": "h2o",
   "database": "logging",
   "flatten_collection": "ecosystemruntime_flatten",
   "predictor": "my_predictor",
@@ -77,6 +142,45 @@ Response (per-customer document written to MongoDB):
 }
 ```
 
+### Export embeddings
+
+Request:
+
+```json
+{
+  "run_id": "tt_abc123",
+  "config_id": "customer_offer_retrieval_v1",
+  "embedding_database": "ecosystem_meta",
+  "user_embedding_collection": "two_tower_user_embeddings",
+  "item_embedding_collection": "two_tower_item_embeddings",
+  "customer_key_field": "customer_id",
+  "offer_key_field": "offer",
+  "max_users": 100000,
+  "max_items": 100000
+}
+```
+
+Accepted response:
+
+```json
+{ "job_id": "job_export_123", "message": "Embedding export started" }
+```
+
+Final job result:
+
+```json
+{
+  "run_id": "tt_abc123",
+  "config_id": "customer_offer_retrieval_v1",
+  "embedding_database": "ecosystem_meta",
+  "user_embedding_collection": "two_tower_user_embeddings",
+  "item_embedding_collection": "two_tower_item_embeddings",
+  "user_embedding_count": 240000,
+  "item_embedding_count": 5800,
+  "embeddings_exported_at": "2026-06-30T00:00:00Z"
+}
+```
+
 ### Concept test
 
 Request:
@@ -113,16 +217,24 @@ Request:
 
 ```json
 {
-  "model_id": "two_tower_user_v1",
+  "model_id": "customer_offer_retrieval_v1",
   "model_type": "two_tower",
+  "async": true,
   "problem_type": "binary_classification",
   "data": {
-    "source": { "database": "logging", "collection": "ecosystemruntime_flatten", "pipeline": [], "limit": 100000 },
+    "source": {
+      "database": "logging",
+      "collection": "ecosystemruntime_flatten",
+      "pipeline": [
+        { "$match": { "predictor": "my_predictor" } },
+        { "$project": { "_id": 0, "customer_id": 1, "offer": 1, "price": 1, "rank": 1, "score": 1, "accepted": 1 } }
+      ],
+      "limit": 100000
+    },
     "csv_path": null,
     "inline": null,
     "target_column": "accepted",
-    "feature_columns": ["customer_id", "price", "rank", "score"],
-    "categorical_columns": ["customer_id"],
+    "categorical_columns": ["customer_id", "offer"],
     "train_test_split": 0.2,
     "random_state": 42
   },
@@ -154,7 +266,7 @@ Request:
 
 ```json
 {
-  "model_id": "two_tower_user_v1",
+  "model_id": "customer_offer_retrieval_v1",
   "instances": [
     { "customer_id": "user_1", "price": 0, "rank": 1, "score": 0, "tower": "user" }
   ]
@@ -175,6 +287,41 @@ Response:
   `ApiModelClient.embed()` accepts the embedding at `predictions[0].embedding`,
   or top-level `embedding` / `vector` / `outputs[0]`.
 </Callout>
+
+## Python runner
+
+The scriptable flow should call the same Workbench APIs as the UI:
+
+```bash
+python backend/scripts/two_tower_pipeline.py \
+  --config-id customer_offer_retrieval_v1 \
+  --steps train,concept-test,export-embeddings \
+  --wait
+```
+
+Expected JSON output:
+
+```json
+{
+  "config_id": "customer_offer_retrieval_v1",
+  "run_id": "tt_abc123",
+  "jobs": [
+    { "step": "train", "job_id": "job_train_1", "status": "Completed" },
+    { "step": "export-embeddings", "job_id": "job_export_1", "status": "Completed" }
+  ],
+  "embedding_export": {
+    "database": "ecosystem_meta",
+    "user_collection": "two_tower_user_embeddings",
+    "item_collection": "two_tower_item_embeddings",
+    "user_embedding_count": 240000,
+    "item_embedding_count": 5800
+  },
+  "deployment_properties": {
+    "predictor.model.type": "similarity",
+    "predictor.twotower.run.id": "tt_abc123"
+  }
+}
+```
 
 ## ecosystem-runtime — invocations
 

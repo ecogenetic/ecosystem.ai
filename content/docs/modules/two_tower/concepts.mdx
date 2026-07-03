@@ -67,6 +67,92 @@ flowchart TB
   hi --> ivec["item embedding"]
 ```
 
+## How Workbench, notebooks, and runtime work together
+
+The Two-Tower module is split across three ecosystem components, each with a
+clear responsibility:
+
+- **Workbench2** is the control plane. Users create saved Two-Tower
+  configurations, choose an engine, launch jobs, run concept tests, export
+  embeddings, and bind the exported run to a deployment.
+- **ecosystem-notebooks** is the PyTorch training and embedding sidecar. It is
+  used when the saved configuration selects the `pytorch_notebooks` engine.
+- **ecosystem-runtime** is the real-time scoring plane. It does not train
+  models; it reads the deployed configuration and ranks the request's offer
+  matrix using exported embeddings and similarity scoring.
+
+### Model training and embedding export
+
+Training starts from a saved configuration in Workbench2. The configuration
+captures the source data, feature lists, key fields, training hyperparameters,
+engine choice, export collections, and deployment defaults. Workbench2 then
+dispatches to the selected engine:
+
+- `h2o` uses the built-in Workbench H2O Deep Learning path.
+- `pytorch_notebooks` calls `ecosystem-notebooks /pytorch/train` with
+  `model_type="two_tower"`.
+
+After training, Workbench2 stores run metadata in `two_tower_runs`, lets the
+user run a concept test, and then runs an explicit embedding export job. That
+export job writes normalized user and item vectors to MongoDB so runtime scoring
+can stay fast and deterministic.
+
+```mermaid
+flowchart TD
+  User["User opens Workbench2 /two-tower"] --> Config["Create or select saved Two-Tower config"]
+  Config --> Params["Set source, features, keys, engine, hyperparameters"]
+  Params --> Engine{"Training engine"}
+
+  Engine --> H2O["Workbench2 H2O Deep Learning trainer"]
+  Engine --> PT["ecosystem-notebooks /pytorch/train"]
+
+  H2O --> H2OModels["User tower + item tower models"]
+  PT --> PTArtifacts["PyTorch two-tower artifacts"]
+
+  H2OModels --> RunMeta["Workbench2 stores two_tower_runs metadata"]
+  PTArtifacts --> RunMeta
+
+  RunMeta --> Concept["Concept test: customer + candidate offers"]
+  Concept --> Export["Workbench2 export embeddings job"]
+  Export --> UserVectors["Mongo: two_tower_user_embeddings"]
+  Export --> ItemVectors["Mongo: two_tower_item_embeddings"]
+  Export --> DeployDefaults["Deployment defaults: run id, collections, keys, plugins"]
+```
+
+This training flow separates **model production** from **runtime use**. H2O and
+PyTorch can produce embeddings in different ways, but the exported shape is the
+same: keyed, normalized vectors grouped by `run_id`.
+
+### Real-time scoring
+
+Runtime scoring starts after Workbench2 has generated deployment properties for
+the selected Two-Tower run. The deployment marks the model as
+`predictor.model.type=similarity` and selects the Two-Tower pre/post plugins.
+That tells ecosystem-runtime to bypass the normal H2O/dynamic scoring path for
+that predictor and use vector similarity instead.
+
+```mermaid
+flowchart TD
+  Request["Runtime invocation with customer context + offerMatrix"] --> Mode["predictor.model.type = similarity"]
+  Mode --> Pre["PrePredictTwoTower"]
+  Pre --> Settings["Read run id, embedding DB, collections, customer key, offer key"]
+  Settings --> FetchUser["Fetch one user embedding from Mongo"]
+  Settings --> OfferKeys["Extract offer keys from offerMatrix"]
+  OfferKeys --> FetchItems["Fetch matching item embeddings from Mongo"]
+  FetchUser --> Params["Attach user_embedding to params"]
+  FetchItems --> Params2["Attach item_embeddings to params"]
+  Params --> Post["PostScoreTwoTower"]
+  Params2 --> Post
+  Post --> Similarity["SimilarityScorer cosine / dot product"]
+  Similarity --> Ranked["Ranked offerMatrix response"]
+```
+
+In this scoring flow, ecosystem-runtime does not need to load the training
+framework or run neural-network inference on every request. It only needs the
+customer vector, the candidate offer vectors, and the configured similarity
+metric. This keeps the hot path small while still allowing Workbench2 and
+ecosystem-notebooks to evolve the training engines independently.
+
 ## Retrieval versus ranking
 
 Two-tower models shine at **retrieval**: with item vectors precomputed, finding

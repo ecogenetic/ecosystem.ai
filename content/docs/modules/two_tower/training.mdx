@@ -7,6 +7,95 @@ import { Callout } from 'nextra/components'
 
 # Model Training
 
+Training is operated from the Workbench **`/two-tower`** page. The page is
+configuration-first: users save a Two-Tower metadata configuration, select it
+from a table, run jobs from that configuration, and review the job history for
+that exact configuration.
+
+## Saved Two-Tower configuration
+
+A configuration captures every parameter needed to repeat the process:
+
+```json
+{
+  "config_id": "customer_offer_retrieval_v1",
+  "name": "Customer Offer Retrieval v1",
+  "engine": "h2o",
+  "source": {
+    "database": "logging",
+    "collection": "ecosystemruntime_flatten",
+    "predictor": "my_predictor",
+    "from_date": "2026-01-01",
+    "to_date": "2026-06-01"
+  },
+  "features": {
+    "target_column": "accepted",
+    "user_features": ["customer_id", "price", "rank", "score"],
+    "item_features": ["offer", "price", "rank", "score"],
+    "categorical_columns": ["customer_id", "offer"]
+  },
+  "keys": {
+    "customer_key_field": "customer_id",
+    "offer_key_field": "offer"
+  },
+  "training": {
+    "embedding_dim": 32,
+    "epochs": 5,
+    "stopping_rounds": 3,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "hidden": 64
+  },
+  "embedding_export": {
+    "database": "ecosystem_meta",
+    "user_collection": "two_tower_user_embeddings",
+    "item_collection": "two_tower_item_embeddings",
+    "metric": "cosine",
+    "normalized": true
+  },
+  "deployment_defaults": {
+    "model_type": "similarity",
+    "pre_score_class_text": "PrePredictTwoTower.java",
+    "post_score_class_text": "PostScoreTwoTower.java"
+  },
+  "prediction_entity": {
+    "predict_id": "customer_offer_retrieval_v1"
+  }
+}
+```
+
+The configuration should be stored with a unique `config_id`. Jobs created from
+the UI or Python runner include `context.config_id`, making it possible to show
+all train, concept-test, export, and pipeline jobs for the selected
+configuration.
+
+The `/two-tower` page also links the config to the existing Workbench
+`predictions` entity. That keeps Projects using `project_predictors` for the
+deployable predictor asset, while `two_tower_runs` remains the operational
+history for training and export jobs.
+
+## Workbench process
+
+```mermaid
+flowchart TD
+  Config["Saved Two-Tower config"] --> Train["Train engine: H2O or PyTorch"]
+  Train --> RunMeta["two_tower_runs metadata"]
+  RunMeta --> Concept["Concept test"]
+  Concept --> Export["Export normalized embeddings"]
+  Export --> Mongo["Mongo embedding collections"]
+  Mongo --> Deploy["Bind exported run in deployment editor"]
+  Config --> Prediction["Prediction entity for Projects"]
+```
+
+The `/two-tower` dashboard should expose:
+
+- a table of saved configurations,
+- an editable selected-configuration panel,
+- action buttons for train, concept test, export embeddings, and full pipeline,
+- a per-configuration job history table, and
+- latest run/export status such as `run_id`, engine, row count, AUC, exported
+  user vectors, exported item vectors, and updated date.
+
 ## Dual H2O Deep Learning towers
 
 The built-in trainer fits **two `H2ODeepLearningEstimator` models** against the
@@ -56,12 +145,56 @@ score = dot(u, v)                                   # cosine on unit vectors
 
 This is the exact computation the offline concept test and batch scoring use.
 
+## PyTorch training engine
+
+PyTorch training runs through the `ecosystem-notebooks` `/pytorch` sidecar. From
+Workbench, a PyTorch configuration is translated into a `POST /pytorch/train`
+request with `model_type="two_tower"`.
+
+```json
+{
+  "model_id": "customer_offer_retrieval_v1",
+  "model_type": "two_tower",
+  "async": true,
+  "data": {
+    "source": {
+      "database": "logging",
+      "collection": "ecosystemruntime_flatten",
+      "pipeline": [
+        { "$match": { "predictor": "my_predictor" } },
+        { "$project": { "_id": 0, "customer_id": 1, "offer": 1, "price": 1, "rank": 1, "score": 1, "accepted": 1 } }
+      ]
+    },
+    "target_column": "accepted",
+    "categorical_columns": ["customer_id", "offer"]
+  },
+  "hyperparameters": {
+    "epochs": 25,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "embedding_dim": 32,
+    "hidden": 64,
+    "user_features": ["customer_id", "price", "rank", "score"],
+    "item_features": ["offer", "price", "rank", "score"],
+    "user_id_column": "customer_id",
+    "item_id_column": "offer"
+  }
+}
+```
+
+Artifacts are stored by the notebooks sidecar under the existing
+`DATA_DIR/pytorch_models/{model_id}` path. Workbench still records the run in
+`ecosystem_meta.two_tower_runs`, with `engine="pytorch"`, the model id, sidecar
+URL, source metadata, feature columns, keys, embedding dimension, metrics, and
+export metadata.
+
 ## Artifacts
 
 | Artifact | Format | Location |
 | --- | --- | --- |
 | In-cluster models | H2O model objects | H2O cluster (used for `deepfeatures`) |
 | MOJO files | `{model_id}.zip` | `H2O_MODELS` directory |
+| PyTorch artifacts | `user_tower.pt`, `item_tower.pt`, preprocessing metadata | `DATA_DIR/pytorch_models/{model_id}` |
 | Run metadata | MongoDB document | `ecosystem_meta.two_tower_runs` |
 
 The `two_tower_runs` document records everything needed to reproduce or score a
@@ -70,6 +203,8 @@ run:
 ```json
 {
   "run_id": "tt_abc123",
+  "config_id": "customer_offer_retrieval_v1",
+  "engine": "h2o",
   "database": "logging",
   "flatten_collection": "ecosystemruntime_flatten",
   "user_column": "customer_id",
@@ -83,6 +218,11 @@ run:
   "user_auc": 0.72,
   "item_auc": 0.68,
   "n_rows": 150000,
+  "embedding_database": "ecosystem_meta",
+  "user_embedding_collection": "two_tower_user_embeddings",
+  "item_embedding_collection": "two_tower_item_embeddings",
+  "customer_key_field": "customer_id",
+  "offer_key_field": "offer",
   "updated_at": "2026-06-30T00:00:00Z"
 }
 ```
@@ -94,24 +234,35 @@ Real-time scoring reads **precomputed embedding vectors** from MongoDB (see
 
 | Collection | Document shape |
 | --- | --- |
-| `two_tower_user_embeddings` | `{ run_id, customer_id, embedding: [floats] }` |
-| `two_tower_item_embeddings` | `{ run_id, offer, embedding: [floats] }` |
+| `two_tower_user_embeddings` | `{ run_id, embedding_id, customer_id, embedding, embedding_dim, engine, model_id, normalized, updated_at }` |
+| `two_tower_item_embeddings` | `{ run_id, embedding_id, offer, embedding, embedding_dim, engine, model_id, normalized, updated_at }` |
 
 Item vectors may alternatively ride on the offer matrix as an `embedding` field.
 
 <Callout type="info" title="Exporting vectors">
-  The training run produces the towers; populating the embedding collections is a
-  batch-export step (run `deepfeatures` over all customers/offers and write the
-  vectors). Until those collections are populated, configure the runtime to fetch
-  the user vector live from the [PyTorch sidecar](/docs/modules/two_tower/pytorch).
+  The training run produces the towers; populating the embedding collections is
+  an explicit export job. H2O exports use `deepfeatures(layer=0)`. PyTorch
+  exports call `/pytorch/invocations` with `tower="user"` or `tower="item"`.
+  Both paths write the same normalized Mongo document shape.
 </Callout>
 
-## Training with PyTorch (alternative)
+## Python runner
 
-Instead of H2O, you can train the towers with **PyTorch** through the
-ecosystem-notebooks `/pytorch/train` endpoint. The model type `two_tower`
-produces user/item embeddings of `embedding_dim` width that the runtime consumes
-identically. See [PyTorch Serving](/docs/modules/two_tower/pytorch) and the
-[API Reference](/docs/modules/two_tower/api) for the exact request body.
+Power users can run the same process from a script instead of the UI:
+
+```bash
+python backend/scripts/two_tower_pipeline.py \
+  --config-id customer_offer_retrieval_v1 \
+  --steps train,concept-test,export-embeddings \
+  --wait
+```
+
+The runner loads the saved configuration (or a local JSON/YAML file), calls the
+same Workbench APIs as the UI, polls jobs, and prints JSON containing `config_id`,
+`run_id`, job ids, final statuses, embedding export counts, and deployment
+property hints.
+
+See [PyTorch Serving](/docs/modules/two_tower/pytorch) and the
+[API Reference](/docs/modules/two_tower/api) for complete request bodies.
 
 Next: [Offline Scoring](/docs/modules/two_tower/scoring).

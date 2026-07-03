@@ -6,3 +6,52 @@ description: Generative Models
 # Generative Models
 
 Generative models are a class of models that generate data. They are used in a variety of applications, including image generation, text generation, and data augmentation. Generative models are typically trained on a large dataset and learn to generate new data that is similar to the training data. This page provides an overview of generative models and how they can be used in ecosystem.Ai.
+
+## Custom OpenAI-Compatible Model Gateways
+
+ecosystem-server and Workbench2 can route generative model calls through a client-owned OpenAI-compatible gateway. Configure the model connection on the server side so browser and Workbench callers do not send upstream LLM secrets.
+
+For a gateway shaped like:
+
+```text
+https://gateway-base-url/deployment/qwen-qwen3-5-122b-a10b/v1/chat/completions
+```
+
+set the deployment root in `CHAT_SERVER` and let ecosystem.Ai append `/v1/chat/completions`:
+
+```bash
+CHAT_SERVER=https://gateway-base-url/deployment/qwen-qwen3-5-122b-a10b
+CHAT_SERVER_MODEL=Qwen/Qwen3.5-122B-A10B
+CHAT_SERVER_KEY=api-key input-key
+```
+
+`CHAT_SERVER_KEY` is backward compatible:
+
+```text
+CHAT_SERVER_KEY=input-key          -> Authorization: Bearer input-key
+CHAT_SERVER_KEY=Bearer input-key   -> Authorization: Bearer input-key
+CHAT_SERVER_KEY=Basic input-key    -> Authorization: Basic input-key
+CHAT_SERVER_KEY=api-key input-key  -> api-key: input-key
+CHAT_SERVER_KEY=x-api-key input-key -> x-api-key: input-key
+```
+
+Use key-only `CHAT_SERVER_KEY=<token>` for existing Bearer-token gateways. Use the prefixed form only when the client gateway requires a different header name, such as `api-key`.
+
+OpenAI-compatible request fields that are not part of the core ecosystem.Ai routing metadata can pass through to the gateway. For example, gateways that support Qwen thinking controls can receive:
+
+```json
+{
+  "model": "Qwen/Qwen3.5-122B-A10B",
+  "messages": [
+    {
+      "role": "user",
+      "content": "explain blue in 100 words"
+    }
+  ],
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  }
+}
+```
+
+Internal routing and secret fields are removed before the request is sent upstream.

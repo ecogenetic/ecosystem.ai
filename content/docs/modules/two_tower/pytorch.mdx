@@ -11,6 +11,10 @@ This page covers how **PyTorch** powers two-tower (and general) scoring in
 ecosystem.Ai. The runtime itself stays lightweight: PyTorch runs in a **sidecar**
 (ecosystem-notebooks `/pytorch`), and the runtime talks to it over HTTP.
 
+In Workbench, PyTorch is an alternative training engine for the `/two-tower`
+module. It should produce the same run metadata and Mongo embedding export shape
+as the H2O engine, so downstream deployment remains engine-agnostic.
+
 ## Engine options in the runtime
 
 | Engine | Status | Two-tower suitability |
@@ -74,16 +78,28 @@ The concrete PyTorch service lives in **ecosystem-notebooks** (Flask, port
 
 ### Training contract
 
+Workbench converts a saved Two-Tower configuration into this request. The
+`source.pipeline` should match the selected predictor/date filters from
+`logging.ecosystemruntime_flatten`.
+
 ```json
 {
-  "model_id": "two_tower_user_v1",
+  "model_id": "customer_offer_retrieval_v1",
   "model_type": "two_tower",
+  "async": true,
   "problem_type": "binary_classification",
   "data": {
-    "source": { "database": "logging", "collection": "ecosystemruntime_flatten", "pipeline": [], "limit": 100000 },
+    "source": {
+      "database": "logging",
+      "collection": "ecosystemruntime_flatten",
+      "pipeline": [
+        { "$match": { "predictor": "my_predictor" } },
+        { "$project": { "_id": 0, "customer_id": 1, "offer": 1, "price": 1, "rank": 1, "score": 1, "accepted": 1 } }
+      ],
+      "limit": 100000
+    },
     "target_column": "accepted",
-    "feature_columns": ["customer_id", "price", "rank", "score"],
-    "categorical_columns": ["customer_id"],
+    "categorical_columns": ["customer_id", "offer"],
     "train_test_split": 0.2,
     "random_state": 42
   },
@@ -101,11 +117,26 @@ Training data is read from **MongoDB** (`MONGODB_URI`) via the `source` spec; a
 `csv_path` (under the existing `DATA_DIR`) or `inline` rows are also accepted.
 Artifacts are written under `DATA_DIR/pytorch_models/{model_id}/`.
 
+The Workbench run metadata should record:
+
+```json
+{
+  "run_id": "tt_pytorch_abc123",
+  "config_id": "customer_offer_retrieval_v1",
+  "engine": "pytorch",
+  "model_id": "customer_offer_retrieval_v1",
+  "pytorch_sidecar_url": "http://ecosystem-notebooks:8010",
+  "embedding_dim": 32,
+  "user_column": "customer_id",
+  "item_column": "offer"
+}
+```
+
 ### Scoring / embedding contract
 
 ```json
 {
-  "model_id": "two_tower_user_v1",
+  "model_id": "customer_offer_retrieval_v1",
   "instances": [
     { "customer_id": "user_1", "price": 0, "rank": 1, "score": 0, "tower": "user" }
   ]
@@ -127,6 +158,41 @@ scoring and `ApiModelClient.embed()`:
   For `two_tower` models, set `"tower": "user"` or `"tower": "item"` on an
   instance to choose which tower's embedding is returned (default: `user`).
 </Callout>
+
+## Exporting PyTorch embeddings to Mongo
+
+For production runtime scoring, Workbench should usually export PyTorch vectors
+to MongoDB rather than call the sidecar for every request.
+
+The export job calls `/pytorch/invocations` in batches:
+
+```json
+{
+  "model_id": "customer_offer_retrieval_v1",
+  "instances": [
+    { "tower": "user", "customer_id": "user_1", "price": 0, "rank": 1, "score": 0 },
+    { "tower": "user", "customer_id": "user_2", "price": 0, "rank": 1, "score": 0 }
+  ]
+}
+```
+
+and:
+
+```json
+{
+  "model_id": "customer_offer_retrieval_v1",
+  "instances": [
+    { "tower": "item", "offer": "ProductA", "price": 0, "rank": 1, "score": 0 },
+    { "tower": "item", "offer": "ProductB", "price": 0, "rank": 1, "score": 0 }
+  ]
+}
+```
+
+The returned embeddings are bulk-upserted into
+`ecosystem_meta.two_tower_user_embeddings` and
+`ecosystem_meta.two_tower_item_embeddings` using the same document contract as
+H2O exports. Real-time scoring then uses the same `PrePredictTwoTower` and
+`PostScoreTwoTower` plugins regardless of training engine.
 
 See the full request/response samples in the
 [API Reference](/docs/modules/two_tower/api).

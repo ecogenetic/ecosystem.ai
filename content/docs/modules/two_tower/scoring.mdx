@@ -11,6 +11,11 @@ Offline scoring validates a run and produces recommendations in bulk, before any
 real-time deployment. Both paths use the same math:
 **dot product of L2-normalized `deepfeatures` embeddings**.
 
+In Workbench, all scoring jobs should be tied back to the saved Two-Tower
+configuration (`config_id`). The `/two-tower` page can then show a job-history
+table for the selected configuration: train jobs, concept tests, batch scores,
+embedding exports, and full pipeline runs.
+
 ## Concept test (fast path)
 
 A concept test ranks a fixed list of offers for a single customer. It is the
@@ -58,6 +63,22 @@ Response:
   identity embeddings.
 </Callout>
 
+For a PyTorch-trained run, the concept test uses the same request shape but
+obtains embeddings by calling the notebooks sidecar:
+
+```json
+{
+  "model_id": "customer_offer_retrieval_v1",
+  "instances": [
+    { "tower": "user", "customer_id": "user_1", "price": 0, "rank": 1, "score": 0 },
+    { "tower": "item", "offer": "ProductA", "price": 0, "rank": 1, "score": 0 }
+  ]
+}
+```
+
+The Workbench backend computes the dot products and returns the same ranked
+response shape.
+
 ## Batch scoring
 
 Batch scoring writes top-**K** recommendations per customer into a MongoDB
@@ -97,9 +118,76 @@ output document:
 | `scores_collection` | `two_tower_scores` | output collection |
 | `scores_database` | run's source DB | output database |
 
+## Embedding export for real-time scoring
+
+Batch scoring writes recommendations. **Embedding export writes vectors.** The
+runtime uses the vector collections, not the batch-score recommendation output.
+
+Request (`POST /api/v1/algorithms/two-tower/export-embeddings`, async job):
+
+```json
+{
+  "run_id": "tt_abc123",
+  "config_id": "customer_offer_retrieval_v1",
+  "embedding_database": "ecosystem_meta",
+  "user_embedding_collection": "two_tower_user_embeddings",
+  "item_embedding_collection": "two_tower_item_embeddings",
+  "customer_key_field": "customer_id",
+  "offer_key_field": "offer",
+  "max_users": 100000,
+  "max_items": 100000
+}
+```
+
+The export job:
+
+1. reads distinct customers and offers from the run's source collection,
+2. computes normalized user/item embeddings using the run engine (`h2o` or
+   `pytorch`),
+3. bulk-upserts vectors into MongoDB, and
+4. updates `ecosystem_meta.two_tower_runs` with export counts and collection
+   names.
+
+User embedding document:
+
+```json
+{
+  "run_id": "tt_abc123",
+  "embedding_id": "tt_abc123:user:user_1",
+  "customer_id": "user_1",
+  "embedding": [0.11, 0.20, 0.07],
+  "embedding_dim": 32,
+  "engine": "h2o",
+  "model_id": "two_tower_user_tt_abc123",
+  "normalized": true,
+  "updated_at": "2026-06-30T00:00:00Z"
+}
+```
+
+Item embedding document:
+
+```json
+{
+  "run_id": "tt_abc123",
+  "embedding_id": "tt_abc123:item:ProductB",
+  "offer": "ProductB",
+  "embedding": [0.06, 0.44, 0.12],
+  "embedding_dim": 32,
+  "engine": "h2o",
+  "model_id": "two_tower_item_tt_abc123",
+  "normalized": true,
+  "updated_at": "2026-06-30T00:00:00Z"
+}
+```
+
+Use idempotent upserts keyed by `(run_id, customer_id)` and `(run_id, offer)` so
+re-exporting the same run replaces previous vectors.
+
 ## From offline to online
 
-Offline scoring proves the embeddings are meaningful. To serve recommendations
-per request — with logging, audit, and the campaign contract — move to
+Concept testing proves the embeddings are meaningful. Exporting embeddings makes
+them available to real-time scoring. To serve recommendations per request — with
+logging, audit, and the campaign contract — move to
 [Real-Time Scoring](/docs/modules/two_tower/runtime), which ranks the offer
-matrix using precomputed (or live PyTorch) embeddings.
+matrix using the exported Mongo vectors (or, optionally, a live PyTorch user
+embedding).

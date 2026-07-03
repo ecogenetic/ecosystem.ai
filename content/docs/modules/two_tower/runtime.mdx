@@ -12,6 +12,11 @@ compares a **user embedding** against **item embeddings** with cosine / dot
 product and ranks the offer matrix. Embeddings are precomputed in MongoDB, or the
 user vector is fetched live from a [PyTorch sidecar](/docs/modules/two_tower/pytorch).
 
+The runtime deployment is bound to an **exported Two-Tower run**. The Workbench
+deployment step emits the run id, embedding database, collection names, customer
+lookup key, offer-matrix key, and plugin classes. `PrePredictTwoTower` uses those
+properties to load vectors at request time.
+
 ## The `similarity` model type
 
 A campaign tells the runtime to use two-tower scoring with one property:
@@ -67,22 +72,62 @@ if (SimilarityScorer.isSimilarity(predictModelMojoResult, params)) {
 
 `PrePredictTwoTower` resolves the **user embedding** in this order:
 
-1. precomputed vector from `two_tower_user_embeddings` (by `customer_id`);
+1. precomputed vector from the configured user embedding collection, keyed by
+   `run_id` and the configured customer key;
 2. otherwise, if `predictor.twotower.user.embed` is configured, a **live call**
    to the PyTorch sidecar (`ApiModelClient.embed(...)`).
 
-Item vectors come from `two_tower_item_embeddings` (or an `embedding` field on the
-offer matrix).
+Item vectors come from the configured item embedding collection, keyed by
+`run_id` and the configured offer key (or from an `embedding` field on the offer
+matrix).
+
+## Runtime properties
+
+Minimum production configuration:
+
+```properties
+predictor.model.type=similarity
+
+predictor.twotower.run.id=tt_abc123
+predictor.twotower.embedding.db=ecosystem_meta
+predictor.twotower.user.collection=two_tower_user_embeddings
+predictor.twotower.item.collection=two_tower_item_embeddings
+predictor.twotower.customer.key=customer_id
+predictor.twotower.offer.key=offer
+
+plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
+plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
+```
+
+Optional live user embedding via PyTorch:
+
+```properties
+predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:customer_offer_retrieval_v1
+```
+
+This optional property is most useful when user vectors must be generated from
+fresh request features. Item vectors should normally remain precomputed because
+the offer catalogue is finite and can be re-exported after training.
 
 ## MongoDB embedding contract
 
 | Collection | Document shape |
 | --- | --- |
-| `two_tower_user_embeddings` | `{ run_id, customer_id, embedding: [floats] }` |
-| `two_tower_item_embeddings` | `{ run_id, offer, embedding: [floats] }` |
+| `two_tower_user_embeddings` | `{ run_id, embedding_id, customer_id, embedding, embedding_dim, engine, model_id, normalized, updated_at }` |
+| `two_tower_item_embeddings` | `{ run_id, embedding_id, offer, embedding, embedding_dim, engine, model_id, normalized, updated_at }` |
 
 Item vectors may instead be attached to each offer-matrix entry as
 `"embedding": [floats]`.
+
+Recommended indexes:
+
+```javascript
+db.two_tower_user_embeddings.createIndex({ run_id: 1, customer_id: 1 }, { unique: true })
+db.two_tower_item_embeddings.createIndex({ run_id: 1, offer: 1 }, { unique: true })
+```
+
+If your configured keys are not `customer_id` and `offer`, create the equivalent
+indexes for those key fields.
 
 ## Worked example — campaign properties
 
@@ -95,10 +140,33 @@ predictor.model.type=similarity
 plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
 plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
 
+predictor.twotower.run.id=tt_abc123
+predictor.twotower.embedding.db=ecosystem_meta
+predictor.twotower.user.collection=two_tower_user_embeddings
+predictor.twotower.item.collection=two_tower_item_embeddings
+predictor.twotower.customer.key=customer_id
+predictor.twotower.offer.key=offer
+
 # optional: live user-tower embedding via the PyTorch sidecar
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:two_tower_user_v1
+predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:customer_offer_retrieval_v1
 
 predictor.offer.matrix={ ... }
+```
+
+## Real-time flow
+
+```mermaid
+flowchart TD
+  Request["Runtime invocation"] --> Pre["PrePredictTwoTower"]
+  Pre --> Customer["Resolve customer key"]
+  Pre --> Offers["Read offerMatrix and offer key"]
+  Customer --> UserVec["Fetch user vector from Mongo or PyTorch"]
+  Offers --> ItemVecs["Fetch item vectors from Mongo"]
+  UserVec --> Params["params.user_embedding"]
+  ItemVecs --> Params["params.item_embeddings"]
+  Params --> Post["PostScoreTwoTower"]
+  Post --> Similarity["SimilarityScorer cosine or dot"]
+  Similarity --> Result["final_result"]
 ```
 
 ## Scoring request and response
