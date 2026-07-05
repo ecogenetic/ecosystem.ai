@@ -183,6 +183,13 @@ Item embedding document:
 Use idempotent upserts keyed by `(run_id, customer_id)` and `(run_id, offer)` so
 re-exporting the same run replaces previous vectors.
 
+<Callout type="warning" title="Export database vs runtime default">
+  The export's `embedding_database` defaults to the **`logging`** database, while
+  the runtime plugin defaults to **`ecosystem_meta`**. Set
+  `predictor.twotower.embedding.db` in the deployment to the database you
+  exported to (as in the example above).
+</Callout>
+
 ## From offline to online
 
 Concept testing proves the embeddings are meaningful. Exporting embeddings makes
@@ -191,3 +198,11 @@ logging, audit, and the campaign contract — move to
 [Real-Time Scoring](/docs/modules/two_tower/runtime), which ranks the offer
 matrix using the exported Mongo vectors (or, optionally, a live PyTorch user
 embedding).
+
+At serve time the payload is richer than the offline `{offer, score}` shape:
+each result row is assigned from the offer matrix (`offer`, `offer_id`,
+`offer_name`, `offer_name_desc`, `price`, `cost`, numeric `offer_value`) plus
+the request `uuid`, similarity `p`, `explore`, and `spend_limit` when a budget
+is configured. Per-offer eligibility rules and request whitelists are applied
+through the `additionalOfferChecks` hook in `PostScoreTwoTower` — see
+[Real-Time Scoring](/docs/modules/two_tower/runtime#per-offer-eligibility-checks).

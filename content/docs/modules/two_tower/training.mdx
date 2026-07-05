@@ -44,10 +44,10 @@ A configuration captures every parameter needed to repeat the process:
     "stopping_rounds": 3,
     "batch_size": 256,
     "learning_rate": 0.001,
-    "hidden": 64
+    "hidden": [128, 64]
   },
   "embedding_export": {
-    "database": "ecosystem_meta",
+    "database": "logging",
     "user_collection": "two_tower_user_embeddings",
     "item_collection": "two_tower_item_embeddings",
     "metric": "cosine",
@@ -68,6 +68,20 @@ The configuration should be stored with a unique `config_id`. Jobs created from
 the UI or Python runner include `context.config_id`, making it possible to show
 all train, concept-test, export, and pipeline jobs for the selected
 configuration.
+
+When a train request carries a `config_id`, the backend **merges the saved
+configuration into the request server-side** — source, features, keys, training
+hyperparameters, and export settings are filled from the saved config, and any
+value supplied explicitly on the request overrides the saved one. Callers only
+need to send the fields they want to change.
+
+The `source` block usually points to **one interaction dataset**:
+`logging.ecosystemruntime_flatten`. The `features` and `keys` blocks tell
+Workbench how to split that one dataset into a user-tower feature view and an
+item-tower feature view. Use separate user/profile or product/catalog datasets
+only when those attributes are not already materialized into the interaction
+rows; the final training frame still needs the interaction label and both sides'
+features together.
 
 The `/two-tower` page also links the config to the existing Workbench
 `predictions` entity. That keeps Projects using `project_predictors` for the
@@ -114,6 +128,11 @@ Both share the same configuration:
 - `categorical_encoding = "one_hot_internal"`
 - `stopping_metric = "AUC"` (binomial classification on `accepted`)
 - `seed = 42`, with an 80/20 train/validation split.
+
+For richer datasets, add customer attributes to `user_features` and product
+attributes to `item_features`. Keep the key fields (`customer_key_field` and
+`offer_key_field`) aligned with the values the runtime will use to fetch
+embeddings during real-time scoring.
 
 ## Hyperparameters
 
@@ -218,7 +237,7 @@ run:
   "user_auc": 0.72,
   "item_auc": 0.68,
   "n_rows": 150000,
-  "embedding_database": "ecosystem_meta",
+  "embedding_database": "logging",
   "user_embedding_collection": "two_tower_user_embeddings",
   "item_embedding_collection": "two_tower_item_embeddings",
   "customer_key_field": "customer_id",
@@ -245,6 +264,30 @@ Item vectors may alternatively ride on the offer matrix as an `embedding` field.
   exports call `/pytorch/invocations` with `tower="user"` or `tower="item"`.
   Both paths write the same normalized Mongo document shape.
 </Callout>
+
+### Engine parity contract
+
+Both engines honor the same export contract so the runtime never needs to know
+which engine produced a run:
+
+- **Identical document shape** — the fields shown above, with `engine` set to
+  `"h2o"` or `"pytorch"`, and the same `{run_id, key}` compound indexes.
+- **L2-normalized vectors** when `embedding_export.normalized` is set. PyTorch
+  vectors are normalized in the workbench export path (the sidecar returns raw
+  activations); H2O vectors are normalized the same way after `deepfeatures`.
+- **Export frames are built from the run's recorded features.** The exporter
+  reads `user_features` / `item_features` from the `two_tower_runs` document and
+  fills feature values from sampled source rows — the same approach for both
+  engines. (Earlier versions padded H2O export frames with hardcoded zeros;
+  re-exporting a run trained before this fix will produce different — correct —
+  vectors, so expect rankings to shift on the next export.)
+- **Same-run invariant** — the user and item vectors for a `run_id` always come
+  from one engine and one training run. Never mix engines within a run id: the
+  towers only share an embedding space when trained together.
+
+The `pytorch_mlrun` engine value is **reserved** and rejected at request
+validation (HTTP 422): the MLRun trainer sidecar has no two-tower handler.
+Use `pytorch` (the notebooks sidecar) for PyTorch training.
 
 ## Python runner
 

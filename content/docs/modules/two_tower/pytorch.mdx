@@ -54,7 +54,9 @@ predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:two_tower_
 `PrePredictTwoTower` calls `ApiModelClient.embed(...)`, which POSTs the customer
 features to `/pytorch/invocations` and reads the embedding from the response. Item
 vectors stay precomputed, so there is **one sidecar call per request**, not one
-per offer.
+per offer. The call carries explicit deadlines (3s connect / 10s read, tunable
+via `-Dembed.connect.timeout.ms` / `-Dembed.read.timeout.ms`) so a hung sidecar
+cannot block runtime request threads.
 
 ```mermaid
 flowchart LR
@@ -188,11 +190,21 @@ and:
 }
 ```
 
-The returned embeddings are bulk-upserted into
-`ecosystem_meta.two_tower_user_embeddings` and
-`ecosystem_meta.two_tower_item_embeddings` using the same document contract as
-H2O exports. Real-time scoring then uses the same `PrePredictTwoTower` and
+In practice the export job fills the feature values from **sampled source
+rows** using the run's recorded `user_features` / `item_features` (the zeros
+above are illustrative). The returned embeddings are **L2-normalized in the
+workbench** when the export's `normalized` flag is set (the sidecar returns raw
+activations) and bulk-upserted into the configured embedding collections
+(default database `logging`) using the same document contract as H2O exports.
+Real-time scoring then uses the same `PrePredictTwoTower` and
 `PostScoreTwoTower` plugins regardless of training engine.
+
+<Callout type="warning" title="pytorch_mlrun is reserved">
+  The `pytorch_mlrun` engine value is rejected at request validation (HTTP
+  422). The MLRun trainer sidecar only ships a tabular-MLP handler — it has no
+  two-tower support. Use `pytorch` (this notebooks sidecar) for PyTorch
+  two-tower training.
+</Callout>
 
 See the full request/response samples in the
 [API Reference](/docs/modules/two_tower/api).
