@@ -1,0 +1,31 @@
+@prefix : <https://ecosystem.ai/ontology/workbench#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<https://ecosystem.ai/ontology/workbench/shapes> a owl:Ontology ;
+    rdfs:label "Workbench Application SHACL Shapes" ;
+    owl:imports <https://ecosystem.ai/ontology/workbench> .
+
+:SyntheticDataRequestShape a sh:NodeShape ;
+    sh:targetClass :SyntheticDataRequest ;
+    sh:property [
+        sh:path :targetDatabase ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :targetCollection ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] .
+
+:AsyncJobShape a sh:NodeShape ;
+    sh:targetClass :AsyncJob ;
+    sh:property [
+        sh:path :jobId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] .

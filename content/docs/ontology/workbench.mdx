@@ -1,0 +1,48 @@
+---
+title: Workbench Application Concepts
+description: Workbench2 solution cases, jobs, synthetic data, and console concepts
+---
+
+# Workbench Application
+
+Namespace: [`https://ecosystem.ai/ontology/workbench#`](/ontology/workbench.ttl)
+
+Concepts beyond raw `ecosystem_meta` collections — productized solutions and Workbench application surfaces.
+
+## Solution cases
+
+| Class | Definition |
+|-------|------------|
+| `SolutionCase` | Productized solution configuration |
+| `SpendPersonalityCase` | Spend / money personality scoring and messaging |
+| `TwoTowerCase` | Two-tower recommender training and deployment |
+
+**Link:** `usesSolutionCase` (Project → SolutionCase)
+
+## Operations & UI
+
+| Class | Definition |
+|-------|------------|
+| `AsyncJob` | Background job (training, synthetic, enrichment, …) |
+| `AnalyticsDashboard` | Analytics studio dashboard |
+| `RuntimeConsole` | UI for operating deployed runtime campaigns |
+| `NetworkGraph` | Networks submodule graph |
+| `NetworkOntologyDefinition` | JSON ontology for Networks KG (not the Turtle platform ontology) |
+| `PublicApiCatalogEntry` | Public API catalog mapping |
+
+**Job properties:** `jobId`, `jobLifecycleState` (`Queued` \| `Running` \| `Succeeded` \| `Failed` \| `Cancelled`)
+
+## Synthetic data & indicative ontology
+
+| Class | Definition |
+|-------|------------|
+| `SyntheticDataRequest` | Generate Mongo docs from a prompt; optional open `ontologyTtl` |
+| `IndicativeOntologyInference` | Sample a collection → draft Turtle (Data Management **Export → ttl**) |
+
+**Properties:** `targetDatabase`, `targetCollection`, `ontologyTtl`
+
+Forward path: ontology guides synthetic generation. Reverse path: collection export produces indicative TTL. See [Data and Ontology](/docs/ontology/data-and-ontology).
+
+Full tables: [Workbench Catalog](/docs/ontology/workbench-catalog)
+
+Download: [`/ontology/workbench.ttl`](/ontology/workbench.ttl)

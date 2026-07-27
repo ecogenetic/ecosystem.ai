@@ -1,0 +1,66 @@
+---
+title: Link Types
+description: Object properties that connect platform ontology concepts across modules
+---
+
+# Link Types
+
+Object properties (edges) in the platform ontology. Prefixed by module: `ent:` entities, `wb:` workbench, `srv:` server, `rt:` runtime, `plat:` platform alignments.
+
+## Entities — project graph
+
+| Property | Domain → Range |
+|----------|----------------|
+| `ent:hasPredictor` | Project → Predictor |
+| `ent:hasFrame` | Project → Frame |
+| `ent:hasDynamicEngagement` | Project → DynamicEngagement |
+| `ent:hasOfferMatrix` | Project → OfferMatrix |
+| `ent:hasCampaign` | Project → Campaign |
+| `ent:hasAgent` | Project → AgentConfig |
+| `ent:hasDeploymentStep` | Project → DeploymentStep |
+| `ent:hasPrompt` | Project → Prompt |
+| `ent:hasCalendar` | Project → Calendar |
+| `ent:hasSimulation` | Project → Simulation |
+| `ent:hasResponderConfig` | Project → ResponderConfig |
+| `ent:hasFactInjectionConfig` | Project → FactInjectionConfig |
+| `ent:hasDataConnection` | Project → DataConnection |
+| `ent:usesFrame` | Predictor → Frame |
+| `ent:hasFeatureStore` | DynamicEngagement → FeatureStoreRef |
+| `ent:hasOptionsStore` | DynamicEngagement → OptionsStoreRef |
+| `ent:linkedToProject` | ContactCatalog → Project |
+| `ent:usesOfferMatrix` | Campaign → OfferMatrix |
+| `ent:belongsToCatalog` | ContactRecord → ContactCatalog |
+
+## Workbench
+
+| Property | Domain → Range |
+|----------|----------------|
+| `wb:usesSolutionCase` | Project → SolutionCase |
+
+## Server
+
+| Property | Domain → Range |
+|----------|----------------|
+| `srv:hasDiagram` | ModelingProject → Diagram |
+| `srv:hasOntologyContext` | ModelingProject → OntologyContext |
+| `srv:usesDomainCatalog` | OntologyContext → DomainCatalogEntry |
+| `srv:triggeredByProject` | UmlGenerationJob → ModelingProject |
+| `srv:producesArtifact` | AppGenerationJob → PlantUmlArtifact |
+
+## Runtime closed loop
+
+| Property | Domain → Range |
+|----------|----------------|
+| `rt:hasFinalResult` | InvocationResponse / ContactLog → FinalResultEntry |
+| `rt:scoringData` | ContactLog → CustomerFeatureDocument |
+| `rt:embedsContactLog` | ResponseLog → ContactLog |
+| `rt:hasResponsePayload` | ResponseLog → ResponseFeedback |
+| `rt:respondsTo` | ResponseFeedback → InvocationResponse (via uuid) |
+| `rt:hasOfferMatrix` | CampaignContext → OfferMatrixEntry |
+| `rt:hasFeatureLookup` | CampaignContext → FeatureLookupConfig |
+| `rt:hasDynamicEngagement` | CampaignContext → DynamicEngagementConfig |
+| `rt:usesPrePredict` / `usesPostPredict` / `usesReward` | CampaignContext → plugins |
+
+## Cross-module (alignments)
+
+See [Alignments](/docs/ontology/alignments) for `plat:` bridges (e.g. DeploymentStep → CampaignContext, ModelingProject ↔ Project).

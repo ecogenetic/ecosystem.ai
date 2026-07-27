@@ -1,0 +1,97 @@
+---
+title: Entities (Workbench Meta)
+description: Complete catalog of Workbench2 ecosystem_meta entity concepts in the platform ontology
+---
+
+# Entities (Workbench Meta)
+
+Namespace: [`https://ecosystem.ai/ontology/entities#`](/ontology/entities.ttl)
+
+These classes map to Mongo collections (and embedded deployment config) managed in Workbench2. The **Project** is the hub; other entities attach via asset arrays and foreign keys.
+
+## Project hub
+
+| Class | Pref label | Definition |
+|-------|------------|------------|
+| `Project` | Project | Hub that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps |
+
+**Key properties:** `projectId`, `projectDescription`, `purpose`, `projectType`, `projectOwner`
+
+## Static models
+
+| Class | Collection / role | Definition |
+|-------|-------------------|------------|
+| `Frame` | `frames` | Training or reference H2O / data frame |
+| `Predictor` | `predictions` | Prediction case (AutoML / model parms); uses a Frame |
+
+**Key properties:** `frameId`; `predictId`, `modelId`; link `usesFrame`
+
+## Dynamic engagement
+
+| Class | Definition |
+|-------|------------|
+| `DynamicEngagement` | Online learning / bandit config (`dynamic_engagement`) |
+| `FeatureStoreRef` | DB + collection for customer/context lookup |
+| `OptionsStoreRef` | Options / arms store (alpha, beta, rewards) |
+
+**Key properties:** `engagementName`, `learningAlgorithm` (e.g. epsilonGreedy, binaryThompson, QLearning)
+
+**Links:** `hasFeatureStore`, `hasOptionsStore`
+
+## Offer catalog
+
+| Class | Definition |
+|-------|------------|
+| `OfferMatrix` | First-class offer catalog (`offer_matrix`) with spec, version, status |
+| `OfferMatrixEntry` | Single offer row — **fixed six fields** for runtime scoring |
+
+See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
+
+## Campaigns & contacts
+
+| Class | Definition |
+|-------|------------|
+| `Campaign` | Binds patron sources, offer matrices, recommender deployments |
+| `ContactCatalog` | Catalog of contact sources (`contacts_catalog`) |
+| `ContactRecord` | Individual contact / patron document |
+| `ChannelProfile` | Delivery channel for ecogentic / engagement |
+| `AgentConfig` | Ecogentic agent (`agent_configs`) |
+
+## Supporting assets
+
+| Class | Typical collection |
+|-------|--------------------|
+| `DataConnection` | `data_connections` |
+| `Prompt` | `prompt_library` |
+| `FactInjectionConfig` | `chat_config` |
+| `Calendar` | `calendar` |
+| `Simulation` | `simulation` |
+| `ResponderConfig` | `responder_config` |
+| `Dashboard` | analytics dashboards |
+| `EnrichmentPipeline` | enrichment pipelines |
+| `DeploymentStep` | Embedded on Project — pushed to runtime |
+
+## Project asset links (object properties)
+
+| Property | From → To | Workbench field |
+|----------|-----------|-----------------|
+| `hasPredictor` | Project → Predictor | `project_predictors` |
+| `hasFrame` | Project → Frame | `project_models` |
+| `hasDynamicEngagement` | Project → DynamicEngagement | `project_dynamic_interactions` |
+| `hasOfferMatrix` | Project → OfferMatrix | `project_offer_matrices` |
+| `hasCampaign` | Project → Campaign | campaigns |
+| `hasAgent` | Project → AgentConfig | `project_agents` |
+| `hasDeploymentStep` | Project → DeploymentStep | `deployment_step` |
+| `hasPrompt` | Project → Prompt | `project_prompts` |
+| `hasCalendar` | Project → Calendar | `project_calendars` |
+| `hasSimulation` | Project → Simulation | `project_simulations` |
+| `hasResponderConfig` | Project → ResponderConfig | `project_api_configs` |
+| `hasFactInjectionConfig` | Project → FactInjectionConfig | `project_fact_injection_configs` |
+| `hasDataConnection` | Project → DataConnection | `presto_connections` |
+| `linkedToProject` | ContactCatalog → Project | `project_ids` |
+| `usesOfferMatrix` | Campaign → OfferMatrix | campaign actions |
+| `belongsToCatalog` | ContactRecord → ContactCatalog | — |
+
+Full tables (every class and property): [Entities Catalog](/docs/ontology/entities-catalog) · [Concept Index](/docs/ontology/concept-index)
+
+Download: [`/ontology/entities.ttl`](/ontology/entities.ttl) · shapes: [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl)

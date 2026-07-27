@@ -1,0 +1,97 @@
+---
+title: Runtime concept catalog
+description: Complete class and property catalog from runtime.ttl
+---
+
+# Runtime concept catalog
+
+Generated from the published Turtle. Download [`/ontology/runtime.ttl`](/ontology/runtime.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/runtime#`
+
+## Classes (24)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AcceptedOffer` | Accepted Offer | Element of offers_accepted; typically mirrors slim OfferResult fields. |
+| `CampaignContext` | Campaign Context | Isolated runtime unit keyed by campaign/predictor name: models, corpora, plugins, logging collections, feature lookup, and optional linked offer matrix. |
+| `ContactLog` | Contact Log | Mongo logging document for an invocation (logging.ecosystemruntime): uuid, predictor, api_params, params lookup, final_result, stats, scoring_data, date indexes. |
+| `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
+| `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| `FeatureLookupConfig` | Feature Lookup Config | Configuration for customer/feature DB lookup (database, collection, key, typically customer). |
+| `FinalResultEntry` | Final Result Entry | One ranked row in final_result with rank, slim result, and result_full. |
+| `GlobalSettings` | Global Settings | Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora). |
+| `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
+| `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
+| `InvocationStats` | Invocation Stats | Timing and model metadata on a contact log (duration, epsilon, predictor, error). |
+| `OfferMatrix` | Offer Matrix | Runtime-linked offer catalog loaded via predictor.offer.matrix. Rows follow a fixed field format. |
+| `OfferMatrixEntry` | Offer Matrix Entry | Canonical offer row: offer_id, offer_name, cost, price, category, static_offers. |
+| `OfferResult` | Offer Result | Slim scored offer: uuid, offer, offer_name, score, final_score, cost, price, offer_value, arm_reward, modified_offer_score. |
+| `Option` | Option | Dynamic engagement options row: optionKey joins OfferMatrixEntry.offer_id; alpha, beta, arm_reward, propensity. |
+| `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
+| `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| `PrePredictPlugin` | Pre-Predict Plugin | plugin.prescore class that mutates params before scoring. |
+| `ProductOfferResult` | Product Offer Result | Recommender result_full with nested product catalog fields and bandit stats (alpha, beta, propensity). |
+| `ResponseFeedback` | Response Feedback | POST /response body: uuid required; offers_accepted with offer_name (preferred match key). |
+| `ResponseLog` | Response Log | Mongo logging document for feedback (logging.ecosystemruntime_response): uuid, response_uuid, embedded response_log (ContactLog), response payload, stats. |
+| `RewardPlugin` | Reward Plugin | plugin.reward class that updates learning state after /response. |
+| `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
+| `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
+
+## Object properties (19)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `embedsContactLog` | embeds contact log | `runtime:ResponseLog` | `runtime:ContactLog` | response_log field. |
+| `featuresObj` | features object | `runtime:ScoringParams` | `runtime:CustomerFeatureDocument` |  |
+| `hasAcceptedOffer` | has accepted offer | `runtime:ResponseFeedback` | `runtime:AcceptedOffer` |  |
+| `hasDynamicEngagement` | has dynamic engagement | `runtime:CampaignContext` | `runtime:DynamicEngagementConfig` |  |
+| `hasEntry` | has entry | `runtime:OfferMatrix` | `runtime:OfferMatrixEntry` |  |
+| `hasFeatureLookup` | has feature lookup | `runtime:CampaignContext` | `runtime:FeatureLookupConfig` | Open-schema binding; target documents are CustomerFeatureDocument instances of any shape. |
+| `hasFinalResult` | has final result | `runtime:InvocationResponse` | `runtime:FinalResultEntry` |  |
+| `hasOfferMatrix` | links offer matrix | `runtime:CampaignContext` | `runtime:OfferMatrix` | Campaign links one offer matrix with fixed row schema. |
+| `hasResponsePayload` | has response payload | `runtime:ResponseLog` | `runtime:ResponseFeedback` |  |
+| `hasServerInfo` | has server info | `runtime:ContactLog` | `runtime:ServerInfo` |  |
+| `hasSettings` | has settings | `runtime:CampaignContext` | `runtime:GlobalSettings` |  |
+| `hasSlimResult` | has slim result | `runtime:FinalResultEntry` | `runtime:OfferResult` |  |
+| `hasStats` | has stats | `runtime:ContactLog` | `runtime:InvocationStats` |  |
+| `joinsOffer` | joins offer | `runtime:Option` | `runtime:OfferMatrixEntry` | optionKey equals matrix offer_id. |
+| `respondsTo` | responds to | `runtime:ResponseFeedback` | `runtime:InvocationResponse` | Matched by shared uuid. |
+| `scoringData` | scoring data | `runtime:ContactLog` | `runtime:CustomerFeatureDocument` | Open feature bag logged when logging.detail is true; may also echo options-store state. |
+| `usesPostPlugin` | uses post plugin | `runtime:CampaignContext` | `runtime:PostPredictPlugin` |  |
+| `usesPrePlugin` | uses pre plugin | `runtime:CampaignContext` | `runtime:PrePredictPlugin` |  |
+| `usesRewardPlugin` | uses reward plugin | `runtime:CampaignContext` | `runtime:RewardPlugin` |  |
+
+## Datatype properties (28)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `alpha` | alpha | `runtime:Option` | `xsd:decimal` |  |
+| `armReward` | arm reward | `runtime:OfferResult` | `xsd:decimal` |  |
+| `beta` | beta | `runtime:Option` | `xsd:decimal` |  |
+| `cache` | cache | `—` | `xsd:integer` |  |
+| `campaign` | campaign | `runtime:InvocationRequest` | `xsd:string` |  |
+| `campaignId` | campaign id | `runtime:CampaignContext` | `xsd:string` | Runtime case name (predictor.name / api_params.campaign). |
+| `category` | category | `runtime:OfferMatrixEntry` | `xsd:string` |  |
+| `channel` | channel | `runtime:InvocationRequest` | `xsd:string` |  |
+| `cost` | cost | `runtime:OfferMatrixEntry` | `xsd:decimal` |  |
+| `customer` | customer | `runtime:InvocationRequest` | `xsd:string` |  |
+| `dateLog` | date log | `—` | `xsd:dateTime` |  |
+| `explore` | explore | `—` | `xsd:integer` |  |
+| `finalScore` | final score | `runtime:OfferResult` | `xsd:decimal` |  |
+| `lookupKey` | lookup key | `runtime:FeatureLookupConfig` | `xsd:string` |  |
+| `modifiedOfferScore` | modified offer score | `runtime:OfferResult` | `xsd:decimal` |  |
+| `numberOffers` | number offers | `runtime:InvocationRequest` | `xsd:integer` |  |
+| `offerId` | offer id | `runtime:OfferMatrixEntry` | `xsd:string` |  |
+| `offerName` | offer name | `runtime:OfferMatrixEntry` | `xsd:string` |  |
+| `optionKey` | option key | `runtime:Option` | `xsd:string` |  |
+| `paramsJson` | params | `runtime:InvocationRequest` | `xsd:string` | Must be a JSON string on the wire, not a nested object. |
+| `predictor` | predictor | `—` | `xsd:string` |  |
+| `price` | price | `runtime:OfferMatrixEntry` | `xsd:decimal` |  |
+| `rank` | rank | `runtime:FinalResultEntry` | `xsd:integer` |  |
+| `responseUuid` | response uuid | `runtime:ResponseLog` | `xsd:string` |  |
+| `score` | score | `runtime:OfferResult` | `xsd:decimal` |  |
+| `staticOffers` | static offers | `runtime:OfferMatrixEntry` | `xsd:decimal` |  |
+| `subcampaign` | subcampaign | `runtime:InvocationRequest` | `xsd:string` |  |
+| `uuid` | uuid | `—` | `xsd:string` | Invocation / contact correlation id shared across logs and /response. |
+

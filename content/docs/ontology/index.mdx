@@ -1,0 +1,51 @@
+---
+title: Ontology Overview
+description: Semantic layer for ecosystem.Ai — Workbench entities, modeling server, and runtime decisioning concepts
+---
+
+# Ontology
+
+The ecosystem.Ai **Ontology** is how you discover and share the **concepts** the platform uses: projects, predictors, offer matrices, invocations, contact logs, and how they connect.
+
+It is the semantic layer over:
+
+- **Workbench2** — configuration entities in `ecosystem_meta`
+- **ecosystem-server** — modeling projects, diagrams, generation
+- **ecosystem-runtime** — real-time `/invocations` and `/response`
+
+Like an operational ontology elsewhere, it connects digital assets (Mongo collections, deployments, models) to their counterparts (customers, offers, channels) so products reason consistently about decisioning.
+
+## How to use this documentation
+
+| Goal | Start here |
+|------|------------|
+| Learn why ontology exists | [Why create an Ontology?](/docs/ontology/why) |
+| **Browse every class & property** | [Concept Index](/docs/ontology/concept-index) |
+| Workbench meta concepts | [Entities](/docs/ontology/entities) · [full catalog](/docs/ontology/entities-catalog) |
+| Runtime API & logging | [Runtime](/docs/ontology/runtime) · [full catalog](/docs/ontology/runtime-catalog) |
+| Modeling server concepts | [Server](/docs/ontology/server) · [full catalog](/docs/ontology/server-catalog) |
+| Fixed offer catalog shape | [Offer Matrix](/docs/ontology/offer-matrix) |
+| Open customer / feature docs | [Customer Feature Lookup](/docs/ontology/customer-features) |
+| Machine-readable downloads | [Downloads](/docs/ontology/downloads) |
+| Term lookup | [Glossary](/docs/ontology/glossary) |
+
+## Modules at a glance
+
+| Module | Namespace | Concepts |
+|--------|-----------|----------|
+| [Entities](/docs/ontology/entities) | `…/ontology/entities#` | Project, Frame, Predictor, DynamicEngagement, OfferMatrix, Campaign, Contacts, DeploymentStep, … |
+| [Workbench](/docs/ontology/workbench) | `…/ontology/workbench#` | Solution cases, AsyncJob, SyntheticDataRequest, RuntimeConsole |
+| [Server](/docs/ontology/server) | `…/ontology/server#` | ModelingProject, Diagram, OntologyContext, generation jobs |
+| [Runtime](/docs/ontology/runtime) | `…/ontology/runtime#` | InvocationRequest/Response, ContactLog, ResponseLog, plugins, Option |
+| Platform | `…/ontology/platform#` | Umbrella + [alignments](/docs/ontology/alignments) |
+
+Full IRIs use the base `https://ecosystem.ai/ontology/`. See [Namespaces](/docs/ontology/namespaces).
+
+## Two schema rules (critical)
+
+1. **Offer Matrix rows are closed** — `offer_id`, `offer_name`, `cost`, `price`, `category`, `static_offers`
+2. **Customer / feature lookup is open** — any document shape keyed by customer (or configured lookup key)
+
+## Formal artifacts
+
+Turtle (OWL 2 + RDFS + SKOS) and SHACL shapes are published under [`/ontology/*.ttl`](/docs/ontology/downloads). Use them in tooling, synthetic data grounding, or as the contract for integrations.

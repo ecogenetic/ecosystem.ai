@@ -1,0 +1,21 @@
+---
+title: Why create an Ontology?
+description: Why ecosystem.Ai publishes a shared concept vocabulary for Workbench, modeling, and runtime
+---
+
+# Why create an Ontology?
+
+Without a shared vocabulary, each product invents field names, guesses `/invocations` shapes, or describes Offer Matrix columns inconsistently. The ontology makes platform meaning **explicit and accessible**.
+
+## What it gives users
+
+1. **A concept catalog** — start at [Concept Index](/docs/ontology/concept-index) for every class and property; module overviews + generated catalogs under Ontology in the docs nav
+2. **Stable contracts** — Turtle downloads for integrations, validation, and AI grounding
+3. **Clear open vs closed data** — flexible customer features; fixed offer rows
+4. **Round trip with Mongo** — export indicative ontology from a collection on `/data`, or ground synthetic generation with any uploaded TTL
+
+## Generate and synthetic reliability
+
+Ontology improves generation when treated as a **contract** (classes, properties, shapes), not only soft prompt text. Workbench2 synthetic can ingest any Turtle; collection **Export → ttl** drafts an indicative ontology from live data.
+
+Industry business domains (CRM, banking, …) remain in the separate domain catalog (`https://ecosystemcode.com/ontology/…`). This platform ontology covers **ecosystem.Ai product concepts**.

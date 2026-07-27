@@ -1,0 +1,33 @@
+---
+title: Glossary
+description: Definitions for platform ontology terms used across Ecosystem.Ai
+---
+
+# Glossary
+
+| Term | Definition |
+|------|------------|
+| **Campaign / CampaignContext** | Isolated runtime unit identified by campaign (and often predictor) name; owns plugins, offer matrix, feature lookup |
+| **ContactLog** | Mongo document written on `/invocations` — scoring snapshot keyed by `uuid` |
+| **CustomerFeatureDocument** | Open-schema customer/context document from feature lookup |
+| **DeploymentStep** | Workbench project step that packages config for runtime |
+| **Dynamic engagement** | Online learning / multi-armed bandit configuration |
+| **Entities ontology** | Turtle module for Workbench `ecosystem_meta` concepts |
+| **Final result** | Ranked offer list returned by `/invocations` (`final_result` by `rank`) |
+| **Frame** | Training / reference dataset (e.g. H2O frame) |
+| **Indicative ontology** | Draft Turtle inferred from sampling a Mongo collection |
+| **Invocation** | `POST /invocations` scoring request |
+| **ModelingProject** | ecosystem-server UML / generation project |
+| **Offer matrix** | Closed six-field catalog of scoreable offers |
+| **OntologyContext** | Structured ontology blob on a ModelingProject |
+| **params (runtime)** | JSON **string** field on invocations (`"{}"` or `{"input":[…],"value":[…]}`) |
+| **Platform ontology** | Umbrella Turtle for Ecosystem product concepts (this suite) |
+| **Predictor** | Static prediction case / model configuration |
+| **Project** | Workbench hub grouping assets for a use case |
+| **Response / ResponseLog** | Feedback via `POST /response`; logged with embedded contact |
+| **SHACL** | Shapes Constraint Language — structural constraints on RDF |
+| **Solution case** | Productized pack (e.g. Spend Personality, Two Tower) |
+| **Synthetic data (Workbench)** | LLM-generated Mongo documents, optionally guided by open TTL |
+| **uuid** | Shared id linking invocation, ContactLog, and response |
+
+For class-level catalogs see [Entities](/docs/ontology/entities), [Runtime](/docs/ontology/runtime), [Server](/docs/ontology/server), [Workbench](/docs/ontology/workbench).

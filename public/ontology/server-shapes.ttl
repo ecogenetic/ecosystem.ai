@@ -1,0 +1,25 @@
+@prefix : <https://ecosystem.ai/ontology/server#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://ecosystem.ai/ontology/server/shapes> a owl:Ontology ;
+    rdfs:label "Server Modeling SHACL Shapes" ;
+    owl:imports <https://ecosystem.ai/ontology/server> .
+
+:ModelingProjectShape a sh:NodeShape ;
+    sh:targetClass :ModelingProject ;
+    sh:property [
+        sh:path :modelingProjectId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] .
+
+:DiagramShape a sh:NodeShape ;
+    sh:targetClass :Diagram ;
+    sh:property [
+        sh:path :diagramName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] .

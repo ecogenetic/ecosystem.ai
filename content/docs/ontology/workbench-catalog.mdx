@@ -1,0 +1,44 @@
+---
+title: Workbench concept catalog
+description: Complete class and property catalog from workbench.ttl
+---
+
+# Workbench concept catalog
+
+Generated from the published Turtle. Download [`/ontology/workbench.ttl`](/ontology/workbench.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/workbench#`
+
+## Classes (11)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AnalyticsDashboard` | Analytics Dashboard | Workbench analytics studio dashboard with charts and filters over Mongo collections. |
+| `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
+| `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
+| `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
+| `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
+| `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
+| `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
+| `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
+| `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
+| `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
+
+## Object properties (2)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `monitorsCampaign` | monitors campaign deployment | `workbench:RuntimeConsole` | `entities:DeploymentStep` |  |
+| `usesSolutionCase` | uses solution case | `entities:Project` | `workbench:SolutionCase` |  |
+
+## Datatype properties (5)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `jobId` | job id | `workbench:AsyncJob` | `xsd:string` |  |
+| `jobLifecycleState` | lifecycle state | `workbench:AsyncJob` | `xsd:string` | Queued \| Running \| Succeeded \| Failed \| Cancelled. |
+| `ontologyTtl` | ontology turtle | `workbench:SyntheticDataRequest` | `xsd:string` | Optional open Turtle ontology text guiding synthetic generation. |
+| `targetCollection` | target collection | `workbench:SyntheticDataRequest` | `xsd:string` |  |
+| `targetDatabase` | target database | `workbench:SyntheticDataRequest` | `xsd:string` |  |
+

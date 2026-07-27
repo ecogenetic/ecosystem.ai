@@ -1,0 +1,45 @@
+---
+title: Server concept catalog
+description: Complete class and property catalog from server.ttl
+---
+
+# Server concept catalog
+
+Generated from the published Turtle. Download [`/ontology/server.ttl`](/ontology/server.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/server#`
+
+## Classes (10)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AppGenerationJob` | App Generation Job | Async job that generates application code from diagrams and ontology context. |
+| `Diagram` | Diagram | Saved UML diagram (class, sequence, etc.) belonging to a modeling project. |
+| `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
+| `GenerationStrategy` | Generation Strategy | Selectable strategy or plugin binding for app/UML generation. |
+| `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| `OntologyContext` | Ontology Context | Structured ontologyContext on a modeling project: domain ids, structuredModel, promptContext, roles, and related generation metadata. |
+| `OntologySynthesisRun` | Ontology Synthesis Run | Enhance/export run that merges diagrams, DB import, and roles into ontologyContext and Turtle export. |
+| `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |
+| `SyntheticDataPackageJob` | Synthetic Data Package Job | Modeling synthetic-data job that produces ZIP packages (JSON/CSV/SQL/DDL) from class diagrams — distinct from Workbench2 Mongo synthetic. |
+| `UmlGenerationJob` | UML Generation Job | Async job that generates or analyzes UML diagrams for a modeling project. |
+
+## Object properties (5)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `hasDiagram` | has diagram | `server:ModelingProject` | `server:Diagram` |  |
+| `hasOntologyContext` | has ontology context | `server:ModelingProject` | `server:OntologyContext` |  |
+| `producesArtifact` | produces artifact | `server:AppGenerationJob` | `server:PlantUmlArtifact` |  |
+| `triggeredByProject` | triggered by project | `server:UmlGenerationJob` | `server:ModelingProject` |  |
+| `usesDomainCatalog` | uses domain catalog | `server:OntologyContext` | `server:DomainCatalogEntry` |  |
+
+## Datatype properties (4)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `diagramName` | diagram name | `server:Diagram` | `xsd:string` |  |
+| `diagramType` | diagram type | `server:Diagram` | `xsd:string` |  |
+| `domainId` | domain id | `server:DomainCatalogEntry` | `xsd:string` |  |
+| `modelingProjectId` | project id | `server:ModelingProject` | `xsd:string` |  |
+

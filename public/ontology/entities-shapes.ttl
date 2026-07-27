@@ -1,0 +1,112 @@
+@prefix : <https://ecosystem.ai/ontology/entities#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://ecosystem.ai/ontology/entities/shapes> a owl:Ontology ;
+    rdfs:label "Ecosystem Entities SHACL Shapes" ;
+    rdfs:comment "Constraint shapes for Workbench2 meta entities. OfferMatrixEntry is closed for the six canonical runtime scoring fields." ;
+    owl:imports <https://ecosystem.ai/ontology/entities> .
+
+:ProjectShape a sh:NodeShape ;
+    sh:targetClass :Project ;
+    sh:property [
+        sh:path :projectId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Project requires projectId." ;
+    ] .
+
+:PredictorShape a sh:NodeShape ;
+    sh:targetClass :Predictor ;
+    sh:property [
+        sh:path :predictId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "Predictor requires predictId." ;
+    ] .
+
+:FrameShape a sh:NodeShape ;
+    sh:targetClass :Frame ;
+    sh:property [
+        sh:path :frameId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "Frame requires frameId." ;
+    ] .
+
+:OfferMatrixShape a sh:NodeShape ;
+    sh:targetClass :OfferMatrix ;
+    sh:property [
+        sh:path :offerMatrixId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "OfferMatrix requires offerMatrixId." ;
+    ] .
+
+:OfferMatrixEntryShape a sh:NodeShape ;
+    sh:targetClass :OfferMatrixEntry ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [
+        sh:path :offerId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "OfferMatrixEntry requires offer_id." ;
+    ] ;
+    sh:property [
+        sh:path :offerName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "OfferMatrixEntry requires offer_name." ;
+    ] ;
+    sh:property [
+        sh:path :cost ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "OfferMatrixEntry requires cost." ;
+    ] ;
+    sh:property [
+        sh:path :price ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "OfferMatrixEntry requires price." ;
+    ] ;
+    sh:property [
+        sh:path :category ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "OfferMatrixEntry requires category." ;
+    ] ;
+    sh:property [
+        sh:path :staticOffers ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "OfferMatrixEntry requires static_offers." ;
+    ] .
+
+:CampaignShape a sh:NodeShape ;
+    sh:targetClass :Campaign ;
+    sh:property [
+        sh:path :campaignId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] .
+
+:DynamicEngagementShape a sh:NodeShape ;
+    sh:targetClass :DynamicEngagement ;
+    sh:property [
+        sh:path :engagementName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] .

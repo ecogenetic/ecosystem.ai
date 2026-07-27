@@ -1,0 +1,28 @@
+---
+title: Alignments
+description: Cross-module bridges between entities, workbench, server, and runtime
+---
+
+# Alignments
+
+File: [`/ontology/alignments.ttl`](/ontology/alignments.ttl)  
+Namespace: `https://ecosystem.ai/ontology/platform#`
+
+Alignments relate concepts that live in different modules without merging their identity.
+
+## Typical bridges
+
+| Alignment idea | From | To | Meaning |
+|----------------|------|-----|---------|
+| Deployed campaign | `ent:DeploymentStep` / project campaign | `rt:CampaignContext` | What Workbench pushes becomes the runtime unit |
+| Offer catalog | `ent:OfferMatrix` / `OfferMatrixEntry` | `rt:hasOfferMatrix` | Same closed rows at design and score time |
+| Feature store | `ent:FeatureStoreRef` | `rt:FeatureLookupConfig` | Design-time pointer → runtime lookup |
+| Dynamic engagement | `ent:DynamicEngagement` | `rt:DynamicEngagementConfig` | Bandit / learning config on both sides |
+| Modeling ↔ Workbench | `srv:ModelingProject` | `ent:Project` | Optional shared identity when products share a project |
+| Solution case | `wb:SolutionCase` | Project + runtime campaign | Product pack binds meta + runtime |
+
+Exact property IRIs and OWL axioms are in the Turtle; treat this page as the **concept map**, the TTL as the **machine-readable source**.
+
+## Umbrella import
+
+[`/ontology/platform.ttl`](/ontology/platform.ttl) imports entities, workbench, server, runtime, and alignments so a single graph load covers the suite.

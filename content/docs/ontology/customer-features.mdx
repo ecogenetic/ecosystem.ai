@@ -1,0 +1,31 @@
+---
+title: Customer Feature Lookup (Open)
+description: Open-schema customer and feature documents for runtime param lookup
+---
+
+# Customer Feature Lookup
+
+Unlike the [Offer Matrix](/docs/ontology/offer-matrix), customer / feature store documents are **open**: any JSON shape the campaign’s feature lookup expects.
+
+## Ontology class
+
+- **`CustomerFeatureDocument`** — runtime namespace  
+  IRI: `https://ecosystem.ai/ontology/runtime#CustomerFeatureDocument`
+
+Represented in logs as nested `scoring_data` / feature-store payloads. The platform ontology does **not** enumerate product-specific fields (spend traits, RFM, embeddings, …). Those belong in a **domain or product ontology** you upload (e.g. in Workbench2 synthetic).
+
+## Configuration concepts
+
+| Class | Role |
+|-------|------|
+| `FeatureLookupConfig` | DB + collection + key for customer/context lookup |
+| `FeatureStoreRef` (entities) | Workbench-side pointer for Dynamic Engagement |
+| `ScoringParams` | Internal bag after lookup / pre-predict |
+
+## Practice
+
+1. Keep **offer rows** fixed (six fields).
+2. Put **customer context** in open feature docs.
+3. Optionally describe that open schema in Turtle for synthetic generation or documentation — without locking the platform ontology to one vertical.
+
+Download: [`/ontology/runtime.ttl`](/ontology/runtime.ttl)

@@ -1,0 +1,369 @@
+@prefix : <https://ecosystem.ai/ontology/entities#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://ecosystem.ai/ontology/entities> a owl:Ontology ;
+    rdfs:label "Ecosystem Workbench Entities Ontology" ;
+    rdfs:comment "Meta-entity vocabulary for ecosystem_meta collections and project asset links in Workbench2. Mongo collection names map to classes; project asset arrays and foreign keys map to object properties." ;
+    owl:versionInfo "1.0.0" .
+
+#################################################################
+# Core hub
+#################################################################
+
+:Project a owl:Class ;
+    skos:prefLabel "Project" ;
+    skos:altLabel "Workbench Project" ;
+    skos:definition "Hub configuration that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps for a solution." .
+
+:projectId a owl:DatatypeProperty ;
+    rdfs:domain :Project ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "project id" ;
+    skos:definition "Primary business identifier for the project (project_id)." .
+
+:projectDescription a owl:DatatypeProperty ;
+    rdfs:domain :Project ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "project description" .
+
+:purpose a owl:DatatypeProperty ;
+    rdfs:domain :Project ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "purpose" .
+
+:projectType a owl:DatatypeProperty ;
+    rdfs:domain :Project ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "project type" .
+
+:projectOwner a owl:DatatypeProperty ;
+    rdfs:domain :Project ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "project owner" .
+
+#################################################################
+# Static models
+#################################################################
+
+:Frame a owl:Class ;
+    skos:prefLabel "Frame" ;
+    skos:altLabel "Training Frame", "H2O Frame" ;
+    skos:definition "Training or reference data frame used by static model predictors (collection: frames)." .
+
+:frameId a owl:DatatypeProperty ;
+    rdfs:domain :Frame ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "frame id" .
+
+:Predictor a owl:Class ;
+    skos:prefLabel "Predictor" ;
+    skos:altLabel "Prediction", "Prediction Case" ;
+    skos:definition "Static or AutoML prediction case configuration (collection: predictions). Links to a training frame and model parameters." .
+
+:predictId a owl:DatatypeProperty ;
+    rdfs:domain :Predictor ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "predict id" ;
+    skos:definition "Prediction case identifier (predict_id / prediction_case_id)." .
+
+:modelId a owl:DatatypeProperty ;
+    rdfs:domain :Predictor ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "model id" .
+
+:usesFrame a owl:ObjectProperty ;
+    rdfs:domain :Predictor ;
+    rdfs:range :Frame ;
+    skos:prefLabel "uses frame" ;
+    skos:definition "Training frame referenced by model_parms.training_frame." .
+
+#################################################################
+# Dynamic engagement
+#################################################################
+
+:DynamicEngagement a owl:Class ;
+    skos:prefLabel "Dynamic Engagement" ;
+    skos:altLabel "Dynamic Interaction" ;
+    skos:definition "Online learning / bandit engagement configuration (collection: dynamic_engagement) with algorithm, contextual variables, and store bindings." .
+
+:engagementName a owl:DatatypeProperty ;
+    rdfs:domain :DynamicEngagement ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "name" .
+
+:learningAlgorithm a owl:DatatypeProperty ;
+    rdfs:domain :DynamicEngagement ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "learning algorithm" ;
+    skos:definition "Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative." .
+
+:FeatureStoreRef a owl:Class ;
+    skos:prefLabel "Feature Store Reference" ;
+    skos:definition "Pointer to a feature-store database and collection used for customer or context lookup." .
+
+:OptionsStoreRef a owl:Class ;
+    skos:prefLabel "Options Store Reference" ;
+    skos:definition "Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards)." .
+
+:hasFeatureStore a owl:ObjectProperty ;
+    rdfs:domain :DynamicEngagement ;
+    rdfs:range :FeatureStoreRef ;
+    skos:prefLabel "has feature store" .
+
+:hasOptionsStore a owl:ObjectProperty ;
+    rdfs:domain :DynamicEngagement ;
+    rdfs:range :OptionsStoreRef ;
+    skos:prefLabel "has options store" .
+
+#################################################################
+# Offer matrix (catalog entity; runtime row shape aligned separately)
+#################################################################
+
+:OfferMatrix a owl:Class ;
+    skos:prefLabel "Offer Matrix" ;
+    skos:definition "First-class offer catalog entity (collection: offer_matrix) with spec, version, status, and rows or linked rows collection." .
+
+:OfferMatrixEntry a owl:Class ;
+    skos:prefLabel "Offer Matrix Entry" ;
+    skos:altLabel "Offer Row" ;
+    skos:definition "A single offer row in a matrix. Canonical runtime scoring fields: offer_id, offer_name, cost, price, category, static_offers." .
+
+:offerMatrixId a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrix ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "offer matrix id" .
+
+:matrixStatus a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrix ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "status" ;
+    skos:definition "draft | active | archived." .
+
+:matrixVersion a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrix ;
+    rdfs:range xsd:integer ;
+    skos:prefLabel "version" .
+
+:hasOfferEntry a owl:ObjectProperty ;
+    rdfs:domain :OfferMatrix ;
+    rdfs:range :OfferMatrixEntry ;
+    skos:prefLabel "has offer entry" .
+
+:offerId a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "offer id" ;
+    skos:definition "Join key for options store and matrix lookup." .
+
+:offerName a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "offer name" ;
+    skos:definition "Display name; primary /response match key." .
+
+:cost a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "cost" .
+
+:price a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "price" .
+
+:category a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "category" .
+
+:staticOffers a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "static offers" ;
+    skos:definition "Static priority slate when greater than 0." .
+
+#################################################################
+# Campaigns, contacts, channels
+#################################################################
+
+:Campaign a owl:Class ;
+    skos:prefLabel "Campaign" ;
+    skos:definition "Workbench campaign that binds patron sources, offer matrices, and recommender deployments (collection: campaigns)." .
+
+:campaignId a owl:DatatypeProperty ;
+    rdfs:domain :Campaign ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "campaign id" .
+
+:usesOfferMatrix a owl:ObjectProperty ;
+    rdfs:domain :Campaign ;
+    rdfs:range :OfferMatrix ;
+    skos:prefLabel "uses offer matrix" .
+
+:ContactCatalog a owl:Class ;
+    skos:prefLabel "Contacts Catalog" ;
+    skos:definition "Catalog definition for contact records and sources (collection: contacts_catalog)." .
+
+:ContactRecord a owl:Class ;
+    skos:prefLabel "Contact Record" ;
+    skos:definition "Individual contact / patron document with core, behavioral, and offers history." .
+
+:catalogId a owl:DatatypeProperty ;
+    rdfs:domain :ContactCatalog ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "catalog id" .
+
+:contactId a owl:DatatypeProperty ;
+    rdfs:domain :ContactRecord ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "contact id" .
+
+:belongsToCatalog a owl:ObjectProperty ;
+    rdfs:domain :ContactRecord ;
+    rdfs:range :ContactCatalog ;
+    skos:prefLabel "belongs to catalog" .
+
+:ChannelProfile a owl:Class ;
+    skos:prefLabel "Channel Profile" ;
+    skos:definition "Delivery channel configuration for ecogentic / engagement." .
+
+:AgentConfig a owl:Class ;
+    skos:prefLabel "Agent Config" ;
+    skos:definition "Ecogentic agent configuration (collection: agent_configs)." .
+
+:agentName a owl:DatatypeProperty ;
+    rdfs:domain :AgentConfig ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "agent name" .
+
+#################################################################
+# Supporting entities
+#################################################################
+
+:DataConnection a owl:Class ;
+    skos:prefLabel "Data Connection" ;
+    skos:definition "External data connection such as Trino/Presto (collection: data_connections)." .
+
+:Prompt a owl:Class ;
+    skos:prefLabel "Prompt" ;
+    skos:altLabel "Prompt Library Entry" ;
+    skos:definition "Generative prompt library entry (collection: prompt_library)." .
+
+:FactInjectionConfig a owl:Class ;
+    skos:prefLabel "Fact Injection Config" ;
+    skos:altLabel "Chat Config" ;
+    skos:definition "Fact injection / chat configuration (collection: chat_config)." .
+
+:Calendar a owl:Class ;
+    skos:prefLabel "Calendar" ;
+    skos:definition "Calendar entity used by dynamic and budget scheduling (collection: calendar)." .
+
+:Simulation a owl:Class ;
+    skos:prefLabel "Simulation" ;
+    skos:definition "Simulation configuration for offline evaluation of deployments." .
+
+:ResponderConfig a owl:Class ;
+    skos:prefLabel "Responder API Config" ;
+    skos:definition "Responder / API configuration for serving predictions (collection: responder_config)." .
+
+:Dashboard a owl:Class ;
+    skos:prefLabel "Dashboard" ;
+    skos:definition "Analytics dashboard definition." .
+
+:EnrichmentPipeline a owl:Class ;
+    skos:prefLabel "Enrichment Pipeline" ;
+    skos:definition "Saved data enrichment pipeline configuration." .
+
+:DeploymentStep a owl:Class ;
+    skos:prefLabel "Deployment Step" ;
+    skos:definition "Embedded project deployment configuration pushed to ecosystem-runtime (paths, plugins, offer matrix, feature store)." .
+
+:deploymentName a owl:DatatypeProperty ;
+    rdfs:domain :DeploymentStep ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "deployment name" .
+
+#################################################################
+# Project asset links
+#################################################################
+
+:hasPredictor a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :Predictor ;
+    skos:prefLabel "has predictor" ;
+    skos:definition "project_predictors asset link." .
+
+:hasFrame a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :Frame ;
+    skos:prefLabel "has frame" ;
+    skos:definition "project_models asset link." .
+
+:hasDynamicEngagement a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :DynamicEngagement ;
+    skos:prefLabel "has dynamic engagement" ;
+    skos:definition "project_dynamic_interactions asset link." .
+
+:hasOfferMatrix a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :OfferMatrix ;
+    skos:prefLabel "has offer matrix" ;
+    skos:definition "project_offer_matrices asset link." .
+
+:hasCampaign a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :Campaign ;
+    skos:prefLabel "has campaign" .
+
+:hasAgent a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :AgentConfig ;
+    skos:prefLabel "has agent" ;
+    skos:definition "project_agents asset link." .
+
+:hasDeploymentStep a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :DeploymentStep ;
+    skos:prefLabel "has deployment step" ;
+    skos:definition "deployment_step array on the project document." .
+
+:hasPrompt a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :Prompt ;
+    skos:prefLabel "has prompt" .
+
+:hasCalendar a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :Calendar ;
+    skos:prefLabel "has calendar" .
+
+:hasSimulation a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :Simulation ;
+    skos:prefLabel "has simulation" .
+
+:hasResponderConfig a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :ResponderConfig ;
+    skos:prefLabel "has responder config" .
+
+:hasFactInjectionConfig a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :FactInjectionConfig ;
+    skos:prefLabel "has fact injection config" .
+
+:hasDataConnection a owl:ObjectProperty ;
+    rdfs:domain :Project ;
+    rdfs:range :DataConnection ;
+    skos:prefLabel "has data connection" .
+
+:linkedToProject a owl:ObjectProperty ;
+    rdfs:domain :ContactCatalog ;
+    rdfs:range :Project ;
+    skos:prefLabel "linked to project" ;
+    skos:definition "project_ids on contacts catalog / records." .

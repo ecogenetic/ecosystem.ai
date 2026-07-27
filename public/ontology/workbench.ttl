@@ -1,0 +1,96 @@
+@prefix : <https://ecosystem.ai/ontology/workbench#> .
+@prefix ent: <https://ecosystem.ai/ontology/entities#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://ecosystem.ai/ontology/workbench> a owl:Ontology ;
+    rdfs:label "Ecosystem Workbench2 Application Ontology" ;
+    rdfs:comment "Workbench2 application and solution concepts beyond raw ecosystem_meta entity collections: solution cases, jobs, analytics, networks, runtime console." ;
+    owl:imports <https://ecosystem.ai/ontology/entities> ;
+    owl:versionInfo "1.0.0" .
+
+:SolutionCase a owl:Class ;
+    skos:prefLabel "Solution Case" ;
+    skos:definition "Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender." .
+
+:SpendPersonalityCase a owl:Class ;
+    rdfs:subClassOf :SolutionCase ;
+    skos:prefLabel "Spend Personality Case" ;
+    skos:definition "Spend and money personality scoring case with trait outputs and messaging." .
+
+:TwoTowerCase a owl:Class ;
+    rdfs:subClassOf :SolutionCase ;
+    skos:prefLabel "Two-Tower Case" ;
+    skos:definition "Two-tower recommender training and deployment case." .
+
+:NetworkGraph a owl:Class ;
+    skos:prefLabel "Network Graph" ;
+    skos:definition "Knowledge or network analysis graph managed in the Networks submodule." .
+
+:NetworkOntologyDefinition a owl:Class ;
+    skos:prefLabel "Network Ontology Definition" ;
+    skos:definition "JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies)." .
+
+:AnalyticsDashboard a owl:Class ;
+    rdfs:subClassOf ent:Dashboard ;
+    skos:prefLabel "Analytics Dashboard" ;
+    skos:definition "Workbench analytics studio dashboard with charts and filters over Mongo collections." .
+
+:RuntimeConsole a owl:Class ;
+    skos:prefLabel "Runtime Console" ;
+    skos:definition "UI surface for inspecting and operating deployed ecosystem-runtime campaigns." .
+
+:AsyncJob a owl:Class ;
+    skos:prefLabel "Async Job" ;
+    skos:definition "Background job for training, synthetic data, enrichment, or generation workflows." .
+
+:jobId a owl:DatatypeProperty ;
+    rdfs:domain :AsyncJob ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "job id" .
+
+:jobLifecycleState a owl:DatatypeProperty ;
+    rdfs:domain :AsyncJob ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "lifecycle state" ;
+    skos:definition "Queued | Running | Succeeded | Failed | Cancelled." .
+
+:PublicApiCatalogEntry a owl:Class ;
+    skos:prefLabel "Public API Catalog Entry" ;
+    skos:definition "Documented public API entity label and collection mapping exposed by the Workbench public API catalog." .
+
+:SyntheticDataRequest a owl:Class ;
+    skos:prefLabel "Synthetic Data Request" ;
+    skos:definition "Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL." .
+
+:ontologyTtl a owl:DatatypeProperty ;
+    rdfs:domain :SyntheticDataRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "ontology turtle" ;
+    skos:definition "Optional open Turtle ontology text guiding synthetic generation." .
+
+:targetDatabase a owl:DatatypeProperty ;
+    rdfs:domain :SyntheticDataRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "target database" .
+
+:targetCollection a owl:DatatypeProperty ;
+    rdfs:domain :SyntheticDataRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "target collection" .
+
+:IndicativeOntologyInference a owl:Class ;
+    skos:prefLabel "Indicative Ontology Inference" ;
+    skos:definition "Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields." .
+
+:usesSolutionCase a owl:ObjectProperty ;
+    rdfs:domain ent:Project ;
+    rdfs:range :SolutionCase ;
+    skos:prefLabel "uses solution case" .
+
+:monitorsCampaign a owl:ObjectProperty ;
+    rdfs:domain :RuntimeConsole ;
+    rdfs:range ent:DeploymentStep ;
+    skos:prefLabel "monitors campaign deployment" .

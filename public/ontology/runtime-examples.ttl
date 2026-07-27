@@ -1,0 +1,31 @@
+@prefix rt: <https://ecosystem.ai/ontology/runtime#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+#################################################################
+# Annotated examples (sanitized) — Spend Personality ContactLog
+# and Offer Matrix canonical row. Image blobs omitted.
+#################################################################
+
+<https://ecosystem.ai/ontology/runtime/examples/offer-product-b> a rt:OfferMatrixEntry ;
+    rdfs:comment "Canonical offer matrix row example." ;
+    rt:offerId "Product B" ;
+    rt:offerName "Product B" ;
+    rt:cost 150 ;
+    rt:price 200 ;
+    rt:category "a" ;
+    rt:staticOffers 1 .
+
+<https://ecosystem.ai/ontology/runtime/examples/contact-money-personality> a rt:ContactLog ;
+    rdfs:comment "Indicative ContactLog from money_personality / Spend Personality (fields only)." ;
+    rt:uuid "3a247f8c-c2d1-46b0-a3dc-1e3a81153d38" ;
+    rt:predictor "money_personality" ;
+    rt:explore 0 ;
+    rt:cache 0 ;
+    rt:dateLog "2026-07-24T11:38:06.664000"^^xsd:dateTime .
+
+<https://ecosystem.ai/ontology/runtime/examples/response-online-recommender> a rt:ResponseLog ;
+    rdfs:comment "Indicative ResponseLog from online_recommender feedback." ;
+    rt:uuid "7cb822de-4328-471d-a81f-9c8f324d0cc4" ;
+    rt:responseUuid "e9f23bd1-6a86-4214-a112-d6897275b621" ;
+    rt:predictor "online_recommender" .

@@ -1,0 +1,42 @@
+---
+title: Data and Ontology
+description: How Turtle ontologies relate to Mongo documents — synthetic forward and indicative reverse
+---
+
+# Data and Ontology
+
+Ontology and Mongo data are related but not the same layer.
+
+| Layer | Role |
+|-------|------|
+| **Ontology (TBox)** | Vocabulary of kinds: classes, properties, optional SHACL constraints |
+| **Data (ABox)** | Concrete Mongo documents that realize those kinds |
+
+## Forward: ontology → data
+
+1. Provide Turtle (upload/paste) in Workbench2 synthetic generation
+2. Backend summarizes classes and properties into prompt context
+3. LLM generates documents preferring ontology terms
+4. Documents insert into the chosen `database.collection`
+
+## Reverse: data → ontology
+
+1. On Workbench2 **Data Management** (`/data`), open a collection and choose **Export** (download icon)
+2. Set File Type to **ttl — indicative ontology (Turtle)**
+3. Choose sample size, then Download (or save to the server data folder)
+4. Optionally paste that TTL into **Generate Synthetic Data → Ontology** for a round trip
+
+Reverse output is inductive: sparse fields, mixed types, and nested arrays may need manual refinement.
+
+```
+Ontology TTL ──guides──► Synthetic generation ──inserts──► Mongo collection
+     ▲                                                         │
+     └──────── indicative infer (sample) ──────────────────────┘
+```
+
+## Runtime asymmetry
+
+For ecosystem-runtime campaigns:
+
+- **Customer / feature lookup** — open bag (any shape) — [Customer Feature Lookup](/docs/ontology/customer-features)
+- **Offer matrix** — fixed six fields — [Offer Matrix](/docs/ontology/offer-matrix)

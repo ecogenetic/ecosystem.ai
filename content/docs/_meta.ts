@@ -16,6 +16,7 @@ export default {
   },
   workers: 'Workers',
   opensource: 'Open Source',
+  ontology: 'Ontology',
   contributing2: {
     type: 'separator',
   },

@@ -1,0 +1,46 @@
+---
+title: Modeling Server Concepts
+description: ecosystem-server modeling project, diagram, ontology context, and generation job concepts
+---
+
+# Modeling Server
+
+Namespace: [`https://ecosystem.ai/ontology/server#`](/ontology/server.ttl)
+
+Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code generation. This module does **not** duplicate industry domain catalogs (CRM, banking, …); those live under `https://ecosystemcode.com/ontology/{domainId}`.
+
+## Core
+
+| Class | Definition |
+|-------|------------|
+| `ModelingProject` | UML / modeling project with description and optional `OntologyContext` |
+| `Diagram` | Saved UML diagram (class, sequence, …) |
+| `OntologyContext` | Structured ontology on the project: domain ids, structuredModel, promptContext, roles |
+| `DomainCatalogEntry` | Hosted business-domain seed (`ontology.ttl` + `shapes.ttl`) via DomainCatalogService |
+| `PlantUmlArtifact` | PlantUML text/SVG from diagram JSON |
+
+## Jobs & synthesis
+
+| Class | Definition |
+|-------|------------|
+| `UmlGenerationJob` | Async UML analyze / generate |
+| `AppGenerationJob` | Async application code generation |
+| `SyntheticDataPackageJob` | Diagram-driven ZIP synthetic packages (distinct from Workbench2 Mongo synthetic) |
+| `OntologySynthesisRun` | Merge diagrams / DB / roles → ontologyContext + Turtle export |
+| `GenerationStrategy` | Selectable generation strategy / plugin binding |
+
+## Links
+
+| Property | From → To |
+|----------|-----------|
+| `hasDiagram` | ModelingProject → Diagram |
+| `hasOntologyContext` | ModelingProject → OntologyContext |
+| `usesDomainCatalog` | OntologyContext → DomainCatalogEntry |
+| `triggeredByProject` | UmlGenerationJob → ModelingProject |
+| `producesArtifact` | AppGenerationJob → PlantUmlArtifact |
+
+`ModelingProject` is related to Workbench `Project` only when intentionally shared — see [Alignments](/docs/ontology/alignments).
+
+Full tables: [Server Catalog](/docs/ontology/server-catalog)
+
+Download: [`/ontology/server.ttl`](/ontology/server.ttl)

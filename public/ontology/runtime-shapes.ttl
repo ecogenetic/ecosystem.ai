@@ -1,0 +1,135 @@
+@prefix : <https://ecosystem.ai/ontology/runtime#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<https://ecosystem.ai/ontology/runtime/shapes> a owl:Ontology ;
+    rdfs:label "Ecosystem Runtime SHACL Shapes" ;
+    rdfs:comment "Closed OfferMatrixEntry; open CustomerFeatureDocument (no closed property list); ContactLog and ResponseLog required fields." ;
+    owl:imports <https://ecosystem.ai/ontology/runtime> .
+
+:OfferMatrixEntryShape a sh:NodeShape ;
+    sh:targetClass :OfferMatrixEntry ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [
+        sh:path :offerId ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :offerName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :cost ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :price ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :category ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :staticOffers ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] .
+
+# CustomerFeatureDocument intentionally has NO closed NodeShape —
+# any document shape is valid for feature lookup / scoring_data.
+
+:ContactLogShape a sh:NodeShape ;
+    sh:targetClass :ContactLog ;
+    sh:property [
+        sh:path :uuid ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "ContactLog requires uuid." ;
+    ] ;
+    sh:property [
+        sh:path :predictor ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "ContactLog requires predictor." ;
+    ] ;
+    sh:property [
+        sh:path :hasFinalResult ;
+        sh:minCount 1 ;
+        sh:message "ContactLog requires final_result entries." ;
+    ] .
+
+:ResponseLogShape a sh:NodeShape ;
+    sh:targetClass :ResponseLog ;
+    sh:property [
+        sh:path :uuid ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :responseUuid ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "ResponseLog requires response_uuid." ;
+    ] ;
+    sh:property [
+        sh:path :hasResponsePayload ;
+        sh:minCount 1 ;
+        sh:message "ResponseLog requires response payload with offers_accepted." ;
+    ] .
+
+:InvocationRequestShape a sh:NodeShape ;
+    sh:targetClass :InvocationRequest ;
+    sh:property [
+        sh:path :campaign ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :paramsJson ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "params must be present as a JSON string (use \"{}\" if empty)." ;
+    ] .
+
+:OfferResultShape a sh:NodeShape ;
+    sh:targetClass :OfferResult ;
+    sh:property [
+        sh:path :uuid ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :offerName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "Slim OfferResult requires offer_name for /response matching." ;
+    ] .
+
+:ResponseFeedbackShape a sh:NodeShape ;
+    sh:targetClass :ResponseFeedback ;
+    sh:property [
+        sh:path :uuid ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path :hasAcceptedOffer ;
+        sh:minCount 1 ;
+        sh:message "ResponseFeedback should include offers_accepted." ;
+    ] .

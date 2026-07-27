@@ -1,0 +1,28 @@
+---
+title: Platform Modules
+description: Umbrella platform ontology and how modules compose
+---
+
+# Platform Modules
+
+The platform umbrella (`https://ecosystem.ai/ontology/platform#`) imports four modules and cross-links them in alignments.
+
+| Module | Docs | Turtle |
+|--------|------|--------|
+| Entities | [Overview](/docs/ontology/entities) · [Catalog](/docs/ontology/entities-catalog) | [`entities.ttl`](/ontology/entities.ttl) |
+| Workbench | [Overview](/docs/ontology/workbench) · [Catalog](/docs/ontology/workbench-catalog) | [`workbench.ttl`](/ontology/workbench.ttl) |
+| Server | [Overview](/docs/ontology/server) · [Catalog](/docs/ontology/server-catalog) | [`server.ttl`](/ontology/server.ttl) |
+| Runtime | [Overview](/docs/ontology/runtime) · [Catalog](/docs/ontology/runtime-catalog) | [`runtime.ttl`](/ontology/runtime.ttl) |
+| Alignments | [Alignments](/docs/ontology/alignments) | [`alignments.ttl`](/ontology/alignments.ttl) |
+| Umbrella | — | [`platform.ttl`](/ontology/platform.ttl) |
+
+Server module **does not** copy industry domain catalogs (`crm`, `fin`, …). Those remain under `https://ecosystemcode.com/ontology/{id}`.
+
+## Example alignments
+
+- `entities:OfferMatrix` ≡ `runtime:OfferMatrix`
+- `entities:OfferMatrixEntry` ≡ `runtime:OfferMatrixEntry` (six canonical fields)
+- `entities:DeploymentStep` seeAlso `runtime:CampaignContext`
+- `entities:DynamicEngagement` seeAlso `runtime:DynamicEngagementConfig`
+
+Full A–Z: [Concept Index](/docs/ontology/concept-index).

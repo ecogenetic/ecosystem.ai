@@ -1,0 +1,22 @@
+@prefix : <https://ecosystem.ai/ontology/platform#> .
+@prefix ent: <https://ecosystem.ai/ontology/entities#> .
+@prefix wb: <https://ecosystem.ai/ontology/workbench#> .
+@prefix srv: <https://ecosystem.ai/ontology/server#> .
+@prefix rt: <https://ecosystem.ai/ontology/runtime#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://ecosystem.ai/ontology/platform> a owl:Ontology ;
+    rdfs:label "Ecosystem Platform Ontology Umbrella" ;
+    rdfs:comment "Imports entities, workbench, server, and runtime modules. Use with alignments.ttl for cross-module bridges." ;
+    owl:imports <https://ecosystem.ai/ontology/entities> ,
+                <https://ecosystem.ai/ontology/workbench> ,
+                <https://ecosystem.ai/ontology/server> ,
+                <https://ecosystem.ai/ontology/runtime> ,
+                <https://ecosystem.ai/ontology/platform/alignments> ;
+    owl:versionInfo "1.0.0" .
+
+:Platform a owl:Class ;
+    skos:prefLabel "Ecosystem Platform" ;
+    skos:definition "The ecosystem.Ai platform spanning Workbench2 experience, modeling server, and real-time runtime." .

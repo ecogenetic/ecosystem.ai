@@ -1,0 +1,382 @@
+@prefix : <https://ecosystem.ai/ontology/runtime#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://ecosystem.ai/ontology/runtime> a owl:Ontology ;
+    rdfs:label "Ecosystem Runtime Ontology" ;
+    rdfs:comment "Closed-loop runtime vocabulary: invocations, response, ContactLog, ResponseLog, open customer feature lookup, fixed Offer Matrix rows, plugins, and campaign context. Grounded in ProductMaster, EcosystemMaster, EcosystemResponse, and production log payloads." ;
+    owl:versionInfo "1.0.0" .
+
+#################################################################
+# Campaign context and bindings
+#################################################################
+
+:CampaignContext a owl:Class ;
+    skos:prefLabel "Campaign Context" ;
+    skos:altLabel "Runtime Campaign", "Predictor Deployment" ;
+    skos:definition "Isolated runtime unit keyed by campaign/predictor name: models, corpora, plugins, logging collections, feature lookup, and optional linked offer matrix." .
+
+:campaignId a owl:DatatypeProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "campaign id" ;
+    skos:definition "Runtime case name (predictor.name / api_params.campaign)." .
+
+:GlobalSettings a owl:Class ;
+    skos:prefLabel "Global Settings" ;
+    skos:definition "Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora)." .
+
+:hasSettings a owl:ObjectProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range :GlobalSettings ;
+    skos:prefLabel "has settings" .
+
+#################################################################
+# Customer lookup — OPEN schema
+#################################################################
+
+:CustomerFeatureDocument a owl:Class ;
+    skos:prefLabel "Customer Feature Document" ;
+    skos:altLabel "Feature Lookup Result", "featuresObj" ;
+    skos:definition "Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema." .
+
+:FeatureLookupConfig a owl:Class ;
+    skos:prefLabel "Feature Lookup Config" ;
+    skos:definition "Configuration for customer/feature DB lookup (database, collection, key, typically customer)." .
+
+:hasFeatureLookup a owl:ObjectProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range :FeatureLookupConfig ;
+    skos:prefLabel "has feature lookup" ;
+    skos:definition "Open-schema binding; target documents are CustomerFeatureDocument instances of any shape." .
+
+:lookupKey a owl:DatatypeProperty ;
+    rdfs:domain :FeatureLookupConfig ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "lookup key" .
+
+#################################################################
+# Offer matrix — FIXED schema (linked)
+#################################################################
+
+:OfferMatrix a owl:Class ;
+    skos:prefLabel "Offer Matrix" ;
+    skos:definition "Runtime-linked offer catalog loaded via predictor.offer.matrix. Rows follow a fixed field format." .
+
+:OfferMatrixEntry a owl:Class ;
+    skos:prefLabel "Offer Matrix Entry" ;
+    skos:definition "Canonical offer row: offer_id, offer_name, cost, price, category, static_offers." .
+
+:hasOfferMatrix a owl:ObjectProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range :OfferMatrix ;
+    skos:prefLabel "links offer matrix" ;
+    skos:definition "Campaign links one offer matrix with fixed row schema." .
+
+:hasEntry a owl:ObjectProperty ;
+    rdfs:domain :OfferMatrix ;
+    rdfs:range :OfferMatrixEntry ;
+    skos:prefLabel "has entry" .
+
+:offerId a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "offer id" .
+
+:offerName a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "offer name" .
+
+:cost a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "cost" .
+
+:price a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "price" .
+
+:category a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "category" .
+
+:staticOffers a owl:DatatypeProperty ;
+    rdfs:domain :OfferMatrixEntry ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "static offers" .
+
+#################################################################
+# Invocation / response closed loop
+#################################################################
+
+:InvocationRequest a owl:Class ;
+    skos:prefLabel "Invocation Request" ;
+    skos:definition "POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string)." .
+
+:campaign a owl:DatatypeProperty ;
+    rdfs:domain :InvocationRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "campaign" .
+
+:subcampaign a owl:DatatypeProperty ;
+    rdfs:domain :InvocationRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "subcampaign" .
+
+:customer a owl:DatatypeProperty ;
+    rdfs:domain :InvocationRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "customer" .
+
+:channel a owl:DatatypeProperty ;
+    rdfs:domain :InvocationRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "channel" .
+
+:numberOffers a owl:DatatypeProperty ;
+    rdfs:domain :InvocationRequest ;
+    rdfs:range xsd:integer ;
+    skos:prefLabel "number offers" .
+
+:paramsJson a owl:DatatypeProperty ;
+    rdfs:domain :InvocationRequest ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "params" ;
+    skos:definition "Must be a JSON string on the wire, not a nested object." .
+
+:InvocationResponse a owl:Class ;
+    skos:prefLabel "Invocation Response" ;
+    skos:definition "API return with uuid, final_result ranked offers, explore/cache flags, in_params echo." .
+
+:uuid a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "uuid" ;
+    skos:definition "Invocation / contact correlation id shared across logs and /response." .
+
+:FinalResultEntry a owl:Class ;
+    skos:prefLabel "Final Result Entry" ;
+    skos:definition "One ranked row in final_result with rank, slim result, and result_full." .
+
+:rank a owl:DatatypeProperty ;
+    rdfs:domain :FinalResultEntry ;
+    rdfs:range xsd:integer ;
+    skos:prefLabel "rank" .
+
+:OfferResult a owl:Class ;
+    skos:prefLabel "Offer Result" ;
+    skos:definition "Slim scored offer: uuid, offer, offer_name, score, final_score, cost, price, offer_value, arm_reward, modified_offer_score." .
+
+:hasFinalResult a owl:ObjectProperty ;
+    rdfs:domain :InvocationResponse ;
+    rdfs:range :FinalResultEntry ;
+    skos:prefLabel "has final result" .
+
+:hasSlimResult a owl:ObjectProperty ;
+    rdfs:domain :FinalResultEntry ;
+    rdfs:range :OfferResult ;
+    skos:prefLabel "has slim result" .
+
+:score a owl:DatatypeProperty ;
+    rdfs:domain :OfferResult ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "score" .
+
+:finalScore a owl:DatatypeProperty ;
+    rdfs:domain :OfferResult ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "final score" .
+
+:armReward a owl:DatatypeProperty ;
+    rdfs:domain :OfferResult ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "arm reward" .
+
+:modifiedOfferScore a owl:DatatypeProperty ;
+    rdfs:domain :OfferResult ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "modified offer score" .
+
+:PersonalityOfferResult a owl:Class ;
+    rdfs:subClassOf :OfferResult ;
+    skos:prefLabel "Personality Offer Result" ;
+    skos:definition "Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels." .
+
+:ProductOfferResult a owl:Class ;
+    rdfs:subClassOf :OfferResult ;
+    skos:prefLabel "Product Offer Result" ;
+    skos:definition "Recommender result_full with nested product catalog fields and bandit stats (alpha, beta, propensity)." .
+
+:ResponseFeedback a owl:Class ;
+    skos:prefLabel "Response Feedback" ;
+    skos:definition "POST /response body: uuid required; offers_accepted with offer_name (preferred match key)." .
+
+:respondsTo a owl:ObjectProperty ;
+    rdfs:domain :ResponseFeedback ;
+    rdfs:range :InvocationResponse ;
+    skos:prefLabel "responds to" ;
+    skos:definition "Matched by shared uuid." .
+
+:AcceptedOffer a owl:Class ;
+    skos:prefLabel "Accepted Offer" ;
+    skos:definition "Element of offers_accepted; typically mirrors slim OfferResult fields." .
+
+:hasAcceptedOffer a owl:ObjectProperty ;
+    rdfs:domain :ResponseFeedback ;
+    rdfs:range :AcceptedOffer ;
+    skos:prefLabel "has accepted offer" .
+
+#################################################################
+# Logging
+#################################################################
+
+:ServerInfo a owl:Class ;
+    skos:prefLabel "Server Info" ;
+    skos:definition "Runtime host metadata: hostname, address, port, version." .
+
+:InvocationStats a owl:Class ;
+    skos:prefLabel "Invocation Stats" ;
+    skos:definition "Timing and model metadata on a contact log (duration, epsilon, predictor, error)." .
+
+:ContactLog a owl:Class ;
+    skos:prefLabel "Contact Log" ;
+    skos:definition "Mongo logging document for an invocation (logging.ecosystemruntime): uuid, predictor, api_params, params lookup, final_result, stats, scoring_data, date indexes." .
+
+:ResponseLog a owl:Class ;
+    skos:prefLabel "Response Log" ;
+    skos:definition "Mongo logging document for feedback (logging.ecosystemruntime_response): uuid, response_uuid, embedded response_log (ContactLog), response payload, stats." .
+
+:responseUuid a owl:DatatypeProperty ;
+    rdfs:domain :ResponseLog ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "response uuid" .
+
+:embedsContactLog a owl:ObjectProperty ;
+    rdfs:domain :ResponseLog ;
+    rdfs:range :ContactLog ;
+    skos:prefLabel "embeds contact log" ;
+    skos:definition "response_log field." .
+
+:hasResponsePayload a owl:ObjectProperty ;
+    rdfs:domain :ResponseLog ;
+    rdfs:range :ResponseFeedback ;
+    skos:prefLabel "has response payload" .
+
+:scoringData a owl:ObjectProperty ;
+    rdfs:domain :ContactLog ;
+    rdfs:range :CustomerFeatureDocument ;
+    skos:prefLabel "scoring data" ;
+    skos:definition "Open feature bag logged when logging.detail is true; may also echo options-store state." .
+
+:hasServerInfo a owl:ObjectProperty ;
+    rdfs:domain :ContactLog ;
+    rdfs:range :ServerInfo ;
+    skos:prefLabel "has server info" .
+
+:hasStats a owl:ObjectProperty ;
+    rdfs:domain :ContactLog ;
+    rdfs:range :InvocationStats ;
+    skos:prefLabel "has stats" .
+
+:dateLog a owl:DatatypeProperty ;
+    rdfs:range xsd:dateTime ;
+    skos:prefLabel "date log" .
+
+:predictor a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "predictor" .
+
+:explore a owl:DatatypeProperty ;
+    rdfs:range xsd:integer ;
+    skos:prefLabel "explore" .
+
+:cache a owl:DatatypeProperty ;
+    rdfs:range xsd:integer ;
+    skos:prefLabel "cache" .
+
+#################################################################
+# Options store / learning
+#################################################################
+
+:Option a owl:Class ;
+    skos:prefLabel "Option" ;
+    skos:altLabel "Options Store Arm" ;
+    skos:definition "Dynamic engagement options row: optionKey joins OfferMatrixEntry.offer_id; alpha, beta, arm_reward, propensity." .
+
+:optionKey a owl:DatatypeProperty ;
+    rdfs:domain :Option ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "option key" .
+
+:joinsOffer a owl:ObjectProperty ;
+    rdfs:domain :Option ;
+    rdfs:range :OfferMatrixEntry ;
+    skos:prefLabel "joins offer" ;
+    skos:definition "optionKey equals matrix offer_id." .
+
+:alpha a owl:DatatypeProperty ;
+    rdfs:domain :Option ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "alpha" .
+
+:beta a owl:DatatypeProperty ;
+    rdfs:domain :Option ;
+    rdfs:range xsd:decimal ;
+    skos:prefLabel "beta" .
+
+:DynamicEngagementConfig a owl:Class ;
+    skos:prefLabel "Dynamic Engagement Config" ;
+    skos:definition "Runtime corpora entry for dynamic_engagement algorithm and contextual variables." .
+
+:hasDynamicEngagement a owl:ObjectProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range :DynamicEngagementConfig ;
+    skos:prefLabel "has dynamic engagement" .
+
+#################################################################
+# Plugins
+#################################################################
+
+:PrePredictPlugin a owl:Class ;
+    skos:prefLabel "Pre-Predict Plugin" ;
+    skos:definition "plugin.prescore class that mutates params before scoring." .
+
+:PostPredictPlugin a owl:Class ;
+    skos:prefLabel "Post-Predict Plugin" ;
+    skos:definition "plugin.postscore class that builds final_result from model output, options, and offer matrix." .
+
+:RewardPlugin a owl:Class ;
+    skos:prefLabel "Reward Plugin" ;
+    skos:definition "plugin.reward class that updates learning state after /response." .
+
+:usesPrePlugin a owl:ObjectProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range :PrePredictPlugin ;
+    skos:prefLabel "uses pre plugin" .
+
+:usesPostPlugin a owl:ObjectProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range :PostPredictPlugin ;
+    skos:prefLabel "uses post plugin" .
+
+:usesRewardPlugin a owl:ObjectProperty ;
+    rdfs:domain :CampaignContext ;
+    rdfs:range :RewardPlugin ;
+    skos:prefLabel "uses reward plugin" .
+
+#################################################################
+# Scoring params (internal)
+#################################################################
+
+:ScoringParams a owl:Class ;
+    skos:prefLabel "Scoring Params" ;
+    skos:definition "Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins." .
+
+:featuresObj a owl:ObjectProperty ;
+    rdfs:domain :ScoringParams ;
+    rdfs:range :CustomerFeatureDocument ;
+    skos:prefLabel "features object" .

@@ -1,0 +1,92 @@
+---
+title: Entities concept catalog
+description: Complete class and property catalog from entities.ttl
+---
+
+# Entities concept catalog
+
+Generated from the published Turtle. Download [`/ontology/entities.ttl`](/ontology/entities.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/entities#`
+
+## Classes (22)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AgentConfig` | Agent Config | Ecogentic agent configuration (collection: agent_configs). |
+| `Calendar` | Calendar | Calendar entity used by dynamic and budget scheduling (collection: calendar). |
+| `Campaign` | Campaign | Workbench campaign that binds patron sources, offer matrices, and recommender deployments (collection: campaigns). |
+| `ChannelProfile` | Channel Profile | Delivery channel configuration for ecogentic / engagement. |
+| `ContactCatalog` | Contacts Catalog | Catalog definition for contact records and sources (collection: contacts_catalog). |
+| `ContactRecord` | Contact Record | Individual contact / patron document with core, behavioral, and offers history. |
+| `Dashboard` | Dashboard | Analytics dashboard definition. |
+| `DataConnection` | Data Connection | External data connection such as Trino/Presto (collection: data_connections). |
+| `DeploymentStep` | Deployment Step | Embedded project deployment configuration pushed to ecosystem-runtime (paths, plugins, offer matrix, feature store). |
+| `DynamicEngagement` | Dynamic Engagement | Online learning / bandit engagement configuration (collection: dynamic_engagement) with algorithm, contextual variables, and store bindings. |
+| `EnrichmentPipeline` | Enrichment Pipeline | Saved data enrichment pipeline configuration. |
+| `FactInjectionConfig` | Fact Injection Config | Fact injection / chat configuration (collection: chat_config). |
+| `FeatureStoreRef` | Feature Store Reference | Pointer to a feature-store database and collection used for customer or context lookup. |
+| `Frame` | Frame | Training or reference data frame used by static model predictors (collection: frames). |
+| `OfferMatrix` | Offer Matrix | First-class offer catalog entity (collection: offer_matrix) with spec, version, status, and rows or linked rows collection. |
+| `OfferMatrixEntry` | Offer Matrix Entry | A single offer row in a matrix. Canonical runtime scoring fields: offer_id, offer_name, cost, price, category, static_offers. |
+| `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
+| `Predictor` | Predictor | Static or AutoML prediction case configuration (collection: predictions). Links to a training frame and model parameters. |
+| `Project` | Project | Hub configuration that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps for a solution. |
+| `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
+| `ResponderConfig` | Responder API Config | Responder / API configuration for serving predictions (collection: responder_config). |
+| `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
+
+## Object properties (20)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `belongsToCatalog` | belongs to catalog | `entities:ContactRecord` | `entities:ContactCatalog` |  |
+| `hasAgent` | has agent | `entities:Project` | `entities:AgentConfig` | project_agents asset link. |
+| `hasCalendar` | has calendar | `entities:Project` | `entities:Calendar` |  |
+| `hasCampaign` | has campaign | `entities:Project` | `entities:Campaign` |  |
+| `hasDataConnection` | has data connection | `entities:Project` | `entities:DataConnection` |  |
+| `hasDeploymentStep` | has deployment step | `entities:Project` | `entities:DeploymentStep` | deployment_step array on the project document. |
+| `hasDynamicEngagement` | has dynamic engagement | `entities:Project` | `entities:DynamicEngagement` | project_dynamic_interactions asset link. |
+| `hasFactInjectionConfig` | has fact injection config | `entities:Project` | `entities:FactInjectionConfig` |  |
+| `hasFeatureStore` | has feature store | `entities:DynamicEngagement` | `entities:FeatureStoreRef` |  |
+| `hasFrame` | has frame | `entities:Project` | `entities:Frame` | project_models asset link. |
+| `hasOfferEntry` | has offer entry | `entities:OfferMatrix` | `entities:OfferMatrixEntry` |  |
+| `hasOfferMatrix` | has offer matrix | `entities:Project` | `entities:OfferMatrix` | project_offer_matrices asset link. |
+| `hasOptionsStore` | has options store | `entities:DynamicEngagement` | `entities:OptionsStoreRef` |  |
+| `hasPredictor` | has predictor | `entities:Project` | `entities:Predictor` | project_predictors asset link. |
+| `hasPrompt` | has prompt | `entities:Project` | `entities:Prompt` |  |
+| `hasResponderConfig` | has responder config | `entities:Project` | `entities:ResponderConfig` |  |
+| `hasSimulation` | has simulation | `entities:Project` | `entities:Simulation` |  |
+| `linkedToProject` | linked to project | `entities:ContactCatalog` | `entities:Project` | project_ids on contacts catalog / records. |
+| `usesFrame` | uses frame | `entities:Predictor` | `entities:Frame` | Training frame referenced by model_parms.training_frame. |
+| `usesOfferMatrix` | uses offer matrix | `entities:Campaign` | `entities:OfferMatrix` |  |
+
+## Datatype properties (24)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `agentName` | agent name | `entities:AgentConfig` | `xsd:string` |  |
+| `campaignId` | campaign id | `entities:Campaign` | `xsd:string` |  |
+| `catalogId` | catalog id | `entities:ContactCatalog` | `xsd:string` |  |
+| `category` | category | `entities:OfferMatrixEntry` | `xsd:string` |  |
+| `contactId` | contact id | `entities:ContactRecord` | `xsd:string` |  |
+| `cost` | cost | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
+| `deploymentName` | deployment name | `entities:DeploymentStep` | `xsd:string` |  |
+| `engagementName` | name | `entities:DynamicEngagement` | `xsd:string` |  |
+| `frameId` | frame id | `entities:Frame` | `xsd:string` |  |
+| `learningAlgorithm` | learning algorithm | `entities:DynamicEngagement` | `xsd:string` | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| `matrixStatus` | status | `entities:OfferMatrix` | `xsd:string` | draft \| active \| archived. |
+| `matrixVersion` | version | `entities:OfferMatrix` | `xsd:integer` |  |
+| `modelId` | model id | `entities:Predictor` | `xsd:string` |  |
+| `offerId` | offer id | `entities:OfferMatrixEntry` | `xsd:string` | Join key for options store and matrix lookup. |
+| `offerMatrixId` | offer matrix id | `entities:OfferMatrix` | `xsd:string` |  |
+| `offerName` | offer name | `entities:OfferMatrixEntry` | `xsd:string` | Display name; primary /response match key. |
+| `predictId` | predict id | `entities:Predictor` | `xsd:string` | Prediction case identifier (predict_id / prediction_case_id). |
+| `price` | price | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
+| `projectDescription` | project description | `entities:Project` | `xsd:string` |  |
+| `projectId` | project id | `entities:Project` | `xsd:string` | Primary business identifier for the project (project_id). |
+| `projectOwner` | project owner | `entities:Project` | `xsd:string` |  |
+| `projectType` | project type | `entities:Project` | `xsd:string` |  |
+| `purpose` | purpose | `entities:Project` | `xsd:string` |  |
+| `staticOffers` | static offers | `entities:OfferMatrixEntry` | `xsd:decimal` | Static priority slate when greater than 0. |
+

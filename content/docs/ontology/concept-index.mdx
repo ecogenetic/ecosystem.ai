@@ -1,0 +1,186 @@
+---
+title: Concept Index
+description: A–Z index of all platform ontology classes and properties
+---
+
+# Concept Index
+
+Alphabetical index of every class and property in the platform ontology suite. Module pages: [Entities catalog](/docs/ontology/entities-catalog), [Workbench catalog](/docs/ontology/workbench-catalog), [Server catalog](/docs/ontology/server-catalog), [Runtime catalog](/docs/ontology/runtime-catalog).
+
+| Module | Kind | Local name | Pref label | Definition |
+|--------|------|------------|------------|------------|
+| [runtime](/docs/ontology/runtime-catalog) | Class | `AcceptedOffer` | Accepted Offer | Element of offers_accepted; typically mirrors slim OfferResult fields. |
+| [entities](/docs/ontology/entities-catalog) | Class | `AgentConfig` | Agent Config | Ecogentic agent configuration (collection: agent_configs). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `agentName` | agent name |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `alpha` | alpha |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `AnalyticsDashboard` | Analytics Dashboard | Workbench analytics studio dashboard with charts and filters over Mongo collections. |
+| [server](/docs/ontology/server-catalog) | Class | `AppGenerationJob` | App Generation Job | Async job that generates application code from diagrams and ontology context. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `armReward` | arm reward |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `belongsToCatalog` | belongs to catalog |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `beta` | beta |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cache` | cache |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `Calendar` | Calendar | Calendar entity used by dynamic and budget scheduling (collection: calendar). |
+| [entities](/docs/ontology/entities-catalog) | Class | `Campaign` | Campaign | Workbench campaign that binds patron sources, offer matrices, and recommender deployments (collection: campaigns). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `campaign` | campaign |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `CampaignContext` | Campaign Context | Isolated runtime unit keyed by campaign/predictor name: models, corpora, plugins, logging collections, feature lookup, and optional linked offer matrix. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `campaignId` | campaign id |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `campaignId` | campaign id | Runtime case name (predictor.name / api_params.campaign). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `catalogId` | catalog id |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `category` | category |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `category` | category |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `channel` | channel |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `ChannelProfile` | Channel Profile | Delivery channel configuration for ecogentic / engagement. |
+| [entities](/docs/ontology/entities-catalog) | Class | `ContactCatalog` | Contacts Catalog | Catalog definition for contact records and sources (collection: contacts_catalog). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `contactId` | contact id |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ContactLog` | Contact Log | Mongo logging document for an invocation (logging.ecosystemruntime): uuid, predictor, api_params, params lookup, final_result, stats, scoring_data, date indexes. |
+| [entities](/docs/ontology/entities-catalog) | Class | `ContactRecord` | Contact Record | Individual contact / patron document with core, behavioral, and offers history. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `cost` | cost |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cost` | cost |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `customer` | customer |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
+| [entities](/docs/ontology/entities-catalog) | Class | `Dashboard` | Dashboard | Analytics dashboard definition. |
+| [entities](/docs/ontology/entities-catalog) | Class | `DataConnection` | Data Connection | External data connection such as Trino/Presto (collection: data_connections). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `dateLog` | date log |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `deploymentName` | deployment name |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `DeploymentStep` | Deployment Step | Embedded project deployment configuration pushed to ecosystem-runtime (paths, plugins, offer matrix, feature store). |
+| [server](/docs/ontology/server-catalog) | Class | `Diagram` | Diagram | Saved UML diagram (class, sequence, etc.) belonging to a modeling project. |
+| [server](/docs/ontology/server-catalog) | Datatype property | `diagramName` | diagram name |  |
+| [server](/docs/ontology/server-catalog) | Datatype property | `diagramType` | diagram type |  |
+| [server](/docs/ontology/server-catalog) | Class | `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
+| [server](/docs/ontology/server-catalog) | Datatype property | `domainId` | domain id |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `DynamicEngagement` | Dynamic Engagement | Online learning / bandit engagement configuration (collection: dynamic_engagement) with algorithm, contextual variables, and store bindings. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `embedsContactLog` | embeds contact log | response_log field. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `engagementName` | name |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `EnrichmentPipeline` | Enrichment Pipeline | Saved data enrichment pipeline configuration. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `explore` | explore |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `FactInjectionConfig` | Fact Injection Config | Fact injection / chat configuration (collection: chat_config). |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `FeatureLookupConfig` | Feature Lookup Config | Configuration for customer/feature DB lookup (database, collection, key, typically customer). |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `featuresObj` | features object |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `FeatureStoreRef` | Feature Store Reference | Pointer to a feature-store database and collection used for customer or context lookup. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `FinalResultEntry` | Final Result Entry | One ranked row in final_result with rank, slim result, and result_full. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `finalScore` | final score |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `Frame` | Frame | Training or reference data frame used by static model predictors (collection: frames). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `frameId` | frame id |  |
+| [server](/docs/ontology/server-catalog) | Class | `GenerationStrategy` | Generation Strategy | Selectable strategy or plugin binding for app/UML generation. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `GlobalSettings` | Global Settings | Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora). |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasAcceptedOffer` | has accepted offer |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasAgent` | has agent | project_agents asset link. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasCalendar` | has calendar |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasCampaign` | has campaign |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasDataConnection` | has data connection |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasDeploymentStep` | has deployment step | deployment_step array on the project document. |
+| [server](/docs/ontology/server-catalog) | Object property | `hasDiagram` | has diagram |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasDynamicEngagement` | has dynamic engagement | project_dynamic_interactions asset link. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDynamicEngagement` | has dynamic engagement |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasEntry` | has entry |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFactInjectionConfig` | has fact injection config |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFeatureLookup` | has feature lookup | Open-schema binding; target documents are CustomerFeatureDocument instances of any shape. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFeatureStore` | has feature store |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFinalResult` | has final result |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFrame` | has frame | project_models asset link. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasOfferEntry` | has offer entry |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasOfferMatrix` | has offer matrix | project_offer_matrices asset link. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasOfferMatrix` | links offer matrix | Campaign links one offer matrix with fixed row schema. |
+| [server](/docs/ontology/server-catalog) | Object property | `hasOntologyContext` | has ontology context |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasOptionsStore` | has options store |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasPredictor` | has predictor | project_predictors asset link. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasPrompt` | has prompt |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasResponderConfig` | has responder config |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasResponsePayload` | has response payload |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasServerInfo` | has server info |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasSettings` | has settings |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasSimulation` | has simulation |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasSlimResult` | has slim result |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasStats` | has stats |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationStats` | Invocation Stats | Timing and model metadata on a contact log (duration, epsilon, predictor, error). |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobId` | job id |  |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobLifecycleState` | lifecycle state | Queued \\| Running \\| Succeeded \\| Failed \\| Cancelled. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `joinsOffer` | joins offer | optionKey equals matrix offer_id. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `learningAlgorithm` | learning algorithm | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `linkedToProject` | linked to project | project_ids on contacts catalog / records. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `lookupKey` | lookup key |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixStatus` | status | draft \\| active \\| archived. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixVersion` | version |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `modelId` | model id |  |
+| [server](/docs/ontology/server-catalog) | Class | `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| [server](/docs/ontology/server-catalog) | Datatype property | `modelingProjectId` | project id |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `modifiedOfferScore` | modified offer score |  |
+| [workbench](/docs/ontology/workbench-catalog) | Object property | `monitorsCampaign` | monitors campaign deployment |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `numberOffers` | number offers |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `offerId` | offer id | Join key for options store and matrix lookup. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `offerId` | offer id |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `OfferMatrix` | Offer Matrix | First-class offer catalog entity (collection: offer_matrix) with spec, version, status, and rows or linked rows collection. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `OfferMatrix` | Offer Matrix | Runtime-linked offer catalog loaded via predictor.offer.matrix. Rows follow a fixed field format. |
+| [entities](/docs/ontology/entities-catalog) | Class | `OfferMatrixEntry` | Offer Matrix Entry | A single offer row in a matrix. Canonical runtime scoring fields: offer_id, offer_name, cost, price, category, static_offers. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `OfferMatrixEntry` | Offer Matrix Entry | Canonical offer row: offer_id, offer_name, cost, price, category, static_offers. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `offerMatrixId` | offer matrix id |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `offerName` | offer name | Display name; primary /response match key. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `offerName` | offer name |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `OfferResult` | Offer Result | Slim scored offer: uuid, offer, offer_name, score, final_score, cost, price, offer_value, arm_reward, modified_offer_score. |
+| [server](/docs/ontology/server-catalog) | Class | `OntologyContext` | Ontology Context | Structured ontologyContext on a modeling project: domain ids, structuredModel, promptContext, roles, and related generation metadata. |
+| [server](/docs/ontology/server-catalog) | Class | `OntologySynthesisRun` | Ontology Synthesis Run | Enhance/export run that merges diagrams, DB import, and roles into ontologyContext and Turtle export. |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `ontologyTtl` | ontology turtle | Optional open Turtle ontology text guiding synthetic generation. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `Option` | Option | Dynamic engagement options row: optionKey joins OfferMatrixEntry.offer_id; alpha, beta, arm_reward, propensity. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `optionKey` | option key |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `paramsJson` | params | Must be a JSON string on the wire, not a nested object. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
+| [server](/docs/ontology/server-catalog) | Class | `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `predictId` | predict id | Prediction case identifier (predict_id / prediction_case_id). |
+| [entities](/docs/ontology/entities-catalog) | Class | `Predictor` | Predictor | Static or AutoML prediction case configuration (collection: predictions). Links to a training frame and model parameters. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `predictor` | predictor |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PrePredictPlugin` | Pre-Predict Plugin | plugin.prescore class that mutates params before scoring. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `price` | price |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `price` | price |  |
+| [server](/docs/ontology/server-catalog) | Object property | `producesArtifact` | produces artifact |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ProductOfferResult` | Product Offer Result | Recommender result_full with nested product catalog fields and bandit stats (alpha, beta, propensity). |
+| [entities](/docs/ontology/entities-catalog) | Class | `Project` | Project | Hub configuration that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps for a solution. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectDescription` | project description |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectId` | project id | Primary business identifier for the project (project_id). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectOwner` | project owner |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectType` | project type |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `purpose` | purpose |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `rank` | rank |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `ResponderConfig` | Responder API Config | Responder / API configuration for serving predictions (collection: responder_config). |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `respondsTo` | responds to | Matched by shared uuid. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ResponseFeedback` | Response Feedback | POST /response body: uuid required; offers_accepted with offer_name (preferred match key). |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ResponseLog` | Response Log | Mongo logging document for feedback (logging.ecosystemruntime_response): uuid, response_uuid, embedded response_log (ContactLog), response payload, stats. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `responseUuid` | response uuid |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `RewardPlugin` | Reward Plugin | plugin.reward class that updates learning state after /response. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `score` | score |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `scoringData` | scoring data | Open feature bag logged when logging.detail is true; may also echo options-store state. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
+| [entities](/docs/ontology/entities-catalog) | Class | `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `staticOffers` | static offers | Static priority slate when greater than 0. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `staticOffers` | static offers |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `subcampaign` | subcampaign |  |
+| [server](/docs/ontology/server-catalog) | Class | `SyntheticDataPackageJob` | Synthetic Data Package Job | Modeling synthetic-data job that produces ZIP packages (JSON/CSV/SQL/DDL) from class diagrams — distinct from Workbench2 Mongo synthetic. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetCollection` | target collection |  |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetDatabase` | target database |  |
+| [server](/docs/ontology/server-catalog) | Object property | `triggeredByProject` | triggered by project |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
+| [server](/docs/ontology/server-catalog) | Class | `UmlGenerationJob` | UML Generation Job | Async job that generates or analyzes UML diagrams for a modeling project. |
+| [server](/docs/ontology/server-catalog) | Object property | `usesDomainCatalog` | uses domain catalog |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `usesFrame` | uses frame | Training frame referenced by model_parms.training_frame. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `usesOfferMatrix` | uses offer matrix |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `usesPostPlugin` | uses post plugin |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `usesPrePlugin` | uses pre plugin |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `usesRewardPlugin` | uses reward plugin |  |
+| [workbench](/docs/ontology/workbench-catalog) | Object property | `usesSolutionCase` | uses solution case |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `uuid` | uuid | Invocation / contact correlation id shared across logs and /response. |
+

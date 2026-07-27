@@ -1,0 +1,44 @@
+---
+title: Offer Matrix (Closed Schema)
+description: Canonical six-field OfferMatrixEntry used by runtime scoring
+---
+
+# Offer Matrix
+
+The offer catalog is **closed** at scoring time. Every linked row used by the runtime must carry exactly these six fields (names and types as used in production configs and logs).
+
+## Canonical row JSON
+
+```json
+{
+  "cost": 150,
+  "price": 200,
+  "category": "a",
+  "offer_id": "Product B",
+  "offer_name": "Product B",
+  "static_offers": 1
+}
+```
+
+| Field | Type | Role |
+|-------|------|------|
+| `cost` | number | Cost / margin input |
+| `price` | number | Price / value input |
+| `category` | string | Grouping / eligibility |
+| `offer_id` | string | Stable id (often same as name) |
+| `offer_name` | string | Display / match key for `/response` |
+| `static_offers` | number | Static offer flag / weight |
+
+## Ontology class
+
+- **`OfferMatrixEntry`** — `https://ecosystem.ai/ontology/entities#OfferMatrixEntry` (also used from runtime)
+- Workbench **`OfferMatrix`** — first-class catalog document that owns versions and rows
+- Runtime **`CampaignContext`** links to offer matrix rows via `hasOfferMatrix`
+
+## Why closed?
+
+Pre/post scoring plugins and bandit arms join on `offer_name` / option keys. Open-ended extra fields on matrix rows break matching and learning. Put customer context in the **open** feature lookup instead — see [Customer Feature Lookup](/docs/ontology/customer-features).
+
+## SHACL
+
+Shapes live in [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl) and [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl).

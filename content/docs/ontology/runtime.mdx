@@ -1,0 +1,79 @@
+---
+title: Runtime Closed Loop
+description: Invocations, response, ContactLog, ResponseLog, plugins, and campaign context concepts
+---
+
+# Runtime Closed Loop
+
+Namespace: [`https://ecosystem.ai/ontology/runtime#`](/ontology/runtime.ttl)
+
+Concepts for **ecosystem-runtime**: score offers, log contacts, accept feedback, and learn.
+
+## Sequence
+
+```
+Client → POST /invocations → InvocationResponse (final_result by rank)
+       → ContactLog written (uuid)
+Client → POST /response (uuid + offer_name) → ResponseFeedback
+       → ResponseLog written (response_uuid, embeds ContactLog)
+```
+
+Same **`uuid`** ties invocation, contact log, and response.
+
+## API classes
+
+| Class | Role |
+|-------|------|
+| `InvocationRequest` | `/invocations` body: `campaign`, `subcampaign`, `customer`, `channel`, `numberOffers`, `paramsJson` (**string**) |
+| `InvocationResponse` | Return: `uuid`, `final_result`, explore/cache, `in_params` |
+| `FinalResultEntry` | Ranked row: `rank` + slim `OfferResult` + `result_full` |
+| `OfferResult` | Slim offer: `uuid`, `offerName`, scores, cost/price |
+| `PersonalityOfferResult` | Trait-oriented `result_full` (Spend Personality) |
+| `ProductOfferResult` | Product + bandit `result_full` (recommenders) |
+| `ResponseFeedback` | `/response` body: `uuid` + `offers_accepted` |
+| `AcceptedOffer` | Accepted slim offer row |
+
+**Matching accepted offers:** prefer `offer_name` (also `offer` / `offer_treatment_code`).
+
+## Logging
+
+| Class | Store (typical) | Role |
+|-------|-----------------|------|
+| `ContactLog` | `logging.ecosystemruntime` | Invocation log: uuid, predictor, api_params, params, final_result, stats, scoring_data |
+| `ResponseLog` | `logging.ecosystemruntime_response` | Feedback log: uuid, responseUuid, embedsContactLog, response payload |
+| `ServerInfo` | nested | hostname, address, port, version |
+| `InvocationStats` | nested | durations, epsilon, model, error |
+
+**Links:** `hasFinalResult`, `scoringData` → open `CustomerFeatureDocument`; `embedsContactLog`; `hasResponsePayload`; `respondsTo`
+
+## Campaign context
+
+| Class | Role |
+|-------|------|
+| `CampaignContext` | Isolated runtime unit (campaign / predictor name) |
+| `GlobalSettings` | Properties: plugins, logging, offer matrix, param lookup, corpora |
+| `FeatureLookupConfig` | Open customer/feature DB lookup |
+| `DynamicEngagementConfig` | Algorithm + contextual variables corpora |
+| `Option` | Options-store arm; `optionKey` joins OfferMatrixEntry |
+| `ScoringParams` | Internal pipeline bag for plugins |
+
+**Links:** `hasOfferMatrix` (fixed rows), `hasFeatureLookup` (open docs), `hasDynamicEngagement`, plugin uses*
+
+## Plugins
+
+| Class | Config key |
+|-------|------------|
+| `PrePredictPlugin` | `plugin.prescore` |
+| `PostPredictPlugin` | `plugin.postscore` |
+| `RewardPlugin` | `plugin.reward` |
+
+## Related
+
+- [Offer Matrix](/docs/ontology/offer-matrix)
+- [Customer Feature Lookup](/docs/ontology/customer-features)
+- [Runtime & Deployment docs](/docs/runtime)
+- Examples TTL: [`/ontology/runtime-examples.ttl`](/ontology/runtime-examples.ttl)
+
+Full tables: [Runtime Catalog](/docs/ontology/runtime-catalog) · [Concept Index](/docs/ontology/concept-index)
+
+Download: [`/ontology/runtime.ttl`](/ontology/runtime.ttl) · shapes: [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl)

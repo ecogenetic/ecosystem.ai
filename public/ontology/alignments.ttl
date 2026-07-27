@@ -1,0 +1,43 @@
+@prefix ent: <https://ecosystem.ai/ontology/entities#> .
+@prefix wb: <https://ecosystem.ai/ontology/workbench#> .
+@prefix srv: <https://ecosystem.ai/ontology/server#> .
+@prefix rt: <https://ecosystem.ai/ontology/runtime#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://ecosystem.ai/ontology/platform/alignments> a owl:Ontology ;
+    rdfs:label "Ecosystem Platform Cross-Module Alignments" ;
+    rdfs:comment "Bridges Workbench entities, modeling server concepts, and runtime closed-loop types." ;
+    owl:imports <https://ecosystem.ai/ontology/entities> ,
+                <https://ecosystem.ai/ontology/workbench> ,
+                <https://ecosystem.ai/ontology/server> ,
+                <https://ecosystem.ai/ontology/runtime> .
+
+# Offer matrix — same catalog concept in Workbench meta and runtime scoring
+ent:OfferMatrix owl:equivalentClass rt:OfferMatrix .
+ent:OfferMatrixEntry owl:equivalentClass rt:OfferMatrixEntry .
+ent:offerId owl:equivalentProperty rt:offerId .
+ent:offerName owl:equivalentProperty rt:offerName .
+ent:cost owl:equivalentProperty rt:cost .
+ent:price owl:equivalentProperty rt:price .
+ent:category owl:equivalentProperty rt:category .
+ent:staticOffers owl:equivalentProperty rt:staticOffers .
+
+# Dynamic engagement config spans meta entity and runtime corpora
+ent:DynamicEngagement rdfs:seeAlso rt:DynamicEngagementConfig .
+
+# Deployment step pushes a runtime campaign context
+ent:DeploymentStep rdfs:seeAlso rt:CampaignContext .
+ent:hasDeploymentStep rdfs:seeAlso rt:campaignId .
+
+# Modeling project vs Workbench project — related products, not always same store
+srv:ModelingProject rdfs:seeAlso ent:Project ;
+    skos:note "Often different databases/products; align only when intentionally shared."@en .
+
+# Workbench synthetic uses open ontology; indicative inference feeds the same paste box
+wb:SyntheticDataRequest rdfs:seeAlso wb:IndicativeOntologyInference .
+
+# Feature store ref on engagement aligns to runtime open lookup
+ent:FeatureStoreRef rdfs:seeAlso rt:FeatureLookupConfig .
+ent:OptionsStoreRef rdfs:seeAlso rt:Option .

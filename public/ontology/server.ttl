@@ -1,0 +1,97 @@
+@prefix : <https://ecosystem.ai/ontology/server#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://ecosystem.ai/ontology/server> a owl:Ontology ;
+    rdfs:label "Ecosystem Server Modeling Ontology" ;
+    rdfs:comment "Platform concepts for ecosystem-server modeling: UML projects, diagrams, generation jobs, ontology context, and domain catalog hosting. Does not duplicate industry business-domain catalog classes (crm, erp, …); seeAlso https://ecosystemcode.com/ontology/core ." ;
+    rdfs:seeAlso <https://ecosystemcode.com/ontology/core> ;
+    owl:versionInfo "1.0.0" .
+
+:ModelingProject a owl:Class ;
+    skos:prefLabel "Modeling Project" ;
+    skos:definition "UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext." .
+
+:modelingProjectId a owl:DatatypeProperty ;
+    rdfs:domain :ModelingProject ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "project id" .
+
+:Diagram a owl:Class ;
+    skos:prefLabel "Diagram" ;
+    skos:altLabel "UML Diagram" ;
+    skos:definition "Saved UML diagram (class, sequence, etc.) belonging to a modeling project." .
+
+:diagramName a owl:DatatypeProperty ;
+    rdfs:domain :Diagram ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "diagram name" .
+
+:diagramType a owl:DatatypeProperty ;
+    rdfs:domain :Diagram ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "diagram type" .
+
+:hasDiagram a owl:ObjectProperty ;
+    rdfs:domain :ModelingProject ;
+    rdfs:range :Diagram ;
+    skos:prefLabel "has diagram" .
+
+:OntologyContext a owl:Class ;
+    skos:prefLabel "Ontology Context" ;
+    skos:definition "Structured ontologyContext on a modeling project: domain ids, structuredModel, promptContext, roles, and related generation metadata." .
+
+:hasOntologyContext a owl:ObjectProperty ;
+    rdfs:domain :ModelingProject ;
+    rdfs:range :OntologyContext ;
+    skos:prefLabel "has ontology context" .
+
+:DomainCatalogEntry a owl:Class ;
+    skos:prefLabel "Domain Catalog Entry" ;
+    skos:definition "Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}." .
+
+:domainId a owl:DatatypeProperty ;
+    rdfs:domain :DomainCatalogEntry ;
+    rdfs:range xsd:string ;
+    skos:prefLabel "domain id" .
+
+:UmlGenerationJob a owl:Class ;
+    skos:prefLabel "UML Generation Job" ;
+    skos:definition "Async job that generates or analyzes UML diagrams for a modeling project." .
+
+:AppGenerationJob a owl:Class ;
+    skos:prefLabel "App Generation Job" ;
+    skos:definition "Async job that generates application code from diagrams and ontology context." .
+
+:SyntheticDataPackageJob a owl:Class ;
+    skos:prefLabel "Synthetic Data Package Job" ;
+    skos:definition "Modeling synthetic-data job that produces ZIP packages (JSON/CSV/SQL/DDL) from class diagrams — distinct from Workbench2 Mongo synthetic." .
+
+:PlantUmlArtifact a owl:Class ;
+    skos:prefLabel "PlantUML Artifact" ;
+    skos:definition "PlantUML text or SVG produced from diagram JSON via server-side conversion." .
+
+:OntologySynthesisRun a owl:Class ;
+    skos:prefLabel "Ontology Synthesis Run" ;
+    skos:definition "Enhance/export run that merges diagrams, DB import, and roles into ontologyContext and Turtle export." .
+
+:GenerationStrategy a owl:Class ;
+    skos:prefLabel "Generation Strategy" ;
+    skos:definition "Selectable strategy or plugin binding for app/UML generation." .
+
+:producesArtifact a owl:ObjectProperty ;
+    rdfs:domain :AppGenerationJob ;
+    rdfs:range :PlantUmlArtifact ;
+    skos:prefLabel "produces artifact" .
+
+:usesDomainCatalog a owl:ObjectProperty ;
+    rdfs:domain :OntologyContext ;
+    rdfs:range :DomainCatalogEntry ;
+    skos:prefLabel "uses domain catalog" .
+
+:triggeredByProject a owl:ObjectProperty ;
+    rdfs:domain :UmlGenerationJob ;
+    rdfs:range :ModelingProject ;
+    skos:prefLabel "triggered by project" .
