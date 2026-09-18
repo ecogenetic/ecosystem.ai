@@ -1,0 +1,13 @@
+---
+description: ecosystem.ai documentation site conventions (Nextra MDX + runtime API accuracy)
+alwaysApply: true
+---
+
+# Documentation site
+
+- Docs are MDX under `content/`. Add/update the nearest `_meta.ts` when adding a page.
+- Runtime closed loop: `POST /invocations` then `POST /response` (singular). Never `/responses`.
+- `/invocations` `params` is a JSON **string**.
+- Do not invent algorithm `approach` / `sub_approach` IDs. Match `ecosystem-runtime` / `ECOSYSTEM_ALGORITHMS.md`.
+- Dev server: `pnpm dev` on port 3333. Preview doc edits; there is no unit-test suite.
+- Components: shadcn/ui patterns, `cn()` from `lib/utils.ts`.

@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
+
+Cursor / Cloud Agents should prefer **`AGENTS.md`** at the repo root (same guidance, kept current for Cursor Online).
 
 ## Project Overview
 
@@ -88,7 +90,7 @@ The ecosystem.Ai platform is a real-time prediction engine that supports:
 - **Dynamic Interactions**: Real-time ML convergence (Epsilon Greedy, Bayesian Probabilistic, Ecosystem Rewards, Q-learning)
 - **Pre/Post Scoring Plugins**: Java-based plugins for data preprocessing and post-processing
 - **Offer Matrix**: Configuration for recommendation systems
-- **API Endpoints**: `/invocations` for scoring, `/responses` for feedback
+- **API Endpoints**: `/invocations` for scoring, `/response` for feedback (singular; not `/responses`)
 
 See `content/docs/runtime/` for comprehensive runtime documentation.
 
