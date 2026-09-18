@@ -7,6 +7,7 @@ export default {
       typesetting: 'article',
       layout: 'default',
       breadcrumb: true,
+      timestamp: false,
     },
   },
 }

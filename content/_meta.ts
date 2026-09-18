@@ -22,6 +22,7 @@ export default {
     type: 'page',
     theme: {
       layout: 'full',
+      timestamp: false,
     },
   },
   authors: {
