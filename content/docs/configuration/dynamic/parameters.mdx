@@ -19,26 +19,77 @@ This is where you select the algorithm that is best for your use case.
 
 ![image](/images/configuration/dynamic/dynamic-02-engagement.png)
 
-### Algorithms
+### Selection tree
 
-#### Epsilon Greedy
-Epsilon-Greedy is an algorithmic technique that strikes a balance between exploring new possibilities and exploiting known advantages by introducing a random element into the decision-making process. In this approach, a fixed probability of "epsilon" (0 < epsilon < 1) is used to randomly choose either the best-known option (exploitation) or a randomly selected alternative (exploration). With a high value of epsilon, exploration dominates and new possibilities are more frequently evaluated; conversely, with a low value, exploitation takes over and proven choices are favored. This hybrid strategy allows Epsilon-Greedy to adaptively explore the solution space while still leveraging existing knowledge, facilitating efficient learning and optimization in complex environments.
+Dynamic Engagement uses a **Dynamic Algorithm** (`approach`). When you select **Human Behavioral** (`behaviorAlgos`), choose a **behavioral type** (`sub_approach`) in the second dropdown.
 
-#### [Bayesian Probabilistic](/docs/configuration/dynamic/baysianprobabilistic)
-The Bayesian Probabilistic and Naive Bayes techniques for constructing classifiers: models that assign class labels to problem instances, represented as vectors of feature values, where the class labels are drawn from some finite set. This algorithm is integrated into the ecosystem.Ai Client Pulse Responder as it uses scoring history and update values (as defined in project deployment) and train models in real-time.
+```mermaid
+flowchart TD
+  intent[User intent]
+  intent --> family{Which family?}
+  family -->|stable features offline retrain| staticH2O[Static H2O / AutoML]
+  family -->|large catalog embeddings| twoTower["Two-Tower similarity"]
+  family -->|spend or money traits| personality[Spend / Money Personality]
+  family -->|route to other campaigns| selector[Network Selector]
+  family -->|online learning offers| de[Dynamic Engagement]
+  de --> approach{Dynamic Algorithm approach}
+  approach --> binaryThompson
+  approach --> epsilonGreedy
+  approach --> naiveBayes
+  approach --> QLearning
+  approach --> Network
+  approach --> behaviorAlgos[behaviorAlgos Human Behavioral]
+  behaviorAlgos --> types[Dynamic Engagement behavioral types]
+  types --> lossAversion
+  types --> riskAversion
+  types --> prospectTheory
+  types --> sentimentalEquilibrium
+  types --> coverageAwareThompson
+  types --> longTailBoostMF
+  types --> generative
+```
 
-#### [Ecosystem Rewards Algorithm](/docs/configuration/dynamic/ecosystemrewards)
-The Ecosystem Rewards Algorithm is a decision-making framework that harnesses the power of Thompson sampling, a probabilistic method, to balance exploration and exploitation in complex environments. By incorporating uncertainty into its decision-making process, this algorithm allows for optimal trade-offs between trying new options (exploration) and leveraging proven successes (exploitation), thereby maximizing cumulative rewards obtained by performing an action. The algorithm's unique approach takes into account not only immediate benefits but also the long-term impact on the ecosystem, enabling it to adapt and learn from its experiences in a dynamic environment, ultimately leading to improved performance and outcomes.
+See the full [Algorithms Overview](/docs/configuration/algorithms) for comparison tables, cold-start behavior, and scenario guides.
 
-#### [Q-learning](/docs/configuration/dynamic/qlearning)
-Q-learning is a powerful, model-free reinforcement learning algorithm that enables agents to learn the value of taking a specific action in a given state, thereby optimizing their behavior in complex environments. This approach doesn't rely on a pre-built model of the environment, which makes it particularly useful for solving problems with unpredictable transitions and rewards. By iteratively updating an estimate (Q-value) of the expected reward that can be obtained by performing a particular action in a specific state, Q-learning allows agents to learn from their experiences without requiring prior knowledge or adaptations for handling stochastic elements. This simplicity and robustness make Q-learning a widely-used and versatile technique for solving reinforcement learning problems.
+### Dynamic Algorithms
 
-#### Human Behavioral Algorithm
-Human behavioral algorithms are computational frameworks that study and replicate human behavior through data-driven approaches, incorporating insights from psychology, sociology, and neuroscience. These models analyze past behaviors, cognitive processes, and social interactions to predict or simulate individual actions, often leveraging machine learning techniques. A key concept in this field is Loss Aversion, which suggests that people tend to be more motivated by avoiding losses than acquiring equivalent gains - a phenomenon where individuals are more willing to take risks to prevent losing something than they are to gain the same amount. This cognitive bias has significant implications for decision-making and risk assessment in various contexts, from finance to healthcare.
+#### [Ecosystem Rewards Algorithm](/docs/configuration/algorithms/ecosystemrewards) (`binaryThompson`)
 
-#### Network Analysis
-Network analysis algorithms are computational tools used to uncover insights from complex networks or graphs by identifying patterns, relationships, and structures within them. These algorithms enable the measurement of key properties such as centrality (i.e., importance or influence), clustering (i.e., how densely connected a group is), and connectivity (i.e., the overall interconnectedness of the network). Techniques include shortest path algorithms that find the most efficient paths between nodes, community detection algorithms that identify groups of highly connected nodes, and ranking algorithms like PageRank that determine the relative importance or popularity of each node. By applying these methods, network analysis can reveal hidden dynamics, predict behavior, and inform decision-making in various domains, from social networks to transportation systems.
+Default Dynamic Engagement algorithm. Thompson Sampling with Beta distributions per offer/segment. Best general-purpose choice and strong cold start (Beta(1,1) prior).
 
+#### [Epsilon Greedy](/docs/configuration/algorithms/epsilongreedy) (`epsilonGreedy`)
+
+Simplest bandit: with probability ε explore randomly, else exploit highest empirical rate. Good for explainable A/B testing.
+
+#### [Bayesian Probabilistic](/docs/configuration/algorithms/baysianprobabilistic) (`naiveBayes`)
+
+Naive Bayes over discrete features. Less focus on explore/exploit; uses Lookup Parameters for inference variables. Runtime uses Bernoulli Naive Bayes.
+
+#### [Q-learning](/docs/configuration/algorithms/qlearning) (`QLearning`)
+
+Sequential reinforcement learning per customer. Requires Lookup Parameters and a custom Java reward plugin. Use when the next offer depends on prior accepts.
+
+#### [Network Analysis](/docs/configuration/algorithms/networkanalysis) (`Network`)
+
+PageRank on offer co-occurrence graph. Requires co-presentation history and Lookup Parameters for network nodes. Not the same as the [Network Selector](/docs/user_guides/network) (traffic routing).
+
+#### Human Behavioral Algorithm (`behaviorAlgos`)
+
+Select this Dynamic Algorithm when you want a behavioral type below. **You must also set `sub_approach`.** If omitted, runtime defaults to Loss Aversion.
+
+##### Dynamic Engagement behavioral types
+
+| `sub_approach` | Algorithm |
+|----------------|-----------|
+| `lossAversion` | [Loss Aversion](/docs/configuration/algorithms/lossaversion) — penalize ignored offers; UCB exploration (default type) |
+| `riskAversion` | [Risk Aversion](/docs/configuration/algorithms/riskaversion) — mean-variance; steady predictable uptake |
+| `prospectTheory` | [Prospect Theory](/docs/configuration/algorithms/prospecttheory) — Kahneman–Tversky value weighting |
+| `sentimentalEquilibrium` | [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium) — engagement equilibrium (not per-offer ranking) |
+| `coverageAwareThompson` | [Coverage-Aware Thompson](/docs/configuration/algorithms/coveragethompson) — long-tail / fairness |
+| `longTailBoostMF` | [Long-Tail Boost MF](/docs/configuration/algorithms/longtailmf) — WRMF + inverse exposure |
+| `generative` | [Generative Model](/docs/configuration/algorithms/generativemodel) — LLM prompt scoring |
+
+All behavioral types require **Lookup Parameters**. Generative also needs `randomisation.prompt` and `randomisation.prompt_parameters`.
 
 ## Variables
 There are a number of options when configuring variables. An offer/message/nudge/option/etc is needed from the feature store as configured in ```Settings```. If customer level tracking and model convergence is required then use ```params.value``` as it contains the customer number in the contact logs.

@@ -1,0 +1,131 @@
+---
+title: Model Convergence
+description: How dynamic recommender scores converge, what acts as a prior, and which levers change the score over time
+---
+
+import { Callout } from 'nextra/components'
+
+# Model Convergence
+
+This guide covers **behaviour over time** for Dynamic Engagement algorithms: how the options store posterior (and each algorithm’s own score) moves after `/invocations` and `/response`, what counts as a prior, and how operator knobs change both the **score** and the **speed** of arm separation.
+
+It complements the day-one catalog in [Dynamic Interaction Algorithms](/docs/configuration/algorithms) (cold-start tables, prior recipes, algorithm selection). For formulas and options-store fields see the runtime [README_DYNAMIC.md](https://github.com/ecosystemai/ecosystem-runtime/blob/main/README_DYNAMIC.md). For agent-facing cards see [ECOSYSTEM_ALGORITHMS.md](https://github.com/ecosystemai/ecosystem-runtime/blob/main/ECOSYSTEM_ALGORITHMS.md) section 20.
+
+<Callout type="info" title="Closed loop">
+Scores only move when the runtime sees presentations in `ecosystemruntime` and outcomes in `ecosystemruntime_response`. `POST /invocations` ranks from the options store. `POST /response` with that row’s `uuid` + `offer_name` is what the rolling process counts as a success.
+</Callout>
+
+## Posterior every algorithm maintains
+
+Every rolling processor writes a **Beta posterior** on the options store:
+
+```
+alpha = alpha_zero + success_reward * successes
+beta  = beta_zero  + fail_reward * failures
+```
+
+`alpha_zero` / `beta_zero` resolve from the options document, then `randomisation.prior_success_reward` / `prior_fail_reward`, then `1.0`. Ranking still uses each algorithm’s own `propensity` / `arm_reward` / Q / PageRank / factorised likelihood. Thompson Sampling **samples the stored** `Beta(alpha, beta)` — it does not add `success_reward` a second time.
+
+Tabular approaches (`binaryThompson`, `epsilonGreedy`, `QLearning`) partition that posterior on optional `training_cell` derived from Dynamic Recommender Training Fields. Factorised approaches (`naiveBayes`, `behaviorAlgos`, `Network`) discretise each field independently and never concatenate a cell.
+
+---
+
+## 1. Convergence mechanics (all algorithms)
+
+| Algorithm | Accumulated state | What drives arm separation | What stalls it | Persisted vs rebuilt |
+|-----------|-------------------|----------------------------|----------------|----------------------|
+| Ecosystem Rewards (`binaryThompson`) | Beta posterior per offer × context × optional `training_cell` | Accept/reject counts × `success_reward` / `fail_reward` | Missing `/response`; tiny window; unique cells (unbinned numerics) | **Persisted** in options store |
+| Epsilon Greedy (`epsilonGreedy`) | Empirical propensity; Beta posterior still written | `response_count / logging_count`; ε randomizes | All arms tied at 0; ε = 0 with no data | **Persisted** |
+| Bayesian Probabilistic (`naiveBayes`) | `P(field\|offer)` with Laplace; Beta alongside | Distinct discrete features | Unbinned numerics; missing Lookup Parameters | Likelihood **rebuilt from window**; Beta persisted |
+| Q-Learning (`QLearning`) | Q-table over states (history + optional cell) and offers | Bellman updates + reward plugin | Sparse per-customer states; no `plugin.reward` | Q **persisted**; Beta alongside |
+| Network Analysis (`Network`) | Offer graph PageRank | Co-presentation / co-acceptance | No co-occurrence yet | Graph **rebuilt from window**; Beta persisted |
+| Human Behavioral (`behaviorAlgos`) | Type-specific in-memory scores | See type rows | `RollingBehavior.resetBehaviorAlgorithms()` discards in-memory posteriors **every cycle** | **Rebuilt from the processing window** each cycle; platform Beta still persisted |
+| Loss Aversion (`lossAversion`) | Ignored-offer penalty + UCB | Failures hurt more than accepts help | Naturally low take-up on every arm | Rebuilt |
+| Risk Aversion (`riskAversion`) | Mean–variance utility | Low variance + decent mean | No history → no scores | Rebuilt |
+| Prospect Theory (`prospectTheory`) | Seeded values + drift | Adaptive drift + internal ε | Need for a single winner | Rebuilt |
+| Sentimental Equilibrium | Aggregate sentiment/effort | Not a per-offer ranker | Used as NBO | Single-shot / rebuilt |
+| Coverage-Aware Thompson | Thompson + long-tail boost | Coverage fights concentration | Fairness KPI vs fastest winner | Rebuilt behavioral state; Beta-like sampling |
+| Long-Tail Boost MF | WRMF/ALS factors | Matrix density | Sparse logs / cold start | Rebuilt |
+| Generative (`generative`) | None (LLM per request) | Prompt + lookup vars | Latency, cost, audit | Not accumulated |
+
+---
+
+## 2. What acts as a prior
+
+| Algorithm | Prior | Notes |
+|-----------|-------|-------|
+| Ecosystem Rewards / Coverage-Aware Thompson | **Conjugate Beta:** `alpha_zero`, `beta_zero` | Defaults: options store → `prior_success_reward` / `prior_fail_reward` → `1.0`. Workbench **Generate options** seeds `alpha_zero` to `prior_success_reward` (not the computed posterior). |
+| Epsilon Greedy | Same Beta fields for inspection | Ranking uses propensity, not the sample |
+| Loss Aversion | Smoothing + UCB | Not a conjugate prior |
+| Prospect Theory | `baseDriftRate` seeding | All offers start with a seeded value |
+| Bayesian Probabilistic | Laplace α = 1 | Unseen feature/offer pairs stay non-zero |
+| Risk Aversion, Network, Long-Tail Boost MF | **None** | Platform uniform/random until history exists |
+| Q-Learning | **None** | Random until the Q-table fills |
+| Generative | Prompt only | Not statistical |
+
+---
+
+## 3. Prior strength vs score (worked numbers)
+
+For a Thompson arm the posterior mean is \((\alpha_0 + s) / (\alpha_0 + \beta_0 + n)\) and the **prior weight** is \((\alpha_0 + \beta_0) / (\alpha_0 + \beta_0 + n)\), with \(n = s + f\).
+
+Assume 4 successes and 6 failures in the window (`success_reward = fail_reward = 1` so \(s=4\), \(n=10\)). Observed rate = 0.40.
+
+| Prior | \(\alpha_0\) | \(\beta_0\) | Posterior mean | Prior weight at n=10 | When the prior stops dominating |
+|-------|-------------|-------------|----------------|----------------------|----------------------------------|
+| Default uninformative | 1.0 | 1.0 | 5/12 = **0.417** | 2/12 = 17% | After ~20 events prior weight &lt; 10% |
+| From `prior_success_reward=0.1`, `prior_fail_reward=0.01` | 0.1 | 0.01 | 4.1/10.11 ≈ **0.406** | 1% | Almost immediately |
+| Optimistic | 2.0 | 1.0 | 6/13 ≈ **0.462** | 23% | Needs ~30 events for &lt; 10% |
+| Strong popular | 10.0 | 5.0 | 14/25 = **0.560** | 60% | Needs ~135 events for &lt; 10% |
+| Strong popular at n=100 (40/60) | 10.0 | 5.0 | 50/115 ≈ **0.435** | 13% | Still pulling toward 10/15 = 0.67 |
+
+<Callout type="warning" title="Prior that never lets go">
+If Generate options used to copy the **computed** \(\alpha\) into `alpha_zero`, the rolling loop treated historical take-up as a permanent prior. The runtime now persists the true prior and recomputes \(\alpha = \alpha_0 + success\_reward \times successes\) from the window.
+</Callout>
+
+---
+
+## 4. User levers
+
+| Lever | Where it is set | Effect on convergence speed | Effect on score | Risk |
+|-------|-----------------|----------------------------|-----------------|------|
+| Deployment ε | Deployment / properties `predictor.epsilon` | Forces uniform explore before post-score | Can override a converged ranking | Too high → never exploits |
+| Algorithm ε | Dynamic Engagement `randomisation.epsilon` | Thompson: extra uniform mix; ε-greedy: the policy; Q: random actions | Directly changes who wins | Confusing the three ε layers |
+| `success_reward` / `fail_reward` | `randomisation` | Larger values move α/β faster per event | Inflates posterior vs raw counts | `fail_reward` ≫ `success_reward` pessimism |
+| `prior_success_reward` / `prior_fail_reward` | `randomisation` + Generate options | Stronger prior → slower data takeover | Shifts early Thompson samples | Arms frozen at the prior if α₀, β₀ huge |
+| `processing_window` | `randomisation` (ms) | Shorter window → faster adaptation | Recency bias | Too short → n=0, random |
+| `processing_count` | `randomisation` | Caps rows per cycle | Same as a short window if hit | 0 with huge logs → slow cycles |
+| `decay_gamma` | `randomisation` | Down-weights older customer repeats | Recency for multi-touch | 1.0 = no decay |
+| `interaction_count` | `randomisation` | Caps per-customer events | Stops one customer dominating | 0 = unlimited |
+| Options `weighting` | Options store | Multiplies `arm_reward` at score | Business boost independent of learning | Can hide a true loser |
+| `learning_reward` | Reward plugin | Scales the learning update | Changes α/β growth | Plugin bugs look like non-convergence |
+| Training-field typing | Deployment `parameter_access.dynamic_training_fields` + types | Numeric binning keeps cells shared | Partitions tabular posteriors | Unbinned numerics → n=1 cells, random |
+
+---
+
+## 5. Switching approach to change score behaviour
+
+| Goal | Approach | Knobs |
+|------|----------|-------|
+| Faster convergence to a winner | `naiveBayes` (features) or `epsilonGreedy` with decaying ε | Lookup Parameters; lower ε over time |
+| More stable scores | `riskAversion`; longer `processing_window` | 7–30 day window; modest rewards |
+| More exploration | `binaryThompson` with weak priors; or raise ε | `alpha_zero=beta_zero=1`; deployment ε 0.1–0.2 |
+| Fairer catalog coverage | `coverageAwareThompson` | Do not also crank ε if coverage boost is enough |
+| Feature-driven accuracy | `naiveBayes` | Discrete/binned training fields; Lookup Parameters |
+| Sequential journeys | `QLearning` | Reward plugin; `training_cell` on state |
+| Default online NBO | `binaryThompson` | Closed loop + processing window |
+
+---
+
+## 6. Diagnosing non-convergence
+
+| Symptom | Likely cause | Fix |
+|---------|--------------|-----|
+| Arms frozen at the prior | Missing `alpha_zero` used to NPE (now defaults); or huge α₀/β₀; or no `/response` | Confirm `/response` matching `offer_name`; set modest priors; check rolling logs |
+| All arms tied | No events in window; ε-greedy propensity 0; unbinned unique cells | Widen window; bin numerics; raise ε until n grows |
+| One arm dominating | High `success_reward`; popular arm + no coverage; `weighting` | Coverage-Aware Thompson; cap weighting; lower success_reward |
+| Scores never stabilise | Window too short; high ε; Thompson sampling (stochastic by design) | Lengthen window; lower ε; inspect posterior **mean** `alpha/(alpha+beta)` not the sample |
+| Behavioral scores reset | `resetBehaviorAlgorithms()` every cycle | Expected — look at the window, not yesterday’s in-memory state |
+| Tabular cells empty at score | Options seeded without `training_cell` while fields are configured | Re-generate options after setting training fields, or wait for rolling upserts |
+
+Public algorithm catalog: [Dynamic Interaction Algorithms](/docs/configuration/algorithms). Exploration layers: [Exploration Using Epsilon](/docs/user_guides/epsilon_exploration).

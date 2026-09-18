@@ -12,6 +12,7 @@ export default {
   },
   runtime_plugin_development: 'Runtime Plugin Development',
   epsilon_exploration: 'Exploration Using Epsilon',
+  model_convergence: 'Model Convergence',
   virtual_variables: 'Virtual Variables',
   network: 'Network Selector',
   dynamic_interaction_deployments: 'Testing Dynamic Interaction Deployments',

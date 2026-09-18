@@ -123,6 +123,20 @@ public class QLearnRewardPlugin extends PluginLoaderSuper {
   - **feature_store**: Use the fields in the feature store for the training. These fields will need to be specified in the rewards plugin class. This approach will use the policy based method for creating the Q-table.
   - **logging**: Use data stored in the ecosystem.Ai runtime logs for the training. This approach will use the logging data based approach for creating the Q-table.
 
+## When To Use
+
+- When the optimal next offer depends on what the customer has already seen or accepted
+- Sequential customer journeys where state transitions matter
+- When you can implement and maintain a custom Java reward plugin
+
+## When NOT To Use
+
+- Simple independent offer choice (use [Ecosystem Rewards](/docs/configuration/algorithms/ecosystemrewards) or [Epsilon Greedy](/docs/configuration/algorithms/epsilongreedy))
+- When reward plugin development is not feasible
+- When you need fast convergence with minimal implementation complexity
+
+Configured Dynamic Recommender Training Fields are appended onto the Q-Learning **state** key (`training_cell`). The logging path projects those fields from `scoring_data`. See [Model Convergence](/docs/user_guides/model_convergence).
+
 ## Example
 
 Below is an example configuration of the Q-learning algorithm in python

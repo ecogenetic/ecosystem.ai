@@ -34,7 +34,7 @@ These classes map to Mongo collections (and embedded deployment config) managed 
 | `FeatureStoreRef` | DB + collection for customer/context lookup |
 | `OptionsStoreRef` | Options / arms store (alpha, beta, rewards) |
 
-**Key properties:** `engagementName`, `learningAlgorithm` (e.g. epsilonGreedy, binaryThompson, QLearning)
+**Key properties:** `engagementName`, `learningAlgorithm` (e.g. `binaryThompson`, `epsilonGreedy`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`; when `behaviorAlgos`, also set behavioral type via `sub_approach`)
 
 **Links:** `hasFeatureStore`, `hasOptionsStore`
 

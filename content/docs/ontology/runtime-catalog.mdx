@@ -9,7 +9,7 @@ Generated from the published Turtle. Download [`/ontology/runtime.ttl`](/ontolog
 
 Namespace: `https://ecosystem.ai/ontology/runtime#`
 
-## Classes (24)
+## Classes (29)
 
 | Local name | Pref label | Definition |
 |------------|------------|------------|
@@ -21,6 +21,11 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `FeatureLookupConfig` | Feature Lookup Config | Configuration for customer/feature DB lookup (database, collection, key, typically customer). |
 | `FinalResultEntry` | Final Result Entry | One ranked row in final_result with rank, slim result, and result_full. |
 | `GlobalSettings` | Global Settings | Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora). |
+| `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
+| `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
+| `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
 | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
 | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
 | `InvocationStats` | Invocation Stats | Timing and model metadata on a contact log (duration, epsilon, predictor, error). |
@@ -38,13 +43,18 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
 | `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
 
-## Object properties (19)
+## Object properties (24)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
 | `embedsContactLog` | embeds contact log | `runtime:ResponseLog` | `runtime:ContactLog` | response_log field. |
 | `featuresObj` | features object | `runtime:ScoringParams` | `runtime:CustomerFeatureDocument` |  |
 | `hasAcceptedOffer` | has accepted offer | `runtime:ResponseFeedback` | `runtime:AcceptedOffer` |  |
+| `hasDebug` | has debug | `runtime:InvocationResponse` | `runtime:InvocationDebug` |  |
+| `hasDebugConfig` | has debug config | `runtime:InvocationDebug` | `runtime:InvocationDebugConfig` |  |
+| `hasDebugDatabase` | has debug database | `runtime:InvocationDebug` | `runtime:InvocationDebugDatabase` |  |
+| `hasDebugError` | has debug error | `runtime:InvocationDebug` | `runtime:InvocationDebugError` |  |
+| `hasDebugParams` | has debug params | `runtime:InvocationDebug` | `runtime:InvocationDebugParams` |  |
 | `hasDynamicEngagement` | has dynamic engagement | `runtime:CampaignContext` | `runtime:DynamicEngagementConfig` |  |
 | `hasEntry` | has entry | `runtime:OfferMatrix` | `runtime:OfferMatrixEntry` |  |
 | `hasFeatureLookup` | has feature lookup | `runtime:CampaignContext` | `runtime:FeatureLookupConfig` | Open-schema binding; target documents are CustomerFeatureDocument instances of any shape. |
@@ -62,7 +72,7 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `usesPrePlugin` | uses pre plugin | `runtime:CampaignContext` | `runtime:PrePredictPlugin` |  |
 | `usesRewardPlugin` | uses reward plugin | `runtime:CampaignContext` | `runtime:RewardPlugin` |  |
 
-## Datatype properties (28)
+## Datatype properties (29)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
@@ -77,6 +87,7 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `cost` | cost | `runtime:OfferMatrixEntry` | `xsd:decimal` |  |
 | `customer` | customer | `runtime:InvocationRequest` | `xsd:string` |  |
 | `dateLog` | date log | `—` | `xsd:dateTime` |  |
+| `debugEnabled` | debug | `runtime:InvocationRequest` | `xsd:string` | Optional opt-in flag (true, 1). When set, the response includes a debug sibling object with pipeline errors and config snapshots. Not for production traffic. |
 | `explore` | explore | `—` | `xsd:integer` |  |
 | `finalScore` | final score | `runtime:OfferResult` | `xsd:decimal` |  |
 | `lookupKey` | lookup key | `runtime:FeatureLookupConfig` | `xsd:string` |  |

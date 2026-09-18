@@ -3,6 +3,8 @@ title: Bayesian Probabilistic
 description: Bayesian Probabilistic
 ---
 
+import { Callout } from 'nextra/components'
+
 # Bayesian Probabilistic
 
 The Bayesian Probabilistic algorithm implements a version of the Naive Bayes algorithm for solving classification problems.
@@ -23,6 +25,21 @@ The historical data used to train the algorithm can be windowed by either time a
   - **none**: Ignore the offer and do not score it.
   - **uniform**: Score the missing offer by sampling from a uniform distribution.
 - **Lookup Defaults**: The features to be used when training and scoring the offers.
+
+## When To Use
+
+- When you have many discrete context features and want accuracy over explore/exploit balance
+- When contextual variables strongly predict offer acceptance
+- When convergence speed matters (very fast once data exists)
+
+## When NOT To Use
+
+- When you want the simplest, most interpretable bandit (use [Ecosystem Rewards](/docs/configuration/algorithms/ecosystemrewards) or [Epsilon Greedy](/docs/configuration/algorithms/epsilongreedy))
+- When you cannot configure Lookup Parameters for inference variables
+
+<Callout type="info" title="Runtime implementation">
+The dynamic engagement path uses **Bernoulli** Naive Bayes (`BernoulliNaiveBayes`), not a multinomial classifier. Numeric Dynamic Recommender Training Fields are binned before `offer___variable___value` keys; the algorithm never concatenates a composite `training_cell`.
+</Callout>
 
 ## Example
 

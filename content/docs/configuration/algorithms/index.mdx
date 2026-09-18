@@ -11,6 +11,42 @@ The ecosystem.Ai runtime includes a comprehensive library of dynamic interaction
 
 All algorithms share the same operational architecture: a background **rolling process** periodically updates offer statistics in the **options store**, and real-time scoring reads those pre-computed statistics to rank offers for each API request.
 
+<Callout type="info" title="Large-catalog retrieval">
+The [Two-Tower recommender](/docs/modules/two_tower) uses `predictor.model.type=similarity` and embedding cosine/dot scoring. It is **not** a Dynamic Engagement `randomisation.approach` — it bypasses H2O and dynamic bandit scoring.
+</Callout>
+
+## Selection tree
+
+Use this tree to pick a Dynamic Engagement **Dynamic Algorithm** (`approach`). When you select **Human Behavioral** (`behaviorAlgos`), you must also pick a **Dynamic Engagement behavioral type** (`sub_approach`).
+
+```mermaid
+flowchart TD
+  intent[User intent]
+  intent --> family{Which family?}
+  family -->|stable features offline retrain| staticH2O[Static H2O / AutoML]
+  family -->|large catalog embeddings| twoTower["Two-Tower similarity"]
+  family -->|spend or money traits| personality[Spend / Money Personality]
+  family -->|route to other campaigns| selector[Network Selector]
+  family -->|online learning offers| de[Dynamic Engagement]
+  de --> approach{Dynamic Algorithm approach}
+  approach --> binaryThompson
+  approach --> epsilonGreedy
+  approach --> naiveBayes
+  approach --> QLearning
+  approach --> Network
+  approach --> behaviorAlgos[behaviorAlgos Human Behavioral]
+  behaviorAlgos --> types[Dynamic Engagement behavioral types]
+  types --> lossAversion
+  types --> riskAversion
+  types --> prospectTheory
+  types --> sentimentalEquilibrium
+  types --> coverageAwareThompson
+  types --> longTailBoostMF
+  types --> generative
+```
+
+If `approach` is `behaviorAlgos` and `sub_approach` is blank or unknown, the runtime defaults to `lossAversion`.
+
 ## Architecture
 
 Algorithm selection is driven by the `randomisation` object stored in the dynamic recommender configuration document in MongoDB:
@@ -31,7 +67,7 @@ Algorithm selection is driven by the `randomisation` object stored in the dynami
 }
 ```
 
-The `approach` field selects the top-level algorithm. When `approach` is `behaviorAlgos`, the `sub_approach` field selects the specific behavioral economics algorithm.
+The `approach` field selects the top-level Dynamic Algorithm. When `approach` is `behaviorAlgos`, the `sub_approach` field selects the **Dynamic Engagement behavioral type**.
 
 ### Algorithm Routing
 
@@ -42,11 +78,11 @@ The `approach` field selects the top-level algorithm. When `approach` is `behavi
 | `naiveBayes` | [Bayesian Probabilistic](/docs/configuration/algorithms/baysianprobabilistic) | `RollingNaiveBayes` |
 | `QLearning` | [Q-Learning](/docs/configuration/algorithms/qlearning) | `RollingQLearning` |
 | `Network` | [Network Analysis (PageRank)](/docs/configuration/algorithms/networkanalysis) | `RollingNetwork` |
-| `behaviorAlgos` | Behavioral Economics (see sub_approach) | `RollingBehavior` |
+| `behaviorAlgos` | Human Behavioral (see behavioral types) | `RollingBehavior` |
 
-### Behavioral Sub-Approaches
+### Dynamic Engagement behavioral types
 
-When `approach = "behaviorAlgos"`, the `sub_approach` field selects one of:
+When `approach = "behaviorAlgos"`, the **Behavioral Algorithm** dropdown selects the behavioral type via `sub_approach`:
 
 | `sub_approach` Value | Algorithm |
 |----------------------|-----------|
@@ -114,7 +150,7 @@ The post-score class then controls the final offer selection, eligibility filter
 
 | Algorithm | Algorithm-Level Cold Start Behavior | Prior / Seed Mechanism | Quality of Early Recommendations |
 |-----------|-------------------------------------|----------------------|----------------------------------|
-| **Ecosystem Rewards (Thompson)** | Beta(1,1) samples uniformly in [0,1]. All arms get equal random chance. | Configurable `alpha_zero` and `beta_zero` per arm. Default Beta(1,1) is uninformative. | **Good.** Uniform exploration by design. |
+| **Ecosystem Rewards (Thompson)** | Samples `Beta(alpha, beta)` uniformly when priors are uninformative. All arms get equal random chance. | Configurable `alpha_zero` and `beta_zero` per arm. Missing priors resolve from `prior_success_reward` / `prior_fail_reward`, then **1.0** (Beta(1,1) when both default). | **Good.** Uniform exploration by design. |
 | **Epsilon Greedy** | All arms start with `arm_reward = 0` and tie. Exploit phase picks randomly among ties. | None beyond deployment epsilon. | **Moderate.** Set epsilon >= 0.1 for better early coverage. |
 | **Loss Aversion** | New offers get smoothing alpha = 1.5. UCB gives under-sampled offers a boost. | Smoothing alpha = 1.5 + UCB exploration term. | **Moderate.** UCB helps under-sampled offers surface. |
 | **Risk Aversion** | Does not score offers without history. Platform random fallback applies. | None. Relies on platform-level random scoring. | **Random until data accumulates.** Algorithm begins influencing after sufficient history. |
@@ -131,7 +167,7 @@ The post-score class then controls the final offer selection, eligibility filter
 
 | Scenario | Recommended Algorithm | Why |
 |----------|----------------------|-----|
-| Brand new deployment, zero data | **Ecosystem Rewards (Thompson)** | Beta(1,1) prior gives uniform exploration. Converges naturally as data arrives. |
+| Brand new deployment, zero data | **Ecosystem Rewards (Thompson)** | Default prior (options → `prior_success_reward`/`prior_fail_reward` → 1.0) explores uniformly. Converges as `/response` events arrive. See [Model Convergence](/docs/user_guides/model_convergence). |
 | New deployment, need guaranteed coverage | **Coverage-Aware Thompson** | Maximum boost for unseen items. Thompson + inverse-popularity + optional epsilon. |
 | Adding new offers to existing catalog | **Ecosystem Rewards** or **Coverage-Aware Thompson** | New offers get default priors and are naturally explored. |
 | New customer segment, have general history | **Prospect Theory** | Seeds all offers from product data. Adaptive drift ensures variety. |
@@ -140,11 +176,12 @@ The post-score class then controls the final offer selection, eligibility filter
 
 ### Configuring Priors for Thompson Sampling
 
-The `alpha_zero` and `beta_zero` fields in the options store control the Thompson Sampling prior. Different priors can be set per offer to encode domain knowledge:
+The `alpha_zero` and `beta_zero` fields in the options store control the Thompson Sampling prior. When a key is missing, the runtime uses `randomisation.prior_success_reward` / `prior_fail_reward`, then `1.0`. Different priors can be set per offer to encode domain knowledge:
 
 | Prior | alpha_zero | beta_zero | Meaning |
 |-------|-----------|----------|---------|
-| Uninformative | 1.0 | 1.0 | No prior belief. Uniform sampling. Default. |
+| Uninformative | 1.0 | 1.0 | No prior belief. Uniform sampling. Default when priors and `prior_*_reward` knobs are unset. |
+| From randomisation knobs | `prior_success_reward` | `prior_fail_reward` | Workbench Generate options seeds these as `alpha_zero` / `beta_zero`. |
 | Optimistic | 2.0 | 1.0 | Assume the offer is probably good. Explore less. |
 | Pessimistic | 1.0 | 2.0 | Assume the offer is probably bad. Explore more. |
 | Strong prior (popular offer) | 10.0 | 5.0 | Equivalent to 10 successes and 5 failures. Stable from start. |
@@ -160,7 +197,7 @@ Every dynamic interaction algorithm follows the same two-phase architecture:
 
 2. **Real-time scoring (read path):** When an API request arrives, the runtime reads the pre-computed arm statistics from the options store, applies the explore/exploit logic for the selected algorithm, and returns ranked offers. No database writes occur during scoring.
 
-This separation means learning is decoupled from serving. The options store acts as the bridge.
+This separation means learning is decoupled from serving. The options store acts as the bridge. How the posterior moves over time, which knobs change scores, and how to diagnose non-convergence are in [Model Convergence](/docs/user_guides/model_convergence).
 
 ### Scheduling
 
@@ -367,7 +404,7 @@ The `RewardStrategyFactory` maps the approach to a reward computation:
 
 | Approach | Strategy | Computation |
 |----------|----------|-------------|
-| `binaryThompson` | `ThompsonReward` | `Beta(alpha + success * responses, beta + fail * (logs - responses)).sample()` |
+| `binaryThompson` | `ThompsonReward` | `Beta(alpha, beta).sample()` — `alpha`/`beta` already include `success_reward` × counts from the rolling posterior |
 | `epsilonGreedy` | `EpsilonGreedyReward` | `response_count / logging_count` |
 | `Network` | `NetworkReward` | Returns 1.0 (PageRank handles scoring) |
 | `behaviorAlgos` | `BehaviorReward` | Returns 1.0 (behavioral algorithms handle scoring) |

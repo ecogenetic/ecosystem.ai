@@ -26,7 +26,11 @@ Base prefix: `/api/v1`.
 | `POST` | `/algorithms/two-tower/train` | async job |
 | `POST` | `/algorithms/two-tower/batch-score` | async job |
 | `POST` | `/algorithms/two-tower/export-embeddings` | async job |
-| `POST` | `/algorithms/two-tower/concept-test` | sync |
+| `POST` | `/algorithms/two-tower/preview-schema` | async job |
+| `POST` | `/algorithms/two-tower/prepare-feature-frame` | async job |
+| `POST` | `/algorithms/two-tower/generate-notebook` | sync (writes `.ipynb`; UI/private) |
+| `POST` | `/algorithms/two-tower/generate-python` | sync (returns script + explanation) |
+| `GET` | `/algorithms/two-tower/runs` | sync |
 
 ### Saved configuration
 
@@ -199,6 +203,35 @@ Response:
   "ranked": [ { "offer": "ProductB", "score": 0.87 }, { "offer": "ProductA", "score": 0.12 } ]
 }
 ```
+
+## Public gateway (`/public/v1/two-tower`)
+
+Dual-auth (`X-API-Key` + user JWT). Scopes: `two-tower:configs`, `two-tower:train`, plus `jobs:read` to poll async jobs.
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `GET`/`POST` | `/public/v1/two-tower/configs` | `two-tower:configs` |
+| `GET`/`PUT` | `/public/v1/two-tower/configs/{config_id}` | `two-tower:configs` |
+| `GET` | `/public/v1/two-tower/predictors` | `two-tower:configs` |
+| `GET` | `/public/v1/two-tower/predictor-date-bounds` | `two-tower:configs` |
+| `GET` | `/public/v1/two-tower/runs` | `two-tower:configs` |
+| `POST` | `/public/v1/two-tower/preview-schema` | `two-tower:configs` |
+| `POST` | `/public/v1/two-tower/prepare-feature-frame` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/train` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/concept-test` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/export-embeddings` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/batch-score` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/generate-python` | `two-tower:train` |
+
+`POST /export-embeddings` is the embedding **update** path (upsert by `run_id` + entity key). Optional `mode`: `full` (default) or `missing_keys_only`.
+
+`POST /generate-python` returns `explanation_markdown`, `python_source`, `scopes`, and `endpoints` for the full pipeline. `generate-notebook` stays private/UI only.
+
+Client: `ecosystem_workbench_public` (`WorkbenchPublicClient.two_tower`).
+
+## MCP (stdio harness)
+
+Typed tools in `ecosystem_workbench_mcp` (not HTTP `/mcp` on :8001): `two_tower_configs`, `two_tower_get_config`, `two_tower_create_config`, `two_tower_update_config`, `two_tower_predictors`, `two_tower_predictor_date_bounds`, `two_tower_preview_schema`, `two_tower_prepare_feature_frame`, `two_tower_runs`, `two_tower_train`, `two_tower_concept_test`, `two_tower_export_embeddings`, `two_tower_batch_score`, `two_tower_generate_python`, plus `jobs_get`. Mutating calls require `confirm=true` when `EWB_PUBLIC_DESTRUCTIVE=confirm`.
 
 ## ecosystem-notebooks — PyTorch sidecar
 

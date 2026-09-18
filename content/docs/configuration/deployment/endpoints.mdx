@@ -30,6 +30,9 @@ Different channels can be used to access the scores. This is useful when using t
 #### Responses
 The number of responses to return. This is useful when using the API to return multiple scores. For data lookup options only one response is returned.
 
+#### Debug (optional)
+Add top-level `"debug": "true"` on `/invocations` to receive a sibling `debug` object with pipeline errors, Mongo status, and sanitized params when scoring fails silently. Use for developer diagnostics only — omit in production traffic. See [Runtime integration guide](https://github.com/ecogenetic/ecosystem-runtime/blob/main/ECOSYSTEM_INTEGRATION_RUNTIME.md#debug-response-opt-in).
+
 #### The in_param parameter
 With the `Score` API Selected, use the following options for in_params.
 

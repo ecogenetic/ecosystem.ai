@@ -11,6 +11,7 @@ export default {
   logging: 'Logging & Reporting',
   externalruntimecalls: 'External Runtime Calls',
   mcp: "MCP Support",
+  model_convergence: 'Model Convergence',
   mlflowintegration: 'MLFlow Integration',
   runtimeversion: 'Release Notes'
 }

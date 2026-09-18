@@ -1,0 +1,17 @@
+---
+title: Model Convergence
+description: Runtime cross-link for how dynamic recommender scores converge and how priors influence ranking
+---
+
+# Model Convergence
+
+Dynamic Engagement learning is documented in the operator guide:
+
+**[Model Convergence](/docs/user_guides/model_convergence)** — six tables covering convergence mechanics for all algorithms, what acts as a prior, prior strength versus score, user levers, switching approach, and diagnosing non-convergence.
+
+Runtime sources:
+
+- Options-store posterior: `alpha = alpha_zero + success_reward * successes`
+- Training fields: `predictor.param.dynamic` plus optional `predictor.param.dynamic.types`
+- Tabular partition key: `training_cell` (`binaryThompson`, `epsilonGreedy`, `QLearning`)
+- Agent catalog: `ECOSYSTEM_ALGORITHMS.md` section 20

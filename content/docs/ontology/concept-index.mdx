@@ -42,6 +42,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Class | `Dashboard` | Dashboard | Analytics dashboard definition. |
 | [entities](/docs/ontology/entities-catalog) | Class | `DataConnection` | Data Connection | External data connection such as Trino/Presto (collection: data_connections). |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `dateLog` | date log |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `debugEnabled` | debug | Optional opt-in flag (true, 1). When set, the response includes a debug sibling object with pipeline errors and config snapshots. Not for production traffic. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `deploymentName` | deployment name |  |
 | [entities](/docs/ontology/entities-catalog) | Class | `DeploymentStep` | Deployment Step | Embedded project deployment configuration pushed to ecosystem-runtime (paths, plugins, offer matrix, feature store). |
 | [server](/docs/ontology/server-catalog) | Class | `Diagram` | Diagram | Saved UML diagram (class, sequence, etc.) belonging to a modeling project. |
@@ -70,6 +71,11 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasCalendar` | has calendar |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasCampaign` | has campaign |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasDataConnection` | has data connection |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebug` | has debug |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugConfig` | has debug config |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugDatabase` | has debug database |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugError` | has debug error |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugParams` | has debug params |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasDeploymentStep` | has deployment step | deployment_step array on the project document. |
 | [server](/docs/ontology/server-catalog) | Object property | `hasDiagram` | has diagram |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasDynamicEngagement` | has dynamic engagement | project_dynamic_interactions asset link. |
@@ -95,6 +101,11 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasSlimResult` | has slim result |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasStats` | has stats |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationStats` | Invocation Stats | Timing and model metadata on a contact log (duration, epsilon, predictor, error). |

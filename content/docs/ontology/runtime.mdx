@@ -24,8 +24,10 @@ Same **`uuid`** ties invocation, contact log, and response.
 
 | Class | Role |
 |-------|------|
-| `InvocationRequest` | `/invocations` body: `campaign`, `subcampaign`, `customer`, `channel`, `numberOffers`, `paramsJson` (**string**) |
-| `InvocationResponse` | Return: `uuid`, `final_result`, explore/cache, `in_params` |
+| `InvocationRequest` | `/invocations` body: `campaign`, `subcampaign`, `customer`, `channel`, `numberOffers`, `paramsJson` (**string**), optional `debug` |
+| `InvocationResponse` | Return: `uuid`, `final_result`, explore/cache, `in_params`; optional `hasDebug` when `debug` was requested |
+| `InvocationDebug` | Developer diagnostics: `errors`, `config`, `database`, `params` (not persisted in ContactLog) |
+| `InvocationDebugError` | One `debug.errors[]` row: `stage`, `code`, `exception`, `at`, `message` |
 | `FinalResultEntry` | Ranked row: `rank` + slim `OfferResult` + `result_full` |
 | `OfferResult` | Slim offer: `uuid`, `offerName`, scores, cost/price |
 | `PersonalityOfferResult` | Trait-oriented `result_full` (Spend Personality) |
@@ -72,7 +74,29 @@ Same **`uuid`** ties invocation, contact log, and response.
 - [Offer Matrix](/docs/ontology/offer-matrix)
 - [Customer Feature Lookup](/docs/ontology/customer-features)
 - [Runtime & Deployment docs](/docs/runtime)
+- [Runtime MCP — ontology tools & agent flow](/docs/runtime/mcp#recommended-agent-flow-closed-loop)
 - Examples TTL: [`/ontology/runtime-examples.ttl`](/ontology/runtime-examples.ttl)
+
+## MCP & agent grounding
+
+The runtime exposes its ontology for AI agents via **MCP resources** and **validation tools** on `POST {RUNTIME}/mcp`:
+
+| MCP resource | Purpose |
+| --- | --- |
+| `ontology://runtime` | Module summary and entry points |
+| `ontology://runtime/closed-loop` | Canonical agent recipe (markdown) |
+| `ontology://runtime/examples` | Annotated ContactLog / ResponseLog examples |
+| `ontology://runtime/concept/{name}` | Concept card (e.g. `InvocationRequest`) |
+
+| MCP tool | Purpose |
+| --- | --- |
+| `getClosedLoopRecipe` | JSON workflow: listCampaigns → validate → invoke → validate → response |
+| `lookupRuntimeConcept` | Search concepts by name, label, or related MCP tool |
+| `validateInvokeRequest` | Pre-flight `InvocationRequest` before `invoke` |
+| `validateResponseRequest` | Pre-flight `ResponseFeedback` before `response` |
+
+REST mirror: `GET /ontology/runtime/*` and `POST /ontology/runtime/validate/*` on the Java runtime. See [MCP Support](/docs/runtime/mcp).
+
 
 Full tables: [Runtime Catalog](/docs/ontology/runtime-catalog) · [Concept Index](/docs/ontology/concept-index)
 

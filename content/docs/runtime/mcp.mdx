@@ -1,99 +1,301 @@
 ---
 title: MCP Support
-description: MCP and custom API configuration
+description: Model Context Protocol surfaces for the Ecosystem Runtime and Workbench
 ---
 
-# Ecosystem Runtime MCP
+# Model Context Protocol (MCP)
 
-The Ecosystem Runtime MCP provides an MCP interface to the ecosystem Runtime as well as providing a python interface which can be used to provide custom APIs to the ecosystem Runtime.
+Ecosystem exposes **three different MCP-related surfaces**. They share the path `/mcp` but are **not interchangeable**. Pick the surface that matches your integration.
 
-## Installing the Runtime MCP
+| Surface | Where | Transport | Primary use |
+| --- | --- | --- | --- |
+| **Runtime builtin MCP** | Java `ecosystem-runtime` | `POST /mcp` (JSON-RPC, dual-era) | Score campaigns, feedback loop, campaign admin from AI agents |
+| **Workbench MCP server** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` (+ legacy SSE) | Deployments, enrichment jobs, scoring via Workbench |
+| **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` image | FastAPI `/mcp` + custom Python routers | MLFlow model refresh, custom FastAPI APIs |
 
-The Runtime MCP can be added to your ecosystem environment using a configuration similar to the docker compose snippet below
+Protocol reference: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
 
-```sh
-  ecosystem-runtime-solo:
-    image: ecosystemai/ecosystem-runtime-mcp:arm64
-    container_name: ecosystem-runtime
-    restart: unless-stopped
-    environment:
-      RUNTIME_URL: 'http://ecosystem-runtime-backend:8081'
-      PORT: 8091
-      MLFLOW_TRACKING_URI: 'http://mlflowurl:8085'
-      RUNTIME_CONFIG: '/data/config/runtime_config.json'
-      MONGO_CONNECT: ${MONGO_CONNECT_STRING}
-    volumes:
-      - ${DATA_PATH}:/data
-    networks:
-      - ecosystem
-    ports:
-      - "8091:8091"
-    depends_on:
-      ecosystem-runtime-backend:
-        condition: service_healthy
+---
+
+## Runtime builtin MCP (Java, 0.9.7+)
+
+Built into the Java runtime. Stateless **Streamable HTTP-shaped** endpoint:
+
+```text
+POST {RUNTIME_BASE}/mcp
+Content-Type: application/json
 ```
 
-For this configuration the OpenAPI style docs can be accessed at `http://ecosystem-runtime:8091/docs` and the MCP interface can be access at `http://ecosystem-runtime:8091/mcp`.
+### Protocol support
 
-## Environment Variables
+- **Legacy (2024-11-05 – 2025-11-25):** `initialize` handshake, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, `prompts/get`, `ping`
+- **Modern (2026-07-28):** `server/discover`, per-request `_meta`, `MCP-Protocol-Version` / `Mcp-Method` / `Mcp-Name` headers, `resultType` on results, MCP `content[]` on `tools/call`, `ttlMs` + `cacheScope` on list results
+- **Streamable HTTP responses:** each POST to `/mcp` returns either `application/json` or a **per-request** `text/event-stream` body (scoped to that request — not a persistent session). Clients **must** send `Accept: application/json, text/event-stream`. Prefer SSE by listing `text/event-stream` first or with a higher `q` value.
+- **Change notifications:** `subscriptions/listen` opens a long-lived SSE stream on the POST response (ack + optional keep-alives).
+- **Deprecated HTTP+SSE (2024-11-05):** `GET /mcp` opens a legacy session stream (when no modern protocol headers); responses are delivered on that stream via `POST /mcp/message?sessionId=…`. New clients should use Streamable HTTP on `POST /mcp` only.
 
-The following environment variables can be used to set the behaviour of the Runtime MCP:
-- **RUNTIME_URL**: The master key for the ecosystem.Ai instance.
-- **PORT**: The port exposed by the Runtime MCP
-- **MLFLOW_TRACKING_URI**: The MLFlow link to use for downloading models
-- **RUNTIME_CONFIG**: The location of the config file giving the details of the MLFlow models to use
-- **MONGO_CONNECT**: The mongo connect string used by the runtime
+When `MASTER_KEY` is configured, **mutating tools** (`campaignCreate`, `campaignDelete`, `generateClass`, `updateProperties*`, `learningTrigger`) require `X-API-KEY` or `Authorization: Bearer {MASTER_KEY}`.
 
-## Custom APIs
+### Prompts
 
-Custom APIs can be set up by creating a python file aligned with the following template
+Curated agent templates (visible in MCP Playground and `prompts/list`):
+
+| Prompt | Use when |
+| --- | --- |
+| `runtime-closed-loop` | Full MCP workflow: listCampaigns → validate → invoke → validate → response |
+| `score-customer` | Score one customer; args: campaign, customer, channel, numberoffers |
+| `send-offer-feedback` | Send `/response` feedback after user accepts an offer |
+| `validate-before-mcp-call` | Pre-flight rules (params as JSON string, required fields) |
+| `campaign-admin` | Create/refresh/delete campaigns; notes MASTER_KEY for mutating tools |
+| `developer-http-integration` | REST integration via `/invocations` and `/response` (non-MCP apps) |
+| `ask-about-algorithms` | Recommend algorithms; args: question (natural language) |
+
+Call `prompts/get` with `name` and optional `arguments` to render a prompt message with substituted values.
+
+For algorithm questions, call `askAboutAlgorithms` or read `ecosystem://algorithms/selection-guide` (full `ECOSYSTEM_ALGORITHMS.md`).
+
+### Tools
+
+**Scoring & campaigns:** `listCampaigns`, `invoke`, `response`, `updateProperties`, `updatePropertiesJson`, `generateClass`, `campaignCreate`, `campaignGet`, `campaignDelete`, `configGet`, `learningTrigger`
+
+**Runtime ontology (agent grounding):** `lookupRuntimeConcept`, `getClosedLoopRecipe`, `validateInvokeRequest`, `validateResponseRequest`
+
+**Algorithm selection:** `askAboutAlgorithms` — recommends `approach` / `sub_approach` from natural-language questions using `ECOSYSTEM_ALGORITHMS.md`
+
+Use ontology tools **before** `invoke` / `response` to validate payloads against the [Runtime Closed Loop](/docs/ontology/runtime) vocabulary.
+
+### Recommended agent flow (closed loop)
+
+1. Read `ontology://runtime/closed-loop` (resource) or call `getClosedLoopRecipe`
+2. `listCampaigns` — resolve `campaign`
+3. `validateInvokeRequest` — pre-flight `InvocationRequest` (`params` must be a JSON **string**)
+4. `invoke` — save `uuid` and `offer_name` from `final_result`
+5. `validateResponseRequest` — pre-flight `ResponseFeedback`
+6. `response` — same `uuid` ties ContactLog and ResponseLog for learning
+
+Optional: `lookupRuntimeConcept` with `query: "InvocationRequest"` for concept cards and related MCP tools.
+
+### REST ontology API
+
+Headless catalog (same content as MCP resources/tools):
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /ontology/runtime` | Module summary |
+| `GET /ontology/runtime/concepts?q=invocation` | Search concept index |
+| `GET /ontology/runtime/concepts/{localName}` | Single concept card |
+| `GET /ontology/runtime/recipes/closed-loop` | Closed-loop recipe JSON |
+| `POST /ontology/runtime/validate/invoke` | Validate invoke body |
+| `POST /ontology/runtime/validate/response` | Validate response body |
+| `GET /ontology/runtime/downloads/runtime.ttl` | Bundled Turtle |
+
+
+```bash
+curl -X POST "$RUNTIME/mcp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "invoke",
+      "arguments": {
+        "campaign": "my_campaign",
+        "customer": "customer-123",
+        "channel": "app",
+        "numberoffers": 3,
+        "userid": "mcp-user",
+        "params": "{}"
+      }
+    }
+  }'
+```
+
+### Example: modern discovery
+
+```bash
+curl -X POST "$RUNTIME/mcp" \
+  -H "Content-Type: application/json" \
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: server/discover" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "server/discover",
+    "params": {
+      "_meta": {
+        "io.modelcontextprotocol/protocolVersion": "2026-07-28"
+      }
+    }
+  }'
+```
+
+Closed-loop learning: after `invoke`, send feedback with `response` using the returned `uuid` and `offer_name`. See [Runtime integration](/docs/runtime/integration).
+
+### Browser MCP testers
+
+Remote browser tools such as [MCP Playground](https://mcpplaygroundonline.com/mcp-test-server) and MCP Inspector can connect to a public runtime over HTTPS.
+
+| Setting | Value |
+| --- | --- |
+| Server URL | `https://{your-runtime-host}/mcp` |
+| Transport | **HTTP / Streamable HTTP** (required for 2026-07-28) |
+| MCP version | Autodetect or **Stateless 2026-07-28** |
+| Accept header | `application/json, text/event-stream` (Streamable HTTP) |
+| Auth header | Required only for **mutating tools** when `MASTER_KEY` is set — use `X-API-KEY: {MASTER_KEY}` or `Authorization: Bearer {MASTER_KEY}` |
+
+The runtime supports **per-request SSE** on `POST /mcp` when the client prefers `text/event-stream`. Protocol-level sessions (`Mcp-Session-Id`) were removed in 2026-07-28; legacy clients may still use `GET /mcp` + `POST /mcp/message` (deprecated HTTP+SSE).
+
+Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `response`) work without auth unless Spring `--security` is enabled on the deployment.
+
+### Resources
+
+- `ecosystem://campaigns`, `ecosystem://config`
+- Dynamic: `ecosystem://campaign/{id}`, `.../config`, `.../metrics`, `.../models`
+- **Runtime ontology:** `ontology://runtime`, `ontology://runtime/closed-loop`, `ontology://runtime/examples`, `ontology://runtime/concept/{localName}` (e.g. `InvocationRequest`)
+- **Algorithms:** `ecosystem://algorithms/selection-guide` — `ECOSYSTEM_ALGORITHMS.md` for approach / sub_approach selection
+
+---
+
+## Workbench MCP server
+
+The Workbench backend exposes deployments, enrichment, catalog escape-hatch (`call_endpoint`), and related tools. See also [Claude Agent](/docs/workers/agent_framework/claude-agent) for Operator vs Campaign Management vs external attach.
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| Streamable HTTP | `POST http://localhost:8001/mcp` | **Preferred** for Cursor, Claude Desktop, MCP Inspector |
+| Legacy SSE (deprecated) | `GET http://localhost:8001/mcp/sse/` | Still mounted; use only for older clients |
+| REST info | `GET /api/v1/mcp/` | Tool list and connection hints (requires JWT) |
+
+**Dual auth (required for HTTP `/mcp`):** `Authorization: Bearer <user-jwt>` and `X-API-Key: ewb_public_...` (same as the public API gateway).
+
+Configure the public base URL with `MCP_PUBLIC_BASE_URL` (default `http://localhost:8001`). The Vite UI port (`5270`) does **not** proxy `/mcp` in local dev — point clients at the backend port or nginx.
+
+### Three Workbench MCP modes
+
+| Mode | Who | Notes |
+| --- | --- | --- |
+| **In-process** | In-app Claude Operator (`tool_profile: operator`) | Same tool implementations as HTTP; no public API key required |
+| **HTTP `POST /mcp`** | External Claude Code / Agent SDK | Dual-auth JWT + `X-API-Key` |
+| **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Typed tools; optional alongside HTTP |
+
+External attach does **not** require Workbench’s in-image Agent SDK bundled CLI — the client brings its own. In-app Operator readiness (`GET /api/v1/claude-agent/status`) does require the bundled binary (Debian slim image).
+
+### Cursor configuration (Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "ecosystem-workbench": {
+      "url": "http://localhost:8001/mcp",
+      "headers": {
+        "Authorization": "Bearer <user-jwt>",
+        "X-API-Key": "ewb_public_..."
+      }
+    }
+  }
+}
+```
+
+### Tools
+
+`list_api_catalog`, `call_endpoint`, `list_campaign_channel_catalog`, `get_campaign_channels`, `set_campaign_channel_selection`, `list_custom_channel_modules`, `list_deployments`, `get_deployment_info`, `score_customer`, `send_feedback`, enrichment helpers (`date_enrich`, `mcc_enrich`, …), and related catalog tools.
+
+Campaign delivery channels (email, WhatsApp, WhatsApp Local, SMS, push, Python, webhook, web robot, CSV) are listed by `list_campaign_channel_catalog`. Assign published options with `set_campaign_channel_selection` (`confirm=true`). Do not confuse these with runtime scoring `channel` (`app` / `web` / `api`).
+
+### `call_endpoint` path rules
+
+Accepts `/api/v1/...`, `/public/v1/...`, or relative paths (e.g. `/campaigns`). Prefixes are stripped; the internal client calls private `/api/v1`. Known remaps:
+
+- `/money-personality/process` → `/algorithms/money-personality/process`
+- `/sentimental-equilibrium/process` → `/algorithms/sentimental-equilibrium/process`
+
+Mutating methods require `confirm=true`.
+
+### Resources
+
+- `ecosystem://deployments`
+- `ecosystem://deployment/{name}`
+
+Per-deployment MCP snippets: `GET /api/v1/deployments/{name}/mcp`.
+
+---
+
+## Runtime MCP sidecar (Python image)
+
+Separate container for **custom FastAPI APIs** and **MLFlow model download** — not the JSON-RPC builtin server above.
+
+```yaml
+ecosystem-runtime-mcp:
+  image: ecosystemai/ecosystem-runtime-mcp:arm64
+  environment:
+    RUNTIME_URL: "http://ecosystem-runtime-backend:8081"
+    PORT: 8091
+    MLFLOW_TRACKING_URI: "http://mlflow:8085"
+    RUNTIME_CONFIG: "/data/config/runtime_config.json"
+    MONGO_CONNECT: ${MONGO_CONNECT_STRING}
+  ports:
+    - "8091:8091"
+```
+
+| Endpoint | Purpose |
+| --- | --- |
+| `/docs` | OpenAPI for custom Python routers |
+| `/mcp` | Sidecar MCP/FastAPI surface (not runtime JSON-RPC) |
+| `/refresh` | MLFlow model download into runtime |
+
+### Environment variables
+
+| Variable | Description |
+| --- | --- |
+| `RUNTIME_URL` | Base URL of the Java runtime backend |
+| `PORT` | Port exposed by the sidecar (default `8091`) |
+| `MLFLOW_TRACKING_URI` | MLFlow tracking server |
+| `RUNTIME_CONFIG` | JSON config listing models to pull |
+| `MONGO_CONNECT` | MongoDB connection string |
+
+### Custom APIs
+
+Author Python `APIRouter` modules and compile them from the Workbench deployment **API** tab. Template:
+
 ```python
 from fastapi import APIRouter, Body
 from .custom_api_super import invocations, response
 from ..type_models import Invocation, Response
-import logging
-
-# Create a logger instance
-logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-
-@router.post(
-    "/myCustomInvocationsName",
-    operation_id="custom_invocations_call",
-    description="Get a list of responses from the runtime",
-    tags=["Predictors"]
-    )
+@router.post("/myCustomInvocationsName", tags=["Predictors"])
 async def my_custom_invocations(
-    customer: str = Body(..., description="The customer ID for the custom invocation."),
-    params: str = Body(..., description="Parameters for the custom invocation, typically a JSON string.")
+    customer: str = Body(...),
+    params: str = Body(...),
 ):
-    """
-    Custom endpoint to call /invocations on the runtime
-    """
-    body = Invocation(
-        customer=customer,
-        params=params
-    )
-    logger.info(f"Received request for custom invocations: {body}")
+    body = Invocation(customer=customer, params=params)
     return await invocations(body)
-
-
-@router.post(
-    "/myCustomResponseName",
-    operation_id="custom_response_call",
-    description="Send a response to the ecosystem.Ai runtime if the customer reaction generated using the result from the /invocations endpoint is a success",
-    tags=["Predictors"]
-    )
-async def my_custom_response(
-    body: Response = Body(..., description="The response to send to the runtime")
-):
-    """
-    Customer endpoint to call /response on the runtime
-    """
-    logger.info(f"Received request for custom response: {body}")
-    return await response(body)
 ```
 
-This python file can be passed to the MCP using the workbench. When configuring [plugins in a deployment](/docs/configuration/deployment/parameters), place your python file in the editor in the API tab and push the Compile button.
+See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via the sidecar.
+
+---
+
+## Client compatibility
+
+| Client | Runtime builtin `POST /mcp` | Workbench Streamable HTTP | Workbench legacy SSE | Sidecar |
+| --- | --- | --- | --- | --- |
+| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes | Deprecated | No |
+| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes | Deprecated | No |
+| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes | Legacy only | No |
+| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` | — | Custom FastAPI only |
+| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK | — | No |
+
+**stdio harness:** the `ecosystem_workbench_mcp` Python package exposes Workbench public APIs over stdio for local agent hosts (Hermes, Cursor `command` config). That is separate from the HTTP `/mcp` servers above.
+
+---
+
+## Which surface should I use?
+
+- **Score runtime campaigns from an agent** → Runtime builtin MCP (`invoke` + `response`)
+- **Score Workbench deployments / run enrichment / catalog via `call_endpoint`** → Workbench MCP server
+- **In-app Operator or Campaign Management Claude turns** → [Claude Agent](/docs/workers/agent_framework/claude-agent)
+- **MLFlow model pull + custom Python APIs** → Runtime MCP sidecar
+- **Local agent with full Workbench API** → `ecosystem_workbench_mcp` stdio SDK

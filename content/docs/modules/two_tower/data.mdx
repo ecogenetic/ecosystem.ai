@@ -66,11 +66,30 @@ Training is scoped by a **predictor** and an optional **date range**:
 - `from_date` / `to_date` — an inclusive-start, exclusive-end window
   (`datetime >= from_date` and `datetime < to_date`).
 
-Two helper endpoints support the UI:
+Two helper endpoints support the UI and public API (`two-tower:configs`):
 
 - `GET /api/v1/algorithms/two-tower/predictors` — distinct predictor values.
 - `GET /api/v1/algorithms/two-tower/predictor-date-bounds` — min/max dates and
   the row count for a predictor.
+
+Public mirrors: `GET /public/v1/two-tower/predictors` and
+`GET /public/v1/two-tower/predictor-date-bounds`.
+
+## Preview schema and prepare feature frame
+
+Before training, headless flows can validate the flatten slice and materialize the
+H2O frame without starting a train job:
+
+| Endpoint | Auth | Purpose |
+| --- | --- | --- |
+| `POST /api/v1/algorithms/two-tower/preview-schema` | private | Sample rows → columns, types, preview (async job) |
+| `POST /api/v1/algorithms/two-tower/prepare-feature-frame` | private | Mongo → CSV → H2O `two_tower_features` (async job) |
+| `POST /public/v1/two-tower/preview-schema` | `two-tower:configs` | Same as private preview |
+| `POST /public/v1/two-tower/prepare-feature-frame` | `two-tower:train` | Same as private prepare |
+
+Train still calls the same `create_feature_frame` helper internally when you skip
+explicit prepare — explicit prepare is for agents, notebooks, and the **Use in Python**
+script.
 
 ## From MongoDB to an H2O frame
 

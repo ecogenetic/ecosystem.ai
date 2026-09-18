@@ -3,6 +3,8 @@ title: Ecosystem Rewards
 description: Ecosystem Rewards
 ---
 
+import { Callout } from 'nextra/components'
+
 # Ecosystem Rewards
 
 The Ecosystem Rewards algorithm implements a version of the Thompson Sampling algorithm for solving multi-armed bandit style problems.
@@ -27,6 +29,24 @@ By default the algorithm will assume initial values of one for both alpha and be
 - **Prior Fail Reward**: The size of the increment to the beta parameter of the beta distributions used in the Thompson Sampling when an interaction is not successful in the historical data. Used when historical data is used to train the algorithm before deployment.
 - **Test options across segments**: If there are options that are configured to only be available for specific values of the contextual variables, electing to test options across segments will occasionally predict those options for contextual variable values where they are not available.
 - **epsilon**: The proportion of API calls that will be allocated for exploration. This exploration is done be sampling from a uniform distribution rather than the beta distribution when scoring.
+
+## When To Use
+
+- Default choice for most dynamic recommendation problems
+- Brand-new deployment with zero interaction history (default prior is uninformative Beta(1,1) when `prior_success_reward`/`prior_fail_reward` are unset)
+- When offer acceptance is binary (accepted vs. not accepted)
+- When you want automatic explore/exploit without tuning epsilon
+- When you want a balance between learning and explainability
+
+## When NOT To Use
+
+- When you need deterministic rankings on every request
+- When sequential state transitions matter (use [Q-Learning](/docs/configuration/algorithms/qlearning) instead)
+- When catalog fairness / long-tail coverage is the primary goal (use [Coverage-Aware Thompson](/docs/configuration/algorithms/coveragethompson) instead)
+
+<Callout type="info" title="Posterior and training cells">
+The rolling process writes `alpha = alpha_zero + success_reward × successes` (no second count in `ThompsonReward`). Dynamic Recommender Training Fields partition history on `training_cell`; contextual variables stay `contextual_variable_one` / `_two`. See [Model Convergence](/docs/user_guides/model_convergence).
+</Callout>
 
 ## Example
 
