@@ -2,3 +2,9 @@
 
 /* Match Nextra: dark utilities follow the html.dark class, not OS preference */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Brand cyan #00aeef — Tailwind primary utilities */
+@theme {
+  --color-primary: #00aeef;
+  --color-primary-foreground: #042433;
+}

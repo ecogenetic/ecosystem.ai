@@ -78,14 +78,14 @@
   --default-border-color: #d1d5db;
   --default-background-color: #f3f4f6;
 
-  --note-border-color: #488bfb;
-  --note-background-color: #ecf3ff;
+  --note-border-color: #00aeef;
+  --note-background-color: color-mix(in srgb, #00aeef 10%, white);
 
-  --abstract-border-color: #1cb1fc;
-  --abstract-background-color: #e8f7ff;
+  --abstract-border-color: #00aeef;
+  --abstract-background-color: color-mix(in srgb, #00aeef 10%, white);
 
-  --info-border-color: #1cb9d2;
-  --info-background-color: #e8f8fa;
+  --info-border-color: #00aeef;
+  --info-background-color: color-mix(in srgb, #00aeef 10%, white);
 
   --tip-border-color: #1cbfa5;
   --tip-background-color: #e8f9f6;
@@ -121,14 +121,14 @@
   --default-border-color: #9e9e9e;
   --default-background-color: #2b2e35;
 
-  --note-border-color: #488bfb;
-  --note-background-color: #222c3f;
+  --note-border-color: #00aeef;
+  --note-background-color: color-mix(in srgb, #00aeef 16%, #111111);
 
-  --abstract-border-color: #1cb1fc;
-  --abstract-background-color: #1e303f;
+  --abstract-border-color: #00aeef;
+  --abstract-background-color: color-mix(in srgb, #00aeef 16%, #111111);
 
-  --info-border-color: #1cb9d2;
-  --info-background-color: #1e313a;
+  --info-border-color: #00aeef;
+  --info-background-color: color-mix(in srgb, #00aeef 16%, #111111);
 
   --tip-border-color: #1cc0a5;
   --tip-background-color: #1e3236;

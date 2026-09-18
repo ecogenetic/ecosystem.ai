@@ -54,11 +54,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         color={{
           hue: { light: 196, dark: 196 },
           saturation: { light: 100, dark: 100 },
-          lightness: { light: 47, dark: 55 },
+          lightness: { light: 47, dark: 47 },
         }}
       >
-        <meta name="theme-color" content="#111111" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+        <meta name="theme-color" content="#00aeef" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00aeef" />
         <style
           dangerouslySetInnerHTML={{
             __html: `:root { --font-geist-sans: ${GeistSans.style.fontFamily}; --font-geist-mono: ${GeistMono.style.fontFamily}; --x-font-sans: ${GeistSans.style.fontFamily}; --x-font-mono: ${GeistMono.style.fontFamily}; }`,

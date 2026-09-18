@@ -2,6 +2,80 @@
   --eco-blue: #00aeef;
   --eco-blue-strong: #00aeef;
   --eco-blue-hover: #0099d6;
+  --eco-blue-wash: color-mix(in srgb, #00aeef 14%, transparent);
+  --eco-blue-wash-strong: color-mix(in srgb, #00aeef 22%, transparent);
+  --color-primary: #00aeef;
+  --primary: #00aeef;
+}
+
+/* Pin Nextra HSL primary to #00aeef (196° / 100% / 47%). Dark mode must not
+   lift lightness to 55% — that becomes #1ac2ff. */
+html,
+html.dark {
+  --nextra-primary-hue: 196deg !important;
+  --nextra-primary-saturation: 100% !important;
+  --nextra-primary-lightness: 47% !important;
+  --x-color-primary-50: color-mix(in srgb, #00aeef 10%, transparent);
+  --x-color-primary-100: color-mix(in srgb, #00aeef 16%, transparent);
+  --x-color-primary-200: color-mix(in srgb, #00aeef 28%, transparent);
+  --x-color-primary-300: color-mix(in srgb, #00aeef 45%, white);
+  --x-color-primary-400: color-mix(in srgb, #00aeef 70%, white);
+  --x-color-primary-500: #00aeef !important;
+  --x-color-primary-600: #00aeef !important;
+  --x-color-primary-700: #0099d6;
+  --x-color-primary-800: #0077a8;
+}
+
+html.dark {
+  --nextra-primary-lightness: 47%;
+  --x-color-primary-300: color-mix(in srgb, #00aeef 55%, black);
+  --x-color-primary-400: color-mix(in srgb, #00aeef 75%, black);
+}
+
+.nextra-sidebar a[class*='bg-primary'],
+.nextra-sidebar a[class*='font-semibold'],
+.nextra-toc a[class*='text-primary'] {
+  color: var(--eco-blue) !important;
+}
+
+.nextra-card svg,
+.nextra-card .nextra-card-icon {
+  color: var(--eco-blue);
+}
+
+.eco-guide-card {
+  border-color: #e4e4e7;
+  background-color: #ffffff;
+}
+
+.eco-guide-card:hover {
+  border-color: var(--eco-blue);
+  background-color: color-mix(in srgb, #00aeef 8%, #ffffff);
+}
+
+html.dark .eco-guide-card {
+  border-color: #3f3f46;
+  background-color: #18181b;
+}
+
+html.dark .eco-guide-card:hover {
+  border-color: var(--eco-blue);
+  background-color: color-mix(in srgb, #00aeef 12%, #18181b);
+}
+
+/* Tiles are brand cyan — never slate/navy washes */
+.eco-guide-icon {
+  background-color: #00aeef;
+  color: #042433;
+}
+
+html.dark .eco-guide-icon {
+  background-color: #00aeef;
+  color: #042433;
+}
+
+.eco-guide-card:hover .eco-guide-title {
+  color: var(--eco-blue);
 }
 
 /* make nav more blurry */

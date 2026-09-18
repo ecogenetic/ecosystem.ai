@@ -60,24 +60,18 @@ export function GuideCard({
     <Link
       href={href}
       className={cn(
-        'group flex items-start gap-3.5 rounded-xl border px-4 py-3.5 no-underline transition-colors',
-        'border-slate-200 bg-white hover:border-[#00aeef] hover:bg-sky-50/70',
-        'dark:border-slate-700 dark:bg-slate-900/50 dark:hover:border-[#00aeef] dark:hover:bg-slate-800/70'
+        'eco-guide-card group flex items-start gap-3.5 rounded-xl border px-4 py-3.5 no-underline transition-colors',
       )}
     >
       {icon ? (
         <span
-          className={cn(
-            'mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
-            'bg-[#00aeef]/15 text-[#00aeef]',
-            'dark:bg-[#00aeef]/20 dark:text-[#00aeef]'
-          )}
+          className="eco-guide-icon mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
         >
           {icon}
         </span>
       ) : null}
       <span className="min-w-0">
-        <span className="block text-[0.95rem] font-semibold leading-snug text-slate-900 group-hover:text-[#00aeef] dark:text-slate-100 dark:group-hover:text-[#00aeef]">
+        <span className="eco-guide-title block text-[0.95rem] font-semibold leading-snug text-slate-900 dark:text-slate-100">
           {title}
         </span>
         {description ? (
