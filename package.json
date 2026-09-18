@@ -4,7 +4,7 @@
   "description": "ecosystem.ai",
   "scripts": {
     "dev": "next dev -p 3333",
-    "build": "next build",
+    "build": "node scripts/ensure-full-git-history.mjs && next build",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start -p 3333",
     "analyze": "cross-env ANALYZE=true next build",
