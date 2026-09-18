@@ -1,4 +1,46 @@
+---
+title: Modules
+description: Workbench and Runtime product modules — Data Agents, Networks, Spend Personality, Two-Tower, and MLRun.
+---
+
+import { GuideCard, GuideCardGrid } from '@/components/docs/GuideCard'
+import { Bot, Boxes, Network, Sparkles, Workflow } from 'lucide-react'
+
 # Modules
 
-## Modules
-ecosystem.Ai modules are the building blocks of the ecosystem.Ai platform. Modules are reusable components that can be used to build chatbots, virtual assistants, and other applications that require users to interact with a database using natural language. Modules can be combined to create complex applications that can be deployed on a variety of platforms.
+Modules are operator products that sit on Workbench and compose with the Runtime. They are not a second scoring engine: scoring stays `POST /invocations` then `POST /response`. Differences live in plugins, properties, and these consoles.
+
+<GuideCardGrid>
+  <GuideCard
+    href="/docs/modules/data_agents"
+    title="Data Agents"
+    description="Agentic analytics — Analytic, Interactions, Personality, Financial reports."
+    icon={<Bot className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules/networks"
+    title="Networks"
+    description="Graph workspace at /networks/ — centrality, communities, social and knowledge graphs."
+    icon={<Network className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules/spend_personality"
+    title="Spend Personality"
+    description="Trait scoring from demographics and transactions."
+    icon={<Sparkles className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules/two_tower"
+    title="Two-Tower"
+    description="Dual-encoder retrieval scored in Runtime with similarity."
+    icon={<Boxes className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules/mlrun"
+    title="MLRun"
+    description="Train, generate Python, and deploy next to the Runtime."
+    icon={<Workflow className="h-5 w-5" strokeWidth={1.75} />}
+  />
+</GuideCardGrid>
+
+**Data Agents** is Agentic Data Analytics (`ecosystem-data-agents`) — batch reports, not live scoring. **Networks** (Workbench2 **Solutions → Network Analysis**) is the graph lab. Neither is the [Network Selector](/docs/user_guides/network) or Dynamic Engagement `approach: Network`.

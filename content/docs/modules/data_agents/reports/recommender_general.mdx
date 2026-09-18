@@ -1,0 +1,66 @@
+---
+title: "Campaign & Predictor Performance"
+description: "Campaign & Predictor Performance (recommender_general_markdown) for Data Agents Interactions jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Campaign & Predictor Performance
+
+**Report type key:** `recommender_general_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Campaign-first performance for selected predictors: executive funnel, campaign scorecards, time/velocity/latency, convergence evidence, economics, data quality, and methodology guards.
+
+UI families **channels**, **convergence**, **economics**, and **fairness** also land in this report (they do not get separate markdown keys).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **general** (on by default).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_general_markdown`  
+API: `GET /reports/JOB_ID/recommender_general_markdown`
+
+<Callout type="info" title="Missing this type">
+The **general** family was off, predictor selection was missing, or the step failed. Check job logs and **Analysis & LLM**.
+</Callout>
+
+## What it contains
+
+1. **Validation findings** and **data fidelity** (exact funnel vs sampled customer profiles).
+2. **Catalogue scorecard** for the general family.
+3. **Declared experiment comparison** when you configured control + treatment campaigns (uptake comparison only; randomization is not independently verified).
+4. **Executive interaction funnel** — recommendation calls → attributed responses → calls with an accepted offer → accepted offer impressions.
+5. **Campaign-first scorecards** — calls, responses, accepted-call rate per campaign.
+6. **Time, velocity, latency** — daily volume, ratios, attributed response latency.
+7. **Convergence and stability** — logged error observations if present. A zero-valued runtime error field is **not** proof that ranking has converged.
+8. **Economics** — estimated net value only when cost/margin exist on the logs; otherwise skipped (this is not Financial ARPU).
+9. **Data quality**, attribution coverage, diagnostics, **not measurable** catalogue metrics, methodology/prerequisite guards.
+
+If attributed responses **equal** accepted calls, the response collection likely records uptake events only — do not read that as 100% conversion.
+
+## How to read
+
+Start with the funnel, then campaign response rates, then daily ratios. Treat “What to change next” as **advisory experiments**. Role-specific lenses (business analyst / data scientist / ML engineer) may appear when LLM interpretation is on.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_general_markdown` | Markdown report |
+| `recommender_general_notebook` | Jupyter notebook |
+| `recommender_general_results` | JSON results |
+| `recommender_general_graphs` | Trend graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [Customer uptake](/docs/modules/data_agents/reports/recommender_customer)
+- [All report types](/docs/modules/data_agents/reports)

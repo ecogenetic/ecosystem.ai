@@ -115,5 +115,5 @@ deployment_step = dm.create_deployment(
 ```
 
 <Callout type="tip" title="Note">
-The `epsilon` parameter in `define_deployment_multi_armed_bandit` sets the exploration rate. The algorithm identifier in the dynamic recommender configuration should have `approach` set to `epsilonGreedy` in the `randomisation` object.
+`algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type, not the scoring algorithm. Set `randomisation.approach` to `epsilonGreedy`. The `epsilon` parameter in `define_deployment_multi_armed_bandit` sets the exploration rate.
 </Callout>

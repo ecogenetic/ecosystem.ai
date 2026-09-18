@@ -1,0 +1,47 @@
+---
+title: "Unit Economics (ARPU)"
+description: "Unit Economics (ARPU) (financial_unit_economics_markdown) for Data Agents Financial jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Unit Economics (ARPU)
+
+**Report type key:** `financial_unit_economics_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+ARPU, ARPPU, ARPA, ARPDAU, recognized revenue, and identity scorecard (active / paying / attributed vs unattributed).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **unit_economics** — identity + time + recognized revenue mapped.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_unit_economics_markdown`  
+API: `GET /reports/JOB_ID/financial_unit_economics_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Headline KPIs use the **latest** period grain. ARPU is attributed recognized revenue divided by identities with an event (zeros included). ARPPU is paying identities only. ARPA needs `account_id`. ARPDAU is ARPU of the latest calendar day. Unattributed revenue does not inflate per-identity KPIs.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_unit_economics_markdown` | Markdown report |
+| `financial_unit_economics_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

@@ -8,6 +8,7 @@ import Script from 'next/script'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Logo } from '@/components/logo'
+import { NavbarControls } from '@/components/NavbarControls'
 import FooterMenu from '@/components/FooterMenu'
 import { AnalyticsProviders } from '@/components/analytics/AnalyticsProviders'
 
@@ -49,7 +50,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <Head>
+      <Head
+        color={{
+          hue: { light: 196, dark: 196 },
+          saturation: { light: 100, dark: 100 },
+          lightness: { light: 47, dark: 55 },
+        }}
+      >
         <meta name="theme-color" content="#111111" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <style
@@ -59,6 +66,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </Head>
       <body>
+        <Script id="full-width-pref" strategy="beforeInteractive">
+          {`try{if(localStorage.getItem('ecosystem-docs-full-width')==='1'){document.documentElement.setAttribute('data-full-width','true');document.documentElement.style.setProperty('--nextra-content-width',document.documentElement.clientWidth+'px')}}catch(e){}`}
+        </Script>
         <Script
           src="https://app.termly.io/resource-blocker/26739b38-1a89-4742-ab53-d8d724b77f51?autoBlock=on"
           strategy="afterInteractive"
@@ -69,7 +79,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               logo={<Logo />}
               projectLink="https://github.com/ecogenetic/ecosystem.ai"
               chatLink="https://discord.com/channels/1465898795949756458/1468558966513598526"
-            />
+            >
+              <NavbarControls />
+            </Navbar>
           }
           footer={<Footer><FooterMenu /></Footer>}
           editLink="Edit this page on GitHub"

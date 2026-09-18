@@ -3,16 +3,28 @@ title: Runtime
 description: Runtime
 ---
 
-import Image from 'next/image'
-
 # Runtime Overview: Client Pulse Responder
 
-The ecosystem.Ai platform is a powerful tool that allows you to build, train, and deploy machine learning models. Use the runtime to deploy your predictors, track their performance, and make predictions in real-time.
+The ecosystem.Ai Runtime is the Java **25** scoring engine (Amazon Corretto 25). It loads campaign properties, runs pre-score / model / post-score / reward plugins, and exposes the closed loop: `POST /invocations` then `POST /response`.
 
-## Why do you need a runtime?
+## Why a runtime?
 
-The runtime is the core component of the ecosystem.Ai platform. It is responsible for managing the lifecycle of your predictors, tracking their performance, and making predictions in real-time. The runtime provides a set of tools and libraries that help you build, deploy, and manage your predictors.
+The runtime is the production prediction process. Workbench and Server configure models and deployments; the runtime serves them with millisecond latency, writes ContactLog / ResponseLog, and (for Dynamic Engagement) runs rolling learning.
 
-## What is a runtime?
+## What it does
 
-The runtime engine is used to access data, score models, perform other related real-time functions and manage the lifecycle of the predictor. The runtime engine is responsible for processing user input, generating responses, and managing conversations.
+- Score campaigns and return ranked `final_result` rows
+- Learn from accepted offers on `/response` (singular)
+- Load Java plugins (`plugin.prescore`, `plugin.postscore`, `plugin.reward`)
+- Expose **MCP** (`POST /mcp`), **ontology** (`/ontology/runtime/*`), and **campaign BDD** (`/test/campaign*`)
+- Host the [Runtime Dashboard](/docs/runtime/dashboard) tester UI
+
+Default HTTP port is **8091**. Local `run_local.sh` often uses **8099**. Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
+## Start here
+
+- [API Access](/docs/runtime/access)
+- [Runtime Dashboard](/docs/runtime/dashboard)
+- [Campaign testing](/docs/runtime/testing)
+- [MCP Support](/docs/runtime/mcp)
+- [Ontology for agents](/docs/ontology/agents)

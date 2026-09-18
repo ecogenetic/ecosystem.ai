@@ -1,0 +1,132 @@
+---
+title: API Keys
+description: Issue Workbench public API credentials and private ecosystem JWTs from Administration → API Keys
+---
+
+import { Callout } from 'nextra/components'
+
+# API Keys
+
+Admins manage credentials at **Administration → API Keys**. The page has two access modes:
+
+1. **Public API Access** — scoped keys for the public gateway and HTTP MCP
+2. **Private Ecosystem Keys** — generated ecosystem JWTs for internal platform services
+
+![Create Public Credential — name, owner, expiry, scopes](/images/configuration/api-keys-public.png)
+
+## Public API Access
+
+Use this tab for notebooks, partner apps, Campaign Management, and MCP clients that must not receive a private ecosystem JWT.
+
+### Credentials vs Public APIs
+
+| Sub-tab | What it shows |
+| --- | --- |
+| **Credentials** | Issued keys: name, owner, status (`active` / `revoked` / `expired`), last used, copy/rotate/revoke |
+| **Public APIs** | Live catalog from `GET /api/v1/admin/public-api-credentials/catalog`. **Accessible** / **Locked** badges follow the scopes on the selected credential |
+
+### Create Public Credential
+
+**New Public Credential** fields:
+
+| Field | Notes |
+| --- | --- |
+| Name | Unique label (for example `CM`, `ecosystem-workbench-mcp`) |
+| Description | What the integration is allowed to do |
+| Owner type | `user`, `service_account`, `organization`, or `partner` |
+| Owner ID / name / email | Who owns the key. `created_by` stays the acting admin |
+| Expires on | Optional. Empty means no expiry |
+| Scopes | Checkboxes. Only grant what the integration needs |
+
+The raw secret is shown **once** on create or rotate. Prefix is `ewb_public_`. If the owner loses it, **rotate** — do not expect reveal after the one-time display unless the admin uses the reveal endpoint while the hashed secret is still recoverable.
+
+Status:
+
+- **active** — usable
+- **revoked** — admin revoked; calls fail
+- **expired** — past `expires_on`
+
+### Dual auth after minting
+
+Every public gateway call needs both:
+
+```http
+X-API-Key: ewb_public_…
+Authorization: Bearer <workbench-jwt>
+```
+
+If `Authorization` is reserved, send the JWT as `X-User-Token`. Login without a public key:
+
+```http
+POST /public/v1/auth/login
+Content-Type: application/json
+
+{"email":"you@example.com","password":"…"}
+```
+
+Interactive check: open `http://localhost:8004/` and paste the public key.
+
+### Resource bindings
+
+Optional limits on a credential (`resource_bindings`):
+
+- `project_ids` — restrict to named projects
+- `catalog_ids` — restrict Contact Sets
+- `entity_names` — restrict entity collections. Empty allows all public collections
+
+`public_api_credentials` and `public_api_audit_events` are never exposed as entity collections.
+
+### Admin HTTP (private API)
+
+These routes sit on the **private** API (`:8001`) and require an admin JWT. They issue public credentials; they are not public-gateway routes.
+
+| Method | Path |
+| --- | --- |
+| `GET` | `/api/v1/admin/public-api-credentials` |
+| `POST` | `/api/v1/admin/public-api-credentials` |
+| `GET` | `/api/v1/admin/public-api-credentials/catalog` |
+| `POST` | `/api/v1/admin/public-api-credentials/{id}/rotate` |
+| `GET` | `/api/v1/admin/public-api-credentials/{id}/secret` |
+| revoke / usage | same prefix on the credentials router |
+
+Audit events land in `ecosystem_meta.public_api_audit_events` (credential lifecycle, successes, missing/invalid/expired/revoked keys, scope denials). Records must not store raw secrets, private JWTs, or request bodies.
+
+## Private Ecosystem Keys
+
+Switch to **Private Ecosystem Keys** for Grafana, ecosystem-server, and other services that expect a **generated ecosystem JWT**.
+
+| Action | Behaviour |
+| --- | --- |
+| Create New | Name, description, validity in days |
+| Generate | Workbench posts to ecosystem-server `POST /api/generate-api-key` and stores metadata in `ecosystem_meta.api_keys` |
+| Copy / hide | Reveal the stored key in the form |
+| Delete | Removes the Mongo document |
+
+<Callout type="warning" title="Not a public gateway key">
+A private ecosystem key is **not** `ewb_public_…`. Do not put it in `X-API-Key` for `:8004`. Do not hand it to partners. The Public API Access copy on this screen exists so you can issue scoped external credentials **without exposing private ecosystem JWTs**.
+</Callout>
+
+Private-key admin routes (admin JWT on `:8001`):
+
+| Method | Path |
+| --- | --- |
+| `GET` | `/api/v1/admin/api-keys` |
+| `POST` | `/api/v1/admin/api-keys/generate` |
+| `PUT` | `/api/v1/admin/api-keys/{id}` |
+| `DELETE` | `/api/v1/admin/api-keys/{id}` |
+
+Grafana and post-install data views historically used **Management → Generate API Keys**. In Workbench 2 that is this **Private Ecosystem Keys** list.
+
+## Python client packages
+
+| Package | Use |
+| --- | --- |
+| `sdk/python/ecosystem_workbench_public` | Typed client for `:8004/public/v1` |
+| `sdk/python/ecosystem_workbench_mcp` | stdio MCP harness that mints/uses `EWB_PUBLIC_API_KEY` |
+
+Env for the public client:
+
+```bash
+export EWB_PUBLIC_API_KEY="ewb_public_…"
+# JWT from login, or let the MCP harness mint from EWB_ADMIN_EMAIL / EWB_ADMIN_PASSWORD
+```

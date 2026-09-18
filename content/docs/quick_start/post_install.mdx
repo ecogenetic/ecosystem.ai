@@ -1,12 +1,16 @@
 # Post Install Setup Guide
 
+The base install is Workbench, Server, Runtime, Notebooks, and optional Grafana. Scoring and learning happen on the **Runtime**, not Grafana.
+
+After login, open the [Runtime Dashboard](/docs/runtime/dashboard) (Runtime **8091**, or **8099** for local debug). Invoke a campaign, then Accept an offer (`POST /response`). Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
 ## Base Install
 
-The ecosystem.Ai platform contain many different options and capabilities. The base install is the starting point from where you can configure other capabilities. The base installation contains the following components:
-- **App Workbench**: The main interface for the ecosystem.Ai platform.
-- **Prediction Server**: A server for running predictions.
-- **Notebooks**: A Jupyter Notebook environment for running Python code.
-- **Grafana**: A data visualization tool for creating dashboards.
+- **Workbench**: Operator UI for projects and deployments.
+- **Server**: Modeling and push to Runtime.
+- **Runtime**: `POST /invocations` and `POST /response` (params is a JSON string).
+- **Notebooks**: Processing / generative workers.
+- **Grafana**: Optional infra charts on port **3000** — not the Runtime tester UI.
 
 ### Step 1. Log in to the App Workbench
 
@@ -14,7 +18,7 @@ The default username and password is `admin@ecosystem.ai` and `password`. Please
 
 ### Step 2. Log in to Notebooks
 
-You need to create a new user account for the Notebooks. The default username is `admin@ecosystem.ai`. You can assign any password during the registration proces.
+You need to create a new user account for the Notebooks. The default username is `admin@ecosystem.ai`. You can assign any password during the registration process.
 
 ### Step 3. Setup key and login to Grafana
 
@@ -37,6 +41,16 @@ Bearer <your key>
 ```
 
 ```Save & Test``` might produce an error, but you can ignore this. You can now create dashboards and panels in Grafana. Navigate to the **Dashboards**.
+
+### Step 4. Score a campaign on the Runtime
+
+Grafana is not the scoring UI. Open the [Runtime Dashboard](/docs/runtime/dashboard) against port **8091** (or **8099** for local debug):
+
+1. **Invoke** an ACTIVE campaign (`POST /invocations`; `params` is a JSON string).
+2. **Accept** a ranked offer (`POST /response` with that row’s `uuid` and `offer_name`).
+3. Optional: **MCP** → Ontology Explorer; **Testing** → [campaign BDD](/docs/runtime/testing).
+
+Demo host: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## Additional Components Install
 

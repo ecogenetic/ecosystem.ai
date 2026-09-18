@@ -1,0 +1,52 @@
+---
+title: "Entity Clusters (Offers by Category)"
+description: "Entity Clusters (Offers by Category) (recommender_entity_clusters_markdown) for Data Agents Interactions jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Entity Clusters (Offers by Category)
+
+**Report type key:** `recommender_entity_clusters_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Offers clustered by category with assignment tables and scatter graphs.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: **entity_clustering** is on by default (`min_rows` 6, `max_clusters` 5). Turn it off in recommender analysis settings if you do not want clusters.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_entity_clusters_markdown`  
+API: `GET /reports/JOB_ID/recommender_entity_clusters_markdown`
+
+<Callout type="info" title="Missing this type">
+Clustering was disabled, skipped (too few rows per peer group), or the step failed.
+</Callout>
+
+## What it contains
+
+Advisory KMeans of offers within peer groups (and optional marketing-mix entities). Sample assignments, silhouette, PCA scatter. Labels are **not** written back to operational catalogs.
+
+## How to read
+
+Use clusters to see catalog structure. Assignments JSON is the machine-readable map.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_entity_clusters_markdown` | Markdown report |
+| `recommender_entity_clusters_results` | Cluster assignments JSON |
+| `recommender_entity_clusters_graphs` | Scatter graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [All report types](/docs/modules/data_agents/reports)

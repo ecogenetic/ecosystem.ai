@@ -1,172 +1,208 @@
 ---
 title: Simulations
-description: Simulate the results of your Deployment configuration
+description: Workbench 2 simulations — closed-loop /invocations and /response traffic against a Dynamic Interaction deployment.
 ---
 
-# Introduction
+import { Callout } from 'nextra/components'
 
-Simulations are an important part of the [Deployment](/docs/configuration/deployment) testing process before moving your Deployment to production. There are two simulation approaches available:
-1. Simulations run using the Workbench
-2. Simulations run using the [Python package](/docs/configuration/pythonpackage)
+# Simulations
 
-Workbench based simulations are easier to configure and run while Python simulations allow more flexibility and control over the simulation process.
+Simulations exercise a [Deployment](/docs/configuration/deployment) before production by driving the Runtime closed loop:
 
-Two key components need to be configured in order to run a simulation:
-1. Determining when and for whom calls to the `/invocations` API should be made
-2. Determining whether the `/invocations` API call would result in a successful interaction triggerring a call to the `/response` API
+1. `POST /invocations` for a sampled customer (ranked offers in `final_result`).
+2. Simulated take-up (or none).
+3. On accept, `POST /response` (singular) with that row’s `uuid` and `offer_name`.
 
-## Workbench Simulations
+`params` on `/invocations` is a **JSON string**, never a nested object. Use a stringified empty object, or a stringified `input` / `value` arrays object.
 
-On the Workbench, simulations can be accessed in the Laboratory section of the menu. Note that you will need to have the ecosystem-notebooks container running in order to use the Workbench simulation functionality.
-- Select `Create New` to set up a new simulation. 
-- Configure a Name and Description for your simulation and select the Deployment which you like to simulate
-- A simulation can have multiple Runs linked to it
-- Select `Create New` to set up a new Run of the Simulations
-- Configure a name and description for your simulation Run
-- A UUID for the simulation run will be automatically generated, this is used to uniquely identify the simulation run
-- Number of Iterations: The number of times that the runtime will be called i nhe simulation
-- Default Take Up Rate: The default take up rate for the simulation. This is the probability that a customer will accept an offer. A value of 0.1 means customers will ahve a 10% chance of accepting an offer
-- Server URL: The URL of the server to use during the simulation. If you are running the ecosystem.Ai platform using the default docker-compose file, this will be `http://ecosystem-server:3001/api`
-- Notebooks URL: The URL of the notebooks server to use during the simulation. If you are running the ecosystem.Ai platform using the default docker-compose file, this will be `http://ecosystem-notebooks:8010/process_simulation`
-- Client Pulse Responder: The end point to which you have pushed the Deployment to be simulated
-- Iterations per second: The number of iteractions of the simulation to run per second. Note that this will pause the simulation by 1/(Iterations per second) seconds between each iteration.
-- Generate Output every x Iterations: The simulation will store the state of the system every x iteractions. This is the output of the simulation and will allow you to understand how the state of the system evolved over time.
-- Produce Plot Output: If this is selected, the simulation will produce a plot of the Beta distributions for each item being recommended.
-- Produce Parameter Output: If this is selected, the simulation will produce a table of the Options Store parameters.
-- Segment To Test: Here you can specify a specific set of contectual variable value combinations over which the simulation should be run. By default, all combinations in the Parameters From Data Source configuration of your deployment will be simulated.
-- Use take up from Dynamic Configuration Feature Store: If this is selected, the simulation will use the take up rate from the Set Up Feature Store. This historical take up rate will be used in place of the default take up rate.
-- Set take up field in dynamic configuration feature store: If this field is selected, you can specify a Take Up field in the Set Up Feature Store which is not the same as that configured in the Dynamic Interaction configuration.
-- Take Up Field: The Take Up Field in the set up Feature Store
-- Shift Take Up Rates Over Time: If this is selected, the simulation will shift the take up rate over time. This is useful for simulating a situation where the take up rate is expected to change over time.
-- Standard deviation of shift in take up per iteration: The take up rate is shifted by sampling a shift amount from a normal distribution with a mean of 0 and a standard deviation of the value specified here.
-- Make Take Up Shift Cyclical Instead of Linear: If this is selected, the take up rate will be shifted in a cyclical manner instead of a linear shift.
-- Number of iterations in period of cyclical shift: The cyclical shift will follow a sine wave pattern with the period of the shift specified here.
+Two ways to run that loop:
 
-Once you have specified and saved your Simulation Run configuration, click `Run` to start the simulation. You can track the progress of the simulation in the Logs accordion at the bottom of the screen or using the notifications icon. Once the simulation run has completed you can click `Results` to see the Options Store parameters and Beta Distributions that were produced during the simulation.
+| Approach | Where | Best for |
+| --- | --- | --- |
+| **Workbench 2** | `/entities/simulation` | Operator setup, scenario describe, logs, Beta plots, options-store snapshots |
+| **Python** | [Python package](/docs/configuration/pythonpackage) or a custom script | Fully custom take-up, traffic, or batch logic |
 
-## Python Simulations
+Workbench is easier. Python is more flexible. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
 
-Simulations can be run in python using `predictor_engine.invocations` and `predictor_engine.response`. The approach for simulating take up can be customised to the use case. An illustrative simulation is provided below using a simple default take up rate of 10%.
+<Callout type="info" title="Not Data Agents">
+A simulation **writes** Runtime logs. To **analyze** those logs (funnel, rank uptake, catalog), run an [Interactions Analytic](/docs/modules/data_agents/interactions) job on the same `ecosystemruntime` / `ecosystemruntime_response` collections.
+</Callout>
+
+## Workbench 2
+
+Open **Simulation** at `/entities/simulation` (not the old Laboratory / Jupyter notebook UI).
+
+### Identity
+
+Each simulation document has a **name**, **project**, **deployment**, and **deployment version**. New simulations inherit the header project, then the first deployment/version when those are empty.
+
+**Save** is never blocked on those fields. Empty names become `New simulation` / `New simulation N`. Duplicate explicit names still conflict.
+
+**Run Simulation** stays disabled until setup is complete. Blockers shown on the Setup card:
+
+- Simulation name
+- Project, deployment, and version
+- ecosystem-server username and password
+- MongoDB available
+- ecosystem-notebooks available
+
+The learning **algorithm** is not chosen on the simulation form. It is resolved from the Dynamic Engagement linked to the deployment. If none is linked, the Runtime scores naively.
+
+### Runs
+
+A simulation can have many **runs**. All run settings (configuration, scenario, customer source, connections, advanced, logs, results) sit **under the selected run**.
+
+**Add Run** clones the **first** run’s configuration, with a new UUID and `RunN` name so logs and plots stay isolated.
+
+Default new-run values (override per run):
+
+| Field | Default |
+| --- | --- |
+| Iterations | 1000 |
+| Default take-up | 0.1 (10% chance the presented offer is accepted) |
+| Number of offers | 3 |
+| Offer selection | `top` (highest scoring among `final_result`) |
+| Iterations per second | 100 |
+| Output every N iterations | 100 |
+| Plot + parameter output | on |
+| Server URL | `http://ecosystem-server:3001/api` |
+| Notebooks URL | `http://ecosystem-notebooks:8010/process_simulation` |
+| Pulse responder | `http://ecosystem-runtime:8091` |
+| Server credentials | `admin@ecosystem.ai` / `password` |
+
+### Run configuration
+
+**Offers & algorithm**
+
+- **Number of offers** — `numberoffers` sent to `/invocations`.
+- **Offer selection (among presented)** — which ranked offer is credited on take-up:
+  - `top` — highest scoring
+  - `second` — always rank 2
+  - `random` — uniform among the Runtime slate
+  - `distribution` — score-weighted
+- **Algorithm** — read-only, from the deployment’s Dynamic Engagement.
+
+**Iterations & take-up**
+
+- **Number of iterations** — how many `/invocations` calls.
+- **Default take-up rate** — Bernoulli accept probability unless historical or policy modes override it.
+- **Reward binary threshold** — used when the deployment’s reward path needs a binary outcome.
+
+### Connections
+
+Open the **Connections** accordion (not buried in Advanced). Simulations authenticate to **ecosystem-server with these credentials**, not the Workbench UI login.
+
+Click **Validate** (`POST /simulations/validate-connections`). The Workbench backend checks:
+
+| Check | What it proves |
+| --- | --- |
+| Database | Mongo ping |
+| ecosystem-notebooks | Process URL reachable (including localhost fallbacks when Docker DNS names fail) |
+| ecosystem-server | `POST` login on `server_url` (must end in `/api`) with the run username/password |
+| Pulse responder | Runtime `/invocations` host is reachable from notebooks |
+
+Typical local notebooks port is **8011** if the container maps that way. If Validate says notebooks is down, start `ecosystem-notebooks` or change **Notebooks URL**. If the pulse responder cannot resolve `ecosystem-runtime`, use a host the notebook server can reach (for example `http://localhost:8099` or `http://localhost:8091`).
+
+### Describe scenario (optional)
+
+Natural language → reviewable **ScenarioSpec**. Failures stay in this panel and **never** block Save or Run.
+
+1. Describe peaks, take-up drift, or random uptake among presented offers (for example `telco weekday peaks 6–8am and 3–7pm`).
+2. **Analyze** — intents `traffic`, `take_up`, `selection`.
+3. **Apply to run** — writes the patch into **this run only** after you confirm.
+
+If the scenario cannot be expressed as config, **Generate custom Python** produces a script you copy and run yourself. Workbench **Run** does not execute that script.
+
+Apply can set:
+
+- **Traffic profile** — virtual day/week compressed into iterations (weekday peaks 6–8 and 15–19 by default). Does not wait for wall-clock hours.
+- **Take-up policy** — `flat`, `historical`, `linear_drift`, `cyclical`, `rank_decline`, `offer_decline`.
+- **Selection policy** — `static` (use Offer Selection) or `drift_lower_sequence` (acceptance moves toward lower ranks over the run).
+
+You can also set those under **Advanced** without using Analyze.
+
+### Customer source (optional)
+
+By default, customers come from the deployment **Parameter Access** lookup.
+
+Enable **Use alternate customer source** to sample `/invocations` customers from another Mongo database/collection/lookup field, with an optional aggregation pipeline (then the engine adds `$sample`). Example lookup field `customer`; pipeline `[{"$match":{"region":"ZA"}}]`.
+
+If the lookup key does not match the collection, Run fails with a hint to fix Parameter Access or the alternate source.
+
+### Advanced
+
+| Group | Fields |
+| --- | --- |
+| Outputs & pacing | Plot output, parameter output, output every N iterations, iterations per second |
+| Who is tested | **Segment to test** — JSON such as `{"contextual_variable_one":"Healthy"}` or `{}` for all dynamic segments. Static models ignore this. |
+| Baseline take-up | Historical take-up from the Dynamic Engagement feature store (1/0 success field); optional override of the field name (does not write the store) |
+| Take-up over time | Linear drift (per-iteration shift std), or cyclical sine period |
+| Selection over time | `drift_lower_sequence` |
+| Traffic profile | Virtual-time intensity windows |
+
+### Run, logs, results
+
+1. Save the simulation (drafts are allowed).
+2. Validate connections.
+3. **Run Simulation** — Workbench FastAPI proxies to notebooks `POST .../process_simulation`. Progress shows in the run banner.
+4. **Logs** — `GET /simulations/logs?run_uuid=...` (Mongo `simulations.simulation_logs`; legacy `ecosystem_meta.threads` is still read). Cancel hits notebooks `/cancel_simulation`.
+5. **Results** — options-store parameter snapshots (`simulation_param_outputs`) and Beta / plot series (`simulation_plot_outputs`) when those outputs are enabled. Use plots to inspect Ecosystem Rewards (and similar) arm distributions after the run.
+
+Failures return a message **and a hint** (unreachable Runtime, empty customer collection, missing server password, notebooks down, bad customer pipeline).
+
+### Workbench APIs (operator)
+
+Thin UI; processing stays on the backend:
+
+- `GET /simulations/status` — Mongo + notebooks health
+- `POST /simulations/validate-connections`
+- `POST /simulations/run` / cancel
+- `GET /simulations/logs`, `DELETE /simulations/logs`
+- `GET /simulations/results/parameters`, `/results/options`, `/results/plot`
+- Scenario analyze/apply via the agents router (optional)
+
+## Python simulations
+
+Use the [Python package](/docs/configuration/pythonpackage) (`prediction.apis.prediction_engine`) when you need a take-up rule Workbench cannot express. Keep the same closed loop.
+
 ```python
-# Import packages
-from prediction.apis import data_management_engine as dme
-from prediction.apis import prediction_engine as pe
-import getpass
 import random
+import time
 
-#Set parameters
-deployment_id = "demo_deployment"
-customer_database = "recommender_demos"
-customer_collection = "offer_feature_store"
-customer_key = "customer_number"
-takeup_rate = 0.1
-delay_seconds = 0.01
-runtime_path_notebook = "http://ecosystem-runtime:8091"
-server_path_notebook = "http://ecosystem-server:3001/api"
-ecosystem_user = "user@ecosystem.ai"
-ecosystem_password = getpass.getpass("Enter your ecosystem password")
+empty_params = "{}"  # params must be a JSON string
+invocations_body = {
+    "campaign": deployment_id,
+    "subcampaign": "simulation",
+    "channel": "simulation",
+    "customer": customer_id,
+    "userid": "simulation",
+    "numberoffers": 1,
+    "params": empty_params,  # JSON string, e.g. "{}"
+}
+offer_response = predictor_engine.invocations(auth_runtime, invocations_body)
+row = offer_response["final_result"][0]
+# Ranked offers: parse offer_name from the row (field names follow the Runtime result)
 
-#Connect to the runtime and server
-auth_runtime = access.Authenticate(runtime_path_notebook)
-auth = jwt_access.Authenticate(server_path_notebook, ecosystem_user, ecosystem_password)
-
-while True:
-    #Get customer
-    customer = dme.post_mongo_db_aggregate_pipeline(
-        auth,
+if random.random() < takeup_rate:
+    predictor_engine.response(
+        auth_runtime,
         {
-        "database":customer_database,"collection":customer_collection
-        ,"pipeline":[
-            {"$sample":{"size":1}}
-            ,{"$project":{customer_key:1,"_id":0}}
-        ]
-        }
-    )[0][customer_key]
-    
-    #Get offer
-    post_invocations_input = {
-                            "campaign": deployment_id
-                          , "subcampaign": "simulation"
-                          , "channel": "notebooks"
-                          , "customer": customer
-                          , "userid": "ecosystem"
-                          , "numberoffers": 1
-                          , "params": "{}"
-                        }
-    offer_response = o.invocations(auth_runtime, post_invocations_input)
-    offer = offer_response["final_result"][0]["result"]["offer"]
-    
-    #Check offer take up
-    take_up = False
-    if random.random() > takeup_rate:
-        take_up = True
-
-    #Register response
-    if take_up:
-        o.response(auth_runtime, offer_response)
-    
-    #pause execution
-    time.sleep(delay_seconds)
+            "uuid": row["uuid"],
+            "offer_name": row.get("offer_name") or row.get("result", {}).get("offer"),
+        },
+    )
+time.sleep(delay_seconds)
 ```
-This will run the simulation indefinitely until you stop it. You can restrict the number of iterations and adjust the parameters to fit your use case.
 
-Once the simulation has been completed you can view the results using the following code, as before you can make adjustments to the parameters to fit your use case.
-```python
-# Import packages
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import stats
+Do **not** call `/responses` (plural). After the loop, inspect the options store or run [Interactions Analytic](/docs/modules/data_agents/interactions) on the logging collections.
 
-# Set Parameters
-options_store_database = "recommender_demos"
-options_store_collection="demo_recommender_options"
-contextual_variable_one = "lt-15"
-contextual_variable_two = "gt-500"
-uuid = online_learning_uuid
+For Beta plots from Mongo alpha/beta (Ecosystem Rewards), filter the options store by contextual variables and overlay `scipy.stats.beta.pdf` — same idea as the Workbench plot output.
 
-def get_options_store_alpha_beta(options_store_collection,options_store_database,contextual_variable_one=None,contextual_variable_two=None,offer=None):
-    """
-    Get the alpha and beta values from an Ecosystem Rewards options store after applying a range of filters
-    
-    :param options_store_collection: The name of the options store collection in mongo. 
-    :param options_store_database: The name of the options store database in mongo.
-    :param contextual_variable_one: The value of contextual variable one to filter for, by default no filtering is applied. Should be a string.
-    :param contextual_variable_two: The value of contextual variable two to filter for, by default no filtering is applied. Should be a string.
-    :param offer: A list of offers to filter for, by default no filtering is applied. Should be a list of strings.
-    
-    :return A list of dictionaries containing the values of alpha and beta and the offer name for each document match the filters
-    """
-    
-    #Construct the mongo match query for the given filter parameters
-    match_dict = {"$match":{}}
-    if contextual_variable_one is not None:
-        match_dict["$match"]["contextual_variable_one"] = contextual_variable_one
-    if contextual_variable_two is not None:
-        match_dict["$match"]["contextual_variable_two"] = contextual_variable_two
-    if offers:
-        match_dict["$match"]["optionKey"] = {"$in":offers}
+## Related
 
-    #Get the options store using the filter parameters
-    options_store_alpha_beta = dme.post_mongo_db_aggregate_pipeline(auth,
-                {
-                "database":options_store_database
-                ,"collection":options_store_collection
-                ,"pipeline":[
-                    match_dict
-                    ,{"$project":{"alpha":1,"beta":1,"offer_name":"$optionKey","_id":0}}
-                ]
-                }
-            )
-    return options_store_alpha_beta
-
-
-options_store_alpha_beta = get_options_store_alpha_beta(options_store_collection,options_store_database,contextual_variable_one,contextual_variable_two)
-x = np.linspace(stats.beta.ppf(0.01, 1, 1),stats.beta.ppf(0.99, 1, 1), 100)
-legend_list = []
-for option_iter in options_store_alpha_beta:
-    beta_norm = stats.beta.pdf(x,option_iter["alpha"],option_iter["beta"])
-    plt.plot(x,beta_norm)
-    legend_list.append(option_iter["offer_name"])
-plt.legend(legend_list,bbox_to_anchor=(1.04, 1), loc="upper left")
-plt.show()
-```
+- [Deployments](/docs/configuration/deployment)
+- [Runtime access](/docs/runtime/access) — `/invocations` and `/response`
+- [Ecosystem Rewards](/docs/configuration/algorithms/ecosystemrewards) — reading Beta plots
+- [Model convergence](/docs/user_guides/model_convergence)
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Runtime Console](/docs/runtime/dashboard) — single-call tests without a full simulation

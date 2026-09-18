@@ -2,6 +2,8 @@
 
 ecosystem.Ai can be installed on OpenShift. This can be tested locally using `crc`. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
 
+The Runtime route should land on **8091**. Score with `POST /invocations` then `POST /response`. Kubernetes (non-OpenShift) samples: [Kubernetes](/docs/quick_start/kubernetes). Overview: [Quick Start](/docs/quick_start). Demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
 ## Environment Variables
 
 A number of [environment variables](/docs/runtime/environment_variables) can be used when starting up the ecosystem.Ai Deployments. These can be set in a ConfigMap. In addition, you should create a secret containing your license key.
@@ -690,6 +692,12 @@ oc expose svc workbench2 --port=5270
 ```
 </Callout>
 
+
+## After deploy
+
+1. Confirm the Runtime route (`/ping`), then open the [Runtime Dashboard](/docs/runtime/dashboard).
+2. **Invoke** a campaign and **Accept** an offer (`POST /response`).
+3. Optional: [campaign BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents).
 
 ## Conclusion
 

@@ -5,14 +5,21 @@ description: The release notes of the ecosystem runtime from version 0.9.0.0
 
 # ecosystem.Ai runtime release history
 
-## 0.9.7 - Preview
+## 0.9.7.0
+
+Current Runtime pin (`pom.xml` / Workbench `platform/versions.json`). Version opened 2025-12-15; still the 2026 line.
 
 ### New functionality
-- Builtin MCP
+- Runs on **Java 25** (Amazon Corretto 25; production images `amazoncorretto:25-alpine-full`)
+- Builtin MCP (`POST /mcp`, dual-era JSON-RPC / Streamable HTTP). See [MCP Support](/docs/runtime/mcp).
 - Improved threading
-- Deploy multiple use cases to a single runtime instance
-- Automated testing
+- Deploy multiple campaigns / use cases to a single runtime instance
+- Automated testing (campaign Cucumber / BDD)
 - Runtime dashboard
+- Two-Tower lookup and scoring performance
+- MCP tools for the algorithm catalog
+- Spend and Money Personality drift support
+- Optional stdout logging; Kubernetes deployment samples
 
 ## 0.9.6.1.4
 
@@ -51,7 +58,7 @@ description: The release notes of the ecosystem runtime from version 0.9.0.0
 - `/refreshWithOptions` API call which updates the Options Store.
 - `/learning` API call which manually triggers the Dynamic Interaction learning.
 - `/updateCassandraConfig` API call which updates the cassandra.conf file.
-- MCP server functionality
+- MCP sidecar (Python image; builtin Java `POST /mcp` lands on 0.9.7)
 - Custom API configuration in python.
 - MLFlow integration
 - Miscellaneous

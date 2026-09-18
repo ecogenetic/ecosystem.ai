@@ -121,7 +121,7 @@ deployment_step = dm.create_deployment(
 ```
 
 <Callout type="tip" title="Deployment pattern">
-Set `approach` to `behaviorAlgos` and `sub_approach` to `sentimentalEquilibrium` in the `randomisation` object of the dynamic recommender configuration in MongoDB.
+`algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "sentimentalEquilibrium"`.
 </Callout>
 
 <Callout type="info" title="Training data">

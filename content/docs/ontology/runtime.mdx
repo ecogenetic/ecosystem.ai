@@ -26,8 +26,9 @@ Same **`uuid`** ties invocation, contact log, and response.
 |-------|------|
 | `InvocationRequest` | `/invocations` body: `campaign`, `subcampaign`, `customer`, `channel`, `numberOffers`, `paramsJson` (**string**), optional `debug` |
 | `InvocationResponse` | Return: `uuid`, `final_result`, explore/cache, `in_params`; optional `hasDebug` when `debug` was requested |
-| `InvocationDebug` | Developer diagnostics: `errors`, `config`, `database`, `params` (not persisted in ContactLog) |
+| `InvocationDebug` | Developer diagnostics: `explanations`, `errors`, `config`, `database`, `params` (not persisted in ContactLog) |
 | `InvocationDebugError` | One `debug.errors[]` row: `stage`, `code`, `exception`, `at`, `message` |
+| `InvocationDebugExplanation` | One `debug.explanations[]` row: `code`, `severity`, `title`, `message`, optional `hint` |
 | `FinalResultEntry` | Ranked row: `rank` + slim `OfferResult` + `result_full` |
 | `OfferResult` | Slim offer: `uuid`, `offerName`, scores, cost/price |
 | `PersonalityOfferResult` | Trait-oriented `result_full` (Spend Personality) |
@@ -75,6 +76,7 @@ Same **`uuid`** ties invocation, contact log, and response.
 - [Customer Feature Lookup](/docs/ontology/customer-features)
 - [Runtime & Deployment docs](/docs/runtime)
 - [Runtime MCP — ontology tools & agent flow](/docs/runtime/mcp#recommended-agent-flow-closed-loop)
+- [Ontology for agents](/docs/ontology/agents) — Explorer UI and REST catalog
 - Examples TTL: [`/ontology/runtime-examples.ttl`](/ontology/runtime-examples.ttl)
 
 ## MCP & agent grounding

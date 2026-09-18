@@ -3,23 +3,21 @@ title: About
 description: 'ecosystem.Ai: Behavioral Predictions'
 ---
 
-import Carousel from '/components/carousel/Carousel'
 import Github from '@/components/icons/github'
 import Discord from '@/components/icons/discord'
 import { Mail } from 'lucide-react'
-import Image from 'next/image'
 
 # ecosystem.Ai
 
 **Behavioral Predictions**
 
-**ecosystem.Ai** is a low code environment which uses a combination of AI and behavioral science to select the best campaigns, products, messages, and offers for your customers - in real time. Set up effective recommendations in minutes using our default Dynamic Recommenders and use Generative AI to enhance your interactions. Or configure your own AI algorithms, with control over all of the settings that impact how the recommendations are made.
+**ecosystem.Ai** is a low-code environment that combines AI and behavioral science to select campaigns, products, messages, and offers for customers in real time. Use default Dynamic Recommenders, Two-Tower retrieval, or your own models, then close the loop with `POST /invocations` and `POST /response`.
 
-The complexity and variability of humans means that change is inevitable; the ecosystem.Ai model serving platform assists you in delivering on those tight AI project deadlines with a robust platform that can be used to integrate your models into websites, apps, inbound call centers, outbound dialers, etc and access to a full set of API's.
+The runtime is a **Java 25** scoring engine (Amazon Corretto 25; plugins, MCP, dashboard, campaign BDD). Workbench is the operator UI. Try a live stack at [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## What is ecosystem.Ai?
 
-We are a team of social, computational, data and technical scientists. Dedicated to making products that always account for the human in the system. With our combination of skills and expertise, we have dedicated ourselves to designing technology that enables you to interact, intervene and engage with the humans in your system. Change is inevitable, and human complexity is difficult to keep up with. We have worked towards making it possible to identify and change with the humans in every system.
+We are a team of social, computational, data, and technical scientists. Dedicated to making products that always account for the human in the system. With our combination of skills and expertise, we have dedicated ourselves to designing technology that enables you to interact, intervene and engage with the humans in your system. Change is inevitable, and human complexity is difficult to keep up with. We have worked towards making it possible to identify and change with the humans in every system.
 
 ## Why ecosystem.Ai?
 
@@ -35,19 +33,19 @@ Behavioral Predictions: Predictive interactions tailored to your customers’ pe
 Real-Time Deployments: Build loyalty with push messages, notifications, and feedback in milliseconds.
 Low-Code Environment: Rapid implementation of automated processes with little-to-no coding knowledge.
 
-### We’ve enhanced the veracity of generative Ai
+### We’ve enhanced the veracity of generative AI
 
-A seamless collaboration of real-time machine learning, and generative AI. Implement ecosystem.ai’s methodology to reduce the prevalence of generative ai hallucinations. Utilise access to multiple approaches that enable you to achieve more accurate outputs, sparking creativity and enhancing your recommendations.
+A seamless collaboration of real-time machine learning and generative AI. Use runtime scoring, fact injection, and behavioral algorithms so generative steps stay grounded in offers and customer context.
 
 ### Artificial Intelligence and Computational Social Science
 
 Understand and predict ever-changing human habits.
 Build: Use the Workbench and Server to build models and tell the system what you want it to do.
 Track: Assess real-time human interactions and feedback on interactive Dashboards.
-Predict: Put models into production and start predicting in real-time with a Client Pulse Responder.
+Predict: Put models into production and start predicting in real-time with the Runtime (Client Pulse Responder).
 Automate: Manage processes, boost engagements, and schedule campaigns with Pipelines.
 
-### Harness the power of Ai to give Your company the competitive edge
+### Harness the power of AI to give your company the competitive edge
 
 Recommender Systems: Send compelling offers, nudges, and triggers at decisive moments.
 Interaction Science: Nurture lasting relationships with highly personalized interactions.
@@ -56,21 +54,13 @@ Enterprise Solutions: Enhance your enterprise with sophisticated AI solutions.
 Experimentation: Test the power of your offers and interactions, in real-time.
 Build Your Own: Use our product to build your own machine learning solutions.
 
-## Design Principles
+## Design principles
 
-ecosystem.Ai adheres to the following key design principles:
-
-1. **User-Friendly Interface**: Inspired by the familiar ChatGPT UI, ecosystem.Ai offers a clean and intuitive layout, making it easy for users to engage with AI assistants.
-
-2. **Multimodal Conversations**: ecosystem.Ai supports multimodal conversations, allowing you to upload and analyze images, chat with files, and leverage advanced agent capabilities powered by AI models like GPT-4 Claude and Gemini Vision.
-
-3. **Extensibility**: With its plugin architecture and open-source nature, ecosystem.Ai encourages the development of custom extensions and integrations, enabling users to tailor the platform to their specific needs.
-
-4. **Privacy and Security**: ecosystem.Ai prioritizes privacy and security by offering secure authentication, moderation tools, and the ability to self-host the application.
-
-## License
-
-Released under the MIT License.
+1. **Closed loop first.** Score with `/invocations`, learn with `/response`. `params` is a JSON string.
+2. **Stable platform, product plugins.** Pre-score, post-score, and reward classes customize behavior without forking the runtime.
+3. **Named algorithms only.** Dynamic Engagement uses documented `approach` / `sub_approach` IDs — do not invent them.
+4. **Ontology for agents.** MCP and REST concept catalogs ground tools before they call the runtime.
+5. **Self-host and enterprise auth.** Runtime, Workbench, and Server can run in your environment.
 
 ## Contact us
 

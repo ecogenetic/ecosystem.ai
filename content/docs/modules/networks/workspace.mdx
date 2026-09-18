@@ -1,0 +1,73 @@
+---
+title: Networks Workspace
+description: Layout of the Workbench2 Networks SPA — left data panel, graph canvas, and analysis sidebar.
+---
+
+# Workspace
+
+The Networks UI is a three-pane workspace. Layout (panel widths, collapsed accordions) is stored with the saved network.
+
+## Open it
+
+| How | URL |
+| --- | --- |
+| Workbench **Solutions → Network Analysis** | `/networks/` |
+| Local Workbench SPA | `http://localhost:5270/networks/` |
+| Same host as Docker Workbench | `http://<workbench>/networks/` |
+
+Use the Workbench login. Standalone Networks login is only for `VITE_NETWORKS_STANDALONE_LOGIN=true` (dev).
+
+## Chrome
+
+Top bar: ecosystem.Ai branding, **Settings**, **Sign Out**. Light/dark follows the Networks theme control.
+
+Left header on a model: **Close**, **Export**, **Save**.
+
+| Control | What it does |
+| --- | --- |
+| **Network Name** | Required. Saved configs live in Mongo `networks.network_configs`. |
+| **Description** | Optional notes for operators. |
+| **Save** | Persist source, mappings, analysis flags, and workspace layout. |
+| **Export** | Download `ecosystem-network-v1` JSON for backup / import. |
+| **Close** | Leave the editor (return to the model list). |
+
+## Left — data and graph
+
+Collapsible sections:
+
+1. **Data Source** — Mongo, REST, or Spotify OAuth2. See [Data Sources](/docs/modules/networks/data).
+2. **Graph parameters** — graph type, node id/label, edge source/target/weight, optional extra edge mappings, graph mode (standard / social / knowledge), layout spacing, show scores / link weights.
+3. **Analytics writeback** — merge or export centrality into Mongo after analysis.
+4. **Time-based** — time field and bracket (minutes → years) for the canvas timeline.
+
+**Display max nodes** (default 1 000, max 5 000) is the canvas sample, not the analysis universe. **Process full collection** tells the job to ignore pipeline `$limit` / `$sample` while the server still returns only the display sample.
+
+## Center — canvas
+
+After the **Generate Graph** job succeeds:
+
+- Force-directed (or other) layout of the **display sample**
+- **Size nodes by** a metric (PageRank, degree, …)
+- **Color nodes by** a metric or **Community**
+- **Search** nodes by id/label
+- Zoom / pan
+- **Timeline** buckets when a time field is configured — click a month (or other bracket) to filter; run [temporal algorithms](/docs/modules/networks/advanced) from the timeline
+
+Click a node for the details panel (metrics, neighbors). Isolated hubs and a large “CUSTOMER”-style center node are typical when the mapping uses a shared entity field.
+
+The canvas is a **sample**. Server analysis can cover a much larger edge set (hard ceiling 2 000 000 edges). The UI states that graphs always build as a **server job**.
+
+## Right — analysis
+
+**Analysis & Results** is enabled once a graph exists.
+
+1. Tick [centrality](/docs/modules/networks/analysis) measures.
+2. Optionally enable **Community Detection** (Louvain or Girvan–Newman) and **Shortest Path**.
+3. **Run Analysis** — another async job; progress shows on the button.
+4. **Explain** uses the Workbench LLM (`/v1`) to narrate hubs, communities, or a path. Run analysis first so Explain has metrics.
+
+Results tables, degree-distribution charts, and NL analytics charts can dock in the lower drawer when those settings are on.
+
+## Saved models
+
+The landing list loads configs from `GET /api/graphtheory/configs`. Import uses the same `ecosystem-network-v1` export format. Delete is per `unique_key`.

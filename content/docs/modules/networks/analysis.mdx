@@ -1,0 +1,62 @@
+---
+title: Networks Analysis
+description: Server-side centrality, community detection, and shortest path in the Workbench2 Networks workspace.
+---
+
+# Analysis
+
+Use **standard** graph mode. **Generate Graph** first, then **Run Analysis** in the right panel. Metrics are computed on the **server graph**, then projected onto the display sample.
+
+**Explain** next to each block calls the Workbench LLM with the current hubs / communities. It is commentary, not a substitute for the numeric job.
+
+## Centrality
+
+Tick the measures you need. Defaults in the UI are all on.
+
+| Measure | What it highlights |
+| --- | --- |
+| **PageRank** | Importance from quantity and quality of inbound links |
+| **Betweenness** | Nodes that sit on many shortest paths (brokers) |
+| **Closeness** | How few hops to everyone else |
+| **Degree** | Raw connection count |
+| **Eigenvector** | Connected-to-important-nodes |
+| **Katz** | Attenuated walks of all lengths |
+| **Harmonic** | Closeness that tolerates disconnected graphs |
+| **Eccentricity** | Longest shortest-path from the node |
+| **Clustering coefficient** | How clustered the node’s neighbors are |
+
+After a run, set **Size nodes by** (often PageRank) and **Color nodes by** (often Community) on the canvas toolbar.
+
+Workbench2 uses **NetworkX** for these scores (Python port of the former Java graphtheory API).
+
+## Community detection
+
+Enable **Community Detection**, then choose:
+
+| Algorithm | Notes |
+| --- | --- |
+| **Louvain modularity** | Default. Fast partitions; modularity is reported in global metrics |
+| **Girvan–Newman** | Edge-betweenness splits; slower on large graphs |
+
+Optional **number of communities** is a target for algorithms that accept a count; Louvain still follows modularity.
+
+Coloring by **Community** is the usual way to read the result on the canvas.
+
+## Shortest path
+
+Enable **Shortest Path**, enter **source** and **target** node ids, then run analysis (or the dedicated path call). The UI draws the path when it exists. Backend supports BFS / Dijkstra depending on weights.
+
+Use **Explain** on the path block after ids are filled.
+
+## After a run
+
+- Node details show per-node scores
+- Results table lists ranked nodes
+- Optional **degree distribution** chart in the analysis drawer
+- **Writeback** (left panel) can merge scores into Mongo for later Runtime lookups or dashboards
+
+Heavy algorithms may skip or simplify above ~100 000 edges; the hard processing ceiling is **2 000 000** edges.
+
+## Not the Runtime bandit
+
+Dynamic Engagement **Network Analysis** (`approach` in campaign properties) ranks **offers** from an acceptance network at score time. That is documented under [algorithms](/docs/configuration/algorithms/networkanalysis). This page is the Workbench **graph lab**.

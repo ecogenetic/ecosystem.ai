@@ -9,7 +9,7 @@ In order to develop your own java classes to use for pre and post scoring and AP
 ## Prerequisites
 Before you can configure your pre and post scoring logic, you will need to have the following set up on your local machine:
 - Install IntelliJ or update your current install to the latest version
-- Install Java Corretto 17 
+- Install **Amazon Corretto 25** (the Runtime JVM; Docker images use `amazoncorretto:25-alpine-full`) 
 - Clone the ecosystem-runtime-localbuild repo from GitHub https://github.com/ecogenetic/ecosystem-runtime-localbuild. There are different branches for different versions of the runtime. The default branch is for the latest version of the runtime. If you are working with a specific version of the runtime then check out the branch for that version. 
 
 ## IntelliJ Configuration
@@ -53,7 +53,7 @@ Open the Tool menu and select Pull Plugin from ecosystem.Ai server.
 Right click on the project root folder and select Refresh from Disk to have the pulled files appear in the tree.
 ![Refresh from disk](/images/local_dev_setup/08_refresh-from-disk.png)
 
-Now in the IntelliJ menu go to File -> Project Structure, select SDKs under Platform Settings, click the + to add a new SDK and select corretto-17.
+Now in the IntelliJ menu go to File → Project Structure, select SDKs under Platform Settings, click the + to add a new SDK and select **Amazon Corretto 25**.
 ![Add SDK](/images/local_dev_setup/09_add-sdk.png)
 
 Now go to the Run menu and select Edit Configurations.

@@ -1,0 +1,65 @@
+---
+title: "Offer Effectiveness & Catalog"
+description: "Offer Effectiveness & Catalog (recommender_offer_markdown) for Data Agents Interactions jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Offer Effectiveness & Catalog
+
+**Report type key:** `recommender_offer_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Offer presentation and uptake, rank behavior, product-catalog snapshots, catalog changes, utilization, and experiments.
+
+The **experimentation** UI family also lands here.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **offers**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_offer_markdown`  
+API: `GET /reports/JOB_ID/recommender_offer_markdown`
+
+<Callout type="info" title="Missing this type">
+The **offers** family was off or the step failed. Check job logs and **Analysis & LLM**.
+</Callout>
+
+## What it contains
+
+1. Offer effectiveness table — presented, accepted, uptake per presentation, lift vs overall.
+2. Daily presented vs accepted volume and uptake ratio.
+3. Product×day peaks (compact; full `offer_time` stays in JSON).
+4. **Offer matrix / catalog snapshot** — status, snapshot count, unique versions and offers.
+5. **Ranking effectiveness** — uptake by presented rank; accepted vs non-accepted score separation when scores exist.
+6. Catalog quality (missing descriptions, negative-value findings, field inventory).
+7. Utilization (offers never presented) and catalog change history.
+8. **Recommended actions to drive product success** — evidence, action, measure, guardrail (advisory).
+
+“Selling” in this report means presented-then-accepted until a purchase event is linked.
+
+## How to read
+
+Read uptake **per presentation**, then rank 1 vs lower ranks. A catalog offer that never appears in slates is a utilization issue, not a Financial KPI.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_offer_markdown` | Markdown report |
+| `recommender_offer_notebook` | Jupyter notebook |
+| `recommender_offer_results` | JSON results |
+| `recommender_offer_graphs` | Rank / uptake graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general)
+- [Entity clusters](/docs/modules/data_agents/reports/recommender_entity_clusters)
+- [All report types](/docs/modules/data_agents/reports)

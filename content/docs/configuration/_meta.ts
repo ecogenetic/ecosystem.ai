@@ -9,5 +9,6 @@ export default {
   deployment: 'Deployments',
   api: 'API Management',
   simulations: 'Simulations',
-  pythonpackage: 'Python Package'
+  pythonpackage: 'Python Package',
+  workbench_apis: 'Public APIs, Agents & MCP',
 }

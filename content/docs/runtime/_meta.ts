@@ -8,6 +8,8 @@ export default {
   deployment: 'Push Your Deployment',
   environment_variables: "Environment Variables",
   access: 'API Access',
+  dashboard: 'Runtime Dashboard',
+  testing: 'Campaign Testing',
   logging: 'Logging & Reporting',
   externalruntimecalls: 'External Runtime Calls',
   mcp: "MCP Support",

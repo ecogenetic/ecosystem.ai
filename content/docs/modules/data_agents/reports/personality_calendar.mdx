@@ -1,0 +1,47 @@
+---
+title: "Calendar Personality Patterns"
+description: "Calendar Personality Patterns (personality_calendar_markdown) for Data Agents Personality jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Calendar Personality Patterns
+
+**Report type key:** `personality_calendar_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Weekend, holiday, day-of-week, and time-of-day personality and category lifts.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **calendar**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_calendar_markdown`  
+API: `GET /reports/JOB_ID/personality_calendar_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Lifts are relative to the extract. Pair with time measures for period share.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_calendar_markdown` | Markdown report |
+| `personality_calendar_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

@@ -1,0 +1,53 @@
+---
+title: "Time Series Report"
+description: "Time Series Report (time_series_markdown) for Data Agents Analytic jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Time Series Report
+
+**Report type key:** `time_series_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Period buckets, numeric measures (sum/mean/rolling/lags), optional journeys, event associations, and forecasts.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Time Series Analysis** (off by default) plus datetime column on [Time Series](/docs/modules/data_agents/analysis).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/time_series_markdown`  
+API: `GET /reports/JOB_ID/time_series_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Read level, change, and grain together. Journeys need entity + event columns. Forecasts are extra JSON/CSV keys.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `time_series_markdown` | Markdown report |
+| `time_series_notebook` | Jupyter notebook |
+| `time_series_graphs` | PNG folder |
+| `time_series_results` | JSON results |
+| `time_series_journeys` | Journey sequences JSON |
+| `time_series_event_associations` | Event association JSON |
+| `time_series_forecasts` | Forecast JSON |
+| `time_series_forecasts_csv` | Forecast CSV |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

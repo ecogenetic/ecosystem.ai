@@ -4,6 +4,7 @@ description: API Access
 ---
 
 import Image from 'next/image'
+import { Callout } from 'nextra/components'
 
 # Introduction
 The ecosystem.Ai runtime exposes APIs that can be used to access and manage your deployed configuration.
@@ -32,7 +33,12 @@ curl -X POST http://ecosystem-runtime:8091/invocations \
     }'
 ```
 
-Here is another example payload with a in_param set that can later be used in the model.
+Here is another example payload with feature values inside `params`. The field remains a JSON **string** (URL-encoded form is also accepted).
+
+<Callout type="warning" title="params is a string">
+Do not send a nested JSON object in `params`. Encode the object as a string. The closed-loop feedback endpoint is `POST /response` (singular).
+</Callout>
+
 ```json
 {
     "campaign": "spending_personality",
@@ -41,11 +47,7 @@ Here is another example payload with a in_param set that can later be used in th
     "customer": "1234",
     "numberoffers": "1",
     "userid": "openai",
-    "params": {
-        "airtime_balance": 200,
-        "airtime_advance_limit": 30,
-        "api_payment_method": "p"
-    }
+    "params": "{\"airtime_balance\":200,\"airtime_advance_limit\":30,\"api_payment_method\":\"p\"}"
 }
 ```
 Modules have different endpoints and payloads. The following is an example of the Spend Personality `/invocations` API in [OpenAPI 3.0](https://swagger.io/specification/) standard.
@@ -298,9 +300,9 @@ components:
 ```
 </Callout>
 
-If you do not want the API to return an array or document in document JSON objects then use the flatten option. This is especially useful for UI and other technologies that have difficulty with processing nested JSON objects. The example uses the in_param to force a flattened response: `{"in_param": {"flatten_json": true}}`
+If you do not want the API to return nested JSON objects then encode flatten inside the `params` **string**: `"params": "{\"flatten_json\": true}"` (URL-encoded form is also accepted).
 <Callout type="note" title="Example Flattened `/invocations` Response for Spend Personality" emoji='✏️' collapsible>
-This is the return for the Spend Personality API when called with `{"in_param": {"flatten_json": true}}`:
+This is the return for the Spend Personality API when called with `"params": "{\"flatten_json\": true}"`:
 ```yaml
 openapi: 3.0.0
 info:
@@ -509,7 +511,7 @@ paths:
 ```
 </Callout>
 
-URL Encoding is required for the in_param field.
+URL Encoding is accepted for the `params` string.
 
 ```json
 {

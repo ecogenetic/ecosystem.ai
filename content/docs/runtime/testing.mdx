@@ -1,0 +1,73 @@
+---
+title: Campaign Testing
+description: Built-in Cucumber BDD tests driven by campaign properties files
+---
+
+# Campaign Testing
+
+Runtime **0.9.7.0** includes a Cucumber BDD runner for campaign plugins. The campaign `.properties` file is the test specification: the runner generates fixtures, loads pre-score / post-score / reward classes, and returns a structured report. Tests do not touch live Mongo or Cassandra.
+
+Open **Testing** on the [Runtime Dashboard](/docs/runtime/dashboard), pick a campaign, then **Run Tests**. Filters (All, Pre-Score, Post-Score, Reward, Pipeline) map to the REST paths below.
+
+![Campaign Testing — properties-driven BDD report](/images/runtime/campaign-testing.png)
+
+The screenshot shows a typical properties-driven result: most scenarios pass, one fixture assertion fails, and later steps skip. That is expected when the generated `featuresObj` does not contain every name listed in `predictor.param.lookup.features`.
+
+## REST API
+
+Default runtime port is **8091** (local debug often **8099**).
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `POST` | `/test/campaign` | All scenarios for one properties file |
+| `POST` | `/test/campaign/prescore` | Pre-score only |
+| `POST` | `/test/campaign/postscore` | Post-score only |
+| `POST` | `/test/campaign/reward` | Reward only |
+| `POST` | `/test/campaign/pipeline` | Pre-score → post-score → reward |
+| `GET` | `/test/campaigns` | List available properties files |
+
+```bash
+curl -X POST http://localhost:8091/test/campaign \
+  -H "Content-Type: application/json" \
+  -d '{"properties": "ecosystem-online_recommender_twotower.properties"}'
+```
+
+From the Runtime repo you can also run the full Cucumber suite:
+
+```bash
+mvn -B test
+```
+
+## Properties-driven fixtures
+
+The generator reads the campaign properties and builds `params`, `featuresObj`, offer-matrix rows, and dynamic corpora. No separate fixture file is required for standard campaigns.
+
+| Property | Test effect |
+| --- | --- |
+| `plugin.prescore` / `plugin.postscore` / `plugin.reward` | Classes under test |
+| `predictor.param.lookup.features` | Names that **must** appear on `featuresObj` |
+| `predictor.param.lookup.default` | Realistic values for those names (JSON) |
+| `predictor.offer.matrix` | Synthetic offers |
+| `mojo.key` | Model-scored path vs empty-score path |
+| `predictor.corpora` | Dynamic Engagement options |
+
+If a scenario fails with `featuresObj should contain feature: <name>`, add that name to `predictor.param.lookup.default`, or remove it from `predictor.param.lookup.features` if it is not a scoring feature. Following steps in the same scenario skip until the fixture step passes.
+
+## Feature coverage
+
+| Feature file | Coverage |
+| --- | --- |
+| `campaign_configuration.feature` | Plugin class names resolve; JSON in properties is well-formed |
+| `campaign_from_properties.feature` | Auto-generated fixtures and feature presence |
+| `prescore.feature` / `postscore.feature` / `reward.feature` | Isolated plugin stages |
+| `campaign_pipeline.feature` | End-to-end plugin chain |
+
+Campaign-specific Gherkin can live under `src/main/resources/features/`. Prefer the parameterless `Given the properties file under test` so the REST body selects the campaign.
+
+## Isolation
+
+- Endpoints are under `/test/*` only.
+- Each run uses an isolated `GlobalSettings`.
+- Concurrent API runs keep the properties path in a `ThreadLocal` that is cleared in `finally`.
+
+Source of truth in the Runtime repo: `TESTING.md`.

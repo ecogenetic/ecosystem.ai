@@ -1,29 +1,204 @@
+---
+title: Quick Start
+description: Install the stack, score a campaign, and close the learning loop
+---
+
+import { Callout } from 'nextra/components'
+import { GuideCard, GuideCardGrid } from '@/components/docs/GuideCard'
+import {
+  Boxes,
+  Cloud,
+  FlaskConical,
+  Monitor,
+  Network,
+  Server,
+  Zap,
+} from 'lucide-react'
+
 # Quick Start
 
-Follow the guides below to get up and running with ecosystem.Ai as quickly as possible.
+Get from zero to a ranked offer and a recorded response. Workbench configures campaigns; the **Runtime** (Client Pulse Responder) scores them in real time. Learning only happens if you close the loop.
 
-## Overview
+<Callout type="info" title="Try before you install">
+Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai). Point the [Runtime Dashboard](/docs/runtime/dashboard) **Runtime URL** at that host (or at your local Runtime on **8091** / **8099**) and Invoke a campaign.
+</Callout>
 
-The platform contains the following components:
+## What you are running
 
-![image](/images/overview.png)
+Current Workbench train: **2.0.3** (pins Runtime **0.9.7.0**, Server **0.7.9.0**, Notebooks **0.3**). Runtime runs on **Java 25** (Amazon Corretto 25). Workbench 2 local backend is **Python 3.14**.
 
-The core of the platform is the Prediction Server which is responsible for running the models and making predictions. The Workbench is the user interface for the platform. The Workbench is where you can load modules, create and train models, and make predictions. Python can be used to create custom modules and models.
+| Piece | Role | Current pin |
+| --- | --- | --- |
+| **Runtime** | Java 25 scoring engine: plugins, `/invocations`, `/response`, builtin MCP, dashboard, campaign BDD | **0.9.7.0** |
+| **Workbench** | Operator UI: projects, deployments, EcoGentic journeys, Claude Operator | **2.0.3** |
+| **Server** | Modeling, corpora, push to Runtime | **0.7.9.0** |
+| **Notebooks** | Processing / generative workers (not the scorer) | **0.3** |
 
-- **Workbench**: The Workbench is the user interface for the platform. The Workbench is where you can load modules, create and train models, and make predictions.
-- **Prediction Server**: The core of the platform is the Prediction Server which is responsible for running the models and making predictions. The server is accessible via API's and can be called from various architectural topologies.
-- **Notebooks Server**: The Notebooks Server is where you can create and run Jupyter notebooks. The Notebooks Server is accessible via API's and can be called from various architectural topologies. We have core capabilities in Chat-to-SQL, Vector Stores, Fact-Injection for RAG and other generative capabilities.
-- **Python**: Python can be used to ingest data, create models, deploy models and other key functions.
-- **Runtime (Client Pulse Responder)**: The runtime is the core of the platform. It is responsible for running the models and making predictions. The runtime can be installed on a local machine or in the cloud. The runtime is accessible via API's and can be called from various architectural topologies.
+Product differences live in **plugins and properties**, not `if (product == …)` in the Runtime. See [architecture](/docs/runtime).
 
-The prediction server focuses on a [worker architecture](/docs/workers/worker_arch) that allows us to implement and evolve the latest technology and make it accessible universally.
+## Closed loop (required)
 
-## Install
+```
+Your app or dashboard
+  → POST /invocations   (params is a JSON string)
+  ← ranked final_result (save uuid + offer_name)
+  → POST /response      (singular — never /responses)
+```
 
-#### [Local Setup](./quick_start/local_setup)
+```json
+{
+  "campaign": "your_campaign",
+  "subcampaign": "your_campaign",
+  "customer": "none",
+  "channel": "app",
+  "numberoffers": "2",
+  "userid": "ecosystem",
+  "params": "{}"
+}
+```
 
-Use this easy setup guide and start using ecosystem.Ai Workbench and load a sample module.
+`params` stays a **string** (`"{}"` or encoded `{"input":[...],"value":[...]}`). Nested JSON in `params` is rejected.
 
-#### [Marketplace Apps](./quick_start/marketplace)
+On accept, send that row’s `uuid` plus `offer_name`:
 
-Install the ecosystem.Ai stack from your favorite cloud marketplace. Azure, AWS and Google Cloud are supported.
+```json
+{
+  "uuid": "dcb54a23-0737-4768-845d-48162598c0f7",
+  "offers_accepted": [{ "offer_name": "OFFER_A" }],
+  "channel_name": "app"
+}
+```
+
+Full contract: [API Access](/docs/runtime/access).
+
+![Runtime Dashboard — invoke a campaign and accept an offer](/images/runtime/dashboard.png)
+
+## First score (after install, or on the demo)
+
+1. Open the [Runtime Dashboard](/docs/runtime/dashboard). Default Runtime port is **8091** (local `run_local.sh` often **8099**).
+2. Pick an **ACTIVE** campaign, set customer / channel / number of offers, **Invoke**.
+3. **Accept** a ranked row. That sends `POST /response` with that row’s `uuid` and `offer_name`.
+4. Optional: **MCP** tab → Ontology Explorer; **Testing** tab → properties-driven BDD.
+
+<GuideCardGrid>
+  <GuideCard
+    href="/docs/runtime/dashboard"
+    title="Runtime Dashboard"
+    description="Invoke, accept, MCP, and config."
+    icon={<Monitor className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/ontology/agents"
+    title="Ontology for agents"
+    description="Ground MCP tools before invoke / response."
+    icon={<Network className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/runtime/testing"
+    title="Campaign testing"
+    description="Cucumber BDD from the campaign properties file."
+    icon={<FlaskConical className="h-5 w-5" strokeWidth={1.75} />}
+  />
+</GuideCardGrid>
+
+![Runtime Ontology Explorer — search concepts and related MCP tools](/images/runtime/ontology-explorer.png)
+
+![Campaign Testing — properties-driven BDD report](/images/runtime/campaign-testing.png)
+
+## Install the stack
+
+<GuideCardGrid columns={2}>
+  <GuideCard
+    href="/docs/quick_start/local_setup"
+    title="Local setup"
+    description="Clone the compose repo, Docker Desktop, start.sh."
+    icon={<Zap className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/quick_start/marketplace"
+    title="Marketplace"
+    description="AWS or Azure listings for platform and modules."
+    icon={<Cloud className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/quick_start/docker"
+    title="Docker Compose"
+    description="Service map: Workbench, Server, Runtime, Notebooks."
+    icon={<Server className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/quick_start/kubernetes"
+    title="Kubernetes / OpenShift"
+    description="Cluster install and environment maps."
+    icon={<Boxes className="h-5 w-5" strokeWidth={1.75} />}
+  />
+</GuideCardGrid>
+
+Longer local guide: [Local Installation](/docs/local). Compose detail: [Docker Compose](/docs/quick_start/docker). OpenShift: [OpenShift](/docs/quick_start/openshift). After containers are up: [Post-install](/docs/quick_start/post_install).
+
+<Callout type="warning" title="Keys and secrets">
+Copy `ecosystem_env.txt` to `.env`. Set `ECOSYSTEM_API_KEY` (license). `OPENAI_API_KEY` is only needed for generative paths. Do not commit `.env`.
+</Callout>
+
+## Ports (typical)
+
+| Surface | Port | Notes |
+| --- | --- | --- |
+| Workbench (Docker / marketplace) | **80** / mapped path | Default login `admin@ecosystem.ai` / `password` — change it |
+| Workbench 2 local SPA | **5270** | `frontend/run.sh` |
+| Workbench private API | **8001** | Workbench MCP Streamable HTTP `POST /mcp` |
+| Server | **3001** | Modeling APIs |
+| Runtime | **8091** | Scoring; builtin MCP is `POST {RUNTIME}/mcp` on this port. Local debug often **8099** |
+| Grafana | **3000** | Optional infra charts — not the Runtime tester UI |
+
+<Callout type="warning" title="8092 is not MCP in the default compose file">
+Default Docker Compose maps **8092–8095** to extra Runtime scoring instances (`ecosystem-runtime-solo2` …). Builtin MCP is on the **same** scoring port as `/invocations` (**8091**). A separate Python MCP **sidecar** image exists for MLFlow / custom FastAPI; do not confuse it with Runtime-solo2.
+</Callout>
+
+There are **three** MCP-related surfaces. They share the path `/mcp` but are not interchangeable. See [MCP Support](/docs/runtime/mcp).
+
+| Surface | Where | Use |
+| --- | --- | --- |
+| Runtime builtin MCP | `POST {RUNTIME}/mcp` (0.9.7+) | Score, feedback, ontology validate, campaign admin |
+| Workbench MCP | Workbench API **8001** `POST /mcp` | Deployments, enrichment, operator tools |
+| Runtime MCP sidecar | Optional Python image | MLFlow refresh, custom FastAPI |
+
+## Configure a campaign
+
+1. In Workbench, create or open a **project** and **deployment**.
+2. Choose predictor type: Dynamic Engagement (named `approach` / `sub_approach`), static H2O, or Two-Tower (`predictor.model.type=similarity` — not a bandit approach). Catalog: [Algorithms](/docs/configuration/algorithms).
+3. Set pre-score / post-score / reward plugins. Single-class custom Java can **Compile** (JIT `/generateClass` from Runtime 0.9.6.0). Multi-class plugins still need a build pipeline.
+4. **Push** the deployment to the Runtime. Confirm `/ping` and the campaign on the dashboard.
+
+Do not invent algorithm IDs. Python `create_online_learning(..., algorithm="ecosystem_rewards")` is a **document type**, not the scoring `approach`.
+
+## Agents
+
+Runtime **0.9.7+** exposes ontology REST (`GET /ontology/runtime/...`) and MCP tools so agents validate payloads before scoring.
+
+Recommended flow: `getClosedLoopRecipe` → `listCampaigns` → `validateInvokeRequest` → `invoke` → `validateResponseRequest` → `response`.
+
+Walkthrough: [Ontology for agents](/docs/ontology/agents). Prompts such as `runtime-closed-loop` are listed on [MCP Support](/docs/runtime/mcp).
+
+## What 0.9.7 / Workbench 2 added
+
+Use these after the stack is up — they are the operator surfaces that used to be missing from this page.
+
+| Capability | Where |
+| --- | --- |
+| Runtime Dashboard (invoke / accept) | [Dashboard](/docs/runtime/dashboard) |
+| Ontology Explorer + REST catalog | [Ontology for agents](/docs/ontology/agents) |
+| Campaign Cucumber / BDD | [Campaign testing](/docs/runtime/testing) (`POST /test/campaign`) |
+| Builtin MCP | [MCP Support](/docs/runtime/mcp) |
+| JIT plugin compile | [Parameters](/docs/configuration/deployment/parameters) (`/generateClass`) |
+| Virtual variables on all deployment types | [Virtual variables](/docs/user_guides/virtual_variables) |
+| Model convergence (Dynamic Engagement) | [Model convergence](/docs/runtime/model_convergence) |
+
+Release notes: [Runtime 0.9.7.0](/docs/runtime/runtimeversion), [Workbench 2.0.3](/changelog/workbench-2.0.3).
+
+## Next
+
+- [User guides](/docs/user_guides) — recommenders, plugins, virtual variables
+- [Runtime plugins](/docs/runtime/plugins) — pre / post / reward
+- [Model convergence](/docs/runtime/model_convergence) — Dynamic Engagement tuning
+- [Changelog](/changelog) — Runtime 0.9.x and Workbench 2.0.x

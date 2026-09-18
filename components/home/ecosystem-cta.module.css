@@ -1,7 +1,7 @@
 .root {
   position: relative;
   width: 100%;
-  padding: 3rem 1.5rem 5rem;
+  padding: 0.75rem 1.5rem 2.25rem;
   display: flex;
   justify-content: center;
 }
@@ -15,47 +15,61 @@
 a.cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.85rem 1.75rem;
-  border-radius: 10px;
-  background: #ff15c9;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
+  gap: 0.25rem;
+  padding: 0.15rem 0.1rem;
+  border-radius: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
   text-decoration: none;
   white-space: nowrap;
   user-select: none;
-  transition: all 0.2s ease;
+  opacity: 0.7;
+  transition: color 0.15s ease, opacity 0.15s ease;
 }
 
 :global(.dark) a.cta {
-  background: #951089;
-  color: #ffffff;
+  background: transparent;
+  color: #94a3b8;
 }
 
 a.cta span {
   display: inline-block;
-  transition: transform 0.2s ease;
+  font-size: 0.7em;
+  opacity: 0.8;
+  transition: transform 0.15s ease;
 }
 
 a.cta:hover {
-  filter: brightness(1.05);
-  box-shadow: 0 5px 30px 0px #ff15c9;
+  filter: none;
+  background: transparent;
+  box-shadow: none;
+  color: #475569;
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 :global(.dark) a.cta:hover {
-  box-shadow: 0 5px 30px 0px #951089;
+  background: transparent;
+  box-shadow: none;
+  color: #cbd5e1;
 }
 
 a.cta:hover span {
-  transform: translate(3px, -3px);
+  transform: none;
 }
 
 a.cta:active {
-  filter: brightness(0.95);
+  filter: none;
+  opacity: 0.85;
 }
 
 a.cta:focus-visible {
-  outline: 2px solid hsl(var(--nextra-primary-hue) var(--nextra-primary-saturation) 77%);
-  outline-offset: 2px;
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+  opacity: 1;
 }

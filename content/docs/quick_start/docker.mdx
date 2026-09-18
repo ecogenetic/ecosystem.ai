@@ -1,10 +1,14 @@
 # Docker Compose
 
-## Docker Compose
+Docker Compose starts Workbench, Server, Runtime, Notebooks, and optional Grafana on one `ecosystem` network. Scoring is the Runtime on **8091** (`POST /invocations`, then `POST /response`). Grafana on **3000** is infra charts, not the [Runtime Dashboard](/docs/runtime/dashboard).
 
-Docker Compose is a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application's services. Then, with a single command, you create and start all the services from your configuration.
+After `start.sh` (or `docker compose up`), log in on port **80**, then follow [Post-install](/docs/quick_start/post_install) and score a campaign. Hosted demo if you are not running locally: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
-## ecosystem.Ai Docker Compose
+**Ports in this file:** Workbench **80**, Server **3001**, first Runtime **8091**, extra Runtimes **8092–8095**, Notebooks **5111** / **8010**, Grafana **3000**. Port **8092** here is a second scoring Runtime, not MCP. Builtin MCP is `POST http://127.0.0.1:8091/mcp`. Overview: [Quick Start](/docs/quick_start).
+
+## Service map
+
+The YAML file defines multiple Docker services on a common network named `ecosystem`. Here is a breakdown of what each segment of code means:
 
 The YAML file is a Docker Compose configuration file which defines multiple Docker services to be run together, connected by a common network named 'ecosystem'. Here is a breakdown of what each segment of code means:
 
@@ -211,3 +215,10 @@ networks:
 ```
 
 [Additional variables](/docs/runtime/environment_variables) can be set for the runtime engine.
+
+## After the stack is up
+
+1. Change the default Workbench password (`admin@ecosystem.ai` / `password`).
+2. Open the [Runtime Dashboard](/docs/runtime/dashboard) against **8091**.
+3. **Invoke** a campaign, then **Accept** (`POST /response`).
+4. Optional: [campaign BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents).

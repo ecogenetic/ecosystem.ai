@@ -1,0 +1,55 @@
+---
+title: "Market Intelligence"
+description: "Market Intelligence (recommender_market_intelligence_markdown) for Data Agents Interactions jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Market Intelligence
+
+**Report type key:** `recommender_market_intelligence_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Market and catalog intelligence snapshots from offer-matrix and interaction scope.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **market_intelligence**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_market_intelligence_markdown`  
+API: `GET /reports/JOB_ID/recommender_market_intelligence_markdown`
+
+<Callout type="info" title="Missing this type">
+The **market_intelligence** family was off, catalog snapshots were missing, or peer groups were too small.
+</Callout>
+
+## What it contains
+
+Catalog and market composition from offer-matrix snapshots plus recommended matrix suggestions (peer groups such as category / product_category / segment_focus). Status may be `not_possible` when snapshots are absent.
+
+Accepted offers remain **uptake signals**, not verified purchases or CLV.
+
+## How to read
+
+Use for catalog composition and peer-group views. Unit economics belong in Financial reports.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_market_intelligence_markdown` | Markdown report |
+| `recommender_market_intelligence_notebook` | Jupyter notebook |
+| `recommender_market_intelligence_results` | JSON results |
+| `recommender_market_intelligence_graphs` | Graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [All report types](/docs/modules/data_agents/reports)

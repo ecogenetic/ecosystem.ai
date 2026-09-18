@@ -117,5 +117,5 @@ deployment_step = dm.create_deployment(
 ```
 
 <Callout type="tip" title="Deployment pattern">
-Set `approach` to `behaviorAlgos` and `sub_approach` to `coverageAwareThompson` in the `randomisation` object. Configure `gamma` and `epsilon` there to tune inverse-popularity strength and uniform exploration; the Python `define_deployment_multi_armed_bandit(epsilon=...)` API controls deployment-level epsilon separately—keep both layers consistent with your intent.
+`algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "coverageAwareThompson"`. Configure `gamma` and `epsilon` there to tune inverse-popularity strength and uniform exploration; the Python `define_deployment_multi_armed_bandit(epsilon=...)` API controls deployment-level epsilon separately—keep both layers consistent with your intent.
 </Callout>

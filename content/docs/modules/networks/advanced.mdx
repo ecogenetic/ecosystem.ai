@@ -1,0 +1,72 @@
+---
+title: Networks Social, Knowledge, and Time
+description: Social SNA, knowledge-graph ontology, timeline filters, temporal algorithms, geo charts, and metric writeback.
+---
+
+# Social, Knowledge, and Time
+
+These features sit on the same `/networks/` workspace. Switch **graph mode** (left) before generate, or use the timeline once a time field is mapped.
+
+## Social network analysis
+
+**Social** mode replaces the standard centrality list with SNA-oriented jobs (`POST /api/graphtheory/graphs/{id}/social-analysis`):
+
+| Option | Role |
+| --- | --- |
+| Influence score | Combined PageRank + betweenness style influence |
+| Bridge score | Structural holes / brokerage |
+| Reciprocity | Mutual directed ties |
+| Clustering | Local clustering |
+| Friend recommendations | Suggest links (count + min mutual friends) |
+| Echo chambers | High in-group density vs out-group (threshold) |
+| Influence paths | Bounded-length paths (max length, min strength) |
+| Structural holes | Min bridge score filter |
+
+Results appear in the social metrics table, not only as canvas colors.
+
+## Knowledge graphs
+
+**Knowledge** mode treats vertices as typed entities and edges as relations.
+
+- Load a **built-in ontology** (example: academic Person / Paper / Institution) or **auto-generate** from the current graph
+- **Validate schema** against entity/relation types
+- **Apply inference** (max iterations) for transitive / implied links
+- Query **related entities**, **semantic path**, and custom knowledge queries
+
+APIs live under `/api/graphtheory/graphs/{id}/knowledge/*`. This ontology is **your domain graph**, not the Runtime closed-loop catalog at `/ontology/runtime`.
+
+## Timeline and temporal algorithms
+
+Map a **time field** and a **bracket** (minutes, hours, days, months, years). The canvas shows a histogram of buckets (server `$dateTrunc`; auto-coarser if the range would exceed 500 buckets).
+
+Click a bucket (for example **Jan 2023**) to filter. From the timeline, run a temporal category:
+
+| Category | Example algorithms |
+| --- | --- |
+| Structural shift | DeltaCon, spectral distance, BOCPD, PELT/CUSUM, top eigenspace |
+| Influence rise/fall | PageRank over periods, k-core evolution, EWMA, rank-change tests |
+| Community evolution | multilayer Leiden, label matching, event taxonomy, persistence/conductance |
+| Tie formation / decay | link-prediction heuristics, gradient-boosted ranker, Cox PH, prediction evaluation |
+| Cascade explosiveness | Hawkes, cascade metrics, changepoint |
+
+Large corpora should send **largeMode** plus `timeField` and period bounds so the job does not stream the whole history into the browser.
+
+## Geo and analytics drawer
+
+Optional settings on the saved network:
+
+- Degree-distribution Chart.js widgets
+- Natural-language charts via Workbench `/api/v1/analytics`
+- Google Maps geo / earth charts (`VITE_GOOGLE_MAPS_API_KEY` / `env-config.js`) when lat/lng fields (or geocoded address) exist
+
+## Writeback and export
+
+After analysis:
+
+| Writeback target | Effect |
+| --- | --- |
+| **source** | Merge metrics onto existing Mongo documents (`_network_metrics` prefix by default) |
+| **export** | One score document per node in a target collection |
+| **full_export** | Copy full source records plus scores |
+
+**Export** on the toolbar downloads **`ecosystem-network-v1`** JSON (mappings + settings). **Import** restores a model into `network_configs`.

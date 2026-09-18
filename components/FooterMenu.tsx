@@ -30,7 +30,7 @@ const menuItems: {
       },
       {
         name: 'Demo',
-        href: 'http://demo.ecosystem.ai/',
+        href: 'https://medemo.ecosystem.ai',
       },
     ],
   },

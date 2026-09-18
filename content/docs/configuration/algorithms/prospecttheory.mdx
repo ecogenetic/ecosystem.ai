@@ -127,5 +127,5 @@ deployment_step = dm.create_deployment(
 ```
 
 <Callout type="tip" title="Note">
-The `approach` should be set to `behaviorAlgos` and `sub_approach` to `prospectTheory` in the `randomisation` object. The Prospect Theory parameter defaults (alpha, beta, lambda, gamma values) match the original Kahneman-Tversky experimental findings.
+`algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "prospectTheory"`. The Prospect Theory parameter defaults (alpha, beta, lambda, gamma values) match the original Kahneman-Tversky experimental findings.
 </Callout>

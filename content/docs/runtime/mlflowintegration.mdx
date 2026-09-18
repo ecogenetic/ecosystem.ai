@@ -16,11 +16,11 @@ If models are not trained using the ecosystem Server, the trained models need to
 </Callout>
 
 <Callout type="tip" title="Note">
-    Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the Runtime MCP has access to an h2o server used by MLFlow
+    Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the **Runtime MCP sidecar** has access to an h2o server used by MLFlow
 </Callout>
 
 ## Configuration
-MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api interface. The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format:
+MLFlow integration requires the **Runtime MCP sidecar** (the Python `ecosystem-runtime-mcp` image — not the Java `POST /mcp` builtin server). See [MCP Support](/docs/runtime/mcp). The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format:
 ```json
 {
     "mlflow_models": [
@@ -29,7 +29,7 @@ MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api 
                     ]
 }
 ```
-The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file. The currently supported types in the config file are `h2o_mojo` and `h2o_model`. `h2o_mojo` is preferred and requires that the mojo is stored as an artifact in MLFlow. `h2o_model` can be used when the mojo is not stored in MLFlow but it requires that the Runtime MCP have access to the H2O server used by MLFlow so that the model can be loaded into MLFlow and the mojo can be downloaded.
+The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file. The currently supported types in the config file are `h2o_mojo` and `h2o_model`. `h2o_mojo` is preferred and requires that the mojo is stored as an artifact in MLFlow. `h2o_model` can be used when the mojo is not stored in MLFlow but it requires that the Runtime MCP sidecar have access to the H2O server used by MLFlow so that the model can be loaded into MLFlow and the mojo can be downloaded.
 
 Calling the `/refresh` API on the Runtime MCP will, in addition to the standard `/refresh` functionality, download and load the models from MLFlow.
 

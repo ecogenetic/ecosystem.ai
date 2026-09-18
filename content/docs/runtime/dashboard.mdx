@@ -1,0 +1,58 @@
+---
+title: Runtime Dashboard
+description: Tester UI for campaigns, closed-loop scoring, MCP, ontology, and campaign BDD
+---
+
+# Runtime Dashboard
+
+The Runtime Dashboard is the tester UI that ships with Runtime **0.9.7.0**. Use it to ping the endpoint, pick a campaign, call `POST /invocations`, accept an offer with `POST /response`, and open the MCP, ontology, and campaign-test surfaces without writing cURL.
+
+![Runtime Dashboard — campaigns, invoke, and ranked offers](/images/runtime/dashboard.png)
+
+Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai). Point the dashboard **Runtime URL** at a running Java runtime (default scoring port **8091**; local `run_local.sh` often uses **8099**). The separate Vite app in `ecosystem-runtime/frontend` serves the same UI on **:3000** during development and proxies API calls to the runtime.
+
+## What it is for
+
+| Surface | What you do |
+| --- | --- |
+| **System Health** | Ping the runtime; refresh campaign configs |
+| **Campaigns** | Select an active campaign (predictor name) |
+| **Test Invocation** | Build a closed-loop request and **Invoke** |
+| **Results** | Ranked `final_result` rows; **Accept** writes `/response` |
+| **MCP** | JSON-RPC `POST /mcp`, Ontology Explorer, prompts |
+| **Testing** | Properties-driven Cucumber / BDD campaign tests |
+| **Config** | Runtime URL and dashboard settings |
+
+This is an operator / developer console. Production traffic should still call `/invocations` and `/response` from your channel (app, web, call center) with `params` as a JSON **string**.
+
+## Debug explanations
+
+Turn **Debug** on (Workbench Test defaults it on) so `/invocations` returns `debug.explanations`: short operator-facing titles, what happened, and what to do. The dashboard Results panel and Workbench Debug analysis tab both render that list. Typical codes include `MONGO_LOOKUP_NULL`, `EMPTY_OFFERS_CONTEXT`, `CONTEXT_DEFAULTED` (API omitted both contextual variables, so scoring used the first options-store cell), and `SCORED_OFFERS`.
+
+## Closed loop from the UI
+
+1. Choose a campaign, customer, channel, and number of offers.
+2. **Invoke** sends `POST /invocations`. The request preview at the bottom of the form is the payload your app should send.
+3. Ranked offers appear with score, price, and arm reward.
+4. **Accept** on a row sends `POST /response` with that row’s `uuid` and `offer_name`. That is the learning feedback — never `/responses`.
+
+```json
+{
+  "campaign": "online_recommender_twotower",
+  "subcampaign": "online_recommender_twotower",
+  "customer": "none",
+  "channel": "app",
+  "numberoffers": "2",
+  "userid": "ecosystem",
+  "params": "{}"
+}
+```
+
+`params` must stay a string (`"{}"` or a JSON-encoded object). Nested JSON objects in `params` are rejected.
+
+## Related
+
+- [API Access](/docs/runtime/access) — REST `/invocations` and `/response`
+- [MCP Support](/docs/runtime/mcp) — agent tools on `POST /mcp`
+- [Ontology for agents](/docs/ontology/agents) — concept catalog the MCP tab explores
+- [Campaign testing](/docs/runtime/testing) — BDD runner on the Testing tab

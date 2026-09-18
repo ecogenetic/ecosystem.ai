@@ -101,7 +101,7 @@ deployment_step = dm.create_deployment(
 ```
 
 <Callout type="tip" title="Deployment pattern">
-Set `approach` to `behaviorAlgos` and `sub_approach` to `generative` in the `randomisation` object. Place **temperature** and other LLM knobs under the configured `prompt_parameters` (or your deployment’s equivalent) so they travel with the dynamic recommender document.
+`algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "generative"`. Place **temperature** and other LLM knobs under the configured `prompt_parameters` (or your deployment’s equivalent) so they travel with the dynamic recommender document.
 </Callout>
 
 <Callout type="warning" title="Latency and cost">

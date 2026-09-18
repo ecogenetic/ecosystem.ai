@@ -1,0 +1,73 @@
+---
+title: Ontology for Agents
+description: Use the Runtime ontology REST catalog and MCP tools to ground AI agents on the closed loop
+---
+
+# Ontology for Agents
+
+The Runtime ontology is a machine-readable vocabulary for scoring, feedback, campaigns, and plugins. AI agents should **look up concepts and validate payloads** before they call `invoke` / `response`. That keeps tools aligned with `POST /invocations` then `POST /response` (singular), and with `params` as a JSON string.
+
+The [Runtime Dashboard](/docs/runtime/dashboard) **MCP** tab includes an Ontology Explorer that calls the same REST catalog the Java runtime exposes.
+
+![Runtime Ontology Explorer — search concepts and related MCP tools](/images/runtime/ontology-explorer.png)
+
+Try the hosted runtime at [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai) (point the dashboard Runtime URL at that host), or run locally (default **8091**, local debug often **8099**).
+
+## Why agents use the ontology
+
+| Problem | Ontology answer |
+| --- | --- |
+| Invented field names (`/responses`, nested `params`) | Concept cards for `InvocationRequest` and `ResponseFeedback` |
+| Wrong closed-loop order | Recipe `GET /ontology/runtime/recipes/closed-loop` |
+| Payload drift vs plugins | `validateInvokeRequest` / `validateResponseRequest` before scoring |
+| Which MCP tool to call | Each concept lists related tools (`invoke`, `listCampaigns`, …) |
+
+The Turtle sources are also downloadable (`runtime.ttl`, shapes, examples) for RAG or graph stores. See [Runtime Closed Loop](/docs/ontology/runtime).
+
+## REST catalog
+
+Same content as MCP resources. Prefix `{RUNTIME}` (for example `http://localhost:8091`).
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/ontology/runtime` | Module summary |
+| `GET` | `/ontology/runtime/concepts?q=invocation` | Search by label or local name |
+| `GET` | `/ontology/runtime/concepts/{localName}` | One concept card |
+| `GET` | `/ontology/runtime/recipes/closed-loop` | Closed-loop recipe JSON |
+| `POST` | `/ontology/runtime/validate/invoke` | Pre-flight invoke body |
+| `POST` | `/ontology/runtime/validate/response` | Pre-flight response body |
+| `GET` | `/ontology/runtime/downloads/runtime.ttl` | Bundled Turtle |
+
+```bash
+curl "http://localhost:8091/ontology/runtime/concepts?q=invocation&limit=20"
+```
+
+## MCP tools and resources
+
+On Runtime **0.9.7+**, `POST {RUNTIME}/mcp` exposes:
+
+| Tool | Use |
+| --- | --- |
+| `lookupRuntimeConcept` | Search concepts (same as the Explorer query box) |
+| `getClosedLoopRecipe` | Canonical listCampaigns → validate → invoke → validate → response |
+| `validateInvokeRequest` | Require `params` as a JSON **string** |
+| `validateResponseRequest` | Require `uuid` + `offer_name` |
+| `invoke` / `response` | Score and learn |
+
+Resources: `ontology://runtime`, `ontology://runtime/closed-loop`, `ontology://runtime/examples`, `ontology://runtime/concept/{localName}`.
+
+Recommended flow:
+
+1. `getClosedLoopRecipe` or read `ontology://runtime/closed-loop`
+2. `listCampaigns`
+3. `validateInvokeRequest` → `invoke` (save `uuid` and `offer_name`)
+4. `validateResponseRequest` → `response`
+
+Protocol detail: [MCP Support](/docs/runtime/mcp). Workbench Operator agents use a **different** MCP server (`POST` Workbench `:8001/mcp`) for deployments and enrichment — do not mix the two `/mcp` surfaces.
+
+## Related
+
+- [Runtime Closed Loop concepts](/docs/ontology/runtime)
+- [Runtime Catalog](/docs/ontology/runtime-catalog)
+- [Runtime Dashboard](/docs/runtime/dashboard)
+- [Campaign testing](/docs/runtime/testing)

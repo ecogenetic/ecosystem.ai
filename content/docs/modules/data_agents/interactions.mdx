@@ -1,0 +1,98 @@
+---
+title: Interactions Analytic
+description: Data Agents Interactions — analyze Runtime call and response logs, campaigns, ranked offers, customers, and catalog without treating acceptance as purchase.
+---
+
+import { Callout } from 'nextra/components'
+
+# Interactions Analytic
+
+**Interactions** is the Data Agents configuration type for **ecosystem.Ai recommender logging**. It pairs recommendation **calls** with attributed **responses**, then publishes family reports (markdown, notebook, graphs, JSON).
+
+It is **not** the Runtime scorer. Scoring still uses `POST /invocations` then `POST /response`. Interactions **reads** those logs after the fact. It is **not** Financial ARPU/ROI and **not** Spend Personality scoring.
+
+<Callout type="warning" title="Acceptance is an uptake signal">
+An attributed response is observed uptake (the customer accepted a ranked offer). It is not automatically a purchase, realized revenue, or causal uplift. Generated recommendations are advisory and do not write back to offers, prices, campaigns, or runtime policy.
+</Callout>
+
+## When to use it
+
+Use Interactions when you have Runtime-style collections, typically:
+
+| Collection | Role |
+| --- | --- |
+| `ecosystemruntime` (calls) | Ranked `final_result` slates, campaign, predictor, channel, UUID |
+| `ecosystemruntime_response` | Accepts joined to the call by **UUID** |
+
+Optional: offer-matrix snapshots, customer/channel collections. Do **not** point this type at a generic sales ledger (use [Financial](/docs/modules/data_agents/reports/financial_general)).
+
+After a [Workbench simulation](/docs/configuration/simulations) or production traffic, run an Interactions job on the same logging collections to inspect funnel, rank uptake, and catalog quality.
+
+## Event concepts
+
+- **Ranked recommendations** in `final_result` are the impression denominator. There is no separate “rendered impression” flag.
+- **Attributed responses** are UUID-joined accepts inside the **attribution window** (default **168 hours**) after `date_log`.
+- Calls **without** a response stay in the funnel (right-censored). Orphan responses are reported, not silently dropped.
+- Generated-but-not-ranked candidates are **not** in these logs.
+
+## Setup
+
+1. [Create New](/docs/modules/data_agents/setup) → configuration type **Interactions**.
+2. Bind Mongo (or Trino extract-only) on **Source**. Database and connection come from that source.
+3. On the Interactions block, set **Calls collection** and **Responses collection**.
+4. Click **Discover Predictors**, then select one or more predictors **or** **Analyze all predictors**. A job will not start until a selection is confirmed (Mongo). Trino extracts default to all predictors present in SQL.
+5. Optional: **Date from / Date to**, **attribution window (hours)**, declared A/B **experiment groups** (control campaign + treatments, randomization unit `customer` or `call`).
+6. Enable families on **Analysis & LLM** (see below). **Marketing mix** is off by default.
+7. Save, then [Run](/docs/modules/data_agents/process).
+
+Discovery also shows a **scale and index preflight**: call/response counts and whether exact mode is feasible. Missing source indexes are recommended and may be created at job start if missing. The analyzer never loads the full interaction population into pandas; large logs use projection, partitions, and mergeable aggregates.
+
+## Families and reports
+
+UI family checkboxes do not all get their own markdown file. Several land inside **general** or **offers**.
+
+| Analysis & LLM family | Report page | Key |
+| --- | --- | --- |
+| General performance (plus channels, convergence, economics, fairness) | [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general) | `recommender_general_markdown` |
+| Offers and catalog (plus experimentation) | [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer) | `recommender_offer_markdown` |
+| Customer engagement | [Customer uptake](/docs/modules/data_agents/reports/recommender_customer) | `recommender_customer_markdown` |
+| Market intelligence | [Market intelligence](/docs/modules/data_agents/reports/recommender_market_intelligence) | `recommender_market_intelligence_markdown` |
+| Marketing mix (adstock / saturation) | [Marketing mix](/docs/modules/data_agents/reports/recommender_marketing_mix) | `recommender_marketing_mix_markdown` |
+| Entity clustering (on by default when enough catalog rows) | [Entity clusters](/docs/modules/data_agents/reports/recommender_entity_clusters) | `recommender_entity_clusters_markdown` |
+| Always written | [Manifest](/docs/modules/data_agents/reports/recommender_manifest) | `recommender_manifest` |
+
+Each family usually also writes `*_notebook`, `*_results` JSON, and `*_graphs`. Open them from **Reports** (`/reports`) or the dashboard at `/recommender`.
+
+## How processing works
+
+1. **Join** — exact UUID attribution from calls to responses inside the window.
+2. **Normalize** — campaign, predictor, ranked offers, channels, customer keys (`customer_id`, `customerId`, `client_id`, `party_id`, …).
+3. **Aggregate** — funnel, campaigns, ranks, catalog snapshots, cohorts. Customer IDs are **pseudonymized**; cells below `minimum_cell_size` (default 10) are suppressed.
+4. **Interpret** — optional LLM on compact evidence packets. The model may explain findings and experiment proposals; it **cannot** change metrics, priority scores, or guardrails.
+5. **Publish** — additive `recommender/v1` JSON plus markdown/notebooks/graphs. Large detail stays in paginated exports / family JSON, not the consolidated dashboard blob.
+
+## Privacy and fidelity
+
+- Funnel totals (calls / responded / accepted) are **exact** over the scanned population.
+- Customer **profiles** may be sampled or truncated; the report’s **Data fidelity** block says so.
+- Distinct-customer / cohort counts prefer Mongo `$group` (exact) over the tracked sample.
+- LLM sees compact packets only — not raw customer identifiers.
+
+## View results
+
+| Surface | Path |
+| --- | --- |
+| Family dashboard | `/recommender` (latest completed Interactions job) |
+| Markdown | `/markdown/JOB_ID/recommender_general_markdown` (and other keys) |
+| Reports list | `/reports` |
+| MCP | `cvm_interactions_family` with family `general`, `offers`, `customers`, … |
+
+Dashboard tabs: General, Offers / Catalog, Customers, Market intelligence, Channels, Experimentation, Marketing mix, Data Quality. Channels and experimentation **views** read the general/offer payloads.
+
+## Related
+
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+- [All report types](/docs/modules/data_agents/reports)
+- [Simulations](/docs/configuration/simulations) — generate call/response traffic to analyze here
+- [Runtime closed loop](/docs/runtime/access)

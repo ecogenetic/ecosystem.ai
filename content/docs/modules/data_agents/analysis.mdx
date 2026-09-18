@@ -1,0 +1,64 @@
+---
+title: Data Agents Analysis Views
+description: Interactive dashboards after a job — Analytics ops, Time Series, Interactions, Personality, Financial, and LLM Agents.
+---
+
+# Analysis Views
+
+Domain pages read the **latest completed job** for the selected configuration. They are chart UIs on `consolidated_results` plus shortcuts into the matching markdown report.
+
+## Analysis Insights (`/analysis/:jobId`)
+
+From Jobs → open a completed job. Interactive panels (distributions, correlations, module-specific charts). **Full Report** jumps to `/reports`.
+
+## Analytics (`/analytics`)
+
+Operations only: job volume, completed/failed, success rate, config usage, 1–90 day window. Not Financial ARPU.
+
+## Time Series (`/time-series`)
+
+For **Analytic** configs with time series enabled:
+
+- Datetime column and grain (day, week, …)
+- Numeric measures (sum/mean, rolling, lags)
+- Optional **journeys** (entity + event columns)
+- Event association / correlation windows
+- Forecast outputs when generated
+
+**Save** on this page updates the configuration; **Run** still goes through Jobs. Primary report: [Time series](/docs/modules/data_agents/reports/time_series) (`time_series_markdown`).
+
+## Interactions (`/recommender`)
+
+Dashboard for **Interactions** jobs (latest completed job for the selected config). Tabs: General, Offers / Catalog, Customers, Market intelligence, Channels, Experimentation, Marketing mix, Data Quality.
+
+Channels and experimentation tabs read the **general** and **offer** payloads. Full narrative is in the markdown reports:
+
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general) (`recommender_general_markdown`)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [Customer uptake](/docs/modules/data_agents/reports/recommender_customer)
+
+How to configure and what each family means: [Interactions Analytic](/docs/modules/data_agents/interactions).
+
+## Personality (`/personality`)
+
+Tabs aligned with families: General, Time, Customer Change, Spend, Money, Drift, Category Patterns, Calendar, Recommendations, Data Quality. Primary report: [Personality overview](/docs/modules/data_agents/reports/personality_general) (`personality_general_markdown`).
+
+This **analyzes** scored or raw transaction history. Live trait **scoring** in the closed loop is [Spend Personality](/docs/modules/spend_personality).
+
+## Financial (`/financial`)
+
+Unit economics, returns, value, growth, ledgers, industry pack — whatever families ran. Primary report: [Financial overview](/docs/modules/data_agents/reports/financial_general) (`financial_general_markdown`). Unmapped ROI families stay empty.
+
+## Agents (`/agents`)
+
+Catalog of CRM/CVM specialists and MCP tools (`list jobs`, `get_report`, …). Test console: choose agent, optional `config_id`, ask in natural language. Mutating tools follow the product’s confirm rules. This is **not** EcoGentic customer chat and **not** Runtime builtin MCP (`POST /mcp` on the Runtime).
+
+## Local run
+
+```bash
+# ecosystem-data-agents repo
+./run.sh              # API :54324
+./run_frontend.sh     # UI  :54325
+```
+
+Python **3.14**. Set `MONGO_CONNECT`. Docker compose publishes **54325** (nginx + API) on the `ecosystem` network — do not also bind `./run_frontend.sh` on the same port.

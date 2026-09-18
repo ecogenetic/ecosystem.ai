@@ -1,0 +1,103 @@
+---
+title: Agents
+description: Workbench Administration → Agents — product catalog, Ecosystem Agent, and how agents reach public and private APIs
+---
+
+import { Callout } from 'nextra/components'
+
+# Agents
+
+**Administration → Agents** is the product agent catalog. It lists personality, campaign, and platform agents plus the **Ecosystem Agent** (in-app operator at `/assistant`). Agents **call** APIs and MCP tools. They do not replace Runtime `POST /invocations` or `POST /response`.
+
+<Callout type="info" title="Three different “agents”">
+**Ecosystem Agent** (`/assistant`) is the Workbench operator. **EcoGentic** is customer conversational journeys. **Data Agents** specialists are a separate analytics product. Do not mix those chats.
+</Callout>
+
+## Catalog
+
+Rows come from the Workbench agent catalog registry. Coverage is `wired`, `partial`, or `gap`.
+
+| Id | Title | Category | Typical tools / paths |
+| --- | --- | --- | --- |
+| `spend-personality` | Spend Personality Agent | Personality | `/public/v1/spend-personality/configs`, `/runs`, drift |
+| `money-personality` | Money Personality Agent | Personality | `POST /api/v1/algorithms/money-personality/process` via `call_endpoint` |
+| `predictive-personality` | Predictive Personality Agent | Personality | Compose spend/money with a Runtime score |
+| `conversational` | Conversational Agent | Journeys | EcoGentic configs — not operator chat |
+| `interaction-science` | Interaction Science Agent | Engagement | Sentimental equilibrium process |
+| `intelligent-sales` | Intelligent Sales Agent | Campaigns | List/trigger campaigns |
+| `real-time-recommender` | Real-Time Recommender Agent | Scoring | Workbench `score_customer` / `send_feedback` on a deployment |
+| `dynamic-experimentation` | Dynamic Experimentation Agent | Dynamic | Dynamic Engagement entities; `explain_algorithms`, `explain_convergence` |
+| `claude-operator` | Ecosystem Agent | Platform | In-process MCP; `/assistant`; HTTP MCP attach |
+| `ecogentic` | EcoGentic | Platform | Customer journeys |
+
+Open a row for capabilities, MCP tool names, skills, and a Workbench deep link (`workbench_href`).
+
+## Ecosystem Agent (`/assistant`)
+
+The operator chat is **Claude Agent** branding (not “Claude Code Agent”). Model traffic always goes through Workbench `POST /v1/messages` → the **default** LLM (`LLMService.get_config("default")`). There is no Anthropic API key in the image.
+
+| Consumer | Needs | Does not need |
+| --- | --- | --- |
+| Workbench `/assistant` | Ready Agent SDK + default LLM + in-process MCP | Public API key |
+| Campaign Management | Private `/claude-agent/*` with `tool_profile: campaign_management` | Workbench mutating tools (denied on that profile) |
+| External Claude Code / Agent SDK | `ANTHROPIC_BASE_URL` → Workbench `:8001`; optional dual-auth `POST /mcp` | Bundled `_bundled/claude` in the Workbench image |
+
+Readiness: `GET /api/v1/claude-agent/status` → `ready: true` when enabled + default LLM + SDK + resolved CLI.
+
+Policy:
+
+- Always `list_api_catalog` first
+- Use MCP tools only (`mcp__ecosystem-workbench__*`)
+- Confirm before mutating (`call_endpoint`, `entity`, `update_current_form`)
+- When `[Current form]` is present, `explain_entity` explains it; `update_current_form` patches the open editor; the operator **Saves**
+- Customer conversations stay in EcoGentic
+
+Private routes:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/v1/claude-agent/status` | Readiness |
+| `POST` | `/api/v1/claude-agent/…` | Chat turns (operator and CM profiles) |
+| `POST` | `/api/v1/agents/entity/explain` | Read-only explain of an entity / current form |
+| `POST` | `/v1/messages` | LLM proxy for the SDK |
+
+## How agents reach APIs
+
+```text
+Operator /assistant
+        │  in-process MCP (no public key)
+        ▼
+Workbench tools → private /api/v1/*  (and remapped /public/v1 paths)
+
+External Cursor / Claude Code
+        │  POST :8001/mcp  (JWT + X-API-Key)
+        ▼
+Same tool implementations → private API or public gateway
+
+Product notebooks
+        │  :8004/public/v1  (JWT + X-API-Key)
+        ▼
+Curated public catalog only
+```
+
+Scoring a customer from an agent:
+
+1. Workbench tool `score_customer` uses a **deployment** on the Workbench/Runtime path the operator configured.
+2. Production apps should still call Runtime `POST /invocations` with `params` as a JSON **string**.
+3. Feedback is Runtime `POST /response` (singular) with that row’s `uuid` and `offer_name`, or Workbench `send_feedback` which wraps the same loop for a deployment.
+
+Do not send nested JSON objects in `params`. Do not call Runtime `POST /mcp` with a Workbench `ewb_public_` key expecting scoring tools — that is a different MCP server.
+
+## Campaign Management
+
+```bash
+WORKBENCH_PRIVATE_API_BASE_URL=http://ecosystem-workbench2:8001/api/v1
+```
+
+CM uses `tool_profile: campaign_management` (CM MCP pack + a read-only Workbench subset). It must not receive private ecosystem JWTs meant for Grafana; mint a **public** credential for CM (the `CM` / `ewb_public_…` row on API Keys).
+
+## Skills
+
+Committed operator skills (Workbench `.claude/skills/`): `workbench-navigator`, `algorithm-selection`, `dynamic-experimentation`, `real-time-recommender`, `conversational`, `spend-personality`, `money-personality`, `predictive-personality`, `ontology-data`, `intelligent-sales`, `interaction-science`, `claude-operator`, `model-convergence`.
+
+Related: [Claude Agent packaging](/docs/workers/agent_framework/claude-agent), [Agent Framework](/docs/workers/agent_framework), [MCP](/docs/configuration/workbench_apis/mcp).

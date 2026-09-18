@@ -7,13 +7,13 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 
 const nonPermanentRedirects = [
   ['/discord', 'https://discord.com/channels/1465898795949756458/1468558966513598526'],
-  ['/demo', 'https://demo.ecosystem.cfd'],
+  ['/demo', 'https://medemo.ecosystem.ai'],
   ['/issue', 'https://github.com/ecogenetic/developer/issues/new/choose'],
   ['/new-issue', 'https://github.com/ecogenetic/developer/issues/new/choose'],
   ['/issues', 'https://github.com/ecogenetic/developer/issues'],
   ['/gh-support', 'https://github.com/ecogenetic/developer/discussions/categories/support'],
   ['/gh-discussions', 'https://github.com/ecogenetic/developer/discussions'],
-  ['/roadmap', '/docs/roadmap'],
+  ['/roadmap', '/blog/2025-07-03_2026_roadmap'],
   ...[].map((path) => [path, path + '/overview']),
 ]
 

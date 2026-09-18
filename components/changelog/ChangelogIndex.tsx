@@ -16,7 +16,7 @@ export async function ChangelogIndex({ maxItems }: { maxItems?: number }) {
     )
     .filter((item) => {
       const route = 'route' in item ? (item as { route: string }).route : ''
-      return !route.includes('content')
+      return !route.includes('content') && route !== '/changelog'
     })
     .map(item => ({
       route: 'route' in item ? (item as { route: string }).route : '',

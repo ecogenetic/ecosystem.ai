@@ -26,7 +26,9 @@ export const ChangelogHeader = ({
       <div>
         {date && (
           <div className="text-lg text-primary/60 mb-3">
-            {new Date(date).toLocaleDateString('en-US', {
+            {new Date(
+              `${date.replace(/\//g, '-')}T12:00:00Z`,
+            ).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',

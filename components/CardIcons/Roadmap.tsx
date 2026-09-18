@@ -1,38 +1,10 @@
-'use client'
-
-import Image from 'next/image'
+import { Map } from 'lucide-react'
 
 export function Roadmap() {
   return (
-    <>
-      <div className="flex gap-2 items-center">
-        {/* Image */}
-        <Image src="/images/cards/route.svg" alt="Roadmap Logo" width={30} height={30} />
-        {/* Text */}
-        <span className="ml-2 text-lg font-bold text-gray-600 dark:text-gray-300">
-          2025-2026 Roadmap
-        </span>
-        {/* CSS for hover effect */}
-        <style jsx>{`
-          div {
-            padding: 0.5rem 0.5rem 0.5rem 0;
-            mask-image: linear-gradient(
-              60deg,
-              #bba0ff 25%,
-              rgba(187, 160, 255, 0.2) 50%,
-              #bba0ff 75%
-            );
-            mask-size: 400%;
-            mask-position: 0%;
-          }
-          div:hover {
-            mask-position: 100%;
-            transition:
-              mask-position 1s ease,
-              -webkit-mask-position 1s ease;
-          }
-        `}</style>
-      </div>
-    </>
+    <span className="flex items-center gap-2 text-lg font-semibold text-slate-800 dark:text-slate-200">
+      <Map className="h-5 w-5 text-[#00aeef]" strokeWidth={1.75} />
+      2025–2026 Roadmap
+    </span>
   )
 }

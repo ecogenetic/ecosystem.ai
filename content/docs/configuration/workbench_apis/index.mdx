@@ -1,0 +1,58 @@
+---
+title: Public APIs, Agents & MCP
+description: Workbench public gateway, private FastAPI, API Keys, product agents, and MCP — how they differ and how to access them
+---
+
+import { Callout } from 'nextra/components'
+
+# Public APIs, Agents & MCP
+
+Workbench2 is the operator control plane. It exposes **two HTTP APIs**, **two kinds of credentials**, an **in-app Ecosystem Agent**, and a **Workbench MCP** server. Those surfaces are not the Java Runtime scoring APIs (`POST /invocations` then `POST /response`).
+
+![Administration → API Keys — Public API Access vs Private Ecosystem Keys](/images/configuration/api-keys-public.png)
+
+Open **Administration → API Keys** (admin role). Switch **Public API Access** and **Private Ecosystem Keys**. **Agents** is the neighbouring tab.
+
+## Surfaces at a glance
+
+| Surface | Default local URL | Who uses it | Auth |
+| --- | --- | --- | --- |
+| **Private Workbench API** | `http://localhost:8001/api/v1` | Workbench SPA, Campaign Management, internal services | Workbench session JWT (`Authorization: Bearer`) |
+| **Public API gateway** | `http://localhost:8004/public/v1` | Notebooks, partners, MCP harness, external apps | Dual: `X-API-Key: ewb_public_…` **and** a user JWT |
+| **Workbench MCP** | `POST http://localhost:8001/mcp` | Ecosystem Agent, Cursor, Claude Code | In-process for `/assistant`; dual-auth for HTTP MCP |
+| **LLM proxy** | `POST http://localhost:8001/v1/messages` | Agent SDK / Claude Code | Workbench JWT; no Anthropic key in the image |
+| **Runtime scoring** | `http://localhost:8091/invocations` | Production apps, Runtime Dashboard | Runtime config; closed loop uses `/response` (singular) |
+| **Runtime MCP** | `POST http://localhost:8091/mcp` | Agents that score campaigns | Separate from Workbench MCP |
+
+`./backend/run.sh` starts the private API on **8001** and the public gateway on **8004**. The Vite UI on **5270** talks to `:8001` and does **not** proxy `/mcp`.
+
+## Which credential?
+
+<Callout type="warning" title="Do not mix credential types">
+Public credentials (`ewb_public_…`) never replace private ecosystem JWTs. Issue scoped public keys for integrations. Keep private keys for Grafana, ecosystem-server, and other platform services that expect a generated ecosystem JWT.
+</Callout>
+
+| Credential | Tab | Prefix / shape | Purpose |
+| --- | --- | --- | --- |
+| **Public API Access** | Public API Access | `ewb_public_…` | Scoped gateway + HTTP MCP. Shown once on create/rotate. |
+| **Private Ecosystem Keys** | Private Ecosystem Keys | Server-generated JWT | Grafana, ecosystem-server, platform services. Stored in `ecosystem_meta.api_keys`. |
+
+Create public credentials with an owner (user, service account, organization, or partner), optional expiry, and **scopes**. The **Public APIs** sub-tab shows which routes the selected scopes unlock.
+
+## Typical access paths
+
+1. **Browser operator** — sign in to Workbench. The SPA uses the private API with your session JWT. No public key.
+2. **External integration** — mint a public credential, obtain a user JWT (`POST /public/v1/auth/login` or Workbench login), call `:8004/public/v1/…` with both headers.
+3. **Ecosystem Agent** — **Administration → Agents** or `/assistant`. In-process MCP; no public key.
+4. **Cursor / Claude Code** — dual-auth `POST /mcp` plus `ANTHROPIC_BASE_URL` pointing at Workbench `:8001` for `POST /v1/messages`.
+5. **Campaign scoring** — Runtime `POST /invocations` then `POST /response`. Workbench MCP `score_customer` / `send_feedback` wrap a **deployment**; they are not Runtime `POST /mcp`.
+
+## Pages in this section
+
+- [API Keys](/docs/configuration/workbench_apis/keys) — issue, rotate, revoke
+- [Public APIs](/docs/configuration/workbench_apis/public) — gateway routes and scopes
+- [Private APIs](/docs/configuration/workbench_apis/private) — `:8001/api/v1` routers
+- [Agents](/docs/configuration/workbench_apis/agents) — product catalog and Ecosystem Agent
+- [MCP](/docs/configuration/workbench_apis/mcp) — Workbench vs Runtime vs sidecar
+
+Related: [API Management](/docs/configuration/api) (test Runtime scoring from Workbench), [Runtime API Access](/docs/runtime/access), [Runtime MCP](/docs/runtime/mcp).

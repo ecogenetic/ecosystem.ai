@@ -11,7 +11,7 @@ Plugins are a powerful way to extend the functionality of the ecosystem.Ai platf
 
 ## Why do you need plugins?
 
-Runtime plugins are used to extend scoring functionality by adding custom scoring logic. This allows you to customize the scoring process to meet your specific needs and requirements. Plugins can be used to add new scoring algorithms, preprocessors, postprocessors, and other components to the scoring pipeline.
+Runtime plugins are Java **25** classes used to extend scoring by adding custom pre-score, post-score, and reward logic. Develop them against Amazon Corretto 25 (same JVM as the Runtime images). This allows you to customize the scoring process to meet your specific needs and requirements.
 
 The following default plugins are available in the ecosystem.Ai platform:
 - **Pre-predict** plugin: This plugin is used to preprocess input data before it is passed to the predictor.

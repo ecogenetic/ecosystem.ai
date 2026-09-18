@@ -1,0 +1,25 @@
+Runtime `0.9.6.0` (git tag `0.96.0`). Pin **`0.9.6.0`**. Customer pre/post-score Java no longer needs a separate compile pipeline if you use JIT source generation.
+
+## What's Changed
+
+### Runtime
+- **JIT compilation** of customer pre/post-score Java from source (no mandatory plugin build pipeline).
+- Runtime split: default image **without** deeplearning; opt in when you need DJL/PyTorch.
+- `PostScoreSuper.callParallelDeployment` for exercising Dynamic Interaction deployments.
+- Pre-score classes whose name contains `PreScoreLookup` receive `mongoClient` (aggregation pipelines in pre-score). Feature store can be assembled from **multiple** lookup tables.
+- **Custom reward plugins** for Dynamic Interaction algorithms.
+- Localbuild rename: `rollingMaster` → `rollingEcosystemRewards`; Q-learning rolling init added.
+- Project-level epsilon now shows up in `params` for Ecosystem Rewards (older images lied here).
+- Failed `offerMatrixStatic` load is a **warning**, not a hard error — `offerMatrix` may still be present.
+
+### Dependencies
+- Spring Boot **3.4.4**, MongoDB **6.0.20**, springdoc OpenAPI **2.8.5**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)

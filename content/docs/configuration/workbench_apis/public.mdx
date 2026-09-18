@@ -1,0 +1,247 @@
+---
+title: Public APIs
+description: Workbench public gateway on port 8004 — dual auth, scopes, and every /public/v1 route
+---
+
+import { Callout } from 'nextra/components'
+
+# Public APIs
+
+The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates a public credential, forwards the **caller's JWT** to private Workbench `:8001/api/v1`, and writes audit events. It never uses a shared operator token for interactive user requests.
+
+`PUBLIC_API_INTERNAL_SERVICE_TOKEN` is an optional server-only fallback for automated jobs, not for people.
+
+Local OpenAPI: `http://localhost:8004/docs` (disable with `PUBLIC_API_DOCS_ENABLED=false`). Prefix default: `/public/v1`.
+
+<Callout type="info" title="Live catalog in the UI">
+Administration → API Keys → Public API Access → **Public APIs** is generated from the same catalog as this page (`admin_public_api_catalog`). Badges follow the scopes on the selected credential.
+</Callout>
+
+## Auth
+
+```http
+GET http://localhost:8004/public/v1/health
+X-API-Key: ewb_public_…
+Authorization: Bearer <workbench-jwt>
+```
+
+- **Public API key** — which gateway routes are allowed
+- **User JWT** — that user's Workbench roles on the private backend
+
+Login (no public key):
+
+```bash
+curl -s -X POST http://localhost:8004/public/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com","password":"your-password"}'
+```
+
+Then:
+
+```python
+import os
+import requests
+
+BASE = "http://localhost:8004/public/v1"
+headers = {
+    "X-API-Key": os.environ["EWB_PUBLIC_API_KEY"],
+    "Authorization": f"Bearer {os.environ['EWB_USER_JWT']}",
+}
+projects = requests.get(f"{BASE}/entities/projects", headers=headers, params={"limit": 20})
+print(projects.json())
+```
+
+Health and login do not require a public key. Every other `/public/v1` route does.
+
+## Grantable scopes
+
+| Scope | Unlocks |
+| --- | --- |
+| `entities:read` / `entities:write` | Entity collections and campaign reads/writes |
+| `catalogs:read` / `catalogs:write` | Contact Sets. Public catalog routes listed below are **GET**; writes go through private contacts or MCP `call_endpoint` |
+| `contacts:read` / `contacts:write` | Contact Set records |
+| `frames:read` | Reserved on credentials (not a CORE catalog group yet) |
+| `predictions:run` | Batch scoring, Spend Personality runtime score, `/v1/models` |
+| `jobs:read` | Async job status, campaign runs |
+| `runtime:evidence:read` | Reserved on credentials (not a CORE catalog group yet) |
+| `networks:jobs` / `networks:read` / `networks:analyze` | Graph jobs and analysis |
+| `spend-personality:configs` / `spend-personality:runs` | Spend Personality configs, pipeline, drift |
+| `money-personality:runs` | Money Personality process |
+| `sentimental-equilibrium:runs` | Sentimental equilibrium process |
+| `two-tower:configs` / `two-tower:train` | Two-Tower configs, train, export, batch-score |
+| `ontology:read` / `ontology:write` | Ontology documents and mappings |
+
+Grant the minimum set. Polling async work also needs `jobs:read`.
+
+---
+
+## Auth & health
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/public/v1/auth/login` | none | Email/password → JWT |
+| `GET` | `/public/v1/health` | none | Gateway health |
+
+## Contact catalogs
+
+Contact Sets (not entity collections).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/catalogs` | `catalogs:read` | List Contact Sets |
+| `GET` | `/public/v1/catalogs/{catalog_id}` | `catalogs:read` | Read one Contact Set |
+| `GET` | `/public/v1/catalogs/{catalog_id}/records` | `contacts:read` | List records |
+
+## Jobs & predictions
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/jobs/{job_id}` | `jobs:read` | Async job status |
+| `POST` | `/public/v1/batch-scoring/jobs` | `predictions:run` | Start backend batch-scoring |
+| `GET` | `/public/v1/batch-scoring/jobs/{job_id}` | `jobs:read` | Batch-scoring progress |
+| `POST` | `/public/v1/predictions/run` | `predictions:run` | Spend Personality **runtime** scoring |
+
+`POST /predictions/run` scores through a Runtime deployment. Closed-loop **learning** still uses Runtime `POST /response` with that row's `uuid` and `offer_name`.
+
+## Networks
+
+Same contract as [Networks Jobs & API](/docs/modules/networks/api). Responses never include the full analysis graph — only a display sample, stats, and metrics summary.
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `POST` | `/public/v1/networks/jobs` | `networks:jobs` |
+| `GET` | `/public/v1/networks/jobs/{job_id}` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/events` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/result` | `networks:read` |
+| `DELETE` | `/public/v1/networks/jobs/{job_id}` | `networks:jobs` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/display` | `networks:read` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/metrics` | `networks:read` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/analyze` | `networks:analyze` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/temporal/{category}` | `networks:analyze` |
+
+## Spend Personality
+
+Needs `spend-personality:configs`, `spend-personality:runs`, and `jobs:read` (plus `predictions:run` for optional score proof). `POST /runs` is fire-and-forget — poll `GET /public/v1/jobs/{job_id}` until `lifecycle_state` is `Completed`. Keep polling `Queued` / `Running` / `Stalled`. Treat `Failed` / `Cancelled` as errors.
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/spend-personality/configs` | `spend-personality:configs` | List or upsert algorithm config |
+| `GET` | `/public/v1/spend-personality/configs/{config_id}` | `spend-personality:configs` | Read config and `run_log` |
+| `POST` | `/public/v1/spend-personality/runs` | `spend-personality:runs` | Phased or full pipeline |
+| `POST` | `/public/v1/spend-personality/drift` | `spend-personality:runs` | Recompute personality drift |
+
+`POST /runs` fields: `algorithm_config_id` (required), optional `phases` (`import_check`, `enrich`, `score_unscored`, `prepare_model`, `deploy`), `running_config_id` from the first response so later phases share leader model ids, plus `project_id` / `week_start_day`.
+
+## Money Personality
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/public/v1/money-personality/process` | `money-personality:runs` | Start scoring; poll jobs |
+
+## Sentimental Equilibrium
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/public/v1/sentimental-equilibrium/process` | `sentimental-equilibrium:runs` | Start analysis from prediction logs; poll jobs |
+
+## Two-Tower
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/two-tower/configs` | `two-tower:configs` | List or upsert |
+| `GET` / `PUT` | `/public/v1/two-tower/configs/{config_id}` | `two-tower:configs` | Read / update |
+| `GET` | `/public/v1/two-tower/predictors` | `two-tower:configs` | Distinct predictors in flatten |
+| `GET` | `/public/v1/two-tower/predictor-date-bounds` | `two-tower:configs` | Date range and row count |
+| `GET` | `/public/v1/two-tower/runs` | `two-tower:configs` | Recent training runs |
+| `POST` | `/public/v1/two-tower/preview-schema` | `two-tower:configs` | Preview flatten schema (async) |
+| `POST` | `/public/v1/two-tower/prepare-feature-frame` | `two-tower:train` | H2O frame without training |
+| `POST` | `/public/v1/two-tower/train` | `two-tower:train` | Start training |
+| `POST` | `/public/v1/two-tower/concept-test` | `two-tower:train` | Sync concept rank for one customer |
+| `POST` | `/public/v1/two-tower/export-embeddings` | `two-tower:train` | Export user/item embeddings |
+| `POST` | `/public/v1/two-tower/batch-score` | `two-tower:train` | Top-K offers to a collection |
+| `POST` | `/public/v1/two-tower/generate-python` | `two-tower:train` | Runnable Python + explanation |
+
+## Ontology
+
+Updates use **POST**, not PUT/PATCH. Same contract as private `/api/v1/ontology/*`.
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `GET` | `/public/v1/ontology` | `ontology:read` |
+| `GET` / `POST` / `DELETE` | `/public/v1/ontology/{ontology_id}` | read / write / write |
+| `POST` | `/public/v1/ontology/from-data-source` | `ontology:write` |
+| `GET` / `POST` | `/public/v1/ontology/{ontology_id}/mappings` | read / write |
+| `POST` | `/public/v1/ontology/{ontology_id}/mappings/suggest-multi` | `ontology:write` |
+| `POST` | `/public/v1/ontology/{ontology_id}/mappings/{mapping_id}` | `ontology:write` |
+| `POST` | `/public/v1/ontology/{ontology_id}/resolve-term` | `ontology:read` |
+| `POST` | `/public/v1/ontology/{ontology_id}/resolve-question` | `ontology:read` |
+
+## Campaigns
+
+Campaign **delivery** channels (email, WhatsApp, SMS, …) are not Runtime scoring `channel` (`app` / `web` / `api`).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/campaigns` | `entities:read` | List campaigns |
+| `GET` | `/public/v1/campaigns/channel-catalog` | `entities:read` | Platform delivery channel catalog |
+| `GET` | `/public/v1/campaigns/{campaign_id}` | `entities:read` | Read one |
+| `GET` | `/public/v1/campaigns/{campaign_id}/channels` | `entities:read` | Options, selection, send_track |
+| `PUT` | `/public/v1/campaigns/{campaign_id}/channel-selection` | `entities:write` | Set option ids |
+| `POST` | `/public/v1/campaigns/{campaign_id}/trigger` | `entities:write` | Trigger a run |
+| `POST` | `/public/v1/campaigns/{campaign_id}/apply-params` | `entities:write` | Parameter overrides |
+| `GET` / `PUT` | `/public/v1/campaigns/{campaign_id}/schedules` | read / write | Embedded schedules |
+| `POST` | `/public/v1/campaigns/{campaign_id}/schedules/sync` | `entities:write` | Save and arm crons |
+| `POST` | `/public/v1/campaigns/{campaign_id}/schedules/generate` | `entities:read` | Natural-language draft (no write) |
+| `POST` | `/public/v1/campaigns/{campaign_id}/schedule` | `entities:write` | Register one cron |
+| `DELETE` | `/public/v1/campaigns/{campaign_id}/schedules/{schedule_id}` | `entities:write` | Unregister one |
+| `DELETE` | `/public/v1/campaigns/{campaign_id}/schedule` | `entities:write` | Unregister one (`schedule_id`) or all |
+| `GET` | `/public/v1/campaigns/{campaign_id}/runs` | `jobs:read` | List runs |
+| `GET` | `/public/v1/campaigns/runs/{run_id}` | `jobs:read` | Read run |
+| `GET` | `/public/v1/campaigns/runs/{run_id}/progress` | `jobs:read` | Progress |
+| `POST` | `/public/v1/campaigns/runs/{run_id}/stop` | `entities:write` | Stop run |
+
+## Analytics dashboards
+
+Workbench analytics dashboards (not Data Agents report jobs).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/analytics/dashboards` | `entities:read` | List |
+| `GET` | `/public/v1/analytics/dashboards/{dashboard_id}` | `entities:read` | Read |
+| `GET` / `POST` | `/public/v1/analytics/dashboards/{dashboard_id}/share` | read / write | Share metadata |
+
+## Account & models
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/me/apis` | none (key identifies credential) | Endpoints this credential can reach |
+| `GET` | `/v1/models` (also `/models`) | `predictions:run` | OpenAI-compatible model list |
+
+## Entity collections
+
+CRUD at `/public/v1/entities/{collection}`. List names: `GET /public/v1/entities/collections`.
+
+| Action | Method | Path | Scope |
+| --- | --- | --- | --- |
+| List | `GET` | `/public/v1/entities/{collection}` | `entities:read` |
+| Read | `GET` | `/public/v1/entities/{collection}/{entity_id}` | `entities:read` |
+| Create | `POST` | `/public/v1/entities/{collection}` | `entities:write` |
+| Update | `PUT` | `/public/v1/entities/{collection}/{entity_id}` | `entities:write` |
+| Delete | `DELETE` | `/public/v1/entities/{collection}/{entity_id}` | `entities:write` |
+
+List query params: `skip`, `limit`, `q`, `fields`.
+
+Public collections include: projects, agent configs / nodes / channels, custom channel modules, calendar, fact injection (`chat_config`), dashboards, data wizards, dynamic engagement, enrichment configs and pipelines, frames, predictions, data connections, offer matrix (+ history), prompt library, responder analytics and API config, simulation, networks, campaigns.
+
+## Settings (operators)
+
+| Setting | Default | Role |
+| --- | --- | --- |
+| `PUBLIC_API_PREFIX` | `/public/v1` | Path prefix |
+| `PUBLIC_API_CORS_ORIGINS` | — | CORS |
+| `PUBLIC_API_SECRET_PEPPER` | — | Hash secrets and IPs |
+| `PUBLIC_API_INTERNAL_BASE_URL` | `http://localhost:8001/api/v1` | Private proxy target |
+| `PUBLIC_API_INTERNAL_SERVICE_TOKEN` | — | Job fallback only |
+| `PUBLIC_API_AUDIT_TTL_DAYS` | `0` = keep | Audit TTL |
+
+Related: [Private APIs](/docs/configuration/workbench_apis/private), [API Keys](/docs/configuration/workbench_apis/keys), [MCP](/docs/configuration/workbench_apis/mcp).

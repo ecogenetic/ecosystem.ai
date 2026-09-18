@@ -162,7 +162,7 @@ The API endpoint is used to configure the API structure to be used in the Deploy
 ### Pre Scoring logic
 The pre scoring logic is used to configure the pre scoring plugin to be used in the Deployment. The pre scoring plugin is used to perform any pre processing of the input data before it is passed to the model for scoring. For Dynamic Interaction configurations select PreScoreDynamic.java for a pre scoring template. For static model configurations PrePredictCustomer.java is the default template and is the pre scoring logic that will be used by default. If you wish to  customise your pre scoring logic see the [pre scoring logic](/docs/runtime/prepredict) documentation as well as the guide for setting up a [local development environment](/docs/user_guides/runtime_plugin_development).
 
-If using custom pre scoring logic, use the compile button to make the pre scoring class available to the runtime. You can also set up a build pipeline to compile the custom pre scoring logic.
+If using custom pre scoring logic, use the Compile button (JIT `/generateClass` from Runtime 0.9.6.0) to make the pre scoring class available to the runtime. Use a build pipeline when the plugin is more than a single generated class.
 
 ### Post Scoring logic
 The post scoring logic is used to configure the post scoring plugin to be used in the Deployment. The post scoring plugin is used to perform any post processing of the output data after it has been scored by the model. There are a number of template classes available:
@@ -177,12 +177,12 @@ The post scoring logic is used to configure the post scoring plugin to be used i
 - **PostScoreSentimentalEquilibrium**: The post score for sentimental equilibrium scoring.
 If you wish to  customise your post scoring logic see the [post scoring logic](/docs/runtime/postpredict) documentation as well as the guide for setting up a [local development environment](/docs/user_guides/runtime_plugin_development).
 
-If using custom post scoring logic, use the compile button to make the post scoring class available to the runtime. You can also set up a build pipeline to compile the custom post scoring logic.
+If using custom post scoring logic, use the Compile button (JIT `/generateClass` from Runtime 0.9.6.0) to make the post scoring class available to the runtime. Use a build pipeline when the plugin is more than a single generated class.
 
 ### Reward Function Class
 The [rewards class logic](/docs/configuration/dynamic/customrewards) is used to impact the learning of the Dynamic Interaction configuration. To use a Business Logic function to set the rewards use BusinessLogicReward.java.
 
-If using custom rewards logic, use the compile button to make the reward class available to the runtime. You can also set up a build pipeline to compile the custom rewards logic.
+If using custom rewards logic, use the Compile button (JIT `/generateClass` from Runtime 0.9.6.0) to make the reward class available to the runtime. Use a build pipeline when the plugin is more than a single generated class.
 
 The details will be visible in the `properties` file with the following format:
 ```properties

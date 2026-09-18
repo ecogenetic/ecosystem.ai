@@ -1,0 +1,48 @@
+---
+title: "Feature Engineering Report"
+description: "Feature Engineering Report (feature_engineering_markdown) for Data Agents Analytic jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Feature Engineering Report
+
+**Report type key:** `feature_engineering_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+ML-ready features: transforms, scaling, encoding, dimensionality reduction, and an engineered dataset summary.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Feature Engineering**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/feature_engineering_markdown`  
+API: `GET /reports/JOB_ID/feature_engineering_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Use this to inspect what was derived before clustering or models. Optional merge of time-series features when that module is on.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `feature_engineering_markdown` | Markdown report |
+| `feature_engineering_notebook` | Jupyter notebook |
+| `feature_engineering_graphs` | PNG folder |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

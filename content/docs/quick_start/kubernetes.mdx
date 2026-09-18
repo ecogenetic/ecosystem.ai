@@ -2,6 +2,8 @@
 
 ecosystem.Ai can be installed on Kubernetes. This can be tested locally using Minikube. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
 
+The Runtime service in these samples listens on **8091**. After pods are ready, score with `POST /invocations` then `POST /response` (`params` is a JSON string). Grafana is optional. OpenShift-specific samples: [OpenShift](/docs/quick_start/openshift). Overview: [Quick Start](/docs/quick_start). Demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
 ## Environment Variables
 
 A number of [environment variables](/docs/runtime/environment_variables) can be used when starting up the ecosystem.Ai Deployments. These can be set in a ConfigMap. In addition, you should create a secret containing your license key.
@@ -528,6 +530,13 @@ spec:
 
 ```
 </Callout>
+
+## After deploy
+
+1. Expose or port-forward the Runtime service (**8091**) and Workbench.
+2. Confirm `/ping`, then open the [Runtime Dashboard](/docs/runtime/dashboard).
+3. **Invoke** and **Accept** so learning is recorded (`POST /response`).
+4. Optional: [campaign BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents), [MCP](/docs/runtime/mcp).
 
 ## Conclusion
 

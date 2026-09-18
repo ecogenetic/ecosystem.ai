@@ -1,0 +1,125 @@
+---
+title: MCP
+description: Workbench MCP versus Runtime builtin MCP — tools, dual auth, Cursor config, and the stdio harness
+---
+
+import { Callout } from 'nextra/components'
+
+# MCP
+
+Ecosystem exposes **three MCP-related surfaces**. They share the path `/mcp` but are **not interchangeable**.
+
+| Surface | Where | Transport | Use for |
+| --- | --- | --- | --- |
+| **Workbench MCP** | `ecosystem-workbench2` `:8001` | Streamable HTTP `POST /mcp` | Deployments, entities, enrichment, public catalog, operator chat |
+| **Runtime builtin MCP** | Java Runtime `:8091` | `POST /mcp` JSON-RPC | `invoke` / `response`, campaign admin, runtime ontology |
+| **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` | FastAPI `/mcp` | MLFlow refresh, custom FastAPI |
+
+Protocol: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28). Runtime detail: [MCP Support](/docs/runtime/mcp).
+
+<Callout type="warning" title="Wrong /mcp is a common failure">
+Pointing Cursor at Runtime `:8091/mcp` will not list Workbench `list_api_catalog`. Pointing it at Workbench `:8001/mcp` will not list Runtime `invoke`. Score campaigns on Runtime MCP or REST `/invocations`. Operate Workbench on Workbench MCP.
+</Callout>
+
+## Workbench MCP modes
+
+| Mode | Who | Auth |
+| --- | --- | --- |
+| **In-process** | Ecosystem Agent `/assistant` (`tool_profile: operator`) | Session JWT inside Workbench. No public API key |
+| **HTTP `POST /mcp`** | Cursor, Claude Code, Agent SDK | Dual: `Authorization: Bearer` **and** `X-API-Key: ewb_public_…` |
+| **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Harness mints JWT; `EWB_PUBLIC_API_KEY` in env or `~/.herm/mcp/ecosystem-public.env` |
+
+Vite `:5270` does **not** proxy `/mcp`. Clients must hit the backend port (or nginx). `MCP_PUBLIC_BASE_URL` default `http://localhost:8001`.
+
+REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints. Legacy SSE `GET /mcp/sse/` is deprecated.
+
+### Cursor (Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "ecosystem-workbench": {
+      "url": "http://localhost:8001/mcp",
+      "headers": {
+        "Authorization": "Bearer <user-jwt>",
+        "X-API-Key": "ewb_public_..."
+      }
+    }
+  }
+}
+```
+
+Mint the key under **Administration → API Keys → Public API Access**. For Claude Code, set `ANTHROPIC_BASE_URL` to the Workbench host root so `POST /v1/messages` uses the Workbench default LLM.
+
+### HTTP MCP tools
+
+Same implementations as in-process MCP. Mutating tools require `confirm=true`.
+
+| Tool | Purpose |
+| --- | --- |
+| `list_api_catalog` | Public API catalog, scopes, accessible flags |
+| `call_endpoint` | Any Workbench `/api/v1` or `/public/v1` path |
+| `entity` | CRUD `/api/v1/entities/{collection}` |
+| `explain_entity` | Read-only explain of entity / current form |
+| `update_current_form` | Patch open editor (operator Saves) |
+| `list_campaign_channel_catalog` | Delivery channels (email, WhatsApp, …) |
+| `get_campaign_channels` | Options, selection, send_track |
+| `set_campaign_channel_selection` | Assign published options |
+| `list_custom_channel_modules` | Custom channel modules |
+| `explain_workbench` | Product-guide orientation |
+| `recommend_algorithm` | Dynamic Engagement / product approaches |
+| `explain_algorithms` | Algorithm catalog |
+| `explain_convergence` | Score convergence and priors |
+| `list_deployments` | Deployments |
+| `get_deployment_info` | One deployment |
+| `get_deployment_schema` | Input/output schema |
+| `score_customer` | Score via a Workbench deployment |
+| `send_feedback` | Feedback for that scoring result (`/response` semantics) |
+| `date_enrich` / `mcc_enrich` | Queue enrichment jobs |
+| `personality_drift` | Queue personality drift |
+| `get_enrichment_job` | Poll enrich / drift jobs |
+| Ontology family | `list_ontologies`, `describe_ontology`, create/update/delete (confirm), mappings, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology` |
+
+Resources: `ecosystem://deployments`, `ecosystem://deployment/{name}`. Per-deployment snippets: `GET /api/v1/deployments/{name}/mcp`.
+
+`call_endpoint` accepts `/api/v1/…`, `/public/v1/…`, or relative `/campaigns`. Prefixes are stripped; the internal client calls private `/api/v1`. Remaps:
+
+- `/money-personality/process` → `/algorithms/money-personality/process`
+- `/sentimental-equilibrium/process` → `/algorithms/sentimental-equilibrium/process`
+
+`score_customer` still needs `params` as a JSON **string** when it forwards an invocation. Feedback uses the returned `uuid` and `offer_name`.
+
+### stdio harness
+
+Package `sdk/python/ecosystem_workbench_mcp` adds typed wrappers on top of the public gateway: `catalogs_*`, `jobs_get`, `campaigns_*`, `networks_job*`, `spend_personality_*`, `two_tower_*`, `analytics_*`, plus admin `bootstrap_credential` / `rotate_credential` / `reveal_credential` / `revoke_credential`.
+
+```bash
+cd sdk/python/ecosystem_workbench_mcp
+backend/venv/bin/python -m ecosystem_workbench_mcp verify
+backend/venv/bin/python -m ecosystem_workbench_mcp catalog
+```
+
+Networks job tools are documented with the [Networks API](/docs/modules/networks/api).
+
+## Runtime builtin MCP (do not confuse)
+
+```text
+POST http://localhost:8091/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+```
+
+Scoring tools: `listCampaigns`, `invoke`, `response`, ontology validators, `askAboutAlgorithms`, campaign admin. Mutating campaign tools may need Runtime `MASTER_KEY` (`X-API-KEY` or Bearer). That key is **not** `ewb_public_…`.
+
+Closed loop:
+
+1. `invoke` (or REST `POST /invocations`) — save `uuid` and `offer_name` from `final_result`
+2. `response` (or REST `POST /response`) — same `uuid`
+
+`params` is a JSON string, never a nested object.
+
+## Sidecar
+
+The Python `ecosystem-runtime-mcp` image is for **custom FastAPI** and **MLFlow model download**. It is not the Java JSON-RPC server and not Workbench MCP.
+
+Related: [Agents](/docs/configuration/workbench_apis/agents), [Public APIs](/docs/configuration/workbench_apis/public), [Runtime MCP](/docs/runtime/mcp), [Ontology for agents](/docs/ontology/agents).

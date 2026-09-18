@@ -1,0 +1,23 @@
+Workbench **2.0** is a new product version line (`platform/versions.json`: `workbench.version` + monotonic `build`). It does **not** replace Runtime `0.9.7.0` — it **pins** it, plus Server `0.7.9.0` and Notebooks `0.3`.
+
+## What's Changed
+
+### Operator surface
+- FastAPI private API (`:8001`) + Vite SPA. Domain work stays on the backend; the UI is presentation.
+- Campaign management workflows, runtime **push**, and simulation invocation with visible failure reasons.
+- Spend Personality / Money Personality / Two-Tower processing, notebooks generation, and personality **drift**.
+- Networks (including temporal algorithm analysis) and EcoGentic journey tooling.
+- Ontology support for modeling and project generation.
+- **MCP** on the Workbench backend (`POST /mcp`) for deployments, enrichment, and scoring — separate from Runtime builtin MCP. See [MCP Support](/docs/runtime/mcp).
+
+### For developers
+- Read `platform/versions.json` only (About panel). Do not invent a second version source.
+- Python **3.14** for the Workbench backend. Pre/post-score Java samples here must match the pinned Runtime.
+- Companion pins in this train: Runtime **0.9.7.0**, Server **0.7.9.0**.
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)

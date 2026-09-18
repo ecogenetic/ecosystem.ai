@@ -1,0 +1,78 @@
+---
+title: Data Agents
+description: Agentic Data Analytics — configure Analytic, Interactions, Personality, or Financial jobs, process Mongo or Trino data, and open markdown, notebook, and graph reports.
+---
+
+import { Callout } from 'nextra/components'
+
+# Data Agents
+
+**Data Agents** is the **Agentic Data Analytics** console (`ecosystem-data-agents`). It extracts, prepares, and analyzes customer or event data, then writes markdown reports, notebooks, and graphs. Local UI is `http://localhost:54325` (API `http://localhost:54324`).
+
+It is **not** the Runtime scorer, [Spend Personality](/docs/modules/spend_personality) scoring module, or EcoGentic customer journeys. Scoring still uses `POST /invocations` then `POST /response`. Data Agents **reads** collections (Mongo or Trino) and **reports**.
+
+![Configurations list — Analytic, Financial, Personality, and Interactions](/images/modules/data-agents/configurations.png)
+
+<Callout type="info" title="Same login as Workbench">
+The SPA stores `ecosystem_auth` and sends `Authorization: Bearer`. Login proxies to Ecosystem Server. Set `AUTH_ENABLED=false` only for offline local work.
+</Callout>
+
+## Where it fits
+
+| Stage | What |
+| --- | --- |
+| Operator UI | React SPA — Configurations, Agents, Jobs, Reports, domain dashboards |
+| Pipeline | LangGraph: extract → prepare → analysis families |
+| Data | MongoDB (`MONGO_CONNECT`) or Trino (extract-only; writes stay on Mongo) |
+| Artifacts | `reports/<timestamp>/` — markdown, `.ipynb`, `graphs/`, JSON |
+
+## Configuration types
+
+Pick a type when you **Create New**. It decides collections, analysis families, and which reports appear.
+
+| Type (card badge) | Use | Primary source |
+| --- | --- | --- |
+| **Analytic** | Profiling, categorical tests, actuarial risk, feature engineering, optional time series | One wide customer/event table |
+| **Interactions** | Recommender / NBA — campaigns, offers, customers, experiments | Runtime-style **calls** collection (`ecosystemruntime`) |
+| **Personality** | Spend / money mix, drift, category patterns, campaign overlays | **Transactions** (customer, amount, category, time) |
+| **Financial** | ARPU, ROI, LTV, NRR, ledgers — only **mapped** fields | Revenue events or sales/GL ledgers |
+
+Do not use Analytic for ARPU/ROI (use Financial). Do not use Personality for ledger KPIs. Do not point Interactions at a generic sales ledger.
+
+## Typical path
+
+1. **[Setup](/docs/modules/data_agents/setup)** — Create New, choose type, bind Mongo or Trino, enable analysis families, Save.
+2. **[Interactions Analytic](/docs/modules/data_agents/interactions)** — For recommender logs: discover predictors, join calls to responses, read family reports.
+3. **[Process](/docs/modules/data_agents/process)** — **Run** on the card (or Jobs). Watch extract → prepare → analysis.
+4. **[Reports](/docs/modules/data_agents/reports)** — Open markdown / notebook / graphs for that job.
+5. **[Analysis views](/docs/modules/data_agents/analysis)** — Interactive dashboards (`/analysis/:jobId`, Time Series, Interactions, Personality, Financial).
+
+## Sidebar
+
+| Nav | Route | Role |
+| --- | --- | --- |
+| Configurations | `/configurations` | List, create, **Analysis & LLM**, Agents tab |
+| Agents | `/agents` | LLM specialists + MCP tools over jobs/reports |
+| Jobs | `/jobs` | Queue, logs, force-stop, analysis dashboard |
+| Reports | `/reports` | All artifacts for a completed job |
+| Analytics | `/analytics` | Job success / volume (ops, not domain KPIs) |
+| Time Series | `/time-series` | Analytic time-bucket / journey reports |
+| Interactions | `/recommender` | Offer / campaign reports |
+| Personality | `/personality` | Spend/money/drift reports |
+| Financial | `/financial` | Unit economics reports |
+
+Running and recent completed jobs sit in the left rail (as in the screenshot).
+
+## In this module
+
+- [Setup](/docs/modules/data_agents/setup) — types, sources, Analysis & LLM
+- [Interactions Analytic](/docs/modules/data_agents/interactions) — recommender call/response analysis
+- [Process Jobs](/docs/modules/data_agents/process) — Run, pipeline steps, logs
+- [Reports](/docs/modules/data_agents/reports) — how to open artifacts, plus a page for each report type
+- [Analysis Views](/docs/modules/data_agents/analysis) — dashboards per domain
+
+## Related
+
+- [Spend Personality](/docs/modules/spend_personality) — Workbench/Runtime **scoring** of traits (Data Agents **analyzes** personality collections)
+- [Networks](/docs/modules/networks) — graph lab, not tabular reports
+- [Ontology for agents](/docs/ontology/agents) — Runtime closed-loop vocabulary

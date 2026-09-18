@@ -59,14 +59,13 @@
 
 .feature-plan a:hover svg {
   --tw-svg-opacity: 1;
-  color: #951089;
+  color: var(--eco-blue, #00aeef);
   transform: translateY(5px);
 }
 
 .feature-plan a:hover .feature-header {
   --tw-svg-opacity: 1;
-  /* color: hsl(var(--nextra-primary-hue)var(--nextra-primary-saturation)60%/var(--tw-svg-opacity)); */
-  color: #951089;
+  color: var(--eco-blue, #00aeef);
 }
 
 .feature-plan a:focus-visible svg {
@@ -108,7 +107,7 @@
 }
 
 .feature-header {
-  color: #585858;
+  color: #334155;
   font-weight: 600;
   letter-spacing: 1px;
 }
@@ -119,9 +118,7 @@
 
 .feature-desc {
   --tw-text-opacity: 1;
-  color: hsl(
-    var(--nextra-primary-hue) var(--nextra-primary-saturation) 50% / var(--tw-text-opacity)
-  );
+  color: var(--eco-blue, #00aeef);
   font-weight: 600;
   letter-spacing: 1px;
   margin: 50px 0 25px;

@@ -4,5 +4,6 @@ export default {
   marketplace: 'Marketplace Apps',
   docker: 'Docker Compose',
   kubernetes: 'Kubernetes',
-  openshift: 'OpenShift'
+  openshift: 'OpenShift',
+  post_install: 'Post Install',
 }

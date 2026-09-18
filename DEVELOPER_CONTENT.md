@@ -2,7 +2,7 @@
 
 This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
 
-Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
+Corpus: 265 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
 
 ## Document index
 
@@ -52,6 +52,12 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Model Types](#docs-configuration-static-models-model-types) — `docs/configuration/static_models/model_types.mdx` — https://ecosystem.ai/docs/configuration/static_models/model_types
 - [Models](#docs-configuration-static-models-models) — `docs/configuration/static_models/models.mdx` — https://ecosystem.ai/docs/configuration/static_models/models
 - [Predictor](#docs-configuration-static-models-predictor) — `docs/configuration/static_models/predictor.mdx` — https://ecosystem.ai/docs/configuration/static_models/predictor
+- [Agents](#docs-configuration-workbench-apis-agents) — `docs/configuration/workbench_apis/agents.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/agents
+- [Public APIs, Agents & MCP](#docs-configuration-workbench-apis-index) — `docs/configuration/workbench_apis/index.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis
+- [API Keys](#docs-configuration-workbench-apis-keys) — `docs/configuration/workbench_apis/keys.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/keys
+- [MCP](#docs-configuration-workbench-apis-mcp) — `docs/configuration/workbench_apis/mcp.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/mcp
+- [Private APIs](#docs-configuration-workbench-apis-private) — `docs/configuration/workbench_apis/private.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/private
+- [Public APIs](#docs-configuration-workbench-apis-public) — `docs/configuration/workbench_apis/public.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/public
 - [Intro](#docs-documentation-index) — `docs/documentation/index.mdx` — https://ecosystem.ai/docs/documentation
 - [Index](#docs-frontend-angular-index) — `docs/frontend/angular/index.mdx` — https://ecosystem.ai/docs/frontend/angular
 - [Index](#docs-frontend-index) — `docs/frontend/index.mdx` — https://ecosystem.ai/docs/frontend
@@ -64,7 +70,53 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Azure Marketplace](#docs-marketplace-azure) — `docs/marketplace/azure.mdx` — https://ecosystem.ai/docs/marketplace/azure
 - [GCP Marketplace](#docs-marketplace-gcp) — `docs/marketplace/gcp.mdx` — https://ecosystem.ai/docs/marketplace/gcp
 - [Intro](#docs-marketplace-index) — `docs/marketplace/index.mdx` — https://ecosystem.ai/docs/marketplace
-- [Index](#docs-modules-index) — `docs/modules/index.mdx` — https://ecosystem.ai/docs/modules
+- [Data Agents Analysis Views](#docs-modules-data-agents-analysis) — `docs/modules/data_agents/analysis.mdx` — https://ecosystem.ai/docs/modules/data_agents/analysis
+- [Data Agents](#docs-modules-data-agents-index) — `docs/modules/data_agents/index.mdx` — https://ecosystem.ai/docs/modules/data_agents
+- [Interactions Analytic](#docs-modules-data-agents-interactions) — `docs/modules/data_agents/interactions.mdx` — https://ecosystem.ai/docs/modules/data_agents/interactions
+- [Data Agents Process Jobs](#docs-modules-data-agents-process) — `docs/modules/data_agents/process.mdx` — https://ecosystem.ai/docs/modules/data_agents/process
+- [Actuarial Analysis Report](#docs-modules-data-agents-reports-actuarial) — `docs/modules/data_agents/reports/actuarial.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/actuarial
+- [Categorical Analysis Report](#docs-modules-data-agents-reports-categorical) — `docs/modules/data_agents/reports/categorical.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/categorical
+- [Config Parameters](#docs-modules-data-agents-reports-config-parameters) — `docs/modules/data_agents/reports/config_parameters.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/config_parameters
+- [Consolidated Results](#docs-modules-data-agents-reports-consolidated-results) — `docs/modules/data_agents/reports/consolidated_results.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/consolidated_results
+- [Feature Engineering Report](#docs-modules-data-agents-reports-feature-engineering) — `docs/modules/data_agents/reports/feature_engineering.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/feature_engineering
+- [Financial Breakdowns](#docs-modules-data-agents-reports-financial-breakdowns) — `docs/modules/data_agents/reports/financial_breakdowns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_breakdowns
+- [Financial Campaigns](#docs-modules-data-agents-reports-financial-campaigns) — `docs/modules/data_agents/reports/financial_campaigns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_campaigns
+- [Financial Comparisons](#docs-modules-data-agents-reports-financial-comparisons) — `docs/modules/data_agents/reports/financial_comparisons.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_comparisons
+- [Financial Data Quality](#docs-modules-data-agents-reports-financial-data-quality) — `docs/modules/data_agents/reports/financial_data_quality.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_data_quality
+- [Financial Distributions](#docs-modules-data-agents-reports-financial-distributions) — `docs/modules/data_agents/reports/financial_distributions.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_distributions
+- [Financial Overview](#docs-modules-data-agents-reports-financial-general) — `docs/modules/data_agents/reports/financial_general.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_general
+- [Growth & Retention](#docs-modules-data-agents-reports-financial-growth) — `docs/modules/data_agents/reports/financial_growth.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_growth
+- [Financial Industry Pack](#docs-modules-data-agents-reports-financial-industry) — `docs/modules/data_agents/reports/financial_industry.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_industry
+- [Ledgers (AR/AP/GL)](#docs-modules-data-agents-reports-financial-ledgers) — `docs/modules/data_agents/reports/financial_ledgers.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_ledgers
+- [Profitability](#docs-modules-data-agents-reports-financial-profitability) — `docs/modules/data_agents/reports/financial_profitability.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_profitability
+- [Returns (ROI / CAC)](#docs-modules-data-agents-reports-financial-returns) — `docs/modules/data_agents/reports/financial_returns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_returns
+- [Financial Time Analytics](#docs-modules-data-agents-reports-financial-time) — `docs/modules/data_agents/reports/financial_time.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_time
+- [Unit Economics (ARPU)](#docs-modules-data-agents-reports-financial-unit-economics) — `docs/modules/data_agents/reports/financial_unit_economics.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_unit_economics
+- [Customer Value (LTV)](#docs-modules-data-agents-reports-financial-value) — `docs/modules/data_agents/reports/financial_value.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_value
+- [Data Agents Reports](#docs-modules-data-agents-reports-index) — `docs/modules/data_agents/reports/index.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports
+- [Main Analysis Report](#docs-modules-data-agents-reports-main) — `docs/modules/data_agents/reports/main.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/main
+- [Machine Learning Report](#docs-modules-data-agents-reports-ml) — `docs/modules/data_agents/reports/ml.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/ml
+- [Calendar Personality Patterns](#docs-modules-data-agents-reports-personality-calendar) — `docs/modules/data_agents/reports/personality_calendar.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_calendar
+- [Personality Intelligent Campaigning](#docs-modules-data-agents-reports-personality-campaigns) — `docs/modules/data_agents/reports/personality_campaigns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_campaigns
+- [Category Patterns](#docs-modules-data-agents-reports-personality-category-patterns) — `docs/modules/data_agents/reports/personality_category_patterns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_category_patterns
+- [Customer Personality Change & Reasons](#docs-modules-data-agents-reports-personality-customer-change) — `docs/modules/data_agents/reports/personality_customer_change.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_customer_change
+- [Personality Drift](#docs-modules-data-agents-reports-personality-drift) — `docs/modules/data_agents/reports/personality_drift.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_drift
+- [Personality Overview](#docs-modules-data-agents-reports-personality-general) — `docs/modules/data_agents/reports/personality_general.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_general
+- [Money Personality Report](#docs-modules-data-agents-reports-personality-money) — `docs/modules/data_agents/reports/personality_money.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_money
+- [Personality Lifecycle Recommendations](#docs-modules-data-agents-reports-personality-recommendations) — `docs/modules/data_agents/reports/personality_recommendations.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_recommendations
+- [Spend Personality Report](#docs-modules-data-agents-reports-personality-spend) — `docs/modules/data_agents/reports/personality_spend.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_spend
+- [Personality Time Measures](#docs-modules-data-agents-reports-personality-time) — `docs/modules/data_agents/reports/personality_time.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_time
+- [Runnable Pipeline Notebook](#docs-modules-data-agents-reports-pipeline-notebook) — `docs/modules/data_agents/reports/pipeline_notebook.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/pipeline_notebook
+- [Customer Uptake & Channel](#docs-modules-data-agents-reports-recommender-customer) — `docs/modules/data_agents/reports/recommender_customer.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_customer
+- [Entity Clusters (Offers by Category)](#docs-modules-data-agents-reports-recommender-entity-clusters) — `docs/modules/data_agents/reports/recommender_entity_clusters.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_entity_clusters
+- [Campaign & Predictor Performance](#docs-modules-data-agents-reports-recommender-general) — `docs/modules/data_agents/reports/recommender_general.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_general
+- [Interaction Analysis Manifest](#docs-modules-data-agents-reports-recommender-manifest) — `docs/modules/data_agents/reports/recommender_manifest.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_manifest
+- [Market Intelligence](#docs-modules-data-agents-reports-recommender-market-intelligence) — `docs/modules/data_agents/reports/recommender_market_intelligence.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_market_intelligence
+- [Marketing Mix (Adstock & Saturation)](#docs-modules-data-agents-reports-recommender-marketing-mix) — `docs/modules/data_agents/reports/recommender_marketing_mix.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_marketing_mix
+- [Offer Effectiveness & Catalog](#docs-modules-data-agents-reports-recommender-offer) — `docs/modules/data_agents/reports/recommender_offer.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_offer
+- [Time Series Report](#docs-modules-data-agents-reports-time-series) — `docs/modules/data_agents/reports/time_series.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/time_series
+- [Data Agents Setup](#docs-modules-data-agents-setup) — `docs/modules/data_agents/setup.mdx` — https://ecosystem.ai/docs/modules/data_agents/setup
+- [Modules](#docs-modules-index) — `docs/modules/index.mdx` — https://ecosystem.ai/docs/modules
 - [MLRun Module — Access & Scoring](#docs-modules-mlrun-access) — `docs/modules/mlrun/access.mdx` — https://ecosystem.ai/docs/modules/mlrun/access
 - [MLRun Module — Community Edition](#docs-modules-mlrun-community-edition) — `docs/modules/mlrun/community_edition.mdx` — https://ecosystem.ai/docs/modules/mlrun/community_edition
 - [MLRun Module — Console Tour](#docs-modules-mlrun-console-tour) — `docs/modules/mlrun/console_tour.mdx` — https://ecosystem.ai/docs/modules/mlrun/console_tour
@@ -75,6 +127,12 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [MLRun Module](#docs-modules-mlrun-index) — `docs/modules/mlrun/index.mdx` — https://ecosystem.ai/docs/modules/mlrun
 - [MLRun Module — Installation](#docs-modules-mlrun-install) — `docs/modules/mlrun/install.mdx` — https://ecosystem.ai/docs/modules/mlrun/install
 - [MLRun Module — Model Training](#docs-modules-mlrun-training) — `docs/modules/mlrun/training.mdx` — https://ecosystem.ai/docs/modules/mlrun/training
+- [Networks Social, Knowledge, and Time](#docs-modules-networks-advanced) — `docs/modules/networks/advanced.mdx` — https://ecosystem.ai/docs/modules/networks/advanced
+- [Networks Analysis](#docs-modules-networks-analysis) — `docs/modules/networks/analysis.mdx` — https://ecosystem.ai/docs/modules/networks/analysis
+- [Networks Jobs and API](#docs-modules-networks-api) — `docs/modules/networks/api.mdx` — https://ecosystem.ai/docs/modules/networks/api
+- [Networks Data Sources](#docs-modules-networks-data) — `docs/modules/networks/data.mdx` — https://ecosystem.ai/docs/modules/networks/data
+- [Networks](#docs-modules-networks-index) — `docs/modules/networks/index.mdx` — https://ecosystem.ai/docs/modules/networks
+- [Networks Workspace](#docs-modules-networks-workspace) — `docs/modules/networks/workspace.mdx` — https://ecosystem.ai/docs/modules/networks/workspace
 - [Spend Personality](#docs-modules-spend-personality-access) — `docs/modules/spend_personality/access.mdx` — https://ecosystem.ai/docs/modules/spend_personality/access
 - [Spend Personality](#docs-modules-spend-personality-chatgpt) — `docs/modules/spend_personality/chatgpt.mdx` — https://ecosystem.ai/docs/modules/spend_personality/chatgpt
 - [Spend Personality](#docs-modules-spend-personality-configuration) — `docs/modules/spend_personality/configuration.mdx` — https://ecosystem.ai/docs/modules/spend_personality/configuration
@@ -93,10 +151,32 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Two-Tower Module — Real-Time Scoring](#docs-modules-two-tower-runtime) — `docs/modules/two_tower/runtime.mdx` — https://ecosystem.ai/docs/modules/two_tower/runtime
 - [Two-Tower Module — Offline Scoring](#docs-modules-two-tower-scoring) — `docs/modules/two_tower/scoring.mdx` — https://ecosystem.ai/docs/modules/two_tower/scoring
 - [Two-Tower Module — Model Training](#docs-modules-two-tower-training) — `docs/modules/two_tower/training.mdx` — https://ecosystem.ai/docs/modules/two_tower/training
+- [Ontology for Agents](#docs-ontology-agents) — `docs/ontology/agents.mdx` — https://ecosystem.ai/docs/ontology/agents
+- [Alignments](#docs-ontology-alignments) — `docs/ontology/alignments.mdx` — https://ecosystem.ai/docs/ontology/alignments
+- [Concept Index](#docs-ontology-concept-index) — `docs/ontology/concept-index.mdx` — https://ecosystem.ai/docs/ontology/concept-index
+- [Customer Feature Lookup (Open)](#docs-ontology-customer-features) — `docs/ontology/customer-features.mdx` — https://ecosystem.ai/docs/ontology/customer-features
+- [Data and Ontology](#docs-ontology-data-and-ontology) — `docs/ontology/data-and-ontology.mdx` — https://ecosystem.ai/docs/ontology/data-and-ontology
+- [Downloads](#docs-ontology-downloads) — `docs/ontology/downloads.mdx` — https://ecosystem.ai/docs/ontology/downloads
+- [Entities concept catalog](#docs-ontology-entities-catalog) — `docs/ontology/entities-catalog.mdx` — https://ecosystem.ai/docs/ontology/entities-catalog
+- [Entities (Workbench Meta)](#docs-ontology-entities) — `docs/ontology/entities.mdx` — https://ecosystem.ai/docs/ontology/entities
+- [Glossary](#docs-ontology-glossary) — `docs/ontology/glossary.mdx` — https://ecosystem.ai/docs/ontology/glossary
+- [Ontology Overview](#docs-ontology-index) — `docs/ontology/index.mdx` — https://ecosystem.ai/docs/ontology
+- [Link Types](#docs-ontology-link-types) — `docs/ontology/link-types.mdx` — https://ecosystem.ai/docs/ontology/link-types
+- [Namespaces](#docs-ontology-namespaces) — `docs/ontology/namespaces.mdx` — https://ecosystem.ai/docs/ontology/namespaces
+- [Object Types](#docs-ontology-object-types) — `docs/ontology/object-types.mdx` — https://ecosystem.ai/docs/ontology/object-types
+- [Offer Matrix (Closed Schema)](#docs-ontology-offer-matrix) — `docs/ontology/offer-matrix.mdx` — https://ecosystem.ai/docs/ontology/offer-matrix
+- [Platform Modules](#docs-ontology-platform) — `docs/ontology/platform.mdx` — https://ecosystem.ai/docs/ontology/platform
+- [Runtime concept catalog](#docs-ontology-runtime-catalog) — `docs/ontology/runtime-catalog.mdx` — https://ecosystem.ai/docs/ontology/runtime-catalog
+- [Runtime Closed Loop](#docs-ontology-runtime) — `docs/ontology/runtime.mdx` — https://ecosystem.ai/docs/ontology/runtime
+- [Server concept catalog](#docs-ontology-server-catalog) — `docs/ontology/server-catalog.mdx` — https://ecosystem.ai/docs/ontology/server-catalog
+- [Modeling Server Concepts](#docs-ontology-server) — `docs/ontology/server.mdx` — https://ecosystem.ai/docs/ontology/server
+- [Why create an Ontology?](#docs-ontology-why) — `docs/ontology/why.mdx` — https://ecosystem.ai/docs/ontology/why
+- [Workbench concept catalog](#docs-ontology-workbench-catalog) — `docs/ontology/workbench-catalog.mdx` — https://ecosystem.ai/docs/ontology/workbench-catalog
+- [Workbench Application Concepts](#docs-ontology-workbench) — `docs/ontology/workbench.mdx` — https://ecosystem.ai/docs/ontology/workbench
 - [Index](#docs-opensource-index) — `docs/opensource/index.mdx` — https://ecosystem.ai/docs/opensource
 - [Superset](#docs-opensource-superset) — `docs/opensource/superset.mdx` — https://ecosystem.ai/docs/opensource/superset
 - [Docker](#docs-quick-start-docker) — `docs/quick_start/docker.mdx` — https://ecosystem.ai/docs/quick_start/docker
-- [Index](#docs-quick-start-index) — `docs/quick_start/index.mdx` — https://ecosystem.ai/docs/quick_start
+- [Quick Start](#docs-quick-start-index) — `docs/quick_start/index.mdx` — https://ecosystem.ai/docs/quick_start
 - [Kubernetes](#docs-quick-start-kubernetes) — `docs/quick_start/kubernetes.mdx` — https://ecosystem.ai/docs/quick_start/kubernetes
 - [Local Setup](#docs-quick-start-local-setup) — `docs/quick_start/local_setup.mdx` — https://ecosystem.ai/docs/quick_start/local_setup
 - [Marketplace](#docs-quick-start-marketplace) — `docs/quick_start/marketplace.mdx` — https://ecosystem.ai/docs/quick_start/marketplace
@@ -106,6 +186,7 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [API Configuration Plugin](#docs-runtime-apiconfiguration-index) — `docs/runtime/apiconfiguration/index.mdx` — https://ecosystem.ai/docs/runtime/apiconfiguration
 - [Product Master Plugin](#docs-runtime-apiconfiguration-productmaster) — `docs/runtime/apiconfiguration/productmaster.mdx` — https://ecosystem.ai/docs/runtime/apiconfiguration/productmaster
 - [Configuration](#docs-runtime-configuration) — `docs/runtime/configuration.mdx` — https://ecosystem.ai/docs/runtime/configuration
+- [Runtime Dashboard](#docs-runtime-dashboard) — `docs/runtime/dashboard.mdx` — https://ecosystem.ai/docs/runtime/dashboard
 - [Push Your Deployment](#docs-runtime-deployment) — `docs/runtime/deployment.mdx` — https://ecosystem.ai/docs/runtime/deployment
 - [Environment Variables](#docs-runtime-environment-variables) — `docs/runtime/environment_variables.mdx` — https://ecosystem.ai/docs/runtime/environment_variables
 - [Calling External Runtimes](#docs-runtime-externalruntimecalls) — `docs/runtime/externalruntimecalls.mdx` — https://ecosystem.ai/docs/runtime/externalruntimecalls
@@ -113,6 +194,7 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Logging](#docs-runtime-logging) — `docs/runtime/logging.mdx` — https://ecosystem.ai/docs/runtime/logging
 - [MCP Support](#docs-runtime-mcp) — `docs/runtime/mcp.mdx` — https://ecosystem.ai/docs/runtime/mcp
 - [MLFlow Integration](#docs-runtime-mlflowintegration) — `docs/runtime/mlflowintegration.mdx` — https://ecosystem.ai/docs/runtime/mlflowintegration
+- [Model Convergence](#docs-runtime-model-convergence) — `docs/runtime/model_convergence.mdx` — https://ecosystem.ai/docs/runtime/model_convergence
 - [Plugins](#docs-runtime-plugins-index) — `docs/runtime/plugins/index.mdx` — https://ecosystem.ai/docs/runtime/plugins
 - [Post-Predict Plugins](#docs-runtime-plugins-postpredict) — `docs/runtime/plugins/postpredict.mdx` — https://ecosystem.ai/docs/runtime/plugins/postpredict
 - [Pre-Predict Plugins](#docs-runtime-plugins-prepredict) — `docs/runtime/plugins/prepredict.mdx` — https://ecosystem.ai/docs/runtime/plugins/prepredict
@@ -127,6 +209,7 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Pre-Score Dynamic Plugin](#docs-runtime-prepredict-prescoredynamic) — `docs/runtime/prepredict/prescoredynamic.mdx` — https://ecosystem.ai/docs/runtime/prepredict/prescoredynamic
 - [Pre-Score Lookup Plugin](#docs-runtime-prepredict-prescorelookup) — `docs/runtime/prepredict/prescorelookup.mdx` — https://ecosystem.ai/docs/runtime/prepredict/prescorelookup
 - [ecosystem.Ai runtime release notes](#docs-runtime-runtimeversion) — `docs/runtime/runtimeversion.mdx` — https://ecosystem.ai/docs/runtime/runtimeversion
+- [Campaign Testing](#docs-runtime-testing) — `docs/runtime/testing.mdx` — https://ecosystem.ai/docs/runtime/testing
 - [Deployment](#docs-user-guides-dynamic-deployment) — `docs/user_guides/dynamic/deployment.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/deployment
 - [Manage Files & Feature Engineering](#docs-user-guides-dynamic-files-features) — `docs/user_guides/dynamic/files_features.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/files_features
 - [How it Works](#docs-user-guides-dynamic-how-it-works) — `docs/user_guides/dynamic/how_it_works.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/how_it_works
@@ -140,6 +223,7 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Exploration using epsilon](#docs-user-guides-epsilon-exploration) — `docs/user_guides/epsilon_exploration.mdx` — https://ecosystem.ai/docs/user_guides/epsilon_exploration
 - [Data From Another Runtime](#docs-user-guides-external-runtime-data) — `docs/user_guides/external_runtime_data.mdx` — https://ecosystem.ai/docs/user_guides/external_runtime_data
 - [Intro](#docs-user-guides-index) — `docs/user_guides/index.mdx` — https://ecosystem.ai/docs/user_guides
+- [Model Convergence](#docs-user-guides-model-convergence) — `docs/user_guides/model_convergence.mdx` — https://ecosystem.ai/docs/user_guides/model_convergence
 - [Network Selector](#docs-user-guides-network) — `docs/user_guides/network.mdx` — https://ecosystem.ai/docs/user_guides/network
 - [Deployment](#docs-user-guides-recommender-deployment) — `docs/user_guides/recommender/deployment.mdx` — https://ecosystem.ai/docs/user_guides/recommender/deployment
 - [Feature Stores](#docs-user-guides-recommender-feature-stores) — `docs/user_guides/recommender/feature_stores.mdx` — https://ecosystem.ai/docs/user_guides/recommender/feature_stores
@@ -157,19 +241,29 @@ Corpus: 171 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Pre and Post Scoring Logic Structures](#docs-user-guides-runtime-plugin-development-pre-post-scoring-structures) — `docs/user_guides/runtime_plugin_development/pre_post_scoring_structures.mdx` — https://ecosystem.ai/docs/user_guides/runtime_plugin_development/pre_post_scoring_structures
 - [Converting Static Model Cases to Dynamic Interactions](#docs-user-guides-static-to-dynamic) — `docs/user_guides/static_to_dynamic.mdx` — https://ecosystem.ai/docs/user_guides/static_to_dynamic
 - [Virtual Variables](#docs-user-guides-virtual-variables) — `docs/user_guides/virtual_variables.mdx` — https://ecosystem.ai/docs/user_guides/virtual_variables
+- [Claude Agent](#docs-workers-agent-framework-claude-agent) — `docs/workers/agent_framework/claude-agent.mdx` — https://ecosystem.ai/docs/workers/agent_framework/claude-agent
 - [Agent Framework](#docs-workers-agent-framework-index) — `docs/workers/agent_framework/index.mdx` — https://ecosystem.ai/docs/workers/agent_framework
 - [Journey Management](#docs-workers-agent-framework-journeys) — `docs/workers/agent_framework/journeys.mdx` — https://ecosystem.ai/docs/workers/agent_framework/journeys
-- [Python](#docs-workers-generative) — `docs/workers/generative.mdx` — https://ecosystem.ai/docs/workers/generative
+- [Language Chat Models](#docs-workers-generative) — `docs/workers/generative.mdx` — https://ecosystem.ai/docs/workers/generative
 - [Workers](#docs-workers-index) — `docs/workers/index.mdx` — https://ecosystem.ai/docs/workers
 - [Python](#docs-workers-python) — `docs/workers/python.mdx` — https://ecosystem.ai/docs/workers/python
-- [Workers](#docs-workers-worker-arch) — `docs/workers/worker_arch.mdx` — https://ecosystem.ai/docs/workers/worker_arch
+- [Worker Architecture](#docs-workers-worker-arch) — `docs/workers/worker_arch.mdx` — https://ecosystem.ai/docs/workers/worker_arch
 - [Changelog](#changelog) — `changelog.mdx` — https://ecosystem.ai/changelog
 - [⚙️ Config v0.6.304.04](#changelog-config-v0-6-304-04) — `changelog/config_v0.6.304.04.mdx` — https://ecosystem.ai/changelog/config_v0.6.304.04
-- [🚀 ecosystem.Ai v0.6.304.04](#changelog-v0-6-304-04) — `changelog/v0.6.304.04.mdx` — https://ecosystem.ai/changelog/v0.6.304.04
-- [🚀 ecosystem.Ai v0.6.401.00](#changelog-v0-6-401-00) — `changelog/v0.6.401.00.mdx` — https://ecosystem.ai/changelog/v0.6.401.00
-- [🚀 ecosystem.Ai v0.6.500.01](#changelog-v0-6-500-01) — `changelog/v0.6.500.01.mdx` — https://ecosystem.ai/changelog/v0.6.500.01
-- [🚀 ecosystem.Ai v0.6.601.00](#changelog-v0-6-601-00) — `changelog/v0.6.601.00.mdx` — https://ecosystem.ai/changelog/v0.6.601.00
-- [🚀 ecosystem.Ai v0.7.900.00](#changelog-v0-7-900-00) — `changelog/v0.7.900.00.mdx` — https://ecosystem.ai/changelog/v0.7.900.00
+- [ecosystem.Ai v0.6.304.04](#changelog-v0-6-304-04) — `changelog/v0.6.304.04.mdx` — https://ecosystem.ai/changelog/v0.6.304.04
+- [ecosystem.Ai v0.6.401.00](#changelog-v0-6-401-00) — `changelog/v0.6.401.00.mdx` — https://ecosystem.ai/changelog/v0.6.401.00
+- [ecosystem.Ai v0.6.500.01](#changelog-v0-6-500-01) — `changelog/v0.6.500.01.mdx` — https://ecosystem.ai/changelog/v0.6.500.01
+- [ecosystem.Ai v0.6.601.00](#changelog-v0-6-601-00) — `changelog/v0.6.601.00.mdx` — https://ecosystem.ai/changelog/v0.6.601.00
+- [ecosystem.Ai v0.7.900.00](#changelog-v0-7-900-00) — `changelog/v0.7.900.00.mdx` — https://ecosystem.ai/changelog/v0.7.900.00
+- [Runtime v0.9.5.0](#changelog-v0-9-5-0) — `changelog/v0.9.5.0.mdx` — https://ecosystem.ai/changelog/v0.9.5.0
+- [Runtime v0.9.6.0](#changelog-v0-9-6-0) — `changelog/v0.9.6.0.mdx` — https://ecosystem.ai/changelog/v0.9.6.0
+- [Runtime v0.9.6.1.2](#changelog-v0-9-6-1-2) — `changelog/v0.9.6.1.2.mdx` — https://ecosystem.ai/changelog/v0.9.6.1.2
+- [Runtime v0.9.6.1.3](#changelog-v0-9-6-1-3) — `changelog/v0.9.6.1.3.mdx` — https://ecosystem.ai/changelog/v0.9.6.1.3
+- [Runtime v0.9.6.1.4](#changelog-v0-9-6-1-4) — `changelog/v0.9.6.1.4.mdx` — https://ecosystem.ai/changelog/v0.9.6.1.4
+- [Runtime v0.9.6.1](#changelog-v0-9-6-1) — `changelog/v0.9.6.1.mdx` — https://ecosystem.ai/changelog/v0.9.6.1
+- [Runtime v0.9.7.0](#changelog-v0-9-7-0) — `changelog/v0.9.7.0.mdx` — https://ecosystem.ai/changelog/v0.9.7.0
+- [Workbench 2.0.3](#changelog-workbench-2-0-3) — `changelog/workbench-2.0.3.mdx` — https://ecosystem.ai/changelog/workbench-2.0.3
+- [Workbench 2.0](#changelog-workbench-2-0) — `changelog/workbench-2.0.mdx` — https://ecosystem.ai/changelog/workbench-2.0
 - [Three essential steps to detect customer happiness](#blog-2024-06-29-happiness) — `blog/2024-06-29_happiness.mdx` — https://ecosystem.ai/blog/2024-06-29_happiness
 - [ecosystem.Ai 2024 Roadmap](#blog-2024-06-30-2024-roadmap) — `blog/2024-06-30_2024_roadmap.mdx` — https://ecosystem.ai/blog/2024-06-30_2024_roadmap
 - [Unlocking Customer Insights, The Power of Spend Personality](#blog-2024-11-06-spend) — `blog/2024-11-06_spend.mdx` — https://ecosystem.ai/blog/2024-11-06_spend
@@ -194,6 +288,8 @@ The Bayesian Probabilistic algorithm implements a version of the Naive Bayes alg
 
 ## Algorithm
 
+**Config value:** `"approach": "naiveBayes"`
+
 The Naive Bayes algorithm assigns a score for each offer using the following formula:
 $P(\text{offer}|X) = P(\text{offer}) \prod_{i=1}^{n} P(x_i|\text{offer})$
 Where $X$ are the features used to score the offers. The Baysian Probabilistic algorithm supports discrete features and with the resulting $P(X|\text{offer})$ distributions being multinomial. Laplace smoothing with $alpha=1$ is used to avoid zeroing out probabilities if an offer and feature value do not occur together in the training data set.
@@ -208,6 +304,19 @@ The historical data used to train the algorithm can be windowed by either time a
   - **none**: Ignore the offer and do not score it.
   - **uniform**: Score the missing offer by sampling from a uniform distribution.
 - **Lookup Defaults**: The features to be used when training and scoring the offers.
+
+## When To Use
+
+- When you have many discrete context features and want accuracy over explore/exploit balance
+- When contextual variables strongly predict offer acceptance
+- When convergence speed matters (very fast once data exists)
+
+## When NOT To Use
+
+- When you want the simplest, most interpretable bandit (use [Ecosystem Rewards](/docs/configuration/algorithms/ecosystemrewards) or [Epsilon Greedy](/docs/configuration/algorithms/epsilongreedy))
+- When you cannot configure Lookup Parameters for inference variables
+
+**Runtime implementation:** The dynamic engagement path uses **Bernoulli** Naive Bayes (`BernoulliNaiveBayes`), not a multinomial classifier. Numeric Dynamic Recommender Training Fields are binned before `offer___variable___value` keys; the algorithm never concatenates a composite `training_cell`.
 
 ## Example
 
@@ -267,6 +376,8 @@ deployment_step = dm.create_deployment(
     multi_armed_bandit=online_learning
 )
 ```
+
+**Note:** `algorithm="bayesian_probabilistic"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation.approach` **`naiveBayes`**.
 
 ---
 
@@ -385,7 +496,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Deployment pattern:** Set `approach` to `behaviorAlgos` and `sub_approach` to `coverageAwareThompson` in the `randomisation` object. Configure `gamma` and `epsilon` there to tune inverse-popularity strength and uniform exploration; the Python `define_deployment_multi_armed_bandit(epsilon=...)` API controls deployment-level epsilon separately—keep both layers consistent with your intent.
+**Deployment pattern:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "coverageAwareThompson"`. Configure `gamma` and `epsilon` there to tune inverse-popularity strength and uniform exploration; the Python `define_deployment_multi_armed_bandit(epsilon=...)` API controls deployment-level epsilon separately—keep both layers consistent with your intent.
 
 ---
 
@@ -400,6 +511,8 @@ Summary: Ecosystem Rewards
 The Ecosystem Rewards algorithm implements a version of the Thompson Sampling algorithm for solving multi-armed bandit style problems.
 
 ## Algorithm
+
+**Config value:** `"approach": "binaryThompson"`
 
 The Ecosystem Rewards algorithm stores and updates a beta distribution for each offer in each segment in the system. When offers need to be scored for an entity in a given segment, the beta distributions for the offers in the segment are sampled and the samples are used as the scores for the offers. Segements can be specified using up to two discrete contextual variables or segmentation can be done at the entity level - i.e. each entity has it's own beta distribution for for each offer.
 
@@ -419,6 +532,22 @@ By default the algorithm will assume initial values of one for both alpha and be
 - **Prior Fail Reward**: The size of the increment to the beta parameter of the beta distributions used in the Thompson Sampling when an interaction is not successful in the historical data. Used when historical data is used to train the algorithm before deployment.
 - **Test options across segments**: If there are options that are configured to only be available for specific values of the contextual variables, electing to test options across segments will occasionally predict those options for contextual variable values where they are not available.
 - **epsilon**: The proportion of API calls that will be allocated for exploration. This exploration is done be sampling from a uniform distribution rather than the beta distribution when scoring.
+
+## When To Use
+
+- Default choice for most dynamic recommendation problems
+- Brand-new deployment with zero interaction history (default prior is uninformative Beta(1,1) when `prior_success_reward`/`prior_fail_reward` are unset)
+- When offer acceptance is binary (accepted vs. not accepted)
+- When you want automatic explore/exploit without tuning epsilon
+- When you want a balance between learning and explainability
+
+## When NOT To Use
+
+- When you need deterministic rankings on every request
+- When sequential state transitions matter (use [Q-Learning](/docs/configuration/algorithms/qlearning) instead)
+- When catalog fairness / long-tail coverage is the primary goal (use [Coverage-Aware Thompson](/docs/configuration/algorithms/coveragethompson) instead)
+
+**Posterior and training cells:** The rolling process writes `alpha = alpha_zero + success_reward × successes` (no second count in `ThompsonReward`). Dynamic Recommender Training Fields partition history on `training_cell`; contextual variables stay `contextual_variable_one` / `_two`. See [Model Convergence](/docs/user_guides/model_convergence).
 
 ## Example
 
@@ -484,7 +613,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-## Inspecting Beta distributions
+**Note:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation.approach` **`binaryThompson`**.
 
 To understand the behaviour of the Ecosystem Rewards algorithm, it is important to inspect the Beta distributions the are produced by the algorithm scoring. There are two ways to do this, using the simulation functionality or by producing box and whisker plots from the information contained in the Options Store. 
 
@@ -631,7 +760,7 @@ While this approach addresses the issue of modified sorting in the post scoring 
 ### Beta Distribution Overlap
 In this approach we consider the score produced for each option and determine the probability that it is higher than the scores sampled from the set of options with higher take up rates than the Option under consideration. The average of these probabilities will give a measure of the degree of exploration being performed by the algorithm.
 
-To illustrate the appraoch followed, consider a single option in the contacts logging collection. Let $r$ be the `arm_reward` for the item. For each option in the Options Store with a higher `propensity` than the option, $\theta$, under consideration, we determine the probability $P_{i}(X < r)$, i.e. the probability that the `arm_reward` generated for $\theta$ is greater then the `arm_reward` generated for option $i$, despite the fact the $i$ has a higher propensity. To take into account the fact that we may not want to measure exploration between similarly performing offers, we replace $r$ with $r_t=r+t$ where $t>0$. We, combine the probability $P_{i}(X < r_t)$, $\forall i$ to deteremine the probability that $\theta$ is an exploration option $P_{explore}$. This is done using the following formula:
+To illustrate the approach followed, consider a single option in the contacts logging collection. Let $r$ be the `arm_reward` for the item. For each option in the Options Store with a higher `propensity` than the option, $\theta$, under consideration, we determine the probability $P_{i}(X < r)$, i.e. the probability that the `arm_reward` generated for $\theta$ is greater then the `arm_reward` generated for option $i$, despite the fact the $i$ has a higher propensity. To take into account the fact that we may not want to measure exploration between similarly performing offers, we replace $r$ with $r_t=r+t$ where $t>0$. We, combine the probability $P_{i}(X < r_t)$, $\forall i$ to deteremine the probability that $\theta$ is an exploration option $P_{explore}$. This is done using the following formula:
 
 $P_{explore} = P_0(X < r_t) + P_0(X > r_t)[P_1(X < r_t) + P_1(X > r_t)[P_2(X < r_t) + ...]]$
 
@@ -849,7 +978,7 @@ print(f"Interactions where the Dynamic Interaction Configuration presented offer
 print(f"Mean Reciprocal Rank: {mean_reciprocal_rank}")
 ```
 
-Note that this approach assumes that only a single option can be accepted during each interaction. If this is not the case the the approach will need to be adjusted accordingly and a metric which take this in account (for example, Mean Averate Precision) could be used instead of Mean Reciprocal Rank.
+Note that this approach assumes that only a single option can be accepted during each interaction. If this is not the case the the approach will need to be adjusted accordingly and a metric which take this in account (for example, Mean Average Precision) could be used instead of Mean Reciprocal Rank.
 
 ---
 
@@ -966,7 +1095,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Note:** The `epsilon` parameter in `define_deployment_multi_armed_bandit` sets the exploration rate. The algorithm identifier in the dynamic recommender configuration should have `approach` set to `epsilonGreedy` in the `randomisation` object.
+**Note:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type, not the scoring algorithm. Set `randomisation.approach` to `epsilonGreedy`. The `epsilon` parameter in `define_deployment_multi_armed_bandit` sets the exploration rate.
 
 ---
 
@@ -1071,7 +1200,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Deployment pattern:** Set `approach` to `behaviorAlgos` and `sub_approach` to `generative` in the `randomisation` object. Place **temperature** and other LLM knobs under the configured `prompt_parameters` (or your deployment’s equivalent) so they travel with the dynamic recommender document.
+**Deployment pattern:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "generative"`. Place **temperature** and other LLM knobs under the configured `prompt_parameters` (or your deployment’s equivalent) so they travel with the dynamic recommender document.
 
 **Latency and cost:** This path typically performs an **external API call per scoring request**, adding **latency** and **per-token cost**. Plan for **timeouts**, **retries**, and **caching** of stable prompt fragments or model outputs where safe.
 
@@ -1088,6 +1217,42 @@ Summary: Overview of all dynamic interaction algorithms available in the ecosyst
 The ecosystem.Ai runtime includes a comprehensive library of dynamic interaction algorithms for real-time offer scoring and recommendation. Each algorithm implements a different strategy for learning which offers, actions, or content to present to users.
 
 All algorithms share the same operational architecture: a background **rolling process** periodically updates offer statistics in the **options store**, and real-time scoring reads those pre-computed statistics to rank offers for each API request.
+
+**Large-catalog retrieval:** The [Two-Tower recommender](/docs/modules/two_tower) uses `predictor.model.type=similarity` and embedding cosine/dot scoring. It is **not** a Dynamic Engagement `randomisation.approach` — it bypasses H2O and dynamic bandit scoring.
+
+**Python SDK document type vs scoring approach:** `create_online_learning(..., algorithm="ecosystem_rewards")` (or `q_learning` / `bayesian_probabilistic`) creates a Dynamic Engagement **document**. Scoring is selected by `randomisation.approach` / `sub_approach` — the **Config value** on each algorithm page — not by that SDK argument. Do not invent approach IDs.
+
+## Selection tree
+
+Use this tree to pick a Dynamic Engagement **Dynamic Algorithm** (`approach`). When you select **Human Behavioral** (`behaviorAlgos`), you must also pick a **Dynamic Engagement behavioral type** (`sub_approach`).
+
+```mermaid
+flowchart TD
+  intent[User intent]
+  intent --> family{Which family?}
+  family -->|stable features offline retrain| staticH2O[Static H2O / AutoML]
+  family -->|large catalog embeddings| twoTower["Two-Tower similarity"]
+  family -->|spend or money traits| personality[Spend / Money Personality]
+  family -->|route to other campaigns| selector[Network Selector]
+  family -->|online learning offers| de[Dynamic Engagement]
+  de --> approach{Dynamic Algorithm approach}
+  approach --> binaryThompson
+  approach --> epsilonGreedy
+  approach --> naiveBayes
+  approach --> QLearning
+  approach --> Network
+  approach --> behaviorAlgos[behaviorAlgos Human Behavioral]
+  behaviorAlgos --> types[Dynamic Engagement behavioral types]
+  types --> lossAversion
+  types --> riskAversion
+  types --> prospectTheory
+  types --> sentimentalEquilibrium
+  types --> coverageAwareThompson
+  types --> longTailBoostMF
+  types --> generative
+```
+
+If `approach` is `behaviorAlgos` and `sub_approach` is blank or unknown, the runtime defaults to `lossAversion`.
 
 ## Architecture
 
@@ -1109,7 +1274,7 @@ Algorithm selection is driven by the `randomisation` object stored in the dynami
 }
 ```
 
-The `approach` field selects the top-level algorithm. When `approach` is `behaviorAlgos`, the `sub_approach` field selects the specific behavioral economics algorithm.
+The `approach` field selects the top-level Dynamic Algorithm. When `approach` is `behaviorAlgos`, the `sub_approach` field selects the **Dynamic Engagement behavioral type**.
 
 ### Algorithm Routing
 
@@ -1120,11 +1285,11 @@ The `approach` field selects the top-level algorithm. When `approach` is `behavi
 | `naiveBayes` | [Bayesian Probabilistic](/docs/configuration/algorithms/baysianprobabilistic) | `RollingNaiveBayes` |
 | `QLearning` | [Q-Learning](/docs/configuration/algorithms/qlearning) | `RollingQLearning` |
 | `Network` | [Network Analysis (PageRank)](/docs/configuration/algorithms/networkanalysis) | `RollingNetwork` |
-| `behaviorAlgos` | Behavioral Economics (see sub_approach) | `RollingBehavior` |
+| `behaviorAlgos` | Human Behavioral (see behavioral types) | `RollingBehavior` |
 
-### Behavioral Sub-Approaches
+### Dynamic Engagement behavioral types
 
-When `approach = "behaviorAlgos"`, the `sub_approach` field selects one of:
+When `approach = "behaviorAlgos"`, the **Behavioral Algorithm** dropdown selects the behavioral type via `sub_approach`:
 
 | `sub_approach` Value | Algorithm |
 |----------------------|-----------|
@@ -1192,7 +1357,7 @@ The post-score class then controls the final offer selection, eligibility filter
 
 | Algorithm | Algorithm-Level Cold Start Behavior | Prior / Seed Mechanism | Quality of Early Recommendations |
 |-----------|-------------------------------------|----------------------|----------------------------------|
-| **Ecosystem Rewards (Thompson)** | Beta(1,1) samples uniformly in [0,1]. All arms get equal random chance. | Configurable `alpha_zero` and `beta_zero` per arm. Default Beta(1,1) is uninformative. | **Good.** Uniform exploration by design. |
+| **Ecosystem Rewards (Thompson)** | Samples `Beta(alpha, beta)` uniformly when priors are uninformative. All arms get equal random chance. | Configurable `alpha_zero` and `beta_zero` per arm. Missing priors resolve from `prior_success_reward` / `prior_fail_reward`, then **1.0** (Beta(1,1) when both default). | **Good.** Uniform exploration by design. |
 | **Epsilon Greedy** | All arms start with `arm_reward = 0` and tie. Exploit phase picks randomly among ties. | None beyond deployment epsilon. | **Moderate.** Set epsilon >= 0.1 for better early coverage. |
 | **Loss Aversion** | New offers get smoothing alpha = 1.5. UCB gives under-sampled offers a boost. | Smoothing alpha = 1.5 + UCB exploration term. | **Moderate.** UCB helps under-sampled offers surface. |
 | **Risk Aversion** | Does not score offers without history. Platform random fallback applies. | None. Relies on platform-level random scoring. | **Random until data accumulates.** Algorithm begins influencing after sufficient history. |
@@ -1209,7 +1374,7 @@ The post-score class then controls the final offer selection, eligibility filter
 
 | Scenario | Recommended Algorithm | Why |
 |----------|----------------------|-----|
-| Brand new deployment, zero data | **Ecosystem Rewards (Thompson)** | Beta(1,1) prior gives uniform exploration. Converges naturally as data arrives. |
+| Brand new deployment, zero data | **Ecosystem Rewards (Thompson)** | Default prior (options → `prior_success_reward`/`prior_fail_reward` → 1.0) explores uniformly. Converges as `/response` events arrive. See [Model Convergence](/docs/user_guides/model_convergence). |
 | New deployment, need guaranteed coverage | **Coverage-Aware Thompson** | Maximum boost for unseen items. Thompson + inverse-popularity + optional epsilon. |
 | Adding new offers to existing catalog | **Ecosystem Rewards** or **Coverage-Aware Thompson** | New offers get default priors and are naturally explored. |
 | New customer segment, have general history | **Prospect Theory** | Seeds all offers from product data. Adaptive drift ensures variety. |
@@ -1218,11 +1383,12 @@ The post-score class then controls the final offer selection, eligibility filter
 
 ### Configuring Priors for Thompson Sampling
 
-The `alpha_zero` and `beta_zero` fields in the options store control the Thompson Sampling prior. Different priors can be set per offer to encode domain knowledge:
+The `alpha_zero` and `beta_zero` fields in the options store control the Thompson Sampling prior. When a key is missing, the runtime uses `randomisation.prior_success_reward` / `prior_fail_reward`, then `1.0`. Different priors can be set per offer to encode domain knowledge:
 
 | Prior | alpha_zero | beta_zero | Meaning |
 |-------|-----------|----------|---------|
-| Uninformative | 1.0 | 1.0 | No prior belief. Uniform sampling. Default. |
+| Uninformative | 1.0 | 1.0 | No prior belief. Uniform sampling. Default when priors and `prior_*_reward` knobs are unset. |
+| From randomisation knobs | `prior_success_reward` | `prior_fail_reward` | Workbench Generate options seeds these as `alpha_zero` / `beta_zero`. |
 | Optimistic | 2.0 | 1.0 | Assume the offer is probably good. Explore less. |
 | Pessimistic | 1.0 | 2.0 | Assume the offer is probably bad. Explore more. |
 | Strong prior (popular offer) | 10.0 | 5.0 | Equivalent to 10 successes and 5 failures. Stable from start. |
@@ -1238,7 +1404,7 @@ Every dynamic interaction algorithm follows the same two-phase architecture:
 
 2. **Real-time scoring (read path):** When an API request arrives, the runtime reads the pre-computed arm statistics from the options store, applies the explore/exploit logic for the selected algorithm, and returns ranked offers. No database writes occur during scoring.
 
-This separation means learning is decoupled from serving. The options store acts as the bridge.
+This separation means learning is decoupled from serving. The options store acts as the bridge. How the posterior moves over time, which knobs change scores, and how to diagnose non-convergence are in [Model Convergence](/docs/user_guides/model_convergence).
 
 ### Scheduling
 
@@ -1445,7 +1611,7 @@ The `RewardStrategyFactory` maps the approach to a reward computation:
 
 | Approach | Strategy | Computation |
 |----------|----------|-------------|
-| `binaryThompson` | `ThompsonReward` | `Beta(alpha + success * responses, beta + fail * (logs - responses)).sample()` |
+| `binaryThompson` | `ThompsonReward` | `Beta(alpha, beta).sample()` — `alpha`/`beta` already include `success_reward` × counts from the rolling posterior |
 | `epsilonGreedy` | `EpsilonGreedyReward` | `response_count / logging_count` |
 | `Network` | `NetworkReward` | Returns 1.0 (PageRank handles scoring) |
 | `behaviorAlgos` | `BehaviorReward` | Returns 1.0 (behavioral algorithms handle scoring) |
@@ -1562,7 +1728,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Deployment pattern:** Set `approach` to `behaviorAlgos` and `sub_approach` to `longTailBoostMF` in the `randomisation` object. Tune `latentDim`, `numIters`, `regLambda`, and `gamma` for your traffic volume and catalog size.
+**Deployment pattern:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "longTailBoostMF"`. Tune `latentDim`, `numIters`, `regLambda`, and `gamma` for your traffic volume and catalog size.
 
 ---
 
@@ -1684,7 +1850,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Note:** The `approach` should be set to `behaviorAlgos` and `sub_approach` to `lossAversion` in the `randomisation` object of the dynamic recommender configuration in MongoDB.
+**Note:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "lossAversion"`.
 
 ---
 
@@ -1697,6 +1863,8 @@ Summary: Network Analysis (PageRank) algorithm for dynamic interactions in ecosy
 # Network Analysis
 
 Treats offers as **nodes** in a **directed graph**. Edges encode how often one offer is accepted when another is co-presented. **Personalized PageRank** (or a related centrality pass) produces scores that highlight **hub** offers and structures implied by **co-occurrence** and acceptance.
+
+**Three different “network” products:** This page is the Dynamic Engagement `approach` **`Network`** at score time. Traffic routing is the [Network Selector](/docs/user_guides/network). The Workbench graph lab is [Networks](/docs/modules/networks) (`/networks/`).
 
 ## Algorithm
 
@@ -1797,7 +1965,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Deployment pattern:** Set `approach` to **`Network`** in the `randomisation` object. This algorithm does **not** use `behaviorAlgos` or `sub_approach`. Populate the graph from logged co-presentations before going live.
+**Deployment pattern:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation.approach` **`Network`**. This algorithm does **not** use `behaviorAlgos` or `sub_approach`. Populate the graph from logged co-presentations before going live.
 
 ---
 
@@ -1926,7 +2094,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Note:** The `approach` should be set to `behaviorAlgos` and `sub_approach` to `prospectTheory` in the `randomisation` object. The Prospect Theory parameter defaults (alpha, beta, lambda, gamma values) match the original Kahneman-Tversky experimental findings.
+**Note:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "prospectTheory"`. The Prospect Theory parameter defaults (alpha, beta, lambda, gamma values) match the original Kahneman-Tversky experimental findings.
 
 ---
 
@@ -1941,6 +2109,8 @@ Summary: Q-Learning
 The Q-learning algorithm uses the Q-learning reinforcement learning framework with actions being presenting offers to clients and states being whether the client accepted the offers. The algorithm works at a customer level, training is done per customer. Segment level implementations are planned for future releases.
 
 ## Algorithm
+
+**Config value:** `"approach": "QLearning"`
 
 The Q-learning algorithm represents offers as the set of actions $\mathcal{A}$ and the states $\mathcal{S}$ represent take up of offers. The algorithm then uses a Q-table to score and rank offers using the Q value as this expresses the expected utility of the offer.
 
@@ -2047,6 +2217,20 @@ public class QLearnRewardPlugin extends PluginLoaderSuper {
   - **feature_store**: Use the fields in the feature store for the training. These fields will need to be specified in the rewards plugin class. This approach will use the policy based method for creating the Q-table.
   - **logging**: Use data stored in the ecosystem.Ai runtime logs for the training. This approach will use the logging data based approach for creating the Q-table.
 
+## When To Use
+
+- When the optimal next offer depends on what the customer has already seen or accepted
+- Sequential customer journeys where state transitions matter
+- When you can implement and maintain a custom Java reward plugin
+
+## When NOT To Use
+
+- Simple independent offer choice (use [Ecosystem Rewards](/docs/configuration/algorithms/ecosystemrewards) or [Epsilon Greedy](/docs/configuration/algorithms/epsilongreedy))
+- When reward plugin development is not feasible
+- When you need fast convergence with minimal implementation complexity
+
+Configured Dynamic Recommender Training Fields are appended onto the Q-Learning **state** key (`training_cell`). The logging path projects those fields from `scoring_data`. See [Model Convergence](/docs/user_guides/model_convergence).
+
 ## Example
 
 Below is an example configuration of the Q-learning algorithm in python
@@ -2109,6 +2293,8 @@ deployment_step = dm.create_deployment(
     multi_armed_bandit=online_learning
 )
 ```
+
+**Note:** `algorithm="q_learning"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation.approach` **`QLearning`**.
 
 ---
 
@@ -2222,7 +2408,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Note:** The `approach` should be set to `behaviorAlgos` and `sub_approach` to `riskAversion` in the `randomisation` object. A longer `processing_window` (e.g. 30 days) is recommended to produce stable variance estimates.
+**Note:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "riskAversion"`. A longer `processing_window` (e.g. 30 days) is recommended to produce stable variance estimates.
 
 ---
 
@@ -2347,7 +2533,7 @@ deployment_step = dm.create_deployment(
 )
 ```
 
-**Deployment pattern:** Set `approach` to `behaviorAlgos` and `sub_approach` to `sentimentalEquilibrium` in the `randomisation` object of the dynamic recommender configuration in MongoDB.
+**Deployment pattern:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "sentimentalEquilibrium"`.
 
 **Training data:** Sentimental Equilibrium parameters (for example `decayRate`, `effortEfficiency`, `discountRate`, `utilityType`, and `disutilityType`) are supplied through the **training data** pipeline so the rolling learner can read them consistently with your feature and options stores. Align field names with your ingestion job and runtime configuration.
 
@@ -2362,6 +2548,8 @@ Summary: Configure API's to test your scoring.
 # Intro
 
 The API management functionality allows you to configure test calls to your deployed ecosystem.Ai runtime configurations.
+
+This page is the Workbench **API tester** for Runtime scoring (`POST /invocations` then `POST /response`). It is not the public gateway. For Workbench public/private HTTP APIs, API Keys, agents, and MCP see [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
 
 ## Key Features
 
@@ -2916,9 +3104,9 @@ Summary: Endpoints
 
 Endpoints are used to access the scoring API. The API is used to access the scoring engine and return results for the configured use case.
 
-The recommended APIs to use to interact with the ecosystem.Ai runtime are the `/invocations` API for receiving results from the ecosystem.Ai runtime and the `/responses` API for sending feedback to the ecosystem.Ai runtime. If required the APIs can be [customised](/docs/runtime/apiconfiguration) to suit the use-case and the model being used.
+The recommended APIs to use to interact with the ecosystem.Ai runtime are `POST /invocations` for ranked offers and `POST /response` (singular) for learning feedback. If required the APIs can be [customised](/docs/runtime/apiconfiguration) to suit the use-case and the model being used.
 
-[UI Frameworks](/docs/frontend) contains examples of integation of these endpoints with different chaneel interfaces.
+[UI Frameworks](/docs/frontend) contains examples of integration of these endpoints with different channel interfaces. Try the closed loop in the [Runtime Dashboard](/docs/runtime/dashboard) or on [medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## API Parameters
 
@@ -2939,8 +3127,11 @@ Different channels can be used to access the scores. This is useful when using t
 #### Responses
 The number of responses to return. This is useful when using the API to return multiple scores. For data lookup options only one response is returned.
 
-#### The in_param parameter
-With the `Score` API Selected, use the following options for in_params.
+#### Debug (optional)
+Add top-level `"debug": "true"` on `/invocations` to receive a sibling `debug` object with operator-facing `explanations`, pipeline errors, Mongo status, and sanitized params when scoring fails silently. Workbench Test renders those explanations. Use for developer diagnostics only — omit in production traffic. See [Runtime integration guide](https://github.com/ecogenetic/ecosystem-runtime/blob/main/ECOSYSTEM_INTEGRATION_RUNTIME.md#debug-response-opt-in).
+
+#### The `params` field
+`params` on `/invocations` is a JSON **string**, not a nested object. With the Score API selected, encode one of the following objects as that string (`""` or `'{"input":[...],"value":[...]}'`).
 
 Model based recommender:
 ```json
@@ -3175,7 +3366,7 @@ The API endpoint is used to configure the API structure to be used in the Deploy
 ### Pre Scoring logic
 The pre scoring logic is used to configure the pre scoring plugin to be used in the Deployment. The pre scoring plugin is used to perform any pre processing of the input data before it is passed to the model for scoring. For Dynamic Interaction configurations select PreScoreDynamic.java for a pre scoring template. For static model configurations PrePredictCustomer.java is the default template and is the pre scoring logic that will be used by default. If you wish to  customise your pre scoring logic see the [pre scoring logic](/docs/runtime/prepredict) documentation as well as the guide for setting up a [local development environment](/docs/user_guides/runtime_plugin_development).
 
-If using custom pre scoring logic, use the compile button to make the pre scoring class available to the runtime. You can also set up a build pipeline to compile the custom pre scoring logic.
+If using custom pre scoring logic, use the Compile button (JIT `/generateClass` from Runtime 0.9.6.0) to make the pre scoring class available to the runtime. Use a build pipeline when the plugin is more than a single generated class.
 
 ### Post Scoring logic
 The post scoring logic is used to configure the post scoring plugin to be used in the Deployment. The post scoring plugin is used to perform any post processing of the output data after it has been scored by the model. There are a number of template classes available:
@@ -3190,12 +3381,12 @@ The post scoring logic is used to configure the post scoring plugin to be used i
 - **PostScoreSentimentalEquilibrium**: The post score for sentimental equilibrium scoring.
 If you wish to  customise your post scoring logic see the [post scoring logic](/docs/runtime/postpredict) documentation as well as the guide for setting up a [local development environment](/docs/user_guides/runtime_plugin_development).
 
-If using custom post scoring logic, use the compile button to make the post scoring class available to the runtime. You can also set up a build pipeline to compile the custom post scoring logic.
+If using custom post scoring logic, use the Compile button (JIT `/generateClass` from Runtime 0.9.6.0) to make the post scoring class available to the runtime. Use a build pipeline when the plugin is more than a single generated class.
 
 ### Reward Function Class
 The [rewards class logic](/docs/configuration/dynamic/customrewards) is used to impact the learning of the Dynamic Interaction configuration. To use a Business Logic function to set the rewards use BusinessLogicReward.java.
 
-If using custom rewards logic, use the compile button to make the reward class available to the runtime. You can also set up a build pipeline to compile the custom rewards logic.
+If using custom rewards logic, use the Compile button (JIT `/generateClass` from Runtime 0.9.6.0) to make the reward class available to the runtime. Use a build pipeline when the plugin is more than a single generated class.
 
 The details will be visible in the `properties` file with the following format:
 ```properties
@@ -3336,19 +3527,15 @@ logging.detail=true
 
 Source: `docs/configuration/dynamic/convergence.mdx`
 URL: https://ecosystem.ai/docs/configuration/dynamic/convergence
-Summary: Model Convergence
+Summary: How dynamic recommender scores converge, what acts as a prior, and which levers to change
 
 # Model Convergence
 
-We use online machine learning and allow models to converge in realtime depending on the algorithm and the data. The convergence of the model is the process of the model learning from the data and updating the model parameters to better fit the data. The model will continue to learn and update the parameters until it reaches a point where the model is no longer improving. The model will then be considered converged.
+Operator guide with six tables (mechanics, priors, prior strength vs score, levers, switching approach, diagnosing non-convergence):
 
-The Ecosystem extended Thompson Sampling effectively balances exploration and exploitation in a dynamic environment. As the posterior distributions update in real time, the system progressively shifts towards actions with higher observed rewards. Initially, due to the high variance of the Beta distribution, exploration dominates, allowing the model to gather sufficient evidence about different options.
+**[Model Convergence](/docs/user_guides/model_convergence)**
 
-Over time, as more data is collected, the variance of the distribution decreases, leading to more confident decisions and a transition towards exploitation. However, in cases where reward distributions change due to concept drift, the model intelligently reintroduces exploration, ensuring adaptability to new patterns. This is particularly beneficial in non-stationary environments where user preferences or contextual factors evolve over time.
-
-By incorporating real-time Probabilistic Bayesian updating, algorithms ensure that decision-making remains dynamic and responsive. This characteristic is further enhanced through techniques such as decay factors and sliding windows, which allow the system to prioritize recent interactions while gradually discounting outdated data. As a result, the model maintains optimal performance even when faced with shifting distributions or unpredictable user behaviors.
-
-Overall, real-time Ecosystem Rewards with Thompson Sampling is a robust approach for sequential decision-making, particularly in online learning and adaptive recommender systems. Future enhancements could explore hybrid strategies that integrate contextual bandits or reinforcement learning techniques to further improve adaptability and convergence speed.
+Related: [Exploration Using Epsilon](/docs/user_guides/epsilon_exploration) · [Dynamic Interaction Algorithms](/docs/configuration/algorithms)
 
 ---
 
@@ -3660,25 +3847,77 @@ This is where you select the algorithm that is best for your use case.
 
 ![image](/images/configuration/dynamic/dynamic-02-engagement.png)
 
-### Algorithms
+### Selection tree
 
-#### Epsilon Greedy
-Epsilon-Greedy is an algorithmic technique that strikes a balance between exploring new possibilities and exploiting known advantages by introducing a random element into the decision-making process. In this approach, a fixed probability of "epsilon" (0 < epsilon < 1) is used to randomly choose either the best-known option (exploitation) or a randomly selected alternative (exploration). With a high value of epsilon, exploration dominates and new possibilities are more frequently evaluated; conversely, with a low value, exploitation takes over and proven choices are favored. This hybrid strategy allows Epsilon-Greedy to adaptively explore the solution space while still leveraging existing knowledge, facilitating efficient learning and optimization in complex environments.
+Dynamic Engagement uses a **Dynamic Algorithm** (`approach`). When you select **Human Behavioral** (`behaviorAlgos`), choose a **behavioral type** (`sub_approach`) in the second dropdown.
 
-#### [Bayesian Probabilistic](/docs/configuration/dynamic/baysianprobabilistic)
-The Bayesian Probabilistic and Naive Bayes techniques for constructing classifiers: models that assign class labels to problem instances, represented as vectors of feature values, where the class labels are drawn from some finite set. This algorithm is integrated into the ecosystem.Ai Client Pulse Responder as it uses scoring history and update values (as defined in project deployment) and train models in real-time.
+```mermaid
+flowchart TD
+  intent[User intent]
+  intent --> family{Which family?}
+  family -->|stable features offline retrain| staticH2O[Static H2O / AutoML]
+  family -->|large catalog embeddings| twoTower["Two-Tower similarity"]
+  family -->|spend or money traits| personality[Spend / Money Personality]
+  family -->|route to other campaigns| selector[Network Selector]
+  family -->|online learning offers| de[Dynamic Engagement]
+  de --> approach{Dynamic Algorithm approach}
+  approach --> binaryThompson
+  approach --> epsilonGreedy
+  approach --> naiveBayes
+  approach --> QLearning
+  approach --> Network
+  approach --> behaviorAlgos[behaviorAlgos Human Behavioral]
+  behaviorAlgos --> types[Dynamic Engagement behavioral types]
+  types --> lossAversion
+  types --> riskAversion
+  types --> prospectTheory
+  types --> sentimentalEquilibrium
+  types --> coverageAwareThompson
+  types --> longTailBoostMF
+  types --> generative
+```
 
-#### [Ecosystem Rewards Algorithm](/docs/configuration/dynamic/ecosystemrewards)
-The Ecosystem Rewards Algorithm is a decision-making framework that harnesses the power of Thompson sampling, a probabilistic method, to balance exploration and exploitation in complex environments. By incorporating uncertainty into its decision-making process, this algorithm allows for optimal trade-offs between trying new options (exploration) and leveraging proven successes (exploitation), thereby maximizing cumulative rewards obtained by performing an action. The algorithm's unique approach takes into account not only immediate benefits but also the long-term impact on the ecosystem, enabling it to adapt and learn from its experiences in a dynamic environment, ultimately leading to improved performance and outcomes.
+See the full [Algorithms Overview](/docs/configuration/algorithms) for comparison tables, cold-start behavior, and scenario guides.
 
-#### [Q-learning](/docs/configuration/dynamic/qlearning)
-Q-learning is a powerful, model-free reinforcement learning algorithm that enables agents to learn the value of taking a specific action in a given state, thereby optimizing their behavior in complex environments. This approach doesn't rely on a pre-built model of the environment, which makes it particularly useful for solving problems with unpredictable transitions and rewards. By iteratively updating an estimate (Q-value) of the expected reward that can be obtained by performing a particular action in a specific state, Q-learning allows agents to learn from their experiences without requiring prior knowledge or adaptations for handling stochastic elements. This simplicity and robustness make Q-learning a widely-used and versatile technique for solving reinforcement learning problems.
+### Dynamic Algorithms
 
-#### Human Behavioral Algorithm
-Human behavioral algorithms are computational frameworks that study and replicate human behavior through data-driven approaches, incorporating insights from psychology, sociology, and neuroscience. These models analyze past behaviors, cognitive processes, and social interactions to predict or simulate individual actions, often leveraging machine learning techniques. A key concept in this field is Loss Aversion, which suggests that people tend to be more motivated by avoiding losses than acquiring equivalent gains - a phenomenon where individuals are more willing to take risks to prevent losing something than they are to gain the same amount. This cognitive bias has significant implications for decision-making and risk assessment in various contexts, from finance to healthcare.
+#### [Ecosystem Rewards Algorithm](/docs/configuration/algorithms/ecosystemrewards) (`binaryThompson`)
 
-#### Network Analysis
-Network analysis algorithms are computational tools used to uncover insights from complex networks or graphs by identifying patterns, relationships, and structures within them. These algorithms enable the measurement of key properties such as centrality (i.e., importance or influence), clustering (i.e., how densely connected a group is), and connectivity (i.e., the overall interconnectedness of the network). Techniques include shortest path algorithms that find the most efficient paths between nodes, community detection algorithms that identify groups of highly connected nodes, and ranking algorithms like PageRank that determine the relative importance or popularity of each node. By applying these methods, network analysis can reveal hidden dynamics, predict behavior, and inform decision-making in various domains, from social networks to transportation systems.
+Default Dynamic Engagement algorithm. Thompson Sampling with Beta distributions per offer/segment. Best general-purpose choice and strong cold start (Beta(1,1) prior).
+
+#### [Epsilon Greedy](/docs/configuration/algorithms/epsilongreedy) (`epsilonGreedy`)
+
+Simplest bandit: with probability ε explore randomly, else exploit highest empirical rate. Good for explainable A/B testing.
+
+#### [Bayesian Probabilistic](/docs/configuration/algorithms/baysianprobabilistic) (`naiveBayes`)
+
+Naive Bayes over discrete features. Less focus on explore/exploit; uses Lookup Parameters for inference variables. Runtime uses Bernoulli Naive Bayes.
+
+#### [Q-learning](/docs/configuration/algorithms/qlearning) (`QLearning`)
+
+Sequential reinforcement learning per customer. Requires Lookup Parameters and a custom Java reward plugin. Use when the next offer depends on prior accepts.
+
+#### [Network Analysis](/docs/configuration/algorithms/networkanalysis) (`Network`)
+
+PageRank on offer co-occurrence graph. Requires co-presentation history and Lookup Parameters for network nodes. Not the [Network Selector](/docs/user_guides/network) (traffic routing) and not Workbench [Networks](/docs/modules/networks) (graph lab).
+
+#### Human Behavioral Algorithm (`behaviorAlgos`)
+
+Select this Dynamic Algorithm when you want a behavioral type below. **You must also set `sub_approach`.** If omitted, runtime defaults to Loss Aversion.
+
+##### Dynamic Engagement behavioral types
+
+| `sub_approach` | Algorithm |
+|----------------|-----------|
+| `lossAversion` | [Loss Aversion](/docs/configuration/algorithms/lossaversion) — penalize ignored offers; UCB exploration (default type) |
+| `riskAversion` | [Risk Aversion](/docs/configuration/algorithms/riskaversion) — mean-variance; steady predictable uptake |
+| `prospectTheory` | [Prospect Theory](/docs/configuration/algorithms/prospecttheory) — Kahneman–Tversky value weighting |
+| `sentimentalEquilibrium` | [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium) — engagement equilibrium (not per-offer ranking) |
+| `coverageAwareThompson` | [Coverage-Aware Thompson](/docs/configuration/algorithms/coveragethompson) — long-tail / fairness |
+| `longTailBoostMF` | [Long-Tail Boost MF](/docs/configuration/algorithms/longtailmf) — WRMF + inverse exposure |
+| `generative` | [Generative Model](/docs/configuration/algorithms/generativemodel) — LLM prompt scoring |
+
+All behavioral types require **Lookup Parameters**. Generative also needs `randomisation.prompt` and `randomisation.prompt_parameters`.
 
 ## Variables
 There are a number of options when configuring variables. An offer/message/nudge/option/etc is needed from the feature store as configured in ```Settings```. If customer level tracking and model convergence is required then use ```params.value``` as it contains the customer number in the contact logs.
@@ -3808,7 +4047,7 @@ When a Dynamic Interaction algorithm is scoring or learning it query the [Option
 - The generated `ecosystem.properties` file should contain the `dynamic_enagement` items above and the `uuid` should align with the `uuid` for the Dynamic Interaction configuration
 - The `logging` collection should contain the default fields. In particular, the `predictor` and `date_log` fields and a `final_result` object containing; `final_result.result.offer_name`, `final_result.result.contextual_variable_one`, `final_result.result.contextual_variable_two` (if contextual variables are used in the configuration). The `api_params.customer` field should also be present if any sort of customer level processing is being used. These fields should all be present if the default `getTopScores` function is used in the post scoring logic
 - The `predictor` field in the logging collection should be the same as the name of the Dynamic Interaction configuration
-- The post scoring logic may be filtering all the offers out. This can be checked by using the debugging functionality in IntelliJ or by checking the runtime logs to see the number of options passed to the post scoring logic
+- The post scoring logic may be filtering all the offers out. This can be checked by using the debugging functionality in IntelliJ or by checking the runtime logs to see the number of options passed to the post scoring logic. If the campaign uses contextual variables and the API omits both `contextual_variable_one` and `contextual_variable_two`, Runtime defaults to the first non-empty options-store cell so a result is still returned. Pass those fields in `params` when you need a specific segment.
 
 ## Processing Interval
 All algorithms have a background process that train models and update the options store. This process is controlled by an environmental variable:
@@ -3995,6 +4234,7 @@ There are many ways to configure ecosystem.Ai, including:
 - Workbench configuration
 - Runtime plugins in Java
 - Python pipelines
+- [Public APIs, Agents & MCP](/docs/configuration/workbench_apis) — public gateway (`:8004`), private FastAPI (`:8001`), API Keys, Ecosystem Agent, Workbench MCP
 
 The Configuration section of the documentation covers the detail of the configuration options available in the ecosystem.Ai platform. These configurations are largely illustrated using the Workbench, the same configurations can be created using any of the other available interfaces.
 
@@ -5234,7 +5474,7 @@ Here we'll work through configuring your first deployment using a pretrained H2O
    data_lead = "ecosystem.Ai"
    deployment_id = "simple_model_deployment"
    deployment_description = "Simple model deployment using a pretrained H2O.ai model"
-   runtime_path="http://localhost:8014"
+   runtime_path="http://localhost:8091"
 
    #Create a project. This set is not required if you will be working in an existing project
    dm.create_project(auth,project_id,project_description,project_type,purpose,project_start_date,project_end_date,data_science_lead,data_lead)
@@ -5297,170 +5537,205 @@ For further detail on the functionality available in the python package see the 
 
 Source: `docs/configuration/simulations.mdx`
 URL: https://ecosystem.ai/docs/configuration/simulations
-Summary: Simulate the results of your Deployment configuration
+Summary: Workbench 2 simulations — closed-loop /invocations and /response traffic against a Dynamic Interaction deployment.
 
-# Introduction
+# Simulations
 
-Simulations are an important part of the [Deployment](/docs/configuration/deployment) testing process before moving your Deployment to production. There are two simulation approaches available:
-1. Simulations run using the Workbench
-2. Simulations run using the [Python package](/docs/configuration/pythonpackage)
+Simulations exercise a [Deployment](/docs/configuration/deployment) before production by driving the Runtime closed loop:
 
-Workbench based simulations are easier to configure and run while Python simulations allow more flexibility and control over the simulation process.
+1. `POST /invocations` for a sampled customer (ranked offers in `final_result`).
+2. Simulated take-up (or none).
+3. On accept, `POST /response` (singular) with that row’s `uuid` and `offer_name`.
 
-Two key components need to be configured in order to run a simulation:
-1. Determining when and for whom calls to the `/invocations` API should be made
-2. Determining whether the `/invocations` API call would result in a successful interaction triggerring a call to the `/response` API
+`params` on `/invocations` is a **JSON string**, never a nested object. Use a stringified empty object, or a stringified `input` / `value` arrays object.
 
-## Workbench Simulations
+Two ways to run that loop:
 
-On the Workbench, simulations can be accessed in the Laboratory section of the menu. Note that you will need to have the ecosystem-notebooks container running in order to use the Workbench simulation functionality.
-- Select `Create New` to set up a new simulation. 
-- Configure a Name and Description for your simulation and select the Deployment which you like to simulate
-- A simulation can have multiple Runs linked to it
-- Select `Create New` to set up a new Run of the Simulations
-- Configure a name and description for your simulation Run
-- A UUID for the simulation run will be automatically generated, this is used to uniquely identify the simulation run
-- Number of Iterations: The number of times that the runtime will be called i nhe simulation
-- Default Take Up Rate: The default take up rate for the simulation. This is the probability that a customer will accept an offer. A value of 0.1 means customers will ahve a 10% chance of accepting an offer
-- Server URL: The URL of the server to use during the simulation. If you are running the ecosystem.Ai platform using the default docker-compose file, this will be `http://ecosystem-server:3001/api`
-- Notebooks URL: The URL of the notebooks server to use during the simulation. If you are running the ecosystem.Ai platform using the default docker-compose file, this will be `http://ecosystem-notebooks:8010/process_simulation`
-- Client Pulse Responder: The end point to which you have pushed the Deployment to be simulated
-- Iterations per second: The number of iteractions of the simulation to run per second. Note that this will pause the simulation by 1/(Iterations per second) seconds between each iteration.
-- Generate Output every x Iterations: The simulation will store the state of the system every x iteractions. This is the output of the simulation and will allow you to understand how the state of the system evolved over time.
-- Produce Plot Output: If this is selected, the simulation will produce a plot of the Beta distributions for each item being recommended.
-- Produce Parameter Output: If this is selected, the simulation will produce a table of the Options Store parameters.
-- Segment To Test: Here you can specify a specific set of contectual variable value combinations over which the simulation should be run. By default, all combinations in the Parameters From Data Source configuration of your deployment will be simulated.
-- Use take up from Dynamic Configuration Feature Store: If this is selected, the simulation will use the take up rate from the Set Up Feature Store. This historical take up rate will be used in place of the default take up rate.
-- Set take up field in dynamic configuration feature store: If this field is selected, you can specify a Take Up field in the Set Up Feature Store which is not the same as that configured in the Dynamic Interaction configuration.
-- Take Up Field: The Take Up Field in the set up Feature Store
-- Shift Take Up Rates Over Time: If this is selected, the simulation will shift the take up rate over time. This is useful for simulating a situation where the take up rate is expected to change over time.
-- Standard deviation of shift in take up per iteration: The take up rate is shifted by sampling a shift amount from a normal distribution with a mean of 0 and a standard deviation of the value specified here.
-- Make Take Up Shift Cyclical Instead of Linear: If this is selected, the take up rate will be shifted in a cyclical manner instead of a linear shift.
-- Number of iterations in period of cyclical shift: The cyclical shift will follow a sine wave pattern with the period of the shift specified here.
+| Approach | Where | Best for |
+| --- | --- | --- |
+| **Workbench 2** | `/entities/simulation` | Operator setup, scenario describe, logs, Beta plots, options-store snapshots |
+| **Python** | [Python package](/docs/configuration/pythonpackage) or a custom script | Fully custom take-up, traffic, or batch logic |
 
-Once you have specified and saved your Simulation Run configuration, click `Run` to start the simulation. You can track the progress of the simulation in the Logs accordion at the bottom of the screen or using the notifications icon. Once the simulation run has completed you can click `Results` to see the Options Store parameters and Beta Distributions that were produced during the simulation.
+Workbench is easier. Python is more flexible. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
 
-## Python Simulations
+**Not Data Agents:** A simulation **writes** Runtime logs. To **analyze** those logs (funnel, rank uptake, catalog), run an [Interactions Analytic](/docs/modules/data_agents/interactions) job on the same `ecosystemruntime` / `ecosystemruntime_response` collections.
 
-Simulations can be run in python using `predictor_engine.invocations` and `predictor_engine.response`. The approach for simulating take up can be customised to the use case. An illustrative simulation is provided below using a simple default take up rate of 10%.
+## Workbench 2
+
+Open **Simulation** at `/entities/simulation` (not the old Laboratory / Jupyter notebook UI).
+
+### Identity
+
+Each simulation document has a **name**, **project**, **deployment**, and **deployment version**. New simulations inherit the header project, then the first deployment/version when those are empty.
+
+**Save** is never blocked on those fields. Empty names become `New simulation` / `New simulation N`. Duplicate explicit names still conflict.
+
+**Run Simulation** stays disabled until setup is complete. Blockers shown on the Setup card:
+
+- Simulation name
+- Project, deployment, and version
+- ecosystem-server username and password
+- MongoDB available
+- ecosystem-notebooks available
+
+The learning **algorithm** is not chosen on the simulation form. It is resolved from the Dynamic Engagement linked to the deployment. If none is linked, the Runtime scores naively.
+
+### Runs
+
+A simulation can have many **runs**. All run settings (configuration, scenario, customer source, connections, advanced, logs, results) sit **under the selected run**.
+
+**Add Run** clones the **first** run’s configuration, with a new UUID and `RunN` name so logs and plots stay isolated.
+
+Default new-run values (override per run):
+
+| Field | Default |
+| --- | --- |
+| Iterations | 1000 |
+| Default take-up | 0.1 (10% chance the presented offer is accepted) |
+| Number of offers | 3 |
+| Offer selection | `top` (highest scoring among `final_result`) |
+| Iterations per second | 100 |
+| Output every N iterations | 100 |
+| Plot + parameter output | on |
+| Server URL | `http://ecosystem-server:3001/api` |
+| Notebooks URL | `http://ecosystem-notebooks:8010/process_simulation` |
+| Pulse responder | `http://ecosystem-runtime:8091` |
+| Server credentials | `admin@ecosystem.ai` / `password` |
+
+### Run configuration
+
+**Offers & algorithm**
+
+- **Number of offers** — `numberoffers` sent to `/invocations`.
+- **Offer selection (among presented)** — which ranked offer is credited on take-up:
+  - `top` — highest scoring
+  - `second` — always rank 2
+  - `random` — uniform among the Runtime slate
+  - `distribution` — score-weighted
+- **Algorithm** — read-only, from the deployment’s Dynamic Engagement.
+
+**Iterations & take-up**
+
+- **Number of iterations** — how many `/invocations` calls.
+- **Default take-up rate** — Bernoulli accept probability unless historical or policy modes override it.
+- **Reward binary threshold** — used when the deployment’s reward path needs a binary outcome.
+
+### Connections
+
+Open the **Connections** accordion (not buried in Advanced). Simulations authenticate to **ecosystem-server with these credentials**, not the Workbench UI login.
+
+Click **Validate** (`POST /simulations/validate-connections`). The Workbench backend checks:
+
+| Check | What it proves |
+| --- | --- |
+| Database | Mongo ping |
+| ecosystem-notebooks | Process URL reachable (including localhost fallbacks when Docker DNS names fail) |
+| ecosystem-server | `POST` login on `server_url` (must end in `/api`) with the run username/password |
+| Pulse responder | Runtime `/invocations` host is reachable from notebooks |
+
+Typical local notebooks port is **8011** if the container maps that way. If Validate says notebooks is down, start `ecosystem-notebooks` or change **Notebooks URL**. If the pulse responder cannot resolve `ecosystem-runtime`, use a host the notebook server can reach (for example `http://localhost:8099` or `http://localhost:8091`).
+
+### Describe scenario (optional)
+
+Natural language → reviewable **ScenarioSpec**. Failures stay in this panel and **never** block Save or Run.
+
+1. Describe peaks, take-up drift, or random uptake among presented offers (for example `telco weekday peaks 6–8am and 3–7pm`).
+2. **Analyze** — intents `traffic`, `take_up`, `selection`.
+3. **Apply to run** — writes the patch into **this run only** after you confirm.
+
+If the scenario cannot be expressed as config, **Generate custom Python** produces a script you copy and run yourself. Workbench **Run** does not execute that script.
+
+Apply can set:
+
+- **Traffic profile** — virtual day/week compressed into iterations (weekday peaks 6–8 and 15–19 by default). Does not wait for wall-clock hours.
+- **Take-up policy** — `flat`, `historical`, `linear_drift`, `cyclical`, `rank_decline`, `offer_decline`.
+- **Selection policy** — `static` (use Offer Selection) or `drift_lower_sequence` (acceptance moves toward lower ranks over the run).
+
+You can also set those under **Advanced** without using Analyze.
+
+### Customer source (optional)
+
+By default, customers come from the deployment **Parameter Access** lookup.
+
+Enable **Use alternate customer source** to sample `/invocations` customers from another Mongo database/collection/lookup field, with an optional aggregation pipeline (then the engine adds `$sample`). Example lookup field `customer`; pipeline `[{"$match":{"region":"ZA"}}]`.
+
+If the lookup key does not match the collection, Run fails with a hint to fix Parameter Access or the alternate source.
+
+### Advanced
+
+| Group | Fields |
+| --- | --- |
+| Outputs & pacing | Plot output, parameter output, output every N iterations, iterations per second |
+| Who is tested | **Segment to test** — JSON such as `{"contextual_variable_one":"Healthy"}` or `` for all dynamic segments. Static models ignore this. |
+| Baseline take-up | Historical take-up from the Dynamic Engagement feature store (1/0 success field); optional override of the field name (does not write the store) |
+| Take-up over time | Linear drift (per-iteration shift std), or cyclical sine period |
+| Selection over time | `drift_lower_sequence` |
+| Traffic profile | Virtual-time intensity windows |
+
+### Run, logs, results
+
+1. Save the simulation (drafts are allowed).
+2. Validate connections.
+3. **Run Simulation** — Workbench FastAPI proxies to notebooks `POST .../process_simulation`. Progress shows in the run banner.
+4. **Logs** — `GET /simulations/logs?run_uuid=...` (Mongo `simulations.simulation_logs`; legacy `ecosystem_meta.threads` is still read). Cancel hits notebooks `/cancel_simulation`.
+5. **Results** — options-store parameter snapshots (`simulation_param_outputs`) and Beta / plot series (`simulation_plot_outputs`) when those outputs are enabled. Use plots to inspect Ecosystem Rewards (and similar) arm distributions after the run.
+
+Failures return a message **and a hint** (unreachable Runtime, empty customer collection, missing server password, notebooks down, bad customer pipeline).
+
+### Workbench APIs (operator)
+
+Thin UI; processing stays on the backend:
+
+- `GET /simulations/status` — Mongo + notebooks health
+- `POST /simulations/validate-connections`
+- `POST /simulations/run` / cancel
+- `GET /simulations/logs`, `DELETE /simulations/logs`
+- `GET /simulations/results/parameters`, `/results/options`, `/results/plot`
+- Scenario analyze/apply via the agents router (optional)
+
+## Python simulations
+
+Use the [Python package](/docs/configuration/pythonpackage) (`prediction.apis.prediction_engine`) when you need a take-up rule Workbench cannot express. Keep the same closed loop.
+
 ```python
-# Import packages
-from prediction.apis import data_management_engine as dme
-from prediction.apis import prediction_engine as pe
 
-#Set parameters
-deployment_id = "demo_deployment"
-customer_database = "recommender_demos"
-customer_collection = "offer_feature_store"
-customer_key = "customer_number"
-takeup_rate = 0.1
-delay_seconds = 0.01
-runtime_path_notebook = "http://ecosystem-runtime:8091"
-server_path_notebook = "http://ecosystem-server:3001/api"
-ecosystem_user = "user@ecosystem.ai"
-ecosystem_password = getpass.getpass("Enter your ecosystem password")
+empty_params = "{}"  # params must be a JSON string
+invocations_body = {
+    "campaign": deployment_id,
+    "subcampaign": "simulation",
+    "channel": "simulation",
+    "customer": customer_id,
+    "userid": "simulation",
+    "numberoffers": 1,
+    "params": empty_params,  # JSON string, e.g. "{}"
+}
+offer_response = predictor_engine.invocations(auth_runtime, invocations_body)
+row = offer_response["final_result"][0]
+# Ranked offers: parse offer_name from the row (field names follow the Runtime result)
 
-#Connect to the runtime and server
-auth_runtime = access.Authenticate(runtime_path_notebook)
-auth = jwt_access.Authenticate(server_path_notebook, ecosystem_user, ecosystem_password)
-
-while True:
-    #Get customer
-    customer = dme.post_mongo_db_aggregate_pipeline(
-        auth,
+if random.random() < takeup_rate:
+    predictor_engine.response(
+        auth_runtime,
         {
-        "database":customer_database,"collection":customer_collection
-        ,"pipeline":[
-            {"$sample":{"size":1}}
-            ,{"$project":{customer_key:1,"_id":0}}
-        ]
-        }
-    )[0][customer_key]
-    
-    #Get offer
-    post_invocations_input = {
-                            "campaign": deployment_id
-                          , "subcampaign": "simulation"
-                          , "channel": "notebooks"
-                          , "customer": customer
-                          , "userid": "ecosystem"
-                          , "numberoffers": 1
-                          , "params": "{}"
-                        }
-    offer_response = o.invocations(auth_runtime, post_invocations_input)
-    offer = offer_response["final_result"][0]["result"]["offer"]
-    
-    #Check offer take up
-    take_up = False
-    if random.random() > takeup_rate:
-        take_up = True
-
-    #Register response
-    if take_up:
-        o.response(auth_runtime, offer_response)
-    
-    #pause execution
-    time.sleep(delay_seconds)
+            "uuid": row["uuid"],
+            "offer_name": row.get("offer_name") or row.get("result", {}).get("offer"),
+        },
+    )
+time.sleep(delay_seconds)
 ```
-This will run the simulation indefinitely until you stop it. You can restrict the number of iterations and adjust the parameters to fit your use case.
 
-Once the simulation has been completed you can view the results using the following code, as before you can make adjustments to the parameters to fit your use case.
-```python
-# Import packages
-from scipy import stats
+Do **not** call `/responses` (plural). After the loop, inspect the options store or run [Interactions Analytic](/docs/modules/data_agents/interactions) on the logging collections.
 
-# Set Parameters
-options_store_database = "recommender_demos"
-options_store_collection="demo_recommender_options"
-contextual_variable_one = "lt-15"
-contextual_variable_two = "gt-500"
-uuid = online_learning_uuid
+For Beta plots from Mongo alpha/beta (Ecosystem Rewards), filter the options store by contextual variables and overlay `scipy.stats.beta.pdf` — same idea as the Workbench plot output.
 
-def get_options_store_alpha_beta(options_store_collection,options_store_database,contextual_variable_one=None,contextual_variable_two=None,offer=None):
-    """
-    Get the alpha and beta values from an Ecosystem Rewards options store after applying a range of filters
-    
-    :param options_store_collection: The name of the options store collection in mongo. 
-    :param options_store_database: The name of the options store database in mongo.
-    :param contextual_variable_one: The value of contextual variable one to filter for, by default no filtering is applied. Should be a string.
-    :param contextual_variable_two: The value of contextual variable two to filter for, by default no filtering is applied. Should be a string.
-    :param offer: A list of offers to filter for, by default no filtering is applied. Should be a list of strings.
-    
-    :return A list of dictionaries containing the values of alpha and beta and the offer name for each document match the filters
-    """
-    
-    #Construct the mongo match query for the given filter parameters
-    match_dict = {"$match":{}}
-    if contextual_variable_one is not None:
-        match_dict["$match"]["contextual_variable_one"] = contextual_variable_one
-    if contextual_variable_two is not None:
-        match_dict["$match"]["contextual_variable_two"] = contextual_variable_two
-    if offers:
-        match_dict["$match"]["optionKey"] = {"$in":offers}
+## Related
 
-    #Get the options store using the filter parameters
-    options_store_alpha_beta = dme.post_mongo_db_aggregate_pipeline(auth,
-                {
-                "database":options_store_database
-                ,"collection":options_store_collection
-                ,"pipeline":[
-                    match_dict
-                    ,{"$project":{"alpha":1,"beta":1,"offer_name":"$optionKey","_id":0}}
-                ]
-                }
-            )
-    return options_store_alpha_beta
-
-options_store_alpha_beta = get_options_store_alpha_beta(options_store_collection,options_store_database,contextual_variable_one,contextual_variable_two)
-x = np.linspace(stats.beta.ppf(0.01, 1, 1),stats.beta.ppf(0.99, 1, 1), 100)
-legend_list = []
-for option_iter in options_store_alpha_beta:
-    beta_norm = stats.beta.pdf(x,option_iter["alpha"],option_iter["beta"])
-    plt.plot(x,beta_norm)
-    legend_list.append(option_iter["offer_name"])
-plt.legend(legend_list,bbox_to_anchor=(1.04, 1), loc="upper left")
-plt.show()
-```
+- [Deployments](/docs/configuration/deployment)
+- [Runtime access](/docs/runtime/access) — `/invocations` and `/response`
+- [Ecosystem Rewards](/docs/configuration/algorithms/ecosystemrewards) — reading Beta plots
+- [Model convergence](/docs/user_guides/model_convergence)
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Runtime Console](/docs/runtime/dashboard) — single-call tests without a full simulation
 
 ---
 
@@ -5552,6 +5827,831 @@ A model list is displayed from generation process.
 
 Test model using default settings.
 ![image](/images/configuration/predictor/predictor-test.png)
+
+---
+
+## Agents
+
+Source: `docs/configuration/workbench_apis/agents.mdx`
+URL: https://ecosystem.ai/docs/configuration/workbench_apis/agents
+Summary: Workbench Administration → Agents — product catalog, Ecosystem Agent, and how agents reach public and private APIs
+
+# Agents
+
+**Administration → Agents** is the product agent catalog. It lists personality, campaign, and platform agents plus the **Ecosystem Agent** (in-app operator at `/assistant`). Agents **call** APIs and MCP tools. They do not replace Runtime `POST /invocations` or `POST /response`.
+
+**Three different “agents”:** **Ecosystem Agent** (`/assistant`) is the Workbench operator. **EcoGentic** is customer conversational journeys. **Data Agents** specialists are a separate analytics product. Do not mix those chats.
+
+## Catalog
+
+Rows come from the Workbench agent catalog registry. Coverage is `wired`, `partial`, or `gap`.
+
+| Id | Title | Category | Typical tools / paths |
+| --- | --- | --- | --- |
+| `spend-personality` | Spend Personality Agent | Personality | `/public/v1/spend-personality/configs`, `/runs`, drift |
+| `money-personality` | Money Personality Agent | Personality | `POST /api/v1/algorithms/money-personality/process` via `call_endpoint` |
+| `predictive-personality` | Predictive Personality Agent | Personality | Compose spend/money with a Runtime score |
+| `conversational` | Conversational Agent | Journeys | EcoGentic configs — not operator chat |
+| `interaction-science` | Interaction Science Agent | Engagement | Sentimental equilibrium process |
+| `intelligent-sales` | Intelligent Sales Agent | Campaigns | List/trigger campaigns |
+| `real-time-recommender` | Real-Time Recommender Agent | Scoring | Workbench `score_customer` / `send_feedback` on a deployment |
+| `dynamic-experimentation` | Dynamic Experimentation Agent | Dynamic | Dynamic Engagement entities; `explain_algorithms`, `explain_convergence` |
+| `claude-operator` | Ecosystem Agent | Platform | In-process MCP; `/assistant`; HTTP MCP attach |
+| `ecogentic` | EcoGentic | Platform | Customer journeys |
+
+Open a row for capabilities, MCP tool names, skills, and a Workbench deep link (`workbench_href`).
+
+## Ecosystem Agent (`/assistant`)
+
+The operator chat is **Claude Agent** branding (not “Claude Code Agent”). Model traffic always goes through Workbench `POST /v1/messages` → the **default** LLM (`LLMService.get_config("default")`). There is no Anthropic API key in the image.
+
+| Consumer | Needs | Does not need |
+| --- | --- | --- |
+| Workbench `/assistant` | Ready Agent SDK + default LLM + in-process MCP | Public API key |
+| Campaign Management | Private `/claude-agent/*` with `tool_profile: campaign_management` | Workbench mutating tools (denied on that profile) |
+| External Claude Code / Agent SDK | `ANTHROPIC_BASE_URL` → Workbench `:8001`; optional dual-auth `POST /mcp` | Bundled `_bundled/claude` in the Workbench image |
+
+Readiness: `GET /api/v1/claude-agent/status` → `ready: true` when enabled + default LLM + SDK + resolved CLI.
+
+Policy:
+
+- Always `list_api_catalog` first
+- Use MCP tools only (`mcp__ecosystem-workbench__*`)
+- Confirm before mutating (`call_endpoint`, `entity`, `update_current_form`)
+- When `[Current form]` is present, `explain_entity` explains it; `update_current_form` patches the open editor; the operator **Saves**
+- Customer conversations stay in EcoGentic
+
+Private routes:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/v1/claude-agent/status` | Readiness |
+| `POST` | `/api/v1/claude-agent/…` | Chat turns (operator and CM profiles) |
+| `POST` | `/api/v1/agents/entity/explain` | Read-only explain of an entity / current form |
+| `POST` | `/v1/messages` | LLM proxy for the SDK |
+
+## How agents reach APIs
+
+```text
+Operator /assistant
+        │  in-process MCP (no public key)
+        ▼
+Workbench tools → private /api/v1/*  (and remapped /public/v1 paths)
+
+External Cursor / Claude Code
+        │  POST :8001/mcp  (JWT + X-API-Key)
+        ▼
+Same tool implementations → private API or public gateway
+
+Product notebooks
+        │  :8004/public/v1  (JWT + X-API-Key)
+        ▼
+Curated public catalog only
+```
+
+Scoring a customer from an agent:
+
+1. Workbench tool `score_customer` uses a **deployment** on the Workbench/Runtime path the operator configured.
+2. Production apps should still call Runtime `POST /invocations` with `params` as a JSON **string**.
+3. Feedback is Runtime `POST /response` (singular) with that row’s `uuid` and `offer_name`, or Workbench `send_feedback` which wraps the same loop for a deployment.
+
+Do not send nested JSON objects in `params`. Do not call Runtime `POST /mcp` with a Workbench `ewb_public_` key expecting scoring tools — that is a different MCP server.
+
+## Campaign Management
+
+```bash
+WORKBENCH_PRIVATE_API_BASE_URL=http://ecosystem-workbench2:8001/api/v1
+```
+
+CM uses `tool_profile: campaign_management` (CM MCP pack + a read-only Workbench subset). It must not receive private ecosystem JWTs meant for Grafana; mint a **public** credential for CM (the `CM` / `ewb_public_…` row on API Keys).
+
+## Skills
+
+Committed operator skills (Workbench `.claude/skills/`): `workbench-navigator`, `algorithm-selection`, `dynamic-experimentation`, `real-time-recommender`, `conversational`, `spend-personality`, `money-personality`, `predictive-personality`, `ontology-data`, `intelligent-sales`, `interaction-science`, `claude-operator`, `model-convergence`.
+
+Related: [Claude Agent packaging](/docs/workers/agent_framework/claude-agent), [Agent Framework](/docs/workers/agent_framework), [MCP](/docs/configuration/workbench_apis/mcp).
+
+---
+
+## Public APIs, Agents & MCP
+
+Source: `docs/configuration/workbench_apis/index.mdx`
+URL: https://ecosystem.ai/docs/configuration/workbench_apis
+Summary: Workbench public gateway, private FastAPI, API Keys, product agents, and MCP — how they differ and how to access them
+
+# Public APIs, Agents & MCP
+
+Workbench2 is the operator control plane. It exposes **two HTTP APIs**, **two kinds of credentials**, an **in-app Ecosystem Agent**, and a **Workbench MCP** server. Those surfaces are not the Java Runtime scoring APIs (`POST /invocations` then `POST /response`).
+
+![Administration → API Keys — Public API Access vs Private Ecosystem Keys](/images/configuration/api-keys-public.png)
+
+Open **Administration → API Keys** (admin role). Switch **Public API Access** and **Private Ecosystem Keys**. **Agents** is the neighbouring tab.
+
+## Surfaces at a glance
+
+| Surface | Default local URL | Who uses it | Auth |
+| --- | --- | --- | --- |
+| **Private Workbench API** | `http://localhost:8001/api/v1` | Workbench SPA, Campaign Management, internal services | Workbench session JWT (`Authorization: Bearer`) |
+| **Public API gateway** | `http://localhost:8004/public/v1` | Notebooks, partners, MCP harness, external apps | Dual: `X-API-Key: ewb_public_…` **and** a user JWT |
+| **Workbench MCP** | `POST http://localhost:8001/mcp` | Ecosystem Agent, Cursor, Claude Code | In-process for `/assistant`; dual-auth for HTTP MCP |
+| **LLM proxy** | `POST http://localhost:8001/v1/messages` | Agent SDK / Claude Code | Workbench JWT; no Anthropic key in the image |
+| **Runtime scoring** | `http://localhost:8091/invocations` | Production apps, Runtime Dashboard | Runtime config; closed loop uses `/response` (singular) |
+| **Runtime MCP** | `POST http://localhost:8091/mcp` | Agents that score campaigns | Separate from Workbench MCP |
+
+`./backend/run.sh` starts the private API on **8001** and the public gateway on **8004**. The Vite UI on **5270** talks to `:8001` and does **not** proxy `/mcp`.
+
+## Which credential?
+
+**Do not mix credential types:** Public credentials (`ewb_public_…`) never replace private ecosystem JWTs. Issue scoped public keys for integrations. Keep private keys for Grafana, ecosystem-server, and other platform services that expect a generated ecosystem JWT.
+
+| Credential | Tab | Prefix / shape | Purpose |
+| --- | --- | --- | --- |
+| **Public API Access** | Public API Access | `ewb_public_…` | Scoped gateway + HTTP MCP. Shown once on create/rotate. |
+| **Private Ecosystem Keys** | Private Ecosystem Keys | Server-generated JWT | Grafana, ecosystem-server, platform services. Stored in `ecosystem_meta.api_keys`. |
+
+Create public credentials with an owner (user, service account, organization, or partner), optional expiry, and **scopes**. The **Public APIs** sub-tab shows which routes the selected scopes unlock.
+
+## Typical access paths
+
+1. **Browser operator** — sign in to Workbench. The SPA uses the private API with your session JWT. No public key.
+2. **External integration** — mint a public credential, obtain a user JWT (`POST /public/v1/auth/login` or Workbench login), call `:8004/public/v1/…` with both headers.
+3. **Ecosystem Agent** — **Administration → Agents** or `/assistant`. In-process MCP; no public key.
+4. **Cursor / Claude Code** — dual-auth `POST /mcp` plus `ANTHROPIC_BASE_URL` pointing at Workbench `:8001` for `POST /v1/messages`.
+5. **Campaign scoring** — Runtime `POST /invocations` then `POST /response`. Workbench MCP `score_customer` / `send_feedback` wrap a **deployment**; they are not Runtime `POST /mcp`.
+
+## Pages in this section
+
+- [API Keys](/docs/configuration/workbench_apis/keys) — issue, rotate, revoke
+- [Public APIs](/docs/configuration/workbench_apis/public) — gateway routes and scopes
+- [Private APIs](/docs/configuration/workbench_apis/private) — `:8001/api/v1` routers
+- [Agents](/docs/configuration/workbench_apis/agents) — product catalog and Ecosystem Agent
+- [MCP](/docs/configuration/workbench_apis/mcp) — Workbench vs Runtime vs sidecar
+
+Related: [API Management](/docs/configuration/api) (test Runtime scoring from Workbench), [Runtime API Access](/docs/runtime/access), [Runtime MCP](/docs/runtime/mcp).
+
+---
+
+## API Keys
+
+Source: `docs/configuration/workbench_apis/keys.mdx`
+URL: https://ecosystem.ai/docs/configuration/workbench_apis/keys
+Summary: Issue Workbench public API credentials and private ecosystem JWTs from Administration → API Keys
+
+# API Keys
+
+Admins manage credentials at **Administration → API Keys**. The page has two access modes:
+
+1. **Public API Access** — scoped keys for the public gateway and HTTP MCP
+2. **Private Ecosystem Keys** — generated ecosystem JWTs for internal platform services
+
+![Create Public Credential — name, owner, expiry, scopes](/images/configuration/api-keys-public.png)
+
+## Public API Access
+
+Use this tab for notebooks, partner apps, Campaign Management, and MCP clients that must not receive a private ecosystem JWT.
+
+### Credentials vs Public APIs
+
+| Sub-tab | What it shows |
+| --- | --- |
+| **Credentials** | Issued keys: name, owner, status (`active` / `revoked` / `expired`), last used, copy/rotate/revoke |
+| **Public APIs** | Live catalog from `GET /api/v1/admin/public-api-credentials/catalog`. **Accessible** / **Locked** badges follow the scopes on the selected credential |
+
+### Create Public Credential
+
+**New Public Credential** fields:
+
+| Field | Notes |
+| --- | --- |
+| Name | Unique label (for example `CM`, `ecosystem-workbench-mcp`) |
+| Description | What the integration is allowed to do |
+| Owner type | `user`, `service_account`, `organization`, or `partner` |
+| Owner ID / name / email | Who owns the key. `created_by` stays the acting admin |
+| Expires on | Optional. Empty means no expiry |
+| Scopes | Checkboxes. Only grant what the integration needs |
+
+The raw secret is shown **once** on create or rotate. Prefix is `ewb_public_`. If the owner loses it, **rotate** — do not expect reveal after the one-time display unless the admin uses the reveal endpoint while the hashed secret is still recoverable.
+
+Status:
+
+- **active** — usable
+- **revoked** — admin revoked; calls fail
+- **expired** — past `expires_on`
+
+### Dual auth after minting
+
+Every public gateway call needs both:
+
+```http
+X-API-Key: ewb_public_…
+Authorization: Bearer <workbench-jwt>
+```
+
+If `Authorization` is reserved, send the JWT as `X-User-Token`. Login without a public key:
+
+```http
+POST /public/v1/auth/login
+Content-Type: application/json
+
+{"email":"you@example.com","password":"…"}
+```
+
+Interactive check: open `http://localhost:8004/` and paste the public key.
+
+### Resource bindings
+
+Optional limits on a credential (`resource_bindings`):
+
+- `project_ids` — restrict to named projects
+- `catalog_ids` — restrict Contact Sets
+- `entity_names` — restrict entity collections. Empty allows all public collections
+
+`public_api_credentials` and `public_api_audit_events` are never exposed as entity collections.
+
+### Admin HTTP (private API)
+
+These routes sit on the **private** API (`:8001`) and require an admin JWT. They issue public credentials; they are not public-gateway routes.
+
+| Method | Path |
+| --- | --- |
+| `GET` | `/api/v1/admin/public-api-credentials` |
+| `POST` | `/api/v1/admin/public-api-credentials` |
+| `GET` | `/api/v1/admin/public-api-credentials/catalog` |
+| `POST` | `/api/v1/admin/public-api-credentials/{id}/rotate` |
+| `GET` | `/api/v1/admin/public-api-credentials/{id}/secret` |
+| revoke / usage | same prefix on the credentials router |
+
+Audit events land in `ecosystem_meta.public_api_audit_events` (credential lifecycle, successes, missing/invalid/expired/revoked keys, scope denials). Records must not store raw secrets, private JWTs, or request bodies.
+
+## Private Ecosystem Keys
+
+Switch to **Private Ecosystem Keys** for Grafana, ecosystem-server, and other services that expect a **generated ecosystem JWT**.
+
+| Action | Behaviour |
+| --- | --- |
+| Create New | Name, description, validity in days |
+| Generate | Workbench posts to ecosystem-server `POST /api/generate-api-key` and stores metadata in `ecosystem_meta.api_keys` |
+| Copy / hide | Reveal the stored key in the form |
+| Delete | Removes the Mongo document |
+
+**Not a public gateway key:** A private ecosystem key is **not** `ewb_public_…`. Do not put it in `X-API-Key` for `:8004`. Do not hand it to partners. The Public API Access copy on this screen exists so you can issue scoped external credentials **without exposing private ecosystem JWTs**.
+
+Private-key admin routes (admin JWT on `:8001`):
+
+| Method | Path |
+| --- | --- |
+| `GET` | `/api/v1/admin/api-keys` |
+| `POST` | `/api/v1/admin/api-keys/generate` |
+| `PUT` | `/api/v1/admin/api-keys/{id}` |
+| `DELETE` | `/api/v1/admin/api-keys/{id}` |
+
+Grafana and post-install data views historically used **Management → Generate API Keys**. In Workbench 2 that is this **Private Ecosystem Keys** list.
+
+## Python client packages
+
+| Package | Use |
+| --- | --- |
+| `sdk/python/ecosystem_workbench_public` | Typed client for `:8004/public/v1` |
+| `sdk/python/ecosystem_workbench_mcp` | stdio MCP harness that mints/uses `EWB_PUBLIC_API_KEY` |
+
+Env for the public client:
+
+```bash
+# JWT from login, or let the MCP harness mint from EWB_ADMIN_EMAIL / EWB_ADMIN_PASSWORD
+```
+
+---
+
+## MCP
+
+Source: `docs/configuration/workbench_apis/mcp.mdx`
+URL: https://ecosystem.ai/docs/configuration/workbench_apis/mcp
+Summary: Workbench MCP versus Runtime builtin MCP — tools, dual auth, Cursor config, and the stdio harness
+
+# MCP
+
+Ecosystem exposes **three MCP-related surfaces**. They share the path `/mcp` but are **not interchangeable**.
+
+| Surface | Where | Transport | Use for |
+| --- | --- | --- | --- |
+| **Workbench MCP** | `ecosystem-workbench2` `:8001` | Streamable HTTP `POST /mcp` | Deployments, entities, enrichment, public catalog, operator chat |
+| **Runtime builtin MCP** | Java Runtime `:8091` | `POST /mcp` JSON-RPC | `invoke` / `response`, campaign admin, runtime ontology |
+| **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` | FastAPI `/mcp` | MLFlow refresh, custom FastAPI |
+
+Protocol: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28). Runtime detail: [MCP Support](/docs/runtime/mcp).
+
+**Wrong /mcp is a common failure:** Pointing Cursor at Runtime `:8091/mcp` will not list Workbench `list_api_catalog`. Pointing it at Workbench `:8001/mcp` will not list Runtime `invoke`. Score campaigns on Runtime MCP or REST `/invocations`. Operate Workbench on Workbench MCP.
+
+## Workbench MCP modes
+
+| Mode | Who | Auth |
+| --- | --- | --- |
+| **In-process** | Ecosystem Agent `/assistant` (`tool_profile: operator`) | Session JWT inside Workbench. No public API key |
+| **HTTP `POST /mcp`** | Cursor, Claude Code, Agent SDK | Dual: `Authorization: Bearer` **and** `X-API-Key: ewb_public_…` |
+| **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Harness mints JWT; `EWB_PUBLIC_API_KEY` in env or `~/.herm/mcp/ecosystem-public.env` |
+
+Vite `:5270` does **not** proxy `/mcp`. Clients must hit the backend port (or nginx). `MCP_PUBLIC_BASE_URL` default `http://localhost:8001`.
+
+REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints. Legacy SSE `GET /mcp/sse/` is deprecated.
+
+### Cursor (Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "ecosystem-workbench": {
+      "url": "http://localhost:8001/mcp",
+      "headers": {
+        "Authorization": "Bearer <user-jwt>",
+        "X-API-Key": "ewb_public_..."
+      }
+    }
+  }
+}
+```
+
+Mint the key under **Administration → API Keys → Public API Access**. For Claude Code, set `ANTHROPIC_BASE_URL` to the Workbench host root so `POST /v1/messages` uses the Workbench default LLM.
+
+### HTTP MCP tools
+
+Same implementations as in-process MCP. Mutating tools require `confirm=true`.
+
+| Tool | Purpose |
+| --- | --- |
+| `list_api_catalog` | Public API catalog, scopes, accessible flags |
+| `call_endpoint` | Any Workbench `/api/v1` or `/public/v1` path |
+| `entity` | CRUD `/api/v1/entities/{collection}` |
+| `explain_entity` | Read-only explain of entity / current form |
+| `update_current_form` | Patch open editor (operator Saves) |
+| `list_campaign_channel_catalog` | Delivery channels (email, WhatsApp, …) |
+| `get_campaign_channels` | Options, selection, send_track |
+| `set_campaign_channel_selection` | Assign published options |
+| `list_custom_channel_modules` | Custom channel modules |
+| `explain_workbench` | Product-guide orientation |
+| `recommend_algorithm` | Dynamic Engagement / product approaches |
+| `explain_algorithms` | Algorithm catalog |
+| `explain_convergence` | Score convergence and priors |
+| `list_deployments` | Deployments |
+| `get_deployment_info` | One deployment |
+| `get_deployment_schema` | Input/output schema |
+| `score_customer` | Score via a Workbench deployment |
+| `send_feedback` | Feedback for that scoring result (`/response` semantics) |
+| `date_enrich` / `mcc_enrich` | Queue enrichment jobs |
+| `personality_drift` | Queue personality drift |
+| `get_enrichment_job` | Poll enrich / drift jobs |
+| Ontology family | `list_ontologies`, `describe_ontology`, create/update/delete (confirm), mappings, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology` |
+
+Resources: `ecosystem://deployments`, `ecosystem://deployment/{name}`. Per-deployment snippets: `GET /api/v1/deployments/{name}/mcp`.
+
+`call_endpoint` accepts `/api/v1/…`, `/public/v1/…`, or relative `/campaigns`. Prefixes are stripped; the internal client calls private `/api/v1`. Remaps:
+
+- `/money-personality/process` → `/algorithms/money-personality/process`
+- `/sentimental-equilibrium/process` → `/algorithms/sentimental-equilibrium/process`
+
+`score_customer` still needs `params` as a JSON **string** when it forwards an invocation. Feedback uses the returned `uuid` and `offer_name`.
+
+### stdio harness
+
+Package `sdk/python/ecosystem_workbench_mcp` adds typed wrappers on top of the public gateway: `catalogs_*`, `jobs_get`, `campaigns_*`, `networks_job*`, `spend_personality_*`, `two_tower_*`, `analytics_*`, plus admin `bootstrap_credential` / `rotate_credential` / `reveal_credential` / `revoke_credential`.
+
+```bash
+cd sdk/python/ecosystem_workbench_mcp
+backend/venv/bin/python -m ecosystem_workbench_mcp verify
+backend/venv/bin/python -m ecosystem_workbench_mcp catalog
+```
+
+Networks job tools are documented with the [Networks API](/docs/modules/networks/api).
+
+## Runtime builtin MCP (do not confuse)
+
+```text
+POST http://localhost:8091/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+```
+
+Scoring tools: `listCampaigns`, `invoke`, `response`, ontology validators, `askAboutAlgorithms`, campaign admin. Mutating campaign tools may need Runtime `MASTER_KEY` (`X-API-KEY` or Bearer). That key is **not** `ewb_public_…`.
+
+Closed loop:
+
+1. `invoke` (or REST `POST /invocations`) — save `uuid` and `offer_name` from `final_result`
+2. `response` (or REST `POST /response`) — same `uuid`
+
+`params` is a JSON string, never a nested object.
+
+## Sidecar
+
+The Python `ecosystem-runtime-mcp` image is for **custom FastAPI** and **MLFlow model download**. It is not the Java JSON-RPC server and not Workbench MCP.
+
+Related: [Agents](/docs/configuration/workbench_apis/agents), [Public APIs](/docs/configuration/workbench_apis/public), [Runtime MCP](/docs/runtime/mcp), [Ontology for agents](/docs/ontology/agents).
+
+---
+
+## Private APIs
+
+Source: `docs/configuration/workbench_apis/private.mdx`
+URL: https://ecosystem.ai/docs/configuration/workbench_apis/private
+Summary: Workbench private FastAPI on port 8001 — session JWT, router map, and how it differs from the public gateway
+
+# Private APIs
+
+The private Workbench API is `app.main:app` on port **8001**. The SPA (`:5270`) and Campaign Management call this surface with a **Workbench session JWT**. It is the source of truth for operators. The public gateway proxies a **curated subset** into `/public/v1`.
+
+```text
+http://localhost:8001/api/v1/…
+Authorization: Bearer <workbench-jwt>
+```
+
+Local health (no JWT): `GET http://localhost:8001/health`. Root: `GET http://localhost:8001/` returns API name and version.
+
+**Do not expose :8001 to partners:** Bind the private API to the cluster network. External notebooks and vendors should use **:8004** with a public credential. MCP HTTP still uses `:8001/mcp` but requires the same dual auth as the gateway.
+
+## How the SPA authenticates
+
+1. User signs in (Workbench login).
+2. JWT is stored as the session (`ecosystem_auth`).
+3. Frontend calls `/api/v1/…` (Vite proxies to `:8001` in local `frontend/run.sh`).
+4. `JWTAuthMiddleware` rejects missing/invalid tokens on protected routes.
+
+There is **no in-code Mongo URI**. Set `MONGODB_URI`. Python **3.14**.
+
+## Prefixes
+
+| Prefix | App | Role |
+| --- | --- | --- |
+| `/api/v1` | Private FastAPI | Almost all operator routes |
+| `/api/graphtheory` | Private FastAPI | Networks jobs (same paths as ecosystem-server networks) |
+| `/api` (pipeline) | Private FastAPI | Pipeline worker without the v1 prefix |
+| `/v1` and `/models` | Private FastAPI | OpenAI-compatible LLM (`/v1/messages`, `/v1/models`) |
+| `/mcp` | Mounted MCP app | Streamable HTTP MCP (not under `/api/v1`) |
+| `/health` | Private FastAPI | Liveness |
+
+Shared analytics dashboards can be viewed without a JWT on the dedicated share router. Everything else that mutates configuration requires a signed-in user (and often admin).
+
+## Router map (`/api/v1`)
+
+Grouped the way `app.main` mounts them. Paths are relative to `/api/v1` unless noted.
+
+### Identity and admin
+
+| Area | Typical prefix | Purpose |
+| --- | --- | --- |
+| Auth | `/auth` | Login, session |
+| Users / roles / profiles | `/users`, `/roles`, `/profiles` | RBAC |
+| Admin utilities | `/admin` | Server utilities |
+| Private API keys | `/admin/api-keys` | Generate ecosystem JWTs |
+| Public credentials | `/admin/public-api-credentials` | Issue `ewb_public_…` keys |
+| About | `/about` | Version, build, companion assets |
+
+### Configuration entities
+
+Generic CRUD lives at `/entities/{collection}` (same collections the public gateway exposes). First-class routers also exist for offer matrix, contacts, campaigns, ontology, plugins, and project export.
+
+| Area | Typical prefix | Purpose |
+| --- | --- | --- |
+| Generic entities | `/entities` | Projects, dynamic engagement, simulation, … |
+| Projects | `/projects` | Project metadata |
+| Data connections | `/data-connections` | Mongo / warehouse connections |
+| Data forms | `/data-forms` | Forms |
+| Templates | `/templates` | Templates |
+| Plugins | `/plugins` | Pre/post-score Java samples |
+| Offer matrix | `/offer-matrix` | Versioned catalog + history |
+| Contacts | `/contacts` | Contact Sets, records, import |
+| Ontology | `/ontology` | Documents, mappings, flags |
+| Project export | `/project-export` | Import/export |
+
+### Deployments, scoring, runtime console
+
+| Area | Typical prefix | Purpose |
+| --- | --- | --- |
+| Deployments | `/deployments` | Push configuration toward Runtime |
+| Predictions | `/predictions` | Prediction jobs |
+| Batch scoring | `/batch-scoring` | Backend batch jobs |
+| Jobs | `/jobs` | Async job store |
+| Frames | `/frames` | Feature frames |
+| Runtime console | `/runtime-console` | Campaign test / invocation debug |
+| API tester | `/api-tester` | Operator HTTP tester (Workbench **API Management**) |
+| Dynamic interactions | `/dynamic` (interactions router) | Dynamic Engagement config |
+
+Workbench **API Management** (`/docs/configuration/api`) stores named Runtime test calls. Those hit Runtime `/invocations` and `/response` — they are not public-gateway routes.
+
+### Enrichment, files, search
+
+| Area | Typical prefix | Purpose |
+| --- | --- | --- |
+| Enrichment | `/enrichment` | Date, MCC, personality drift jobs |
+| Prompt enrichment | `/prompt-enrichment` | LLM document enrichment |
+| Filesystem | `/filesystem` | Browse worker files |
+| Search | `/search` | Global search |
+| Search-replace | `/search-replace` | Document replace |
+| Document locks | `/document-locks` | Concurrent edit locks |
+| Notebooks | `/notebooks` | Notebook module |
+| Geocoding | `/geocoding` | Geocode helpers |
+
+### Algorithms and simulations
+
+| Area | Typical prefix | Purpose |
+| --- | --- | --- |
+| Algorithm configs | `/algorithm-config` | Saved algorithm documents |
+| Spend Personality | `/spend-personality`, `/algorithms/spend-personality` | Wizard, runs, notebooks |
+| Money Personality | `/algorithms/money-personality` | `POST …/process` |
+| Sentimental equilibrium | `/algorithms/sentimental-equilibrium` | `POST …/process` |
+| Two-Tower | `/algorithms/two-tower` | Train, export, generate Python |
+| Simulations | `/simulations` | Save/run/validate connections ([Simulations](/docs/configuration/simulations)) |
+| Network Selector | `/network-selector` | Diagnostics for the selector (not `/networks/` SPA) |
+
+MCP `call_endpoint` remaps `/money-personality/process` → `/algorithms/money-personality/process` (same for sentimental equilibrium).
+
+### Campaigns, agents, analytics, graphs
+
+| Area | Typical prefix | Purpose |
+| --- | --- | --- |
+| Campaigns | `/campaigns` | Campaign management, trigger, schedules |
+| Agents | `/agents` | Agent configs + `POST /agents/entity/explain` |
+| Ecosystem Agent | `/claude-agent` | Operator chat, status, profiles |
+| EcoGentic | `/ecogentic` | Customer journeys (not operator chat) |
+| Analytics | `/analytics` | Dashboards / charts |
+| Shared analytics | share router | Unauthenticated dashboard view |
+| MCP info | `/mcp/` | Tool list (JWT). Protocol traffic is `POST /mcp` |
+| Langflow | `/langflow` | Component generation |
+| MLRun | `/mlrun-runtime` | MLRun module |
+| Kubernetes | `/k8s` | Optional k8s deploy helpers |
+| Graph theory | `/api/graphtheory/*` (no v1) | Networks build/analyze ([Networks](/docs/modules/networks/api)) |
+
+Spend Personality processing also mounts data, scores, schedule, runs, health, preflight, processing-config, and analytics routers used by the wizard.
+
+### LLM
+
+| Path | Purpose |
+| --- | --- |
+| `POST /v1/messages` | Anthropic-compatible proxy → Workbench default LLM |
+| `GET /v1/models`, `GET /models`, `GET /api/v1/models` | Model catalog |
+| `/api/v1/llm` | LLM config and prompt library |
+
+External Claude Code must set `ANTHROPIC_BASE_URL` to the Workbench host **root** (port 8001), not Anthropic SaaS. Leave `ANTHROPIC_API_KEY` empty. See [Agents](/docs/configuration/workbench_apis/agents).
+
+## What stays private on purpose
+
+These never appear as public-gateway entity collections:
+
+- `public_api_credentials`
+- `public_api_audit_events`
+
+Admin credential minting, user/role CRUD, filesystem browsing, and most enrichment internals stay on `:8001`. If an integration needs a private-only route, use MCP `call_endpoint` from a **trusted** operator session — do not punch a hole in the gateway without a scope.
+
+## Data Agents and Runtime
+
+| Product | API | Not this private API |
+| --- | --- | --- |
+| [Data Agents](/docs/modules/data_agents) | Data Agents service `:54324` (`POST /process`) | Separate repo; same JWT cookie family |
+| [Runtime](/docs/runtime/access) | `:8091` `/invocations`, `/response` | Java scoring engine |
+
+Related: [Public APIs](/docs/configuration/workbench_apis/public), [API Keys](/docs/configuration/workbench_apis/keys).
+
+---
+
+## Public APIs
+
+Source: `docs/configuration/workbench_apis/public.mdx`
+URL: https://ecosystem.ai/docs/configuration/workbench_apis/public
+Summary: Workbench public gateway on port 8004 — dual auth, scopes, and every /public/v1 route
+
+# Public APIs
+
+The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates a public credential, forwards the **caller's JWT** to private Workbench `:8001/api/v1`, and writes audit events. It never uses a shared operator token for interactive user requests.
+
+`PUBLIC_API_INTERNAL_SERVICE_TOKEN` is an optional server-only fallback for automated jobs, not for people.
+
+Local OpenAPI: `http://localhost:8004/docs` (disable with `PUBLIC_API_DOCS_ENABLED=false`). Prefix default: `/public/v1`.
+
+**Live catalog in the UI:** Administration → API Keys → Public API Access → **Public APIs** is generated from the same catalog as this page (`admin_public_api_catalog`). Badges follow the scopes on the selected credential.
+
+## Auth
+
+```http
+GET http://localhost:8004/public/v1/health
+X-API-Key: ewb_public_…
+Authorization: Bearer <workbench-jwt>
+```
+
+- **Public API key** — which gateway routes are allowed
+- **User JWT** — that user's Workbench roles on the private backend
+
+Login (no public key):
+
+```bash
+curl -s -X POST http://localhost:8004/public/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com","password":"your-password"}'
+```
+
+Then:
+
+```python
+
+BASE = "http://localhost:8004/public/v1"
+headers = {
+    "X-API-Key": os.environ["EWB_PUBLIC_API_KEY"],
+    "Authorization": f"Bearer {os.environ['EWB_USER_JWT']}",
+}
+projects = requests.get(f"{BASE}/entities/projects", headers=headers, params={"limit": 20})
+print(projects.json())
+```
+
+Health and login do not require a public key. Every other `/public/v1` route does.
+
+## Grantable scopes
+
+| Scope | Unlocks |
+| --- | --- |
+| `entities:read` / `entities:write` | Entity collections and campaign reads/writes |
+| `catalogs:read` / `catalogs:write` | Contact Sets. Public catalog routes listed below are **GET**; writes go through private contacts or MCP `call_endpoint` |
+| `contacts:read` / `contacts:write` | Contact Set records |
+| `frames:read` | Reserved on credentials (not a CORE catalog group yet) |
+| `predictions:run` | Batch scoring, Spend Personality runtime score, `/v1/models` |
+| `jobs:read` | Async job status, campaign runs |
+| `runtime:evidence:read` | Reserved on credentials (not a CORE catalog group yet) |
+| `networks:jobs` / `networks:read` / `networks:analyze` | Graph jobs and analysis |
+| `spend-personality:configs` / `spend-personality:runs` | Spend Personality configs, pipeline, drift |
+| `money-personality:runs` | Money Personality process |
+| `sentimental-equilibrium:runs` | Sentimental equilibrium process |
+| `two-tower:configs` / `two-tower:train` | Two-Tower configs, train, export, batch-score |
+| `ontology:read` / `ontology:write` | Ontology documents and mappings |
+
+Grant the minimum set. Polling async work also needs `jobs:read`.
+
+---
+
+## Auth & health
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/public/v1/auth/login` | none | Email/password → JWT |
+| `GET` | `/public/v1/health` | none | Gateway health |
+
+## Contact catalogs
+
+Contact Sets (not entity collections).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/catalogs` | `catalogs:read` | List Contact Sets |
+| `GET` | `/public/v1/catalogs/{catalog_id}` | `catalogs:read` | Read one Contact Set |
+| `GET` | `/public/v1/catalogs/{catalog_id}/records` | `contacts:read` | List records |
+
+## Jobs & predictions
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/jobs/{job_id}` | `jobs:read` | Async job status |
+| `POST` | `/public/v1/batch-scoring/jobs` | `predictions:run` | Start backend batch-scoring |
+| `GET` | `/public/v1/batch-scoring/jobs/{job_id}` | `jobs:read` | Batch-scoring progress |
+| `POST` | `/public/v1/predictions/run` | `predictions:run` | Spend Personality **runtime** scoring |
+
+`POST /predictions/run` scores through a Runtime deployment. Closed-loop **learning** still uses Runtime `POST /response` with that row's `uuid` and `offer_name`.
+
+## Networks
+
+Same contract as [Networks Jobs & API](/docs/modules/networks/api). Responses never include the full analysis graph — only a display sample, stats, and metrics summary.
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `POST` | `/public/v1/networks/jobs` | `networks:jobs` |
+| `GET` | `/public/v1/networks/jobs/{job_id}` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/events` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/result` | `networks:read` |
+| `DELETE` | `/public/v1/networks/jobs/{job_id}` | `networks:jobs` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/display` | `networks:read` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/metrics` | `networks:read` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/analyze` | `networks:analyze` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/temporal/{category}` | `networks:analyze` |
+
+## Spend Personality
+
+Needs `spend-personality:configs`, `spend-personality:runs`, and `jobs:read` (plus `predictions:run` for optional score proof). `POST /runs` is fire-and-forget — poll `GET /public/v1/jobs/{job_id}` until `lifecycle_state` is `Completed`. Keep polling `Queued` / `Running` / `Stalled`. Treat `Failed` / `Cancelled` as errors.
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/spend-personality/configs` | `spend-personality:configs` | List or upsert algorithm config |
+| `GET` | `/public/v1/spend-personality/configs/{config_id}` | `spend-personality:configs` | Read config and `run_log` |
+| `POST` | `/public/v1/spend-personality/runs` | `spend-personality:runs` | Phased or full pipeline |
+| `POST` | `/public/v1/spend-personality/drift` | `spend-personality:runs` | Recompute personality drift |
+
+`POST /runs` fields: `algorithm_config_id` (required), optional `phases` (`import_check`, `enrich`, `score_unscored`, `prepare_model`, `deploy`), `running_config_id` from the first response so later phases share leader model ids, plus `project_id` / `week_start_day`.
+
+## Money Personality
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/public/v1/money-personality/process` | `money-personality:runs` | Start scoring; poll jobs |
+
+## Sentimental Equilibrium
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/public/v1/sentimental-equilibrium/process` | `sentimental-equilibrium:runs` | Start analysis from prediction logs; poll jobs |
+
+## Two-Tower
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/two-tower/configs` | `two-tower:configs` | List or upsert |
+| `GET` / `PUT` | `/public/v1/two-tower/configs/{config_id}` | `two-tower:configs` | Read / update |
+| `GET` | `/public/v1/two-tower/predictors` | `two-tower:configs` | Distinct predictors in flatten |
+| `GET` | `/public/v1/two-tower/predictor-date-bounds` | `two-tower:configs` | Date range and row count |
+| `GET` | `/public/v1/two-tower/runs` | `two-tower:configs` | Recent training runs |
+| `POST` | `/public/v1/two-tower/preview-schema` | `two-tower:configs` | Preview flatten schema (async) |
+| `POST` | `/public/v1/two-tower/prepare-feature-frame` | `two-tower:train` | H2O frame without training |
+| `POST` | `/public/v1/two-tower/train` | `two-tower:train` | Start training |
+| `POST` | `/public/v1/two-tower/concept-test` | `two-tower:train` | Sync concept rank for one customer |
+| `POST` | `/public/v1/two-tower/export-embeddings` | `two-tower:train` | Export user/item embeddings |
+| `POST` | `/public/v1/two-tower/batch-score` | `two-tower:train` | Top-K offers to a collection |
+| `POST` | `/public/v1/two-tower/generate-python` | `two-tower:train` | Runnable Python + explanation |
+
+## Ontology
+
+Updates use **POST**, not PUT/PATCH. Same contract as private `/api/v1/ontology/*`.
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `GET` | `/public/v1/ontology` | `ontology:read` |
+| `GET` / `POST` / `DELETE` | `/public/v1/ontology/{ontology_id}` | read / write / write |
+| `POST` | `/public/v1/ontology/from-data-source` | `ontology:write` |
+| `GET` / `POST` | `/public/v1/ontology/{ontology_id}/mappings` | read / write |
+| `POST` | `/public/v1/ontology/{ontology_id}/mappings/suggest-multi` | `ontology:write` |
+| `POST` | `/public/v1/ontology/{ontology_id}/mappings/{mapping_id}` | `ontology:write` |
+| `POST` | `/public/v1/ontology/{ontology_id}/resolve-term` | `ontology:read` |
+| `POST` | `/public/v1/ontology/{ontology_id}/resolve-question` | `ontology:read` |
+
+## Campaigns
+
+Campaign **delivery** channels (email, WhatsApp, SMS, …) are not Runtime scoring `channel` (`app` / `web` / `api`).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/campaigns` | `entities:read` | List campaigns |
+| `GET` | `/public/v1/campaigns/channel-catalog` | `entities:read` | Platform delivery channel catalog |
+| `GET` | `/public/v1/campaigns/{campaign_id}` | `entities:read` | Read one |
+| `GET` | `/public/v1/campaigns/{campaign_id}/channels` | `entities:read` | Options, selection, send_track |
+| `PUT` | `/public/v1/campaigns/{campaign_id}/channel-selection` | `entities:write` | Set option ids |
+| `POST` | `/public/v1/campaigns/{campaign_id}/trigger` | `entities:write` | Trigger a run |
+| `POST` | `/public/v1/campaigns/{campaign_id}/apply-params` | `entities:write` | Parameter overrides |
+| `GET` / `PUT` | `/public/v1/campaigns/{campaign_id}/schedules` | read / write | Embedded schedules |
+| `POST` | `/public/v1/campaigns/{campaign_id}/schedules/sync` | `entities:write` | Save and arm crons |
+| `POST` | `/public/v1/campaigns/{campaign_id}/schedules/generate` | `entities:read` | Natural-language draft (no write) |
+| `POST` | `/public/v1/campaigns/{campaign_id}/schedule` | `entities:write` | Register one cron |
+| `DELETE` | `/public/v1/campaigns/{campaign_id}/schedules/{schedule_id}` | `entities:write` | Unregister one |
+| `DELETE` | `/public/v1/campaigns/{campaign_id}/schedule` | `entities:write` | Unregister one (`schedule_id`) or all |
+| `GET` | `/public/v1/campaigns/{campaign_id}/runs` | `jobs:read` | List runs |
+| `GET` | `/public/v1/campaigns/runs/{run_id}` | `jobs:read` | Read run |
+| `GET` | `/public/v1/campaigns/runs/{run_id}/progress` | `jobs:read` | Progress |
+| `POST` | `/public/v1/campaigns/runs/{run_id}/stop` | `entities:write` | Stop run |
+
+## Analytics dashboards
+
+Workbench analytics dashboards (not Data Agents report jobs).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/analytics/dashboards` | `entities:read` | List |
+| `GET` | `/public/v1/analytics/dashboards/{dashboard_id}` | `entities:read` | Read |
+| `GET` / `POST` | `/public/v1/analytics/dashboards/{dashboard_id}/share` | read / write | Share metadata |
+
+## Account & models
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/me/apis` | none (key identifies credential) | Endpoints this credential can reach |
+| `GET` | `/v1/models` (also `/models`) | `predictions:run` | OpenAI-compatible model list |
+
+## Entity collections
+
+CRUD at `/public/v1/entities/{collection}`. List names: `GET /public/v1/entities/collections`.
+
+| Action | Method | Path | Scope |
+| --- | --- | --- | --- |
+| List | `GET` | `/public/v1/entities/{collection}` | `entities:read` |
+| Read | `GET` | `/public/v1/entities/{collection}/{entity_id}` | `entities:read` |
+| Create | `POST` | `/public/v1/entities/{collection}` | `entities:write` |
+| Update | `PUT` | `/public/v1/entities/{collection}/{entity_id}` | `entities:write` |
+| Delete | `DELETE` | `/public/v1/entities/{collection}/{entity_id}` | `entities:write` |
+
+List query params: `skip`, `limit`, `q`, `fields`.
+
+Public collections include: projects, agent configs / nodes / channels, custom channel modules, calendar, fact injection (`chat_config`), dashboards, data wizards, dynamic engagement, enrichment configs and pipelines, frames, predictions, data connections, offer matrix (+ history), prompt library, responder analytics and API config, simulation, networks, campaigns.
+
+## Settings (operators)
+
+| Setting | Default | Role |
+| --- | --- | --- |
+| `PUBLIC_API_PREFIX` | `/public/v1` | Path prefix |
+| `PUBLIC_API_CORS_ORIGINS` | — | CORS |
+| `PUBLIC_API_SECRET_PEPPER` | — | Hash secrets and IPs |
+| `PUBLIC_API_INTERNAL_BASE_URL` | `http://localhost:8001/api/v1` | Private proxy target |
+| `PUBLIC_API_INTERNAL_SERVICE_TOKEN` | — | Job fallback only |
+| `PUBLIC_API_AUDIT_TTL_DAYS` | `0` = keep | Audit TTL |
+
+Related: [Private APIs](/docs/configuration/workbench_apis/private), [API Keys](/docs/configuration/workbench_apis/keys), [MCP](/docs/configuration/workbench_apis/mcp).
 
 ---
 
@@ -5768,22 +6868,64 @@ git clone https://github.com/ecogenetic/message-app-python.git
 Source: `docs/index.mdx`
 URL: https://ecosystem.ai/docs
 
+BookOpen,
+  Boxes,
+  Cloud,
+  Library,
+  Monitor,
+  FlaskConical,
+  Network,
+  Settings2,
+  Store,
+  Zap,
+  Bot,
+  KeyRound,
+} from 'lucide-react'
+
 # Get Started
 
 ### Quick Start Guides
 
-  
+  }
+  />
+  }
+  />
+  }
+  />
 
 ### Explore our Documentation
 
-- [Local Installation](/docs/local)
-  - [Marketplace Apps](/docs/marketplace)
-  - [Configuration](/docs/configuration)
-  - [User Guides](/docs/user_guides)
-  - [Modules](/docs/modules)
-  - [Documentation](/docs/documentation)
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+
+### Operate the Runtime
+
+  }
+  />
+  }
+  />
+  }
+  />
 
 ---
+
+  Support
 
 ---
 
@@ -6083,15 +7225,2510 @@ The minimum requirements for running ecosystem.Ai for testing purposes:
 
 ---
 
-## Index
+## Data Agents Analysis Views
+
+Source: `docs/modules/data_agents/analysis.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/analysis
+Summary: Interactive dashboards after a job — Analytics ops, Time Series, Interactions, Personality, Financial, and LLM Agents.
+
+# Analysis Views
+
+Domain pages read the **latest completed job** for the selected configuration. They are chart UIs on `consolidated_results` plus shortcuts into the matching markdown report.
+
+## Analysis Insights (`/analysis/:jobId`)
+
+From Jobs → open a completed job. Interactive panels (distributions, correlations, module-specific charts). **Full Report** jumps to `/reports`.
+
+## Analytics (`/analytics`)
+
+Operations only: job volume, completed/failed, success rate, config usage, 1–90 day window. Not Financial ARPU.
+
+## Time Series (`/time-series`)
+
+For **Analytic** configs with time series enabled:
+
+- Datetime column and grain (day, week, …)
+- Numeric measures (sum/mean, rolling, lags)
+- Optional **journeys** (entity + event columns)
+- Event association / correlation windows
+- Forecast outputs when generated
+
+**Save** on this page updates the configuration; **Run** still goes through Jobs. Primary report: [Time series](/docs/modules/data_agents/reports/time_series) (`time_series_markdown`).
+
+## Interactions (`/recommender`)
+
+Dashboard for **Interactions** jobs (latest completed job for the selected config). Tabs: General, Offers / Catalog, Customers, Market intelligence, Channels, Experimentation, Marketing mix, Data Quality.
+
+Channels and experimentation tabs read the **general** and **offer** payloads. Full narrative is in the markdown reports:
+
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general) (`recommender_general_markdown`)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [Customer uptake](/docs/modules/data_agents/reports/recommender_customer)
+
+How to configure and what each family means: [Interactions Analytic](/docs/modules/data_agents/interactions).
+
+## Personality (`/personality`)
+
+Tabs aligned with families: General, Time, Customer Change, Spend, Money, Drift, Category Patterns, Calendar, Recommendations, Data Quality. Primary report: [Personality overview](/docs/modules/data_agents/reports/personality_general) (`personality_general_markdown`).
+
+This **analyzes** scored or raw transaction history. Live trait **scoring** in the closed loop is [Spend Personality](/docs/modules/spend_personality).
+
+## Financial (`/financial`)
+
+Unit economics, returns, value, growth, ledgers, industry pack — whatever families ran. Primary report: [Financial overview](/docs/modules/data_agents/reports/financial_general) (`financial_general_markdown`). Unmapped ROI families stay empty.
+
+## Agents (`/agents`)
+
+Catalog of CRM/CVM specialists and MCP tools (`list jobs`, `get_report`, …). Test console: choose agent, optional `config_id`, ask in natural language. Mutating tools follow the product’s confirm rules. This is **not** EcoGentic customer chat and **not** Runtime builtin MCP (`POST /mcp` on the Runtime).
+
+## Local run
+
+```bash
+# ecosystem-data-agents repo
+./run.sh              # API :54324
+./run_frontend.sh     # UI  :54325
+```
+
+Python **3.14**. Set `MONGO_CONNECT`. Docker compose publishes **54325** (nginx + API) on the `ecosystem` network — do not also bind `./run_frontend.sh` on the same port.
+
+---
+
+## Data Agents
+
+Source: `docs/modules/data_agents/index.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents
+Summary: Agentic Data Analytics — configure Analytic, Interactions, Personality, or Financial jobs, process Mongo or Trino data, and open markdown, notebook, and graph reports.
+
+# Data Agents
+
+**Data Agents** is the **Agentic Data Analytics** console (`ecosystem-data-agents`). It extracts, prepares, and analyzes customer or event data, then writes markdown reports, notebooks, and graphs. Local UI is `http://localhost:54325` (API `http://localhost:54324`).
+
+It is **not** the Runtime scorer, [Spend Personality](/docs/modules/spend_personality) scoring module, or EcoGentic customer journeys. Scoring still uses `POST /invocations` then `POST /response`. Data Agents **reads** collections (Mongo or Trino) and **reports**.
+
+![Configurations list — Analytic, Financial, Personality, and Interactions](/images/modules/data-agents/configurations.png)
+
+**Same login as Workbench:** The SPA stores `ecosystem_auth` and sends `Authorization: Bearer`. Login proxies to Ecosystem Server. Set `AUTH_ENABLED=false` only for offline local work.
+
+## Where it fits
+
+| Stage | What |
+| --- | --- |
+| Operator UI | React SPA — Configurations, Agents, Jobs, Reports, domain dashboards |
+| Pipeline | LangGraph: extract → prepare → analysis families |
+| Data | MongoDB (`MONGO_CONNECT`) or Trino (extract-only; writes stay on Mongo) |
+| Artifacts | `reports/<timestamp>/` — markdown, `.ipynb`, `graphs/`, JSON |
+
+## Configuration types
+
+Pick a type when you **Create New**. It decides collections, analysis families, and which reports appear.
+
+| Type (card badge) | Use | Primary source |
+| --- | --- | --- |
+| **Analytic** | Profiling, categorical tests, actuarial risk, feature engineering, optional time series | One wide customer/event table |
+| **Interactions** | Recommender / NBA — campaigns, offers, customers, experiments | Runtime-style **calls** collection (`ecosystemruntime`) |
+| **Personality** | Spend / money mix, drift, category patterns, campaign overlays | **Transactions** (customer, amount, category, time) |
+| **Financial** | ARPU, ROI, LTV, NRR, ledgers — only **mapped** fields | Revenue events or sales/GL ledgers |
+
+Do not use Analytic for ARPU/ROI (use Financial). Do not use Personality for ledger KPIs. Do not point Interactions at a generic sales ledger.
+
+## Typical path
+
+1. **[Setup](/docs/modules/data_agents/setup)** — Create New, choose type, bind Mongo or Trino, enable analysis families, Save.
+2. **[Interactions Analytic](/docs/modules/data_agents/interactions)** — For recommender logs: discover predictors, join calls to responses, read family reports.
+3. **[Process](/docs/modules/data_agents/process)** — **Run** on the card (or Jobs). Watch extract → prepare → analysis.
+4. **[Reports](/docs/modules/data_agents/reports)** — Open markdown / notebook / graphs for that job.
+5. **[Analysis views](/docs/modules/data_agents/analysis)** — Interactive dashboards (`/analysis/:jobId`, Time Series, Interactions, Personality, Financial).
+
+## Sidebar
+
+| Nav | Route | Role |
+| --- | --- | --- |
+| Configurations | `/configurations` | List, create, **Analysis & LLM**, Agents tab |
+| Agents | `/agents` | LLM specialists + MCP tools over jobs/reports |
+| Jobs | `/jobs` | Queue, logs, force-stop, analysis dashboard |
+| Reports | `/reports` | All artifacts for a completed job |
+| Analytics | `/analytics` | Job success / volume (ops, not domain KPIs) |
+| Time Series | `/time-series` | Analytic time-bucket / journey reports |
+| Interactions | `/recommender` | Offer / campaign reports |
+| Personality | `/personality` | Spend/money/drift reports |
+| Financial | `/financial` | Unit economics reports |
+
+Running and recent completed jobs sit in the left rail (as in the screenshot).
+
+## In this module
+
+- [Setup](/docs/modules/data_agents/setup) — types, sources, Analysis & LLM
+- [Interactions Analytic](/docs/modules/data_agents/interactions) — recommender call/response analysis
+- [Process Jobs](/docs/modules/data_agents/process) — Run, pipeline steps, logs
+- [Reports](/docs/modules/data_agents/reports) — how to open artifacts, plus a page for each report type
+- [Analysis Views](/docs/modules/data_agents/analysis) — dashboards per domain
+
+## Related
+
+- [Spend Personality](/docs/modules/spend_personality) — Workbench/Runtime **scoring** of traits (Data Agents **analyzes** personality collections)
+- [Networks](/docs/modules/networks) — graph lab, not tabular reports
+- [Ontology for agents](/docs/ontology/agents) — Runtime closed-loop vocabulary
+
+---
+
+## Interactions Analytic
+
+Source: `docs/modules/data_agents/interactions.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/interactions
+Summary: Data Agents Interactions — analyze Runtime call and response logs, campaigns, ranked offers, customers, and catalog without treating acceptance as purchase.
+
+# Interactions Analytic
+
+**Interactions** is the Data Agents configuration type for **ecosystem.Ai recommender logging**. It pairs recommendation **calls** with attributed **responses**, then publishes family reports (markdown, notebook, graphs, JSON).
+
+It is **not** the Runtime scorer. Scoring still uses `POST /invocations` then `POST /response`. Interactions **reads** those logs after the fact. It is **not** Financial ARPU/ROI and **not** Spend Personality scoring.
+
+**Acceptance is an uptake signal:** An attributed response is observed uptake (the customer accepted a ranked offer). It is not automatically a purchase, realized revenue, or causal uplift. Generated recommendations are advisory and do not write back to offers, prices, campaigns, or runtime policy.
+
+## When to use it
+
+Use Interactions when you have Runtime-style collections, typically:
+
+| Collection | Role |
+| --- | --- |
+| `ecosystemruntime` (calls) | Ranked `final_result` slates, campaign, predictor, channel, UUID |
+| `ecosystemruntime_response` | Accepts joined to the call by **UUID** |
+
+Optional: offer-matrix snapshots, customer/channel collections. Do **not** point this type at a generic sales ledger (use [Financial](/docs/modules/data_agents/reports/financial_general)).
+
+After a [Workbench simulation](/docs/configuration/simulations) or production traffic, run an Interactions job on the same logging collections to inspect funnel, rank uptake, and catalog quality.
+
+## Event concepts
+
+- **Ranked recommendations** in `final_result` are the impression denominator. There is no separate “rendered impression” flag.
+- **Attributed responses** are UUID-joined accepts inside the **attribution window** (default **168 hours**) after `date_log`.
+- Calls **without** a response stay in the funnel (right-censored). Orphan responses are reported, not silently dropped.
+- Generated-but-not-ranked candidates are **not** in these logs.
+
+## Setup
+
+1. [Create New](/docs/modules/data_agents/setup) → configuration type **Interactions**.
+2. Bind Mongo (or Trino extract-only) on **Source**. Database and connection come from that source.
+3. On the Interactions block, set **Calls collection** and **Responses collection**.
+4. Click **Discover Predictors**, then select one or more predictors **or** **Analyze all predictors**. A job will not start until a selection is confirmed (Mongo). Trino extracts default to all predictors present in SQL.
+5. Optional: **Date from / Date to**, **attribution window (hours)**, declared A/B **experiment groups** (control campaign + treatments, randomization unit `customer` or `call`).
+6. Enable families on **Analysis & LLM** (see below). **Marketing mix** is off by default.
+7. Save, then [Run](/docs/modules/data_agents/process).
+
+Discovery also shows a **scale and index preflight**: call/response counts and whether exact mode is feasible. Missing source indexes are recommended and may be created at job start if missing. The analyzer never loads the full interaction population into pandas; large logs use projection, partitions, and mergeable aggregates.
+
+## Families and reports
+
+UI family checkboxes do not all get their own markdown file. Several land inside **general** or **offers**.
+
+| Analysis & LLM family | Report page | Key |
+| --- | --- | --- |
+| General performance (plus channels, convergence, economics, fairness) | [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general) | `recommender_general_markdown` |
+| Offers and catalog (plus experimentation) | [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer) | `recommender_offer_markdown` |
+| Customer engagement | [Customer uptake](/docs/modules/data_agents/reports/recommender_customer) | `recommender_customer_markdown` |
+| Market intelligence | [Market intelligence](/docs/modules/data_agents/reports/recommender_market_intelligence) | `recommender_market_intelligence_markdown` |
+| Marketing mix (adstock / saturation) | [Marketing mix](/docs/modules/data_agents/reports/recommender_marketing_mix) | `recommender_marketing_mix_markdown` |
+| Entity clustering (on by default when enough catalog rows) | [Entity clusters](/docs/modules/data_agents/reports/recommender_entity_clusters) | `recommender_entity_clusters_markdown` |
+| Always written | [Manifest](/docs/modules/data_agents/reports/recommender_manifest) | `recommender_manifest` |
+
+Each family usually also writes `*_notebook`, `*_results` JSON, and `*_graphs`. Open them from **Reports** (`/reports`) or the dashboard at `/recommender`.
+
+## How processing works
+
+1. **Join** — exact UUID attribution from calls to responses inside the window.
+2. **Normalize** — campaign, predictor, ranked offers, channels, customer keys (`customer_id`, `customerId`, `client_id`, `party_id`, …).
+3. **Aggregate** — funnel, campaigns, ranks, catalog snapshots, cohorts. Customer IDs are **pseudonymized**; cells below `minimum_cell_size` (default 10) are suppressed.
+4. **Interpret** — optional LLM on compact evidence packets. The model may explain findings and experiment proposals; it **cannot** change metrics, priority scores, or guardrails.
+5. **Publish** — additive `recommender/v1` JSON plus markdown/notebooks/graphs. Large detail stays in paginated exports / family JSON, not the consolidated dashboard blob.
+
+## Privacy and fidelity
+
+- Funnel totals (calls / responded / accepted) are **exact** over the scanned population.
+- Customer **profiles** may be sampled or truncated; the report’s **Data fidelity** block says so.
+- Distinct-customer / cohort counts prefer Mongo `$group` (exact) over the tracked sample.
+- LLM sees compact packets only — not raw customer identifiers.
+
+## View results
+
+| Surface | Path |
+| --- | --- |
+| Family dashboard | `/recommender` (latest completed Interactions job) |
+| Markdown | `/markdown/JOB_ID/recommender_general_markdown` (and other keys) |
+| Reports list | `/reports` |
+| MCP | `cvm_interactions_family` with family `general`, `offers`, `customers`, … |
+
+Dashboard tabs: General, Offers / Catalog, Customers, Market intelligence, Channels, Experimentation, Marketing mix, Data Quality. Channels and experimentation **views** read the general/offer payloads.
+
+## Related
+
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+- [All report types](/docs/modules/data_agents/reports)
+- [Simulations](/docs/configuration/simulations) — generate call/response traffic to analyze here
+- [Runtime closed loop](/docs/runtime/access)
+
+---
+
+## Data Agents Process Jobs
+
+Source: `docs/modules/data_agents/process.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/process
+Summary: Run a configuration — LangGraph extract, prepare, and analysis steps — then open logs and the analysis dashboard.
+
+# Process Jobs
+
+Processing is always a **server job**. The browser posts `config_id` to `POST /process` and polls `/jobs`.
+
+## Start a job
+
+From **Configurations**:
+
+1. **Run** on the card (or table row).
+2. Confirm **Run Analytic Job** (or Interactions / Personality / Financial).
+3. You land on **Jobs**. A toast appears if the job fails.
+
+From **Jobs**: pick a configuration and create a job (optional LLM interpretation override).
+
+Only one active job per configuration: **queued** or **running** locks that config’s editor.
+
+## Pipeline steps
+
+LangGraph (`EcosystemDataWorkflow`) walks:
+
+| Step | Label in UI |
+| --- | --- |
+| `queued` | Queued |
+| `initialization` | Initializing |
+| `data_extraction` | Mongo or Trino extract |
+| `data_preparation` | Clean, types, quality |
+| `data_analysis` | Main analysis (Analytic) |
+| `categorical_analysis` | Categorical |
+| `actuarial_analysis` | Actuarial |
+| `time_series_analysis` | Time series |
+| `feature_engineering` | Feature engineering |
+| `ml_analysis` | Machine learning |
+| `recommender_analysis` | Interactions |
+| `personality_analysis` | Personality |
+| `financial_analysis` | Financial |
+| `results_persistence` | Saving results |
+| `completed` / `failed` / `cancelled` | Terminal |
+
+A failed **family** should not always abort the rest; remaining enabled modules can still write reports. Watch **Jobs** and the sidebar **Running Jobs** list.
+
+Optional `--sample-size` / config sample limits cap documents for trials. Unlimited Mongo/Trino scans use disk partitions; Trino still does not write analysis collections.
+
+## Monitor
+
+- Sidebar: running jobs (elapsed) and last four completed
+- **Jobs** table: status, duration, sample size, report badges
+- **`/jobs/:jobId/logs`** — step and log level
+- Force-stop a stuck run; delete can remove artifacts (confirm in the modal)
+
+**Analytics** (`/analytics`) is **ops**: job counts and success rate over 1–90 days — not ARPU or personality mix.
+
+## After completion
+
+| Action | Where |
+| --- | --- |
+| Interactive charts | **Analysis Insights** `/analysis/:jobId` (consolidated JSON) |
+| Full artifact list | [Reports](/docs/modules/data_agents/reports) (one docs page per report type) |
+| Domain UI | Interactions / Personality / Financial / Time Series pages (latest completed job for that config) |
+| Eye on a config card | Opens the domain page if a completed job exists |
+
+Artifacts land under `backend/reports/<YYYY-MM-DD_HHMMSS>/` including `config_parameters.json` (secrets masked) for reproducibility.
+
+---
+
+## Actuarial Analysis Report
+
+Source: `docs/modules/data_agents/reports/actuarial.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/actuarial
+Summary: Actuarial Analysis Report (actuarial_markdown) for Data Agents Analytic jobs.
+
+# Actuarial Analysis Report
+
+**Report type key:** `actuarial_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Risk-style metrics: extremes, tails, survival-style views, and actuarial summaries on numeric severity/frequency fields.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Actuarial Analysis**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/actuarial_markdown`  
+API: `GET /reports/JOB_ID/actuarial_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Treat tails and rare events carefully. This is not Financial DSO or insurance pricing unless your extract is built for that.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `actuarial_markdown` | Markdown report |
+| `actuarial_notebook` | Jupyter notebook |
+| `actuarial_graphs` | PNG folder |
+| `actuarial_results` | JSON results |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Categorical Analysis Report
+
+Source: `docs/modules/data_agents/reports/categorical.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/categorical
+Summary: Categorical Analysis Report (categorical_markdown) for Data Agents Analytic jobs.
+
+# Categorical Analysis Report
+
+**Report type key:** `categorical_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Statistical tests and visualizations for categorical and mixed-type columns (chi-square, Cramér's V, bar charts).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Categorical Analysis**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/categorical_markdown`  
+API: `GET /reports/JOB_ID/categorical_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Look for associations between categories, not continuous ARPU. Sparse levels can inflate tests — check counts in the JSON.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `categorical_markdown` | Markdown report |
+| `categorical_notebook` | Jupyter notebook |
+| `categorical_graphs` | PNG folder |
+| `categorical_results` | JSON results |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Config Parameters
+
+Source: `docs/modules/data_agents/reports/config_parameters.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/config_parameters
+Summary: Config Parameters (config_parameters) for Data Agents jobs.
+
+# Config Parameters
+
+**Report type key:** `config_parameters`  
+**Configuration type:** All types  
+**Group:** Shared
+
+Snapshot of the configuration used for the run (secrets masked) for reproducibility.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) any saved configuration.
+2. Enable: Always saved next to reports (`config_parameters.json`).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Reports UI → **Other** (JSON/CSV), or `GET /reports/JOB_ID/config_parameters`  
+API: `GET /reports/JOB_ID/config_parameters`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Copy mappings and family flags from here if you need to re-run the same analysis.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `config_parameters` | JSON snapshot |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Consolidated Results
+
+Source: `docs/modules/data_agents/reports/consolidated_results.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/consolidated_results
+Summary: Consolidated Results (consolidated_results) for Data Agents jobs.
+
+# Consolidated Results
+
+**Report type key:** `consolidated_results`  
+**Configuration type:** All types  
+**Group:** Shared
+
+Versioned machine-readable result contract used by **Analysis Insights** (`/analysis/JOB_ID`).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) any saved configuration.
+2. Enable: Written at the end of a successful job (`results_persistence`).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Reports UI → **Other** (JSON/CSV), or `GET /reports/JOB_ID/consolidated_results`  
+API: `GET /reports/JOB_ID/consolidated_results`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Prefer this JSON for dashboards and MCP. Markdown families are the human narrative.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `consolidated_results` | JSON contract |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Feature Engineering Report
+
+Source: `docs/modules/data_agents/reports/feature_engineering.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/feature_engineering
+Summary: Feature Engineering Report (feature_engineering_markdown) for Data Agents Analytic jobs.
+
+# Feature Engineering Report
+
+**Report type key:** `feature_engineering_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+ML-ready features: transforms, scaling, encoding, dimensionality reduction, and an engineered dataset summary.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Feature Engineering**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/feature_engineering_markdown`  
+API: `GET /reports/JOB_ID/feature_engineering_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Use this to inspect what was derived before clustering or models. Optional merge of time-series features when that module is on.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `feature_engineering_markdown` | Markdown report |
+| `feature_engineering_notebook` | Jupyter notebook |
+| `feature_engineering_graphs` | PNG folder |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Breakdowns
+
+Source: `docs/modules/data_agents/reports/financial_breakdowns.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_breakdowns
+Summary: Financial Breakdowns (financial_breakdowns_markdown) for Data Agents Financial jobs.
+
+# Financial Breakdowns
+
+**Report type key:** `financial_breakdowns_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Portfolio matrix, median-gap opportunity sizing, and slices of revenue/ARPU/margin/ROI by mapped dimensions and hierarchies.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **breakdowns** — dimension fields mapped.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_breakdowns_markdown`  
+API: `GET /reports/JOB_ID/financial_breakdowns_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Quadrants are relative to **this** portfolio median. Uplifts across dimensions must not be summed. Unscored segments lack prior-period revenue.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_breakdowns_markdown` | Markdown report |
+| `financial_breakdowns_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Campaigns
+
+Source: `docs/modules/data_agents/reports/financial_campaigns.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_campaigns
+Summary: Financial Campaigns (financial_campaigns_markdown) for Data Agents Financial jobs.
+
+# Financial Campaigns
+
+**Report type key:** `financial_campaigns_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Campaign attribution, spend, verified ROI, budget variance, and channel mix.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **campaigns**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_campaigns_markdown`  
+API: `GET /reports/JOB_ID/financial_campaigns_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Rank volume by revenue and efficiency by **verified** ROI only. High unattributed share means `campaign_id` is missing on revenue events.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_campaigns_markdown` | Markdown report |
+| `financial_campaigns_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Comparisons
+
+Source: `docs/modules/data_agents/reports/financial_comparisons.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_comparisons
+Summary: Financial Comparisons (financial_comparisons_markdown) for Data Agents Financial jobs.
+
+# Financial Comparisons
+
+**Report type key:** `financial_comparisons_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Latest vs previous bucket, trailing windows, and plan-vs-actual when targets are mapped.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **comparisons**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_comparisons_markdown`  
+API: `GET /reports/JOB_ID/financial_comparisons_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Latest-vs-prior is one step — use Time for the full series. Unmapped plan is skipped, not 100% attainment.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_comparisons_markdown` | Markdown report |
+| `financial_comparisons_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Data Quality
+
+Source: `docs/modules/data_agents/reports/financial_data_quality.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_data_quality
+Summary: Financial Data Quality (financial_data_quality_markdown) for Data Agents Financial jobs.
+
+# Financial Data Quality
+
+**Report type key:** `financial_data_quality_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Mapping coverage, field completeness, type validity, event usability, and family readiness.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **data_quality**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_data_quality_markdown`  
+API: `GET /reports/JOB_ID/financial_data_quality_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+A high mapping count is not enough — check field fill before trusting ARPU/ROI. Close errors first, then warnings.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_data_quality_markdown` | Markdown report |
+| `financial_data_quality_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Distributions
+
+Source: `docs/modules/data_agents/reports/financial_distributions.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_distributions
+Summary: Financial Distributions (financial_distributions_markdown) for Data Agents Financial jobs.
+
+# Financial Distributions
+
+**Report type key:** `financial_distributions_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Identity revenue percentiles, concentration (Pareto/Lorenz, Gini), and outliers.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **distributions**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_distributions_markdown`  
+API: `GET /reports/JOB_ID/financial_distributions_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+A high top-decile share means concentration risk. Net-negative identities are excluded from the Lorenz curve and listed separately.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_distributions_markdown` | Markdown report |
+| `financial_distributions_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Overview
+
+Source: `docs/modules/data_agents/reports/financial_general.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_general
+Summary: Financial Overview (financial_general_markdown) for Data Agents Financial jobs.
+
+# Financial Overview
+
+**Report type key:** `financial_general_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Executive overview of mapped financial KPIs, coverage, sized prize, prioritized actions, and primary charts.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **general**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_general_markdown`  
+API: `GET /reports/JOB_ID/financial_general_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Prefer **verified** observations — skipped metrics mean missing mappings, not zero performance. Sizing holds volume constant and is not additive across dimensions.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_general_markdown` | Markdown report |
+| `financial_general_notebook` | Jupyter notebook |
+| `financial_results` | All-family JSON |
+| `financial_graphs` | Shared financial graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Growth & Retention
+
+Source: `docs/modules/data_agents/reports/financial_growth.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_growth
+Summary: Growth & Retention (financial_growth_markdown) for Data Agents Financial jobs.
+
+# Growth & Retention
+
+**Report type key:** `financial_growth_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+NRR, GRR, logo and revenue churn, identity bridge, and revenue bridge (expansion/contraction).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **growth**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_growth_markdown`  
+API: `GET /reports/JOB_ID/financial_growth_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+NRR includes expansion of the retained cohort (new logos excluded). GRR is the retention floor without expansion. Expansion/contraction only applies to identities in both periods.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_growth_markdown` | Markdown report |
+| `financial_growth_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Industry Pack
+
+Source: `docs/modules/data_agents/reports/financial_industry.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_industry
+Summary: Financial Industry Pack (financial_industry_markdown) for Data Agents Financial jobs.
+
+# Financial Industry Pack
+
+**Report type key:** `financial_industry_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Industry-pack KPIs: banking NII/NIM/CIR/ROA/ROE; telco blended ARPU and SAC; gambling GGR/NGR, hold %, ARPDAU.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **industry** — profile banking, telco, or gambling (generic skips the pack).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_industry_markdown`  
+API: `GET /reports/JOB_ID/financial_industry_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Generic profile skips this pack on purpose. Skipped pack KPIs are mapping gaps, not zeros. Responsible-gambling questions stay blocked.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_industry_markdown` | Markdown report |
+| `financial_industry_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Ledgers (AR/AP/GL)
+
+Source: `docs/modules/data_agents/reports/financial_ledgers.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_ledgers
+Summary: Ledgers (AR/AP/GL) (financial_ledgers_markdown) for Data Agents Financial jobs.
+
+# Ledgers (AR/AP/GL)
+
+**Report type key:** `financial_ledgers_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Open AR/AP, aging, DSO/DPO, match rates, GL imbalance, and subledger-to-GL reconciliation.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **ledgers** — sales/purchase/GL collections mapped.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_ledgers_markdown`  
+API: `GET /reports/JOB_ID/financial_ledgers_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Working-capital and control, not income-statement ARPU. Other books are never treated as sales-ledger revenue.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_ledgers_markdown` | Markdown report |
+| `financial_ledgers_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Profitability
+
+Source: `docs/modules/data_agents/reports/financial_profitability.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_profitability
+Summary: Profitability (financial_profitability_markdown) for Data Agents Financial jobs.
+
+# Profitability
+
+**Report type key:** `financial_profitability_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Gross profit, gross margin, contribution, cost-to-serve, and latest-period P&L bridge.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **profitability** — cost mapped.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_profitability_markdown`  
+API: `GET /reports/JOB_ID/financial_profitability_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Headline KPIs use the latest period grain. Gross margin is (revenue − mapped cost) / revenue — never 100% if cost is unmapped.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_profitability_markdown` | Markdown report |
+| `financial_profitability_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Returns (ROI / CAC)
+
+Source: `docs/modules/data_agents/reports/financial_returns.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_returns
+Summary: Returns (ROI / CAC) (financial_returns_markdown) for Data Agents Financial jobs.
+
+# Returns (ROI / CAC)
+
+**Report type key:** `financial_returns_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+ROI, ROAS, CAC, payback, observed LTV, and LTV:CAC from mapped cost/investment.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **returns** — cost/investment mapped.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_returns_markdown`  
+API: `GET /reports/JOB_ID/financial_returns_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+ROI is never invented from revenue alone. CAC requires the investment role — mapped COGS alone is not CAC. Skipped ROI means unmapped spend, not a failed campaign.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_returns_markdown` | Markdown report |
+| `financial_returns_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Financial Time Analytics
+
+Source: `docs/modules/data_agents/reports/financial_time.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_time
+Summary: Financial Time Analytics (financial_time_markdown) for Data Agents Financial jobs.
+
+# Financial Time Analytics
+
+**Report type key:** `financial_time_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Period series for recognized revenue, ARPU, and sequential growth at the selected grain.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **time**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_time_markdown`  
+API: `GET /reports/JOB_ID/financial_time_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Read revenue level, ARPU, and period-over-period together. Grain is set on the Financial setup (year/month/week/day).
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_time_markdown` | Markdown report |
+| `financial_time_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Unit Economics (ARPU)
+
+Source: `docs/modules/data_agents/reports/financial_unit_economics.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_unit_economics
+Summary: Unit Economics (ARPU) (financial_unit_economics_markdown) for Data Agents Financial jobs.
+
+# Unit Economics (ARPU)
+
+**Report type key:** `financial_unit_economics_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+ARPU, ARPPU, ARPA, ARPDAU, recognized revenue, and identity scorecard (active / paying / attributed vs unattributed).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **unit_economics** — identity + time + recognized revenue mapped.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_unit_economics_markdown`  
+API: `GET /reports/JOB_ID/financial_unit_economics_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Headline KPIs use the **latest** period grain. ARPU is attributed recognized revenue divided by identities with an event (zeros included). ARPPU is paying identities only. ARPA needs `account_id`. ARPDAU is ARPU of the latest calendar day. Unattributed revenue does not inflate per-identity KPIs.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_unit_economics_markdown` | Markdown report |
+| `financial_unit_economics_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Customer Value (LTV)
+
+Source: `docs/modules/data_agents/reports/financial_value.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_value
+Summary: Customer Value (LTV) (financial_value_markdown) for Data Agents Financial jobs.
+
+# Customer Value (LTV)
+
+**Report type key:** `financial_value_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Observed LTV / identity value from mapped revenue history.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **value**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_value_markdown`  
+API: `GET /reports/JOB_ID/financial_value_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Average of attributed history including zero-revenue identities, excluding unattributed dollars. Not a predicted CLV unless a retention model exists.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_value_markdown` | Markdown report |
+| `financial_value_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Data Agents Reports
+
+Source: `docs/modules/data_agents/reports/index.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports
+Summary: How to open Data Agents reports, plus a page for every report type.
+
+# Reports
+
+Open **Reports** (`/reports`) and select a **completed** job. Artifacts group as **Markdown**, **Notebooks**, **Graphs**, and **Other** (JSON/CSV).
+
+Each **report type** has its own page in this section (sidebar). The key in the UI matches the `reportType` on `GET /reports/JOB_ID/REPORT_TYPE`.
+
+**Only enabled families appear:** If a type is missing, that analysis family was off, mapping was incomplete, or the step failed.
+
+## How to open any type
+
+| Viewer | Path |
+| --- | --- |
+| Markdown | `/markdown/JOB_ID/REPORT_TYPE` |
+| Notebook | `/notebook/JOB_ID/REPORT_TYPE` |
+| Graphs | `/graphs/JOB_ID/REPORT_TYPE` |
+
+1. [Run a job](/docs/modules/data_agents/process).
+2. **Reports** → select the job → pick the labeled row.
+3. Or use a [domain analysis view](/docs/modules/data_agents/analysis) (latest completed job).
+
+## Analytic
+
+- [Main analysis](/docs/modules/data_agents/reports/main) (`main_markdown`)
+- [Categorical](/docs/modules/data_agents/reports/categorical)
+- [Actuarial](/docs/modules/data_agents/reports/actuarial)
+- [Feature engineering](/docs/modules/data_agents/reports/feature_engineering)
+- [Machine learning](/docs/modules/data_agents/reports/ml)
+- [Time series](/docs/modules/data_agents/reports/time_series)
+
+## Shared artifacts
+
+- [Pipeline notebook](/docs/modules/data_agents/reports/pipeline_notebook)
+- [Consolidated results](/docs/modules/data_agents/reports/consolidated_results)
+- [Config parameters](/docs/modules/data_agents/reports/config_parameters)
+
+## Interactions
+
+How the type works (sources, predictors, attribution, privacy): [Interactions Analytic](/docs/modules/data_agents/interactions).
+
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [Customer uptake](/docs/modules/data_agents/reports/recommender_customer)
+- [Market intelligence](/docs/modules/data_agents/reports/recommender_market_intelligence)
+- [Marketing mix](/docs/modules/data_agents/reports/recommender_marketing_mix)
+- [Entity clusters](/docs/modules/data_agents/reports/recommender_entity_clusters)
+- [Interaction manifest](/docs/modules/data_agents/reports/recommender_manifest)
+
+## Personality
+
+- [Overview](/docs/modules/data_agents/reports/personality_general)
+- [Time measures](/docs/modules/data_agents/reports/personality_time)
+- [Customer change](/docs/modules/data_agents/reports/personality_customer_change)
+- [Spend](/docs/modules/data_agents/reports/personality_spend)
+- [Money](/docs/modules/data_agents/reports/personality_money)
+- [Drift](/docs/modules/data_agents/reports/personality_drift)
+- [Category patterns](/docs/modules/data_agents/reports/personality_category_patterns)
+- [Calendar](/docs/modules/data_agents/reports/personality_calendar)
+- [Lifecycle recommendations](/docs/modules/data_agents/reports/personality_recommendations)
+- [Intelligent campaigning](/docs/modules/data_agents/reports/personality_campaigns)
+
+## Financial
+
+- [Overview](/docs/modules/data_agents/reports/financial_general)
+- [Unit economics (ARPU)](/docs/modules/data_agents/reports/financial_unit_economics)
+- [Returns (ROI / CAC)](/docs/modules/data_agents/reports/financial_returns)
+- [Customer value (LTV)](/docs/modules/data_agents/reports/financial_value)
+- [Profitability](/docs/modules/data_agents/reports/financial_profitability)
+- [Growth & retention](/docs/modules/data_agents/reports/financial_growth)
+- [Time analytics](/docs/modules/data_agents/reports/financial_time)
+- [Breakdowns](/docs/modules/data_agents/reports/financial_breakdowns)
+- [Distributions](/docs/modules/data_agents/reports/financial_distributions)
+- [Comparisons](/docs/modules/data_agents/reports/financial_comparisons)
+- [Campaigns](/docs/modules/data_agents/reports/financial_campaigns)
+- [Ledgers](/docs/modules/data_agents/reports/financial_ledgers)
+- [Industry pack](/docs/modules/data_agents/reports/financial_industry)
+- [Data quality](/docs/modules/data_agents/reports/financial_data_quality)
+
+---
+
+## Main Analysis Report
+
+Source: `docs/modules/data_agents/reports/main.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/main
+Summary: Main Analysis Report (main_markdown) for Data Agents Analytic jobs.
+
+# Main Analysis Report
+
+**Report type key:** `main_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Profiling, data quality, descriptive statistics, correlations, and chart descriptions for the primary extract.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Main Analysis** (`enable_main_analysis`).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/main_markdown`  
+API: `GET /reports/JOB_ID/main_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Start with the executive summary and quality score. Use histograms and box plots for numeric spread; heatmaps for correlations. This is not ARPU or personality mix.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `main_markdown` | Markdown report |
+| `main_notebook` | Jupyter notebook |
+| `main_graphs` | PNG folder |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Machine Learning Report
+
+Source: `docs/modules/data_agents/reports/ml.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/ml
+Summary: Machine Learning Report (ml_markdown) for Data Agents Analytic jobs.
+
+# Machine Learning Report
+
+**Report type key:** `ml_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Clustering or supervised ML summaries (for example cluster counts and feature scores) from the analytic pipeline.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Feature engineering / ML stage (when the job writes `ml_markdown`).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/ml_markdown`  
+API: `GET /reports/JOB_ID/ml_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+If `ml_markdown` is missing, check feature-engineering output and job logs. Dashboards may fall back to a consolidated `ml` section.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `ml_markdown` | Markdown report |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Calendar Personality Patterns
+
+Source: `docs/modules/data_agents/reports/personality_calendar.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_calendar
+Summary: Calendar Personality Patterns (personality_calendar_markdown) for Data Agents Personality jobs.
+
+# Calendar Personality Patterns
+
+**Report type key:** `personality_calendar_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Weekend, holiday, day-of-week, and time-of-day personality and category lifts.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **calendar**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_calendar_markdown`  
+API: `GET /reports/JOB_ID/personality_calendar_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Lifts are relative to the extract. Pair with time measures for period share.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_calendar_markdown` | Markdown report |
+| `personality_calendar_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Personality Intelligent Campaigning
+
+Source: `docs/modules/data_agents/reports/personality_campaigns.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_campaigns
+Summary: Personality Intelligent Campaigning (personality_campaigns_markdown) for Data Agents Personality jobs.
+
+# Personality Intelligent Campaigning
+
+**Report type key:** `personality_campaigns_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Activate/retain campaign playbook with engagement segments, cross-pair messages, and optional Mongo export summary.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **campaigning**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_campaigns_markdown`  
+API: `GET /reports/JOB_ID/personality_campaigns_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Export collections are optional and suggested from the source name. Review payloads before using them in Runtime.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_campaigns_markdown` | Markdown report |
+| `personality_campaigns_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Category Patterns
+
+Source: `docs/modules/data_agents/reports/personality_category_patterns.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_category_patterns
+Summary: Category Patterns (personality_category_patterns_markdown) for Data Agents Personality jobs.
+
+# Category Patterns
+
+**Report type key:** `personality_category_patterns_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Transaction-scan category concentrations co-occurring with personality labels.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **category_patterns** (transaction scan).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_category_patterns_markdown`  
+API: `GET /reports/JOB_ID/personality_category_patterns_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Co-occurrence is not causation. Heavy-hitter limits may cap category keys on large scans.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_category_patterns_markdown` | Markdown report |
+| `personality_category_patterns_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Customer Personality Change & Reasons
+
+Source: `docs/modules/data_agents/reports/personality_customer_change.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_customer_change
+Summary: Customer Personality Change & Reasons (personality_customer_change_markdown) for Data Agents Personality jobs.
+
+# Customer Personality Change & Reasons
+
+**Report type key:** `personality_customer_change_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Pseudonymous customer-level personality changes with reason codes, score movers, and history paths.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **customers** / customer change.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_customer_change_markdown`  
+API: `GET /reports/JOB_ID/personality_customer_change_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Reason codes explain *why* a label moved. Magnitudes are in the notebook and JSON.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_customer_change_markdown` | Markdown report |
+| `personality_customer_change_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Personality Drift
+
+Source: `docs/modules/data_agents/reports/personality_drift.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_drift
+Summary: Personality Drift (personality_drift_markdown) for Data Agents Personality jobs.
+
+# Personality Drift
+
+**Report type key:** `personality_drift_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Direction summary, reason-code rollups, and top personality transitions across intervals.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **drift** — needs enough history.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_drift_markdown`  
+API: `GET /reports/JOB_ID/personality_drift_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Transitions need two periods. Sparse history yields weak drift — check data quality.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_drift_markdown` | Markdown report |
+| `personality_drift_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Personality Overview
+
+Source: `docs/modules/data_agents/reports/personality_general.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_general
+Summary: Personality Overview (personality_general_markdown) for Data Agents Personality jobs.
+
+# Personality Overview
+
+**Report type key:** `personality_general_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Executive overview of spend/money personality mix with time/change scorecard and guardrails.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **general**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_general_markdown`  
+API: `GET /reports/JOB_ID/personality_general_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+This **analyzes** mix and scores. Live trait scoring in the closed loop is Spend Personality, not this report.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_general_markdown` | Markdown report |
+| `personality_general_notebook` | Jupyter notebook |
+| `personality_results` | Combined JSON |
+| `personality_graphs` | Score / mix graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Money Personality Report
+
+Source: `docs/modules/data_agents/reports/personality_money.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_money
+Summary: Money Personality Report (personality_money_markdown) for Data Agents Personality jobs.
+
+# Money Personality Report
+
+**Report type key:** `personality_money_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Population mix and traits for money personality labels and scores.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **money**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_money_markdown`  
+API: `GET /reports/JOB_ID/personality_money_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Same reading pattern as spend: mix, then scores. Drift is a separate family.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_money_markdown` | Markdown report |
+| `personality_money_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Personality Lifecycle Recommendations
+
+Source: `docs/modules/data_agents/reports/personality_recommendations.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_recommendations
+Summary: Personality Lifecycle Recommendations (personality_recommendations_markdown) for Data Agents Personality jobs.
+
+# Personality Lifecycle Recommendations
+
+**Report type key:** `personality_recommendations_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Discover / Engage / Activate / Retain action cards grounded in personality evidence.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **recommendations**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_recommendations_markdown`  
+API: `GET /reports/JOB_ID/personality_recommendations_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Cards are evidence-backed suggestions for operators, not Runtime offers. Campaign export is the campaigns report.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_recommendations_markdown` | Markdown report |
+| `personality_recommendations_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Spend Personality Report
+
+Source: `docs/modules/data_agents/reports/personality_spend.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_spend
+Summary: Spend Personality Report (personality_spend_markdown) for Data Agents Personality jobs.
+
+# Spend Personality Report
+
+**Report type key:** `personality_spend_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Population mix and traits for spend personality labels and scores.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **spend**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_spend_markdown`  
+API: `GET /reports/JOB_ID/personality_spend_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Population mix first, then trait distributions. Not Runtime `/invocations` scoring.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_spend_markdown` | Markdown report |
+| `personality_spend_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Personality Time Measures
+
+Source: `docs/modules/data_agents/reports/personality_time.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_time
+Summary: Personality Time Measures (personality_time_markdown) for Data Agents Personality jobs.
+
+# Personality Time Measures
+
+**Report type key:** `personality_time_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Weekly/monthly period trends, observation windows, and calendar cadence for personality mix.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **time** (and related time measures).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_time_markdown`  
+API: `GET /reports/JOB_ID/personality_time_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Read share timelines with the observation window. Calendar lifts are a separate report.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_time_markdown` | Markdown report |
+| `personality_time_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Runnable Pipeline Notebook
+
+Source: `docs/modules/data_agents/reports/pipeline_notebook.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/pipeline_notebook
+Summary: Runnable Pipeline Notebook (pipeline_notebook) for Data Agents Analytic jobs.
+
+# Runnable Pipeline Notebook
+
+**Report type key:** `pipeline_notebook`  
+**Configuration type:** Analytic  
+**Group:** Shared
+
+Headless-executable notebook that re-runs the analysis pipeline and displays generated charts.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Emitted with Analytic jobs when notebook generation is enabled.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Notebook viewer: `/notebook/JOB_ID/pipeline_notebook`  
+API: `GET /reports/JOB_ID/pipeline_notebook`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Open in the notebook viewer or Jupyter. It is not a substitute for `config_parameters` when reproducing a specific job.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `pipeline_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Customer Uptake & Channel
+
+Source: `docs/modules/data_agents/reports/recommender_customer.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_customer
+Summary: Customer Uptake & Channel (recommender_customer_markdown) for Data Agents Interactions jobs.
+
+# Customer Uptake & Channel
+
+**Report type key:** `recommender_customer_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Pseudonymous customer uptake, cohorts, repeat behavior, channel preferences, switching, journeys, and experiments.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **customers**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_customer_markdown`  
+API: `GET /reports/JOB_ID/recommender_customer_markdown`
+
+**Missing this type:** The **customers** family was off or identity coverage was too low. Check job logs and **Analysis & LLM**.
+
+## What it contains
+
+1. Tracked vs visible vs **suppressed** pseudonymous customers (`minimum_cell_size`, default 10).
+2. Offer/response timeline and ratios for **identified** customers only.
+3. Sample journeys (offers presented → responded → accepted, with channels).
+4. Daily interaction movement.
+5. Behavioral **cohorts** and repeat behavior (prefer exact `$group` counts when present).
+6. Channel preference scorecards, cross-channel journeys, switching, preference evidence.
+
+Customer identifiers are hashed. Do not expect raw PII.
+
+## How to read
+
+Use this for cohort mix and channel journeys, not ledger ARPU. Low-evidence rows disappear by design.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_customer_markdown` | Markdown report |
+| `recommender_customer_notebook` | Jupyter notebook |
+| `recommender_customer_results` | JSON results |
+| `recommender_customer_graphs` | Cohort / channel graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general)
+- [All report types](/docs/modules/data_agents/reports)
+
+---
+
+## Entity Clusters (Offers by Category)
+
+Source: `docs/modules/data_agents/reports/recommender_entity_clusters.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_entity_clusters
+Summary: Entity Clusters (Offers by Category) (recommender_entity_clusters_markdown) for Data Agents Interactions jobs.
+
+# Entity Clusters (Offers by Category)
+
+**Report type key:** `recommender_entity_clusters_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Offers clustered by category with assignment tables and scatter graphs.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: **entity_clustering** is on by default (`min_rows` 6, `max_clusters` 5). Turn it off in recommender analysis settings if you do not want clusters.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_entity_clusters_markdown`  
+API: `GET /reports/JOB_ID/recommender_entity_clusters_markdown`
+
+**Missing this type:** Clustering was disabled, skipped (too few rows per peer group), or the step failed.
+
+## What it contains
+
+Advisory KMeans of offers within peer groups (and optional marketing-mix entities). Sample assignments, silhouette, PCA scatter. Labels are **not** written back to operational catalogs.
+
+## How to read
+
+Use clusters to see catalog structure. Assignments JSON is the machine-readable map.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_entity_clusters_markdown` | Markdown report |
+| `recommender_entity_clusters_results` | Cluster assignments JSON |
+| `recommender_entity_clusters_graphs` | Scatter graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [All report types](/docs/modules/data_agents/reports)
+
+---
+
+## Campaign & Predictor Performance
+
+Source: `docs/modules/data_agents/reports/recommender_general.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_general
+Summary: Campaign & Predictor Performance (recommender_general_markdown) for Data Agents Interactions jobs.
+
+# Campaign & Predictor Performance
+
+**Report type key:** `recommender_general_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Campaign-first performance for selected predictors: executive funnel, campaign scorecards, time/velocity/latency, convergence evidence, economics, data quality, and methodology guards.
+
+UI families **channels**, **convergence**, **economics**, and **fairness** also land in this report (they do not get separate markdown keys).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **general** (on by default).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_general_markdown`  
+API: `GET /reports/JOB_ID/recommender_general_markdown`
+
+**Missing this type:** The **general** family was off, predictor selection was missing, or the step failed. Check job logs and **Analysis & LLM**.
+
+## What it contains
+
+1. **Validation findings** and **data fidelity** (exact funnel vs sampled customer profiles).
+2. **Catalogue scorecard** for the general family.
+3. **Declared experiment comparison** when you configured control + treatment campaigns (uptake comparison only; randomization is not independently verified).
+4. **Executive interaction funnel** — recommendation calls → attributed responses → calls with an accepted offer → accepted offer impressions.
+5. **Campaign-first scorecards** — calls, responses, accepted-call rate per campaign.
+6. **Time, velocity, latency** — daily volume, ratios, attributed response latency.
+7. **Convergence and stability** — logged error observations if present. A zero-valued runtime error field is **not** proof that ranking has converged.
+8. **Economics** — estimated net value only when cost/margin exist on the logs; otherwise skipped (this is not Financial ARPU).
+9. **Data quality**, attribution coverage, diagnostics, **not measurable** catalogue metrics, methodology/prerequisite guards.
+
+If attributed responses **equal** accepted calls, the response collection likely records uptake events only — do not read that as 100% conversion.
+
+## How to read
+
+Start with the funnel, then campaign response rates, then daily ratios. Treat “What to change next” as **advisory experiments**. Role-specific lenses (business analyst / data scientist / ML engineer) may appear when LLM interpretation is on.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_general_markdown` | Markdown report |
+| `recommender_general_notebook` | Jupyter notebook |
+| `recommender_general_results` | JSON results |
+| `recommender_general_graphs` | Trend graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [Customer uptake](/docs/modules/data_agents/reports/recommender_customer)
+- [All report types](/docs/modules/data_agents/reports)
+
+---
+
+## Interaction Analysis Manifest
+
+Source: `docs/modules/data_agents/reports/recommender_manifest.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_manifest
+Summary: Interaction Analysis Manifest (recommender_manifest) for Data Agents Interactions jobs.
+
+# Interaction Analysis Manifest
+
+**Report type key:** `recommender_manifest`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Versioned source scope, report families, artifact locations, and analysis execution metadata.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Written with Interactions jobs.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Reports UI → **Other** (JSON/CSV), or `GET /reports/JOB_ID/recommender_manifest`  
+API: `GET /reports/JOB_ID/recommender_manifest`
+
+**Missing this type:** The job did not finish publishing artifacts. Check Jobs logs.
+
+## What it contains
+
+Versioned source scope (collections, predictors, date window), which families ran, artifact paths, and execution metadata. Open this first when a markdown family is missing — it shows whether that family was disabled or skipped.
+
+## How to read
+
+Use this to see which families ran and where files landed before opening markdown.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_manifest` | Manifest JSON / markdown |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [All report types](/docs/modules/data_agents/reports)
+
+---
+
+## Market Intelligence
+
+Source: `docs/modules/data_agents/reports/recommender_market_intelligence.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_market_intelligence
+Summary: Market Intelligence (recommender_market_intelligence_markdown) for Data Agents Interactions jobs.
+
+# Market Intelligence
+
+**Report type key:** `recommender_market_intelligence_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Market and catalog intelligence snapshots from offer-matrix and interaction scope.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **market_intelligence**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_market_intelligence_markdown`  
+API: `GET /reports/JOB_ID/recommender_market_intelligence_markdown`
+
+**Missing this type:** The **market_intelligence** family was off, catalog snapshots were missing, or peer groups were too small.
+
+## What it contains
+
+Catalog and market composition from offer-matrix snapshots plus recommended matrix suggestions (peer groups such as category / product_category / segment_focus). Status may be `not_possible` when snapshots are absent.
+
+Accepted offers remain **uptake signals**, not verified purchases or CLV.
+
+## How to read
+
+Use for catalog composition and peer-group views. Unit economics belong in Financial reports.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_market_intelligence_markdown` | Markdown report |
+| `recommender_market_intelligence_notebook` | Jupyter notebook |
+| `recommender_market_intelligence_results` | JSON results |
+| `recommender_market_intelligence_graphs` | Graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [All report types](/docs/modules/data_agents/reports)
+
+---
+
+## Marketing Mix (Adstock & Saturation)
+
+Source: `docs/modules/data_agents/reports/recommender_marketing_mix.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_marketing_mix
+Summary: Marketing Mix (Adstock & Saturation) (recommender_marketing_mix_markdown) for Data Agents Interactions jobs.
+
+# Marketing Mix (Adstock & Saturation)
+
+**Report type key:** `recommender_marketing_mix_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Adstock and saturation transforms on campaign/channel exposure versus response.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **marketing_mix** (off by default).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_marketing_mix_markdown`  
+API: `GET /reports/JOB_ID/recommender_marketing_mix_markdown`
+
+**Missing this type:** Enable **marketing_mix** on Analysis & LLM (off by default). If still missing, exposure/response series were too short or the step was skipped.
+
+## What it contains
+
+Diagnostic **adstock** (geometric or Weibull) and **saturation** (Hill or Michaelis–Menten) transforms of observed campaign/channel exposure versus attributed acceptance.
+
+Reports carryover half-life, peak lag, and observed elasticity along the curve. Optional overlay from a Financial job (`overlay_financial_job_id`) joins spend series — it still does **not** invent incremental ROAS.
+
+## How to read
+
+These are **not** a causal media-mix model and do not replace declared A/B uplift. Use [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general) for verified uptake rates and Financial **campaigns** for mapped ROI.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_marketing_mix_markdown` | Markdown report |
+| `recommender_marketing_mix_notebook` | Jupyter notebook |
+| `recommender_marketing_mix_results` | JSON results |
+| `recommender_marketing_mix_graphs` | Graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general)
+- [All report types](/docs/modules/data_agents/reports)
+
+---
+
+## Offer Effectiveness & Catalog
+
+Source: `docs/modules/data_agents/reports/recommender_offer.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_offer
+Summary: Offer Effectiveness & Catalog (recommender_offer_markdown) for Data Agents Interactions jobs.
+
+# Offer Effectiveness & Catalog
+
+**Report type key:** `recommender_offer_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Offer presentation and uptake, rank behavior, product-catalog snapshots, catalog changes, utilization, and experiments.
+
+The **experimentation** UI family also lands here.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **offers**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_offer_markdown`  
+API: `GET /reports/JOB_ID/recommender_offer_markdown`
+
+**Missing this type:** The **offers** family was off or the step failed. Check job logs and **Analysis & LLM**.
+
+## What it contains
+
+1. Offer effectiveness table — presented, accepted, uptake per presentation, lift vs overall.
+2. Daily presented vs accepted volume and uptake ratio.
+3. Product×day peaks (compact; full `offer_time` stays in JSON).
+4. **Offer matrix / catalog snapshot** — status, snapshot count, unique versions and offers.
+5. **Ranking effectiveness** — uptake by presented rank; accepted vs non-accepted score separation when scores exist.
+6. Catalog quality (missing descriptions, negative-value findings, field inventory).
+7. Utilization (offers never presented) and catalog change history.
+8. **Recommended actions to drive product success** — evidence, action, measure, guardrail (advisory).
+
+“Selling” in this report means presented-then-accepted until a purchase event is linked.
+
+## How to read
+
+Read uptake **per presentation**, then rank 1 vs lower ranks. A catalog offer that never appears in slates is a utilization issue, not a Financial KPI.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_offer_markdown` | Markdown report |
+| `recommender_offer_notebook` | Jupyter notebook |
+| `recommender_offer_results` | JSON results |
+| `recommender_offer_graphs` | Rank / uptake graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general)
+- [Entity clusters](/docs/modules/data_agents/reports/recommender_entity_clusters)
+- [All report types](/docs/modules/data_agents/reports)
+
+---
+
+## Time Series Report
+
+Source: `docs/modules/data_agents/reports/time_series.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/reports/time_series
+Summary: Time Series Report (time_series_markdown) for Data Agents Analytic jobs.
+
+# Time Series Report
+
+**Report type key:** `time_series_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Period buckets, numeric measures (sum/mean/rolling/lags), optional journeys, event associations, and forecasts.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Time Series Analysis** (off by default) plus datetime column on [Time Series](/docs/modules/data_agents/analysis).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/time_series_markdown`  
+API: `GET /reports/JOB_ID/time_series_markdown`
+
+**Missing this type:** The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+
+## How to read
+
+Read level, change, and grain together. Journeys need entity + event columns. Forecasts are extra JSON/CSV keys.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `time_series_markdown` | Markdown report |
+| `time_series_notebook` | Jupyter notebook |
+| `time_series_graphs` | PNG folder |
+| `time_series_results` | JSON results |
+| `time_series_journeys` | Journey sequences JSON |
+| `time_series_event_associations` | Event association JSON |
+| `time_series_forecasts` | Forecast JSON |
+| `time_series_forecasts_csv` | Forecast CSV |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)
+
+---
+
+## Data Agents Setup
+
+Source: `docs/modules/data_agents/setup.mdx`
+URL: https://ecosystem.ai/docs/modules/data_agents/setup
+Summary: Create Analytic, Interactions, Personality, or Financial configurations — Mongo or Trino, analysis families, and LLM interpretation.
+
+# Setup
+
+Open **Configurations** (`/configurations`). Tabs: **Configurations List**, **Analysis & LLM**, **Agents**. **Import** (JSON) sits on the right.
+
+## Create a configuration
+
+1. **Create New** (Quick Access) or click a card to edit.
+2. Name and optional description.
+3. Set **configuration type**: Analytic, Interactions, Personality, or Financial (help modal shows sample rows).
+4. Bind a **data source**:
+   - **MongoDB** — database + collection (optional aggregation pipeline). Default collection in samples is often `logging.data_ecosystemruntime_flatten` for runtime logs.
+   - **Trino** — catalog / schema / table or SQL. Trino is **extract-only**; report writes stay on Mongo.
+5. Map fields the type requires (especially Financial — aliases alone are not enough).
+6. Enable **analysis families** (or leave defaults). Disable unused families to keep jobs fast.
+7. **Save**. You cannot edit a config while a job for it is **running** or **queued**.
+
+**Import** loads a previously exported JSON (metadata stripped). Use this to clone environments.
+
+## Analytic
+
+Best for a single wide table (events, customers, transactions).
+
+Enable on **Analysis & LLM** (or the form):
+
+| Module | What it produces |
+| --- | --- |
+| **Main analysis** | Profiling, correlations, histograms — [Main analysis](/docs/modules/data_agents/reports/main) |
+| **Categorical** | Tests and charts for categories — [Categorical](/docs/modules/data_agents/reports/categorical) |
+| **Actuarial** | Risk, extremes, survival-style metrics — [Actuarial](/docs/modules/data_agents/reports/actuarial) |
+| **Feature engineering** | ML-ready features — [Feature engineering](/docs/modules/data_agents/reports/feature_engineering) |
+| **Time series** | Off by default. Needs a datetime column — [Time series](/docs/modules/data_agents/reports/time_series) |
+
+Optional: LLM interpretation on the analysis agent. Time Series also has its own page for datetime, grain, journeys, and event association.
+
+## Interactions
+
+Full walkthrough: **[Interactions Analytic](/docs/modules/data_agents/interactions)**.
+
+Pair **calls** (`ecosystemruntime`) with **responses** (`ecosystemruntime_response`) by UUID. Mongo connection and database come from **Source**. Then:
+
+1. Set calls and responses collections.
+2. **Discover Predictors** — pick specific predictors or **Analyze all**. Required before Run on Mongo.
+3. Optional date range and **attribution window** (hours, default 168).
+4. Optional declared experiment groups (control + treatments).
+5. Enable families on **Analysis & LLM**. Marketing mix is **off** by default.
+
+| Family | Focus |
+| --- | --- |
+| General performance | [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general) — also channels, convergence, economics, fairness |
+| Offers and catalog | [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer) — also experimentation |
+| Customer engagement | [Customer uptake](/docs/modules/data_agents/reports/recommender_customer) |
+| Market intelligence | [Market intelligence](/docs/modules/data_agents/reports/recommender_market_intelligence) |
+| Marketing mix | [Adstock / saturation](/docs/modules/data_agents/reports/recommender_marketing_mix) — **off** by default |
+| Entity clustering | [Offers by category](/docs/modules/data_agents/reports/recommender_entity_clusters) — on by default when enough catalog rows |
+
+Acceptance is **uptake**, not purchase or causal lift. LLM interpretation cannot change metrics. After a [simulation](/docs/configuration/simulations), point this config at the same logging collections.
+
+## Personality
+
+Requires **transactions** with customer, amount, merchant/category, timestamp. Optional score / campaign collections (often suggested from the source name).
+
+| Family | Focus |
+| --- | --- |
+| General / spend / money | [Overview](/docs/modules/data_agents/reports/personality_general), [spend](/docs/modules/data_agents/reports/personality_spend), [money](/docs/modules/data_agents/reports/personality_money) |
+| Drift | [Transitions](/docs/modules/data_agents/reports/personality_drift) |
+| Category patterns | [Txn-scan co-occurrence](/docs/modules/data_agents/reports/personality_category_patterns) |
+| Calendar | [Weekend, DOW, daypart](/docs/modules/data_agents/reports/personality_calendar) |
+| Recommendations | [Lifecycle cards](/docs/modules/data_agents/reports/personality_recommendations) |
+| Intelligent campaigning | [Playbook / export](/docs/modules/data_agents/reports/personality_campaigns) |
+| Customers / data quality | [Change reasons](/docs/modules/data_agents/reports/personality_customer_change) |
+
+Needs enough history for drift. Not a substitute for [Spend Personality](/docs/modules/spend_personality) **scoring** in Runtime.
+
+## Financial
+
+Map **identity**, **time**, and **recognized revenue**. Map **cost** if you need ROI/CAC. Industry profile: generic, banking, telco, or gambling.
+
+| Family | KPIs (when mapped) |
+| --- | --- |
+| Unit economics | [ARPU / ARPA / ARPPU](/docs/modules/data_agents/reports/financial_unit_economics) |
+| Returns | [ROI, ROAS, CAC](/docs/modules/data_agents/reports/financial_returns) |
+| Value | [Observed LTV](/docs/modules/data_agents/reports/financial_value) |
+| Profitability | [Margin, cost-to-serve](/docs/modules/data_agents/reports/financial_profitability) |
+| Growth | [NRR, GRR, churn](/docs/modules/data_agents/reports/financial_growth) |
+| Time / breakdowns / distributions / comparisons | [Time](/docs/modules/data_agents/reports/financial_time), [breakdowns](/docs/modules/data_agents/reports/financial_breakdowns), [distributions](/docs/modules/data_agents/reports/financial_distributions), [comparisons](/docs/modules/data_agents/reports/financial_comparisons) |
+| Campaigns | [Attribution](/docs/modules/data_agents/reports/financial_campaigns) |
+| Ledgers | [AR/AP/GL](/docs/modules/data_agents/reports/financial_ledgers) |
+| Industry pack | [Profile-specific](/docs/modules/data_agents/reports/financial_industry) |
+| Data quality | [Mapping coverage](/docs/modules/data_agents/reports/financial_data_quality) |
+
+**Unmapped cost:** ROI is **skipped**, never invented, if cost/investment is not mapped.
+
+Dimensions (product, region, customer, division, category, account, type) slice measures. Hierarchies such as region → category → product run when two or more levels are mapped.
+
+## Analysis & LLM tab
+
+After Save, use **Analysis & LLM** for the selected config:
+
+- Agent LLM interpretation
+- Module LLM interpretation (Personality / Interactions / Financial)
+- Per-type family checkboxes (same families as above)
+
+**Save Settings** applies to **new** jobs, not in-flight ones.
+
+## Agents tab
+
+Embedded test console: bind the saved config, pick a specialist, ask questions over jobs and reports (MCP tools). Same catalog as the **Agents** sidebar page.
+
+After a job completes, each family has its own report page under [Reports](/docs/modules/data_agents/reports).
+
+---
+
+## Modules
 
 Source: `docs/modules/index.mdx`
 URL: https://ecosystem.ai/docs/modules
+Summary: Workbench and Runtime product modules — Data Agents, Networks, Spend Personality, Two-Tower, and MLRun.
 
 # Modules
 
-## Modules
-ecosystem.Ai modules are the building blocks of the ecosystem.Ai platform. Modules are reusable components that can be used to build chatbots, virtual assistants, and other applications that require users to interact with a database using natural language. Modules can be combined to create complex applications that can be deployed on a variety of platforms.
+Modules are operator products that sit on Workbench and compose with the Runtime. They are not a second scoring engine: scoring stays `POST /invocations` then `POST /response`. Differences live in plugins, properties, and these consoles.
+
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+
+**Data Agents** is Agentic Data Analytics (`ecosystem-data-agents`) — batch reports, not live scoring. **Networks** (Workbench2 **Solutions → Network Analysis**) is the graph lab. Neither is the [Network Selector](/docs/user_guides/network) or Dynamic Engagement `approach: Network`.
 
 ---
 
@@ -7529,6 +11166,463 @@ label.
 
 ---
 
+## Networks Social, Knowledge, and Time
+
+Source: `docs/modules/networks/advanced.mdx`
+URL: https://ecosystem.ai/docs/modules/networks/advanced
+Summary: Social SNA, knowledge-graph ontology, timeline filters, temporal algorithms, geo charts, and metric writeback.
+
+# Social, Knowledge, and Time
+
+These features sit on the same `/networks/` workspace. Switch **graph mode** (left) before generate, or use the timeline once a time field is mapped.
+
+## Social network analysis
+
+**Social** mode replaces the standard centrality list with SNA-oriented jobs (`POST /api/graphtheory/graphs/{id}/social-analysis`):
+
+| Option | Role |
+| --- | --- |
+| Influence score | Combined PageRank + betweenness style influence |
+| Bridge score | Structural holes / brokerage |
+| Reciprocity | Mutual directed ties |
+| Clustering | Local clustering |
+| Friend recommendations | Suggest links (count + min mutual friends) |
+| Echo chambers | High in-group density vs out-group (threshold) |
+| Influence paths | Bounded-length paths (max length, min strength) |
+| Structural holes | Min bridge score filter |
+
+Results appear in the social metrics table, not only as canvas colors.
+
+## Knowledge graphs
+
+**Knowledge** mode treats vertices as typed entities and edges as relations.
+
+- Load a **built-in ontology** (example: academic Person / Paper / Institution) or **auto-generate** from the current graph
+- **Validate schema** against entity/relation types
+- **Apply inference** (max iterations) for transitive / implied links
+- Query **related entities**, **semantic path**, and custom knowledge queries
+
+APIs live under `/api/graphtheory/graphs/{id}/knowledge/*`. This ontology is **your domain graph**, not the Runtime closed-loop catalog at `/ontology/runtime`.
+
+## Timeline and temporal algorithms
+
+Map a **time field** and a **bracket** (minutes, hours, days, months, years). The canvas shows a histogram of buckets (server `$dateTrunc`; auto-coarser if the range would exceed 500 buckets).
+
+Click a bucket (for example **Jan 2023**) to filter. From the timeline, run a temporal category:
+
+| Category | Example algorithms |
+| --- | --- |
+| Structural shift | DeltaCon, spectral distance, BOCPD, PELT/CUSUM, top eigenspace |
+| Influence rise/fall | PageRank over periods, k-core evolution, EWMA, rank-change tests |
+| Community evolution | multilayer Leiden, label matching, event taxonomy, persistence/conductance |
+| Tie formation / decay | link-prediction heuristics, gradient-boosted ranker, Cox PH, prediction evaluation |
+| Cascade explosiveness | Hawkes, cascade metrics, changepoint |
+
+Large corpora should send **largeMode** plus `timeField` and period bounds so the job does not stream the whole history into the browser.
+
+## Geo and analytics drawer
+
+Optional settings on the saved network:
+
+- Degree-distribution Chart.js widgets
+- Natural-language charts via Workbench `/api/v1/analytics`
+- Google Maps geo / earth charts (`VITE_GOOGLE_MAPS_API_KEY` / `env-config.js`) when lat/lng fields (or geocoded address) exist
+
+## Writeback and export
+
+After analysis:
+
+| Writeback target | Effect |
+| --- | --- |
+| **source** | Merge metrics onto existing Mongo documents (`_network_metrics` prefix by default) |
+| **export** | One score document per node in a target collection |
+| **full_export** | Copy full source records plus scores |
+
+**Export** on the toolbar downloads **`ecosystem-network-v1`** JSON (mappings + settings). **Import** restores a model into `network_configs`.
+
+---
+
+## Networks Analysis
+
+Source: `docs/modules/networks/analysis.mdx`
+URL: https://ecosystem.ai/docs/modules/networks/analysis
+Summary: Server-side centrality, community detection, and shortest path in the Workbench2 Networks workspace.
+
+# Analysis
+
+Use **standard** graph mode. **Generate Graph** first, then **Run Analysis** in the right panel. Metrics are computed on the **server graph**, then projected onto the display sample.
+
+**Explain** next to each block calls the Workbench LLM with the current hubs / communities. It is commentary, not a substitute for the numeric job.
+
+## Centrality
+
+Tick the measures you need. Defaults in the UI are all on.
+
+| Measure | What it highlights |
+| --- | --- |
+| **PageRank** | Importance from quantity and quality of inbound links |
+| **Betweenness** | Nodes that sit on many shortest paths (brokers) |
+| **Closeness** | How few hops to everyone else |
+| **Degree** | Raw connection count |
+| **Eigenvector** | Connected-to-important-nodes |
+| **Katz** | Attenuated walks of all lengths |
+| **Harmonic** | Closeness that tolerates disconnected graphs |
+| **Eccentricity** | Longest shortest-path from the node |
+| **Clustering coefficient** | How clustered the node’s neighbors are |
+
+After a run, set **Size nodes by** (often PageRank) and **Color nodes by** (often Community) on the canvas toolbar.
+
+Workbench2 uses **NetworkX** for these scores (Python port of the former Java graphtheory API).
+
+## Community detection
+
+Enable **Community Detection**, then choose:
+
+| Algorithm | Notes |
+| --- | --- |
+| **Louvain modularity** | Default. Fast partitions; modularity is reported in global metrics |
+| **Girvan–Newman** | Edge-betweenness splits; slower on large graphs |
+
+Optional **number of communities** is a target for algorithms that accept a count; Louvain still follows modularity.
+
+Coloring by **Community** is the usual way to read the result on the canvas.
+
+## Shortest path
+
+Enable **Shortest Path**, enter **source** and **target** node ids, then run analysis (or the dedicated path call). The UI draws the path when it exists. Backend supports BFS / Dijkstra depending on weights.
+
+Use **Explain** on the path block after ids are filled.
+
+## After a run
+
+- Node details show per-node scores
+- Results table lists ranked nodes
+- Optional **degree distribution** chart in the analysis drawer
+- **Writeback** (left panel) can merge scores into Mongo for later Runtime lookups or dashboards
+
+Heavy algorithms may skip or simplify above ~100 000 edges; the hard processing ceiling is **2 000 000** edges.
+
+## Not the Runtime bandit
+
+Dynamic Engagement **Network Analysis** (`approach` in campaign properties) ranks **offers** from an acceptance network at score time. That is documented under [algorithms](/docs/configuration/algorithms/networkanalysis). This page is the Workbench **graph lab**.
+
+---
+
+## Networks Jobs and API
+
+Source: `docs/modules/networks/api.mdx`
+URL: https://ecosystem.ai/docs/modules/networks/api
+Summary: Async graph jobs on Workbench2 — graphtheory routes and the public Networks API.
+
+# Jobs and API
+
+All graph work is **Workbench2 FastAPI**, not the Java Runtime. The SPA uses `/api/graphtheory/*` with the Workbench JWT. Automation and MCP use the **public gateway** (`:8004`) under `/public/v1/networks/*`.
+
+**Auth:** Browser calls need a Workbench session. Public routes need the gateway scopes (`networks:jobs`, `networks:read`, `networks:analyze`). Mutating MCP tools require confirm.
+
+## Operator flow (SPA)
+
+```
+POST /api/graphtheory/graphs          → 202 { jobId }
+GET  /api/graphtheory/jobs/{jobId}    → status / progress
+GET  /api/graphtheory/jobs/{jobId}/events   → SSE
+GET  /api/graphtheory/jobs/{jobId}/result   → displayGraph + graphId
+POST /api/graphtheory/graphs/{graphId}/analyze
+GET  /api/graphtheory/graphs/{graphId}/display
+```
+
+Build is always **async + display sample**. The result must not include the full analysis edge list.
+
+Cancel: `DELETE /api/graphtheory/jobs/{jobId}`.
+
+## Configs
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/graphtheory/configs` | List saved networks |
+| `GET` | `/api/graphtheory/configs/{unique_key}` | Load one |
+| `POST` | `/api/graphtheory/configs` | Save |
+| `POST` | `/api/graphtheory/configs/import` | Import `ecosystem-network-v1` |
+| `DELETE` | `/api/graphtheory/configs/{unique_key}` | Delete |
+
+Mongo: database **`networks`**, collection **`network_configs`**. Graph job artifacts use `ecosystem_graphtheory` (`graph_node_metrics`, `graph_analysis_meta`).
+
+## Public API (gateway)
+
+Same jobs, scoped for integrations:
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `POST` | `/public/v1/networks/jobs` | `networks:jobs` |
+| `GET` | `/public/v1/networks/jobs/{job_id}` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/events` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/result` | `networks:read` |
+| `DELETE` | `/public/v1/networks/jobs/{job_id}` | `networks:jobs` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/display` | `networks:read` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/metrics` | `networks:read` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/analyze` | `networks:analyze` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/temporal/{category}` | `networks:analyze` |
+
+Job result typically includes `graphId`, `analysisStats`, `displayGraph`, and `metricsSummary`.
+
+## Other graphtheory routes the UI uses
+
+- Metadata: databases, collections, fetch-data preview
+- Time periods histogram
+- Shortest path, social-analysis, knowledge infer/query/semantic-path
+- Layout, subgraph expand, metrics writeback
+- Temporal: `structural-shift`, `influence`, `community-evolution`, `tie-formation`, `cascade`
+
+## Limits (server)
+
+| Cap | Value |
+| --- | --- |
+| Display sample | 1 000 default, 5 000 max |
+| Timeline buckets | 500 |
+| Heavy-algorithm edge hint | ~100 000 |
+| Hard edge ceiling | 2 000 000 |
+
+## MCP (Workbench)
+
+Dedicated tools on the Workbench MCP server (gateway `:8004`):
+
+| Tool | Maps to |
+| --- | --- |
+| `networks_job` | `POST /public/v1/networks/jobs` (confirm required) |
+| `networks_job_status` | `GET …/jobs/{job_id}` |
+| `networks_job_events` | `GET …/jobs/{job_id}/events` |
+| `networks_job_result` | `GET …/jobs/{job_id}/result` |
+| `networks_cancel_job` | `DELETE …/jobs/{job_id}` (confirm required) |
+
+Do not send Runtime scoring `params` here — that contract is `POST /invocations` only.
+
+---
+
+## Networks Data Sources
+
+Source: `docs/modules/networks/data.mdx`
+URL: https://ecosystem.ai/docs/modules/networks/data
+Summary: MongoDB, generic REST, and Spotify sources for Workbench2 Networks — pipelines, display samples, and field mappings.
+
+# Data Sources
+
+Networks never scrapes the browser against Mongo. The SPA sends a config; Workbench2 FastAPI reads data and builds the graph.
+
+## Source types
+
+| Type (UI) | Config `type` | Typical use |
+| --- | --- | --- |
+| **ecosystem.Ai MongoDB** | `ecosystem.ai` | Platform collections (`master`, project DBs) |
+| **Generic API** | `generic_api` | REST with bearer token; optional JSON path to the records array |
+| **Spotify** | `spotify` | OAuth2 client credentials; catalog search as a demo graph |
+
+Legacy saved configs that only have `database` + `collection` (no `type`) are treated as Mongo.
+
+## MongoDB (ecosystem.Ai)
+
+1. Pick **database** and **collection** (lists come from `/api/graphtheory/metadata/*`).
+2. Optional **aggregation pipeline** (JSON array). Empty pipeline = match all documents the job is allowed to process.
+3. **Display max nodes** — canvas sample, default **1 000**, clamp **5 000**. Strategy is usually **top degree** or **top PageRank**.
+4. **Process full collection** — ignore `$limit` / `$sample` in the pipeline so analysis can see the full matching set. The canvas still shows only the display sample.
+5. **Empty pipeline for analysis** — send `[]` so the job is not constrained by a preview limit.
+
+**Canvas vs analysis:** If display max is 5 000, you will not see 14 GB of documents as dots. You will see the highest-degree (or highest-PageRank) sample. Server jobs can still score the larger graph within the edge ceiling (2 000 000).
+
+Preview/sample document fetch is available from the data-source panel so you can choose mapping fields. An LLM **suggest pipeline** helper can draft a Mongo aggregation from a prompt; review it before you run the job.
+
+## Generic API
+
+Provide:
+
+- API URL
+- Bearer token
+- GET or POST (optional body)
+- Optional **response data path** (dot path to the array, for example `data.results`)
+- Timeout
+
+The backend pulls that array and applies the same node/edge mappings as Mongo.
+
+## Spotify
+
+Client id + secret (client-credentials). Default search is a year/track catalog query. Use this as a **demo** social/item graph, not as production customer data.
+
+## Field mappings
+
+After records are available, **Graph parameters** bind document fields:
+
+| Mapping | Meaning |
+| --- | --- |
+| Node **id** | Unique vertex key |
+| Node **label** | Canvas text |
+| Edge **source** / **target** | Link endpoints |
+| Edge **weight** | Optional; used for weighted graphs and some metrics |
+| Extra **edge mappings** | Additional relation types (`typeName`, enable/disable) |
+| **Geocode** | Optional address field → lat/lng attributes for geo charts |
+
+Graph type: **directed**, **undirected**, **bipartite**, **weighted**.
+
+## Build job
+
+Generating a graph always starts an async job (`POST /api/graphtheory/graphs` → `202` + `jobId`). In the UI that is **Fetch Data** (load records) then **Generate Graph** (build). Poll status or subscribe to SSE events. The result includes a **displayGraph** only — not the full analysis edge list.
+
+Saved analytics settings can later **write metrics** onto source documents (`_network_metrics` prefix by default), **export scores only**, or **full-export** source records plus scores into another collection.
+
+---
+
+## Networks
+
+Source: `docs/modules/networks/index.mdx`
+URL: https://ecosystem.ai/docs/modules/networks
+Summary: Workbench2 graph analysis — build networks from Mongo or APIs, run centrality and community detection on the server, and inspect a canvas-safe sample in the browser.
+
+# Networks
+
+**Networks** is the Workbench2 graph workspace. Open it from **Solutions → Network Analysis** or go to `/networks/` on the same origin as Workbench (local: `http://localhost:5270/networks/`).
+
+It is **not** the [Network Selector](/docs/user_guides/network). Selector **routes** `POST /invocations` traffic across Runtime configurations. Networks **builds and analyzes graphs** (customers, offers, transactions, knowledge) and writes optional metrics back to Mongo.
+
+![Networks workspace — data source, canvas, and analysis](/images/modules/networks/workspace.png)
+
+## Where it fits
+
+| Stage | Component | Repo |
+| --- | --- | --- |
+| Operator UI | `/networks/` SPA (second Vite HTML entry) | `ecosystem-workbench2` (`frontend/networks/`) |
+| Graph build & analysis | FastAPI `/api/graphtheory/*` (NetworkX) | `ecosystem-workbench2` backend |
+| Saved models | Mongo `networks.network_configs` | Workbench2 |
+| Dashboards | Analytics can bind a saved network config | Workbench2 `/analytics/` |
+| Runtime scoring | Separate: Dynamic Engagement **Network Analysis** approach, or [Network Selector](/docs/user_guides/network) | `ecosystem-runtime` |
+
+Sign in once on Workbench. `/networks/` shares `ecosystem_auth`; unauthenticated visits redirect to `/login?next=…`.
+
+## What it is for
+
+Use Networks when you need **structure**, not a ranked offer list:
+
+- Find **hubs** (PageRank, degree, eigenvector) in a customer–offer or transaction graph
+- Detect **communities** (Louvain or Girvan–Newman) and color the canvas by cluster
+- Measure **bridges** and social influence
+- Walk **shortest paths** between two nodes
+- Slice a graph by **time** and run temporal algorithms
+- Treat the graph as a **knowledge graph** (ontology, inference, semantic path)
+
+The **canvas never loads the full million-edge graph**. Build and analyze run as **async jobs** on the backend. The UI shows a display sample of at most **5 000** nodes (default **1 000**, typically top degree or top PageRank) with induced edges.
+
+**Processing stays on the server:** The browser collects mappings and analysis checkboxes, then calls Workbench2. Do not expect the SPA to compute PageRank or Louvain locally.
+
+## Graph modes
+
+When you generate the graph, pick a mode. It changes which right-hand panel you get after **Run Analysis**.
+
+| Mode | Use |
+| --- | --- |
+| **Standard** | Centrality, community detection, shortest path |
+| **Social** | Influence, reciprocity, echo chambers, friend recommendations, structural holes |
+| **Knowledge** | Ontology load / auto-generate, schema validation, inference, related entities |
+
+Graph type can be **directed**, **undirected**, **bipartite**, or **weighted**. Map source documents to **node id / label** and **edge source / target** (optional weight and multiple edge types).
+
+## Typical path
+
+1. Open **Network Analysis** (`/networks/`). Name the model and **Save**.
+2. Choose a [data source](/docs/modules/networks/data), database, and collection. Optionally process the full collection; keep **Display max nodes** at or below 5 000. Click **Fetch Data**.
+3. Map node and edge fields, then **Generate Graph** (async job).
+4. Size / color nodes (for example PageRank and Community), then [**Run Analysis**](/docs/modules/networks/analysis).
+5. Optional: [social, knowledge, timeline](/docs/modules/networks/advanced), **Explain**, **Export**, write metrics back to Mongo.
+
+## In this module
+
+- [Workspace](/docs/modules/networks/workspace) — three panes, save/export, canvas vs analysis
+- [Data Sources](/docs/modules/networks/data) — Mongo, REST, Spotify, mappings, display sample
+- [Analysis](/docs/modules/networks/analysis) — centrality, Louvain / Girvan–Newman, shortest path
+- [Social, Knowledge & Time](/docs/modules/networks/advanced) — SNA, ontologies, temporal jobs, writeback
+- [Jobs & API](/docs/modules/networks/api) — `/api/graphtheory`, public `/public/v1/networks`, MCP tools
+
+## Related
+
+- [Network Selector](/docs/user_guides/network) — Runtime request routing (`PostScoreNetwork`)
+- [Network Analysis algorithm](/docs/configuration/algorithms/networkanalysis) — Dynamic Engagement `approach` that ranks offers from an acceptance network
+- [Ontology for agents](/docs/ontology/agents) — Runtime closed-loop vocabulary (separate from Networks ontologies)
+
+---
+
+## Networks Workspace
+
+Source: `docs/modules/networks/workspace.mdx`
+URL: https://ecosystem.ai/docs/modules/networks/workspace
+Summary: Layout of the Workbench2 Networks SPA — left data panel, graph canvas, and analysis sidebar.
+
+# Workspace
+
+The Networks UI is a three-pane workspace. Layout (panel widths, collapsed accordions) is stored with the saved network.
+
+## Open it
+
+| How | URL |
+| --- | --- |
+| Workbench **Solutions → Network Analysis** | `/networks/` |
+| Local Workbench SPA | `http://localhost:5270/networks/` |
+| Same host as Docker Workbench | `http://<workbench>/networks/` |
+
+Use the Workbench login. Standalone Networks login is only for `VITE_NETWORKS_STANDALONE_LOGIN=true` (dev).
+
+## Chrome
+
+Top bar: ecosystem.Ai branding, **Settings**, **Sign Out**. Light/dark follows the Networks theme control.
+
+Left header on a model: **Close**, **Export**, **Save**.
+
+| Control | What it does |
+| --- | --- |
+| **Network Name** | Required. Saved configs live in Mongo `networks.network_configs`. |
+| **Description** | Optional notes for operators. |
+| **Save** | Persist source, mappings, analysis flags, and workspace layout. |
+| **Export** | Download `ecosystem-network-v1` JSON for backup / import. |
+| **Close** | Leave the editor (return to the model list). |
+
+## Left — data and graph
+
+Collapsible sections:
+
+1. **Data Source** — Mongo, REST, or Spotify OAuth2. See [Data Sources](/docs/modules/networks/data).
+2. **Graph parameters** — graph type, node id/label, edge source/target/weight, optional extra edge mappings, graph mode (standard / social / knowledge), layout spacing, show scores / link weights.
+3. **Analytics writeback** — merge or export centrality into Mongo after analysis.
+4. **Time-based** — time field and bracket (minutes → years) for the canvas timeline.
+
+**Display max nodes** (default 1 000, max 5 000) is the canvas sample, not the analysis universe. **Process full collection** tells the job to ignore pipeline `$limit` / `$sample` while the server still returns only the display sample.
+
+## Center — canvas
+
+After the **Generate Graph** job succeeds:
+
+- Force-directed (or other) layout of the **display sample**
+- **Size nodes by** a metric (PageRank, degree, …)
+- **Color nodes by** a metric or **Community**
+- **Search** nodes by id/label
+- Zoom / pan
+- **Timeline** buckets when a time field is configured — click a month (or other bracket) to filter; run [temporal algorithms](/docs/modules/networks/advanced) from the timeline
+
+Click a node for the details panel (metrics, neighbors). Isolated hubs and a large “CUSTOMER”-style center node are typical when the mapping uses a shared entity field.
+
+The canvas is a **sample**. Server analysis can cover a much larger edge set (hard ceiling 2 000 000 edges). The UI states that graphs always build as a **server job**.
+
+## Right — analysis
+
+**Analysis & Results** is enabled once a graph exists.
+
+1. Tick [centrality](/docs/modules/networks/analysis) measures.
+2. Optionally enable **Community Detection** (Louvain or Girvan–Newman) and **Shortest Path**.
+3. **Run Analysis** — another async job; progress shows on the button.
+4. **Explain** uses the Workbench LLM (`/v1`) to narrate hubs, communities, or a path. Run analysis first so Explain has metrics.
+
+Results tables, degree-distribution charts, and NL analytics charts can dock in the lower drawer when those settings are on.
+
+## Saved models
+
+The landing list loads configs from `GET /api/graphtheory/configs`. Import uses the same `ecosystem-network-v1` export format. Delete is per `unique_key`.
+
+---
+
 ## Spend Personality
 
 Source: `docs/modules/spend_personality/access.mdx`
@@ -7900,6 +11994,8 @@ There are a number of key use-cases that make the total process of Spend Persona
 
 The Spend Personality module uses a combination of NLP and ML techniques to analyze text data and generate predictions. The model is trained on a dataset of customer transactions and demographic information, and uses this data to predict the spending behavior of new customers.
 
+Population mix, drift, and campaign overlays on already-scored or raw transactions are documented under [Data Agents — Personality reports](/docs/modules/data_agents/reports#personality).
+
 ---
 
 ## AWS Spend Personality
@@ -8127,7 +12223,11 @@ Base prefix: `/api/v1`.
 | `POST` | `/algorithms/two-tower/train` | async job |
 | `POST` | `/algorithms/two-tower/batch-score` | async job |
 | `POST` | `/algorithms/two-tower/export-embeddings` | async job |
-| `POST` | `/algorithms/two-tower/concept-test` | sync |
+| `POST` | `/algorithms/two-tower/preview-schema` | async job |
+| `POST` | `/algorithms/two-tower/prepare-feature-frame` | async job |
+| `POST` | `/algorithms/two-tower/generate-notebook` | sync (writes `.ipynb`; UI/private) |
+| `POST` | `/algorithms/two-tower/generate-python` | sync (returns script + explanation) |
+| `GET` | `/algorithms/two-tower/runs` | sync |
 
 ### Saved configuration
 
@@ -8300,6 +12400,35 @@ Response:
   "ranked": [ { "offer": "ProductB", "score": 0.87 }, { "offer": "ProductA", "score": 0.12 } ]
 }
 ```
+
+## Public gateway (`/public/v1/two-tower`)
+
+Dual-auth (`X-API-Key` + user JWT). Scopes: `two-tower:configs`, `two-tower:train`, plus `jobs:read` to poll async jobs.
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `GET`/`POST` | `/public/v1/two-tower/configs` | `two-tower:configs` |
+| `GET`/`PUT` | `/public/v1/two-tower/configs/{config_id}` | `two-tower:configs` |
+| `GET` | `/public/v1/two-tower/predictors` | `two-tower:configs` |
+| `GET` | `/public/v1/two-tower/predictor-date-bounds` | `two-tower:configs` |
+| `GET` | `/public/v1/two-tower/runs` | `two-tower:configs` |
+| `POST` | `/public/v1/two-tower/preview-schema` | `two-tower:configs` |
+| `POST` | `/public/v1/two-tower/prepare-feature-frame` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/train` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/concept-test` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/export-embeddings` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/batch-score` | `two-tower:train` |
+| `POST` | `/public/v1/two-tower/generate-python` | `two-tower:train` |
+
+`POST /export-embeddings` is the embedding **update** path (upsert by `run_id` + entity key). Optional `mode`: `full` (default) or `missing_keys_only`.
+
+`POST /generate-python` returns `explanation_markdown`, `python_source`, `scopes`, and `endpoints` for the full pipeline. `generate-notebook` stays private/UI only.
+
+Client: `ecosystem_workbench_public` (`WorkbenchPublicClient.two_tower`).
+
+## MCP (stdio harness)
+
+Typed tools in `ecosystem_workbench_mcp` (not HTTP `/mcp` on :8001): `two_tower_configs`, `two_tower_get_config`, `two_tower_create_config`, `two_tower_update_config`, `two_tower_predictors`, `two_tower_predictor_date_bounds`, `two_tower_preview_schema`, `two_tower_prepare_feature_frame`, `two_tower_runs`, `two_tower_train`, `two_tower_concept_test`, `two_tower_export_embeddings`, `two_tower_batch_score`, `two_tower_generate_python`, plus `jobs_get`. Mutating calls require `confirm=true` when `EWB_PUBLIC_DESTRUCTIVE=confirm`.
 
 ## ecosystem-notebooks — PyTorch sidecar
 
@@ -8703,11 +12832,30 @@ Training is scoped by a **predictor** and an optional **date range**:
 - `from_date` / `to_date` — an inclusive-start, exclusive-end window
   (`datetime >= from_date` and `datetime < to_date`).
 
-Two helper endpoints support the UI:
+Two helper endpoints support the UI and public API (`two-tower:configs`):
 
 - `GET /api/v1/algorithms/two-tower/predictors` — distinct predictor values.
 - `GET /api/v1/algorithms/two-tower/predictor-date-bounds` — min/max dates and
   the row count for a predictor.
+
+Public mirrors: `GET /public/v1/two-tower/predictors` and
+`GET /public/v1/two-tower/predictor-date-bounds`.
+
+## Preview schema and prepare feature frame
+
+Before training, headless flows can validate the flatten slice and materialize the
+H2O frame without starting a train job:
+
+| Endpoint | Auth | Purpose |
+| --- | --- | --- |
+| `POST /api/v1/algorithms/two-tower/preview-schema` | private | Sample rows → columns, types, preview (async job) |
+| `POST /api/v1/algorithms/two-tower/prepare-feature-frame` | private | Mongo → CSV → H2O `two_tower_features` (async job) |
+| `POST /public/v1/two-tower/preview-schema` | `two-tower:configs` | Same as private preview |
+| `POST /public/v1/two-tower/prepare-feature-frame` | `two-tower:train` | Same as private prepare |
+
+Train still calls the same `create_feature_frame` helper internally when you skip
+explicit prepare — explicit prepare is for agents, notebooks, and the **Use in Python**
+script.
 
 ## From MongoDB to an H2O frame
 
@@ -10043,6 +14191,1349 @@ Next: [Offline Scoring](/docs/modules/two_tower/scoring).
 
 ---
 
+## Ontology for Agents
+
+Source: `docs/ontology/agents.mdx`
+URL: https://ecosystem.ai/docs/ontology/agents
+Summary: Use the Runtime ontology REST catalog and MCP tools to ground AI agents on the closed loop
+
+# Ontology for Agents
+
+The Runtime ontology is a machine-readable vocabulary for scoring, feedback, campaigns, and plugins. AI agents should **look up concepts and validate payloads** before they call `invoke` / `response`. That keeps tools aligned with `POST /invocations` then `POST /response` (singular), and with `params` as a JSON string.
+
+The [Runtime Dashboard](/docs/runtime/dashboard) **MCP** tab includes an Ontology Explorer that calls the same REST catalog the Java runtime exposes.
+
+![Runtime Ontology Explorer — search concepts and related MCP tools](/images/runtime/ontology-explorer.png)
+
+Try the hosted runtime at [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai) (point the dashboard Runtime URL at that host), or run locally (default **8091**, local debug often **8099**).
+
+## Why agents use the ontology
+
+| Problem | Ontology answer |
+| --- | --- |
+| Invented field names (`/responses`, nested `params`) | Concept cards for `InvocationRequest` and `ResponseFeedback` |
+| Wrong closed-loop order | Recipe `GET /ontology/runtime/recipes/closed-loop` |
+| Payload drift vs plugins | `validateInvokeRequest` / `validateResponseRequest` before scoring |
+| Which MCP tool to call | Each concept lists related tools (`invoke`, `listCampaigns`, …) |
+
+The Turtle sources are also downloadable (`runtime.ttl`, shapes, examples) for RAG or graph stores. See [Runtime Closed Loop](/docs/ontology/runtime).
+
+## REST catalog
+
+Same content as MCP resources. Prefix `{RUNTIME}` (for example `http://localhost:8091`).
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/ontology/runtime` | Module summary |
+| `GET` | `/ontology/runtime/concepts?q=invocation` | Search by label or local name |
+| `GET` | `/ontology/runtime/concepts/{localName}` | One concept card |
+| `GET` | `/ontology/runtime/recipes/closed-loop` | Closed-loop recipe JSON |
+| `POST` | `/ontology/runtime/validate/invoke` | Pre-flight invoke body |
+| `POST` | `/ontology/runtime/validate/response` | Pre-flight response body |
+| `GET` | `/ontology/runtime/downloads/runtime.ttl` | Bundled Turtle |
+
+```bash
+curl "http://localhost:8091/ontology/runtime/concepts?q=invocation&limit=20"
+```
+
+## MCP tools and resources
+
+On Runtime **0.9.7+**, `POST {RUNTIME}/mcp` exposes:
+
+| Tool | Use |
+| --- | --- |
+| `lookupRuntimeConcept` | Search concepts (same as the Explorer query box) |
+| `getClosedLoopRecipe` | Canonical listCampaigns → validate → invoke → validate → response |
+| `validateInvokeRequest` | Require `params` as a JSON **string** |
+| `validateResponseRequest` | Require `uuid` + `offer_name` |
+| `invoke` / `response` | Score and learn |
+
+Resources: `ontology://runtime`, `ontology://runtime/closed-loop`, `ontology://runtime/examples`, `ontology://runtime/concept/{localName}`.
+
+Recommended flow:
+
+1. `getClosedLoopRecipe` or read `ontology://runtime/closed-loop`
+2. `listCampaigns`
+3. `validateInvokeRequest` → `invoke` (save `uuid` and `offer_name`)
+4. `validateResponseRequest` → `response`
+
+Protocol detail: [MCP Support](/docs/runtime/mcp). Workbench Operator agents use a **different** MCP server (`POST` Workbench `:8001/mcp`) for deployments and enrichment — do not mix the two `/mcp` surfaces.
+
+## Related
+
+- [Runtime Closed Loop concepts](/docs/ontology/runtime)
+- [Runtime Catalog](/docs/ontology/runtime-catalog)
+- [Runtime Dashboard](/docs/runtime/dashboard)
+- [Campaign testing](/docs/runtime/testing)
+
+---
+
+## Alignments
+
+Source: `docs/ontology/alignments.mdx`
+URL: https://ecosystem.ai/docs/ontology/alignments
+Summary: Cross-module bridges between entities, workbench, server, and runtime
+
+# Alignments
+
+File: [`/ontology/alignments.ttl`](/ontology/alignments.ttl)  
+Namespace: `https://ecosystem.ai/ontology/platform#`
+
+Alignments relate concepts that live in different modules without merging their identity.
+
+## Typical bridges
+
+| Alignment idea | From | To | Meaning |
+|----------------|------|-----|---------|
+| Deployed campaign | `ent:DeploymentStep` / project campaign | `rt:CampaignContext` | What Workbench pushes becomes the runtime unit |
+| Offer catalog | `ent:OfferMatrix` / `OfferMatrixEntry` | `rt:hasOfferMatrix` | Same closed rows at design and score time |
+| Feature store | `ent:FeatureStoreRef` | `rt:FeatureLookupConfig` | Design-time pointer → runtime lookup |
+| Dynamic engagement | `ent:DynamicEngagement` | `rt:DynamicEngagementConfig` | Bandit / learning config on both sides |
+| Modeling ↔ Workbench | `srv:ModelingProject` | `ent:Project` | Optional shared identity when products share a project |
+| Solution case | `wb:SolutionCase` | Project + runtime campaign | Product pack binds meta + runtime |
+
+Exact property IRIs and OWL axioms are in the Turtle; treat this page as the **concept map**, the TTL as the **machine-readable source**.
+
+## Umbrella import
+
+[`/ontology/platform.ttl`](/ontology/platform.ttl) imports entities, workbench, server, runtime, and alignments so a single graph load covers the suite.
+
+---
+
+## Concept Index
+
+Source: `docs/ontology/concept-index.mdx`
+URL: https://ecosystem.ai/docs/ontology/concept-index
+Summary: A–Z index of all platform ontology classes and properties
+
+# Concept Index
+
+Alphabetical index of every class and property in the platform ontology suite. Module pages: [Entities catalog](/docs/ontology/entities-catalog), [Workbench catalog](/docs/ontology/workbench-catalog), [Server catalog](/docs/ontology/server-catalog), [Runtime catalog](/docs/ontology/runtime-catalog).
+
+| Module | Kind | Local name | Pref label | Definition |
+|--------|------|------------|------------|------------|
+| [runtime](/docs/ontology/runtime-catalog) | Class | `AcceptedOffer` | Accepted Offer | Element of offers_accepted; typically mirrors slim OfferResult fields. |
+| [entities](/docs/ontology/entities-catalog) | Class | `AgentConfig` | Agent Config | Ecogentic agent configuration (collection: agent_configs). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `agentName` | agent name |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `alpha` | alpha |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `AnalyticsDashboard` | Analytics Dashboard | Workbench analytics studio dashboard with charts and filters over Mongo collections. |
+| [server](/docs/ontology/server-catalog) | Class | `AppGenerationJob` | App Generation Job | Async job that generates application code from diagrams and ontology context. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `armReward` | arm reward |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `belongsToCatalog` | belongs to catalog |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `beta` | beta |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cache` | cache |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `Calendar` | Calendar | Calendar entity used by dynamic and budget scheduling (collection: calendar). |
+| [entities](/docs/ontology/entities-catalog) | Class | `Campaign` | Campaign | Workbench campaign that binds patron sources, offer matrices, and recommender deployments (collection: campaigns). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `campaign` | campaign |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `CampaignContext` | Campaign Context | Isolated runtime unit keyed by campaign/predictor name: models, corpora, plugins, logging collections, feature lookup, and optional linked offer matrix. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `campaignId` | campaign id |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `campaignId` | campaign id | Runtime case name (predictor.name / api_params.campaign). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `catalogId` | catalog id |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `category` | category |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `category` | category |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `channel` | channel |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `ChannelProfile` | Channel Profile | Delivery channel configuration for ecogentic / engagement. |
+| [entities](/docs/ontology/entities-catalog) | Class | `ContactCatalog` | Contacts Catalog | Catalog definition for contact records and sources (collection: contacts_catalog). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `contactId` | contact id |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ContactLog` | Contact Log | Mongo logging document for an invocation (logging.ecosystemruntime): uuid, predictor, api_params, params lookup, final_result, stats, scoring_data, date indexes. |
+| [entities](/docs/ontology/entities-catalog) | Class | `ContactRecord` | Contact Record | Individual contact / patron document with core, behavioral, and offers history. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `cost` | cost |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cost` | cost |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `customer` | customer |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
+| [entities](/docs/ontology/entities-catalog) | Class | `Dashboard` | Dashboard | Analytics dashboard definition. |
+| [entities](/docs/ontology/entities-catalog) | Class | `DataConnection` | Data Connection | External data connection such as Trino/Presto (collection: data_connections). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `dateLog` | date log |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `debugEnabled` | debug | Optional opt-in flag (true, 1). When set, the response includes a debug sibling object with pipeline errors and config snapshots. Not for production traffic. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `deploymentName` | deployment name |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `DeploymentStep` | Deployment Step | Embedded project deployment configuration pushed to ecosystem-runtime (paths, plugins, offer matrix, feature store). |
+| [server](/docs/ontology/server-catalog) | Class | `Diagram` | Diagram | Saved UML diagram (class, sequence, etc.) belonging to a modeling project. |
+| [server](/docs/ontology/server-catalog) | Datatype property | `diagramName` | diagram name |  |
+| [server](/docs/ontology/server-catalog) | Datatype property | `diagramType` | diagram type |  |
+| [server](/docs/ontology/server-catalog) | Class | `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
+| [server](/docs/ontology/server-catalog) | Datatype property | `domainId` | domain id |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `DynamicEngagement` | Dynamic Engagement | Online learning / bandit engagement configuration (collection: dynamic_engagement) with algorithm, contextual variables, and store bindings. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `embedsContactLog` | embeds contact log | response_log field. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `engagementName` | name |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `EnrichmentPipeline` | Enrichment Pipeline | Saved data enrichment pipeline configuration. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `explore` | explore |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `FactInjectionConfig` | Fact Injection Config | Fact injection / chat configuration (collection: chat_config). |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `FeatureLookupConfig` | Feature Lookup Config | Configuration for customer/feature DB lookup (database, collection, key, typically customer). |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `featuresObj` | features object |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `FeatureStoreRef` | Feature Store Reference | Pointer to a feature-store database and collection used for customer or context lookup. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `FinalResultEntry` | Final Result Entry | One ranked row in final_result with rank, slim result, and result_full. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `finalScore` | final score |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `Frame` | Frame | Training or reference data frame used by static model predictors (collection: frames). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `frameId` | frame id |  |
+| [server](/docs/ontology/server-catalog) | Class | `GenerationStrategy` | Generation Strategy | Selectable strategy or plugin binding for app/UML generation. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `GlobalSettings` | Global Settings | Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora). |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasAcceptedOffer` | has accepted offer |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasAgent` | has agent | project_agents asset link. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasCalendar` | has calendar |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasCampaign` | has campaign |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasDataConnection` | has data connection |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebug` | has debug |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugConfig` | has debug config |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugDatabase` | has debug database |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugError` | has debug error |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugParams` | has debug params |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasDeploymentStep` | has deployment step | deployment_step array on the project document. |
+| [server](/docs/ontology/server-catalog) | Object property | `hasDiagram` | has diagram |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasDynamicEngagement` | has dynamic engagement | project_dynamic_interactions asset link. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDynamicEngagement` | has dynamic engagement |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasEntry` | has entry |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFactInjectionConfig` | has fact injection config |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFeatureLookup` | has feature lookup | Open-schema binding; target documents are CustomerFeatureDocument instances of any shape. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFeatureStore` | has feature store |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFinalResult` | has final result |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFrame` | has frame | project_models asset link. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasOfferEntry` | has offer entry |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasOfferMatrix` | has offer matrix | project_offer_matrices asset link. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasOfferMatrix` | links offer matrix | Campaign links one offer matrix with fixed row schema. |
+| [server](/docs/ontology/server-catalog) | Object property | `hasOntologyContext` | has ontology context |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasOptionsStore` | has options store |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasPredictor` | has predictor | project_predictors asset link. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasPrompt` | has prompt |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasResponderConfig` | has responder config |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasResponsePayload` | has response payload |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasServerInfo` | has server info |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasSettings` | has settings |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasSimulation` | has simulation |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasSlimResult` | has slim result |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasStats` | has stats |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationStats` | Invocation Stats | Timing and model metadata on a contact log (duration, epsilon, predictor, error). |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobId` | job id |  |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobLifecycleState` | lifecycle state | Queued \\| Running \\| Succeeded \\| Failed \\| Cancelled. |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `joinsOffer` | joins offer | optionKey equals matrix offer_id. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `learningAlgorithm` | learning algorithm | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `linkedToProject` | linked to project | project_ids on contacts catalog / records. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `lookupKey` | lookup key |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixStatus` | status | draft \\| active \\| archived. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixVersion` | version |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `modelId` | model id |  |
+| [server](/docs/ontology/server-catalog) | Class | `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| [server](/docs/ontology/server-catalog) | Datatype property | `modelingProjectId` | project id |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `modifiedOfferScore` | modified offer score |  |
+| [workbench](/docs/ontology/workbench-catalog) | Object property | `monitorsCampaign` | monitors campaign deployment |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `numberOffers` | number offers |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `offerId` | offer id | Join key for options store and matrix lookup. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `offerId` | offer id |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `OfferMatrix` | Offer Matrix | First-class offer catalog entity (collection: offer_matrix) with spec, version, status, and rows or linked rows collection. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `OfferMatrix` | Offer Matrix | Runtime-linked offer catalog loaded via predictor.offer.matrix. Rows follow a fixed field format. |
+| [entities](/docs/ontology/entities-catalog) | Class | `OfferMatrixEntry` | Offer Matrix Entry | A single offer row in a matrix. Canonical runtime scoring fields: offer_id, offer_name, cost, price, category, static_offers. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `OfferMatrixEntry` | Offer Matrix Entry | Canonical offer row: offer_id, offer_name, cost, price, category, static_offers. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `offerMatrixId` | offer matrix id |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `offerName` | offer name | Display name; primary /response match key. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `offerName` | offer name |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `OfferResult` | Offer Result | Slim scored offer: uuid, offer, offer_name, score, final_score, cost, price, offer_value, arm_reward, modified_offer_score. |
+| [server](/docs/ontology/server-catalog) | Class | `OntologyContext` | Ontology Context | Structured ontologyContext on a modeling project: domain ids, structuredModel, promptContext, roles, and related generation metadata. |
+| [server](/docs/ontology/server-catalog) | Class | `OntologySynthesisRun` | Ontology Synthesis Run | Enhance/export run that merges diagrams, DB import, and roles into ontologyContext and Turtle export. |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `ontologyTtl` | ontology turtle | Optional open Turtle ontology text guiding synthetic generation. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `Option` | Option | Dynamic engagement options row: optionKey joins OfferMatrixEntry.offer_id; alpha, beta, arm_reward, propensity. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `optionKey` | option key |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `paramsJson` | params | Must be a JSON string on the wire, not a nested object. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
+| [server](/docs/ontology/server-catalog) | Class | `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `predictId` | predict id | Prediction case identifier (predict_id / prediction_case_id). |
+| [entities](/docs/ontology/entities-catalog) | Class | `Predictor` | Predictor | Static or AutoML prediction case configuration (collection: predictions). Links to a training frame and model parameters. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `predictor` | predictor |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PrePredictPlugin` | Pre-Predict Plugin | plugin.prescore class that mutates params before scoring. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `price` | price |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `price` | price |  |
+| [server](/docs/ontology/server-catalog) | Object property | `producesArtifact` | produces artifact |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ProductOfferResult` | Product Offer Result | Recommender result_full with nested product catalog fields and bandit stats (alpha, beta, propensity). |
+| [entities](/docs/ontology/entities-catalog) | Class | `Project` | Project | Hub configuration that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps for a solution. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectDescription` | project description |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectId` | project id | Primary business identifier for the project (project_id). |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectOwner` | project owner |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectType` | project type |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `purpose` | purpose |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `rank` | rank |  |
+| [entities](/docs/ontology/entities-catalog) | Class | `ResponderConfig` | Responder API Config | Responder / API configuration for serving predictions (collection: responder_config). |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `respondsTo` | responds to | Matched by shared uuid. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ResponseFeedback` | Response Feedback | POST /response body: uuid required; offers_accepted with offer_name (preferred match key). |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ResponseLog` | Response Log | Mongo logging document for feedback (logging.ecosystemruntime_response): uuid, response_uuid, embedded response_log (ContactLog), response payload, stats. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `responseUuid` | response uuid |  |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `RewardPlugin` | Reward Plugin | plugin.reward class that updates learning state after /response. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `score` | score |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `scoringData` | scoring data | Open feature bag logged when logging.detail is true; may also echo options-store state. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
+| [entities](/docs/ontology/entities-catalog) | Class | `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `staticOffers` | static offers | Static priority slate when greater than 0. |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `staticOffers` | static offers |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `subcampaign` | subcampaign |  |
+| [server](/docs/ontology/server-catalog) | Class | `SyntheticDataPackageJob` | Synthetic Data Package Job | Modeling synthetic-data job that produces ZIP packages (JSON/CSV/SQL/DDL) from class diagrams — distinct from Workbench2 Mongo synthetic. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetCollection` | target collection |  |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetDatabase` | target database |  |
+| [server](/docs/ontology/server-catalog) | Object property | `triggeredByProject` | triggered by project |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
+| [server](/docs/ontology/server-catalog) | Class | `UmlGenerationJob` | UML Generation Job | Async job that generates or analyzes UML diagrams for a modeling project. |
+| [server](/docs/ontology/server-catalog) | Object property | `usesDomainCatalog` | uses domain catalog |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `usesFrame` | uses frame | Training frame referenced by model_parms.training_frame. |
+| [entities](/docs/ontology/entities-catalog) | Object property | `usesOfferMatrix` | uses offer matrix |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `usesPostPlugin` | uses post plugin |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `usesPrePlugin` | uses pre plugin |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `usesRewardPlugin` | uses reward plugin |  |
+| [workbench](/docs/ontology/workbench-catalog) | Object property | `usesSolutionCase` | uses solution case |  |
+| [runtime](/docs/ontology/runtime-catalog) | Datatype property | `uuid` | uuid | Invocation / contact correlation id shared across logs and /response. |
+
+---
+
+## Customer Feature Lookup (Open)
+
+Source: `docs/ontology/customer-features.mdx`
+URL: https://ecosystem.ai/docs/ontology/customer-features
+Summary: Open-schema customer and feature documents for runtime param lookup
+
+# Customer Feature Lookup
+
+Unlike the [Offer Matrix](/docs/ontology/offer-matrix), customer / feature store documents are **open**: any JSON shape the campaign’s feature lookup expects.
+
+## Ontology class
+
+- **`CustomerFeatureDocument`** — runtime namespace  
+  IRI: `https://ecosystem.ai/ontology/runtime#CustomerFeatureDocument`
+
+Represented in logs as nested `scoring_data` / feature-store payloads. The platform ontology does **not** enumerate product-specific fields (spend traits, RFM, embeddings, …). Those belong in a **domain or product ontology** you upload (e.g. in Workbench2 synthetic).
+
+## Configuration concepts
+
+| Class | Role |
+|-------|------|
+| `FeatureLookupConfig` | DB + collection + key for customer/context lookup |
+| `FeatureStoreRef` (entities) | Workbench-side pointer for Dynamic Engagement |
+| `ScoringParams` | Internal bag after lookup / pre-predict |
+
+## Practice
+
+1. Keep **offer rows** fixed (six fields).
+2. Put **customer context** in open feature docs.
+3. Optionally describe that open schema in Turtle for synthetic generation or documentation — without locking the platform ontology to one vertical.
+
+Download: [`/ontology/runtime.ttl`](/ontology/runtime.ttl)
+
+---
+
+## Data and Ontology
+
+Source: `docs/ontology/data-and-ontology.mdx`
+URL: https://ecosystem.ai/docs/ontology/data-and-ontology
+Summary: How Turtle ontologies relate to Mongo documents — synthetic forward and indicative reverse
+
+# Data and Ontology
+
+Ontology and Mongo data are related but not the same layer.
+
+| Layer | Role |
+|-------|------|
+| **Ontology (TBox)** | Vocabulary of kinds: classes, properties, optional SHACL constraints |
+| **Data (ABox)** | Concrete Mongo documents that realize those kinds |
+
+## Forward: ontology → data
+
+1. Provide Turtle (upload/paste) in Workbench2 synthetic generation
+2. Backend summarizes classes and properties into prompt context
+3. LLM generates documents preferring ontology terms
+4. Documents insert into the chosen `database.collection`
+
+## Reverse: data → ontology
+
+1. On Workbench2 **Data Management** (`/data`), open a collection and choose **Export** (download icon)
+2. Set File Type to **ttl — indicative ontology (Turtle)**
+3. Choose sample size, then Download (or save to the server data folder)
+4. Optionally paste that TTL into **Generate Synthetic Data → Ontology** for a round trip
+
+Reverse output is inductive: sparse fields, mixed types, and nested arrays may need manual refinement.
+
+```
+Ontology TTL ──guides──► Synthetic generation ──inserts──► Mongo collection
+     ▲                                                         │
+     └──────── indicative infer (sample) ──────────────────────┘
+```
+
+## Runtime asymmetry
+
+For ecosystem-runtime campaigns:
+
+- **Customer / feature lookup** — open bag (any shape) — [Customer Feature Lookup](/docs/ontology/customer-features)
+- **Offer matrix** — fixed six fields — [Offer Matrix](/docs/ontology/offer-matrix)
+
+---
+
+## Downloads
+
+Source: `docs/ontology/downloads.mdx`
+URL: https://ecosystem.ai/docs/ontology/downloads
+Summary: Turtle ontology and SHACL shape downloads for the ecosystem.Ai platform
+
+# Downloads
+
+Turtle ontologies and SHACL shapes are served from `/ontology/`:
+
+| Artifact | URL |
+|----------|-----|
+| Entities | [/ontology/entities.ttl](/ontology/entities.ttl) |
+| Entities shapes | [/ontology/entities-shapes.ttl](/ontology/entities-shapes.ttl) |
+| Workbench | [/ontology/workbench.ttl](/ontology/workbench.ttl) |
+| Workbench shapes | [/ontology/workbench-shapes.ttl](/ontology/workbench-shapes.ttl) |
+| Server | [/ontology/server.ttl](/ontology/server.ttl) |
+| Server shapes | [/ontology/server-shapes.ttl](/ontology/server-shapes.ttl) |
+| Runtime | [/ontology/runtime.ttl](/ontology/runtime.ttl) |
+| Runtime shapes | [/ontology/runtime-shapes.ttl](/ontology/runtime-shapes.ttl) |
+| Runtime examples | [/ontology/runtime-examples.ttl](/ontology/runtime-examples.ttl) |
+| Platform umbrella | [/ontology/platform.ttl](/ontology/platform.ttl) |
+| Alignments | [/ontology/alignments.ttl](/ontology/alignments.ttl) |
+
+Human-readable concept tables: [Concept Index](/docs/ontology/concept-index).
+
+Source of truth for authoring also lives in the Workbench2 repo under `presentations/ontology/`.
+
+---
+
+## Entities concept catalog
+
+Source: `docs/ontology/entities-catalog.mdx`
+URL: https://ecosystem.ai/docs/ontology/entities-catalog
+Summary: Complete class and property catalog from entities.ttl
+
+# Entities concept catalog
+
+Generated from the published Turtle. Download [`/ontology/entities.ttl`](/ontology/entities.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/entities#`
+
+## Classes (22)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AgentConfig` | Agent Config | Ecogentic agent configuration (collection: agent_configs). |
+| `Calendar` | Calendar | Calendar entity used by dynamic and budget scheduling (collection: calendar). |
+| `Campaign` | Campaign | Workbench campaign that binds patron sources, offer matrices, and recommender deployments (collection: campaigns). |
+| `ChannelProfile` | Channel Profile | Delivery channel configuration for ecogentic / engagement. |
+| `ContactCatalog` | Contacts Catalog | Catalog definition for contact records and sources (collection: contacts_catalog). |
+| `ContactRecord` | Contact Record | Individual contact / patron document with core, behavioral, and offers history. |
+| `Dashboard` | Dashboard | Analytics dashboard definition. |
+| `DataConnection` | Data Connection | External data connection such as Trino/Presto (collection: data_connections). |
+| `DeploymentStep` | Deployment Step | Embedded project deployment configuration pushed to ecosystem-runtime (paths, plugins, offer matrix, feature store). |
+| `DynamicEngagement` | Dynamic Engagement | Online learning / bandit engagement configuration (collection: dynamic_engagement) with algorithm, contextual variables, and store bindings. |
+| `EnrichmentPipeline` | Enrichment Pipeline | Saved data enrichment pipeline configuration. |
+| `FactInjectionConfig` | Fact Injection Config | Fact injection / chat configuration (collection: chat_config). |
+| `FeatureStoreRef` | Feature Store Reference | Pointer to a feature-store database and collection used for customer or context lookup. |
+| `Frame` | Frame | Training or reference data frame used by static model predictors (collection: frames). |
+| `OfferMatrix` | Offer Matrix | First-class offer catalog entity (collection: offer_matrix) with spec, version, status, and rows or linked rows collection. |
+| `OfferMatrixEntry` | Offer Matrix Entry | A single offer row in a matrix. Canonical runtime scoring fields: offer_id, offer_name, cost, price, category, static_offers. |
+| `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
+| `Predictor` | Predictor | Static or AutoML prediction case configuration (collection: predictions). Links to a training frame and model parameters. |
+| `Project` | Project | Hub configuration that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps for a solution. |
+| `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
+| `ResponderConfig` | Responder API Config | Responder / API configuration for serving predictions (collection: responder_config). |
+| `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
+
+## Object properties (20)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `belongsToCatalog` | belongs to catalog | `entities:ContactRecord` | `entities:ContactCatalog` |  |
+| `hasAgent` | has agent | `entities:Project` | `entities:AgentConfig` | project_agents asset link. |
+| `hasCalendar` | has calendar | `entities:Project` | `entities:Calendar` |  |
+| `hasCampaign` | has campaign | `entities:Project` | `entities:Campaign` |  |
+| `hasDataConnection` | has data connection | `entities:Project` | `entities:DataConnection` |  |
+| `hasDeploymentStep` | has deployment step | `entities:Project` | `entities:DeploymentStep` | deployment_step array on the project document. |
+| `hasDynamicEngagement` | has dynamic engagement | `entities:Project` | `entities:DynamicEngagement` | project_dynamic_interactions asset link. |
+| `hasFactInjectionConfig` | has fact injection config | `entities:Project` | `entities:FactInjectionConfig` |  |
+| `hasFeatureStore` | has feature store | `entities:DynamicEngagement` | `entities:FeatureStoreRef` |  |
+| `hasFrame` | has frame | `entities:Project` | `entities:Frame` | project_models asset link. |
+| `hasOfferEntry` | has offer entry | `entities:OfferMatrix` | `entities:OfferMatrixEntry` |  |
+| `hasOfferMatrix` | has offer matrix | `entities:Project` | `entities:OfferMatrix` | project_offer_matrices asset link. |
+| `hasOptionsStore` | has options store | `entities:DynamicEngagement` | `entities:OptionsStoreRef` |  |
+| `hasPredictor` | has predictor | `entities:Project` | `entities:Predictor` | project_predictors asset link. |
+| `hasPrompt` | has prompt | `entities:Project` | `entities:Prompt` |  |
+| `hasResponderConfig` | has responder config | `entities:Project` | `entities:ResponderConfig` |  |
+| `hasSimulation` | has simulation | `entities:Project` | `entities:Simulation` |  |
+| `linkedToProject` | linked to project | `entities:ContactCatalog` | `entities:Project` | project_ids on contacts catalog / records. |
+| `usesFrame` | uses frame | `entities:Predictor` | `entities:Frame` | Training frame referenced by model_parms.training_frame. |
+| `usesOfferMatrix` | uses offer matrix | `entities:Campaign` | `entities:OfferMatrix` |  |
+
+## Datatype properties (24)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `agentName` | agent name | `entities:AgentConfig` | `xsd:string` |  |
+| `campaignId` | campaign id | `entities:Campaign` | `xsd:string` |  |
+| `catalogId` | catalog id | `entities:ContactCatalog` | `xsd:string` |  |
+| `category` | category | `entities:OfferMatrixEntry` | `xsd:string` |  |
+| `contactId` | contact id | `entities:ContactRecord` | `xsd:string` |  |
+| `cost` | cost | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
+| `deploymentName` | deployment name | `entities:DeploymentStep` | `xsd:string` |  |
+| `engagementName` | name | `entities:DynamicEngagement` | `xsd:string` |  |
+| `frameId` | frame id | `entities:Frame` | `xsd:string` |  |
+| `learningAlgorithm` | learning algorithm | `entities:DynamicEngagement` | `xsd:string` | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| `matrixStatus` | status | `entities:OfferMatrix` | `xsd:string` | draft \| active \| archived. |
+| `matrixVersion` | version | `entities:OfferMatrix` | `xsd:integer` |  |
+| `modelId` | model id | `entities:Predictor` | `xsd:string` |  |
+| `offerId` | offer id | `entities:OfferMatrixEntry` | `xsd:string` | Join key for options store and matrix lookup. |
+| `offerMatrixId` | offer matrix id | `entities:OfferMatrix` | `xsd:string` |  |
+| `offerName` | offer name | `entities:OfferMatrixEntry` | `xsd:string` | Display name; primary /response match key. |
+| `predictId` | predict id | `entities:Predictor` | `xsd:string` | Prediction case identifier (predict_id / prediction_case_id). |
+| `price` | price | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
+| `projectDescription` | project description | `entities:Project` | `xsd:string` |  |
+| `projectId` | project id | `entities:Project` | `xsd:string` | Primary business identifier for the project (project_id). |
+| `projectOwner` | project owner | `entities:Project` | `xsd:string` |  |
+| `projectType` | project type | `entities:Project` | `xsd:string` |  |
+| `purpose` | purpose | `entities:Project` | `xsd:string` |  |
+| `staticOffers` | static offers | `entities:OfferMatrixEntry` | `xsd:decimal` | Static priority slate when greater than 0. |
+
+---
+
+## Entities (Workbench Meta)
+
+Source: `docs/ontology/entities.mdx`
+URL: https://ecosystem.ai/docs/ontology/entities
+Summary: Complete catalog of Workbench2 ecosystem_meta entity concepts in the platform ontology
+
+# Entities (Workbench Meta)
+
+Namespace: [`https://ecosystem.ai/ontology/entities#`](/ontology/entities.ttl)
+
+These classes map to Mongo collections (and embedded deployment config) managed in Workbench2. The **Project** is the hub; other entities attach via asset arrays and foreign keys.
+
+## Project hub
+
+| Class | Pref label | Definition |
+|-------|------------|------------|
+| `Project` | Project | Hub that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps |
+
+**Key properties:** `projectId`, `projectDescription`, `purpose`, `projectType`, `projectOwner`
+
+## Static models
+
+| Class | Collection / role | Definition |
+|-------|-------------------|------------|
+| `Frame` | `frames` | Training or reference H2O / data frame |
+| `Predictor` | `predictions` | Prediction case (AutoML / model parms); uses a Frame |
+
+**Key properties:** `frameId`; `predictId`, `modelId`; link `usesFrame`
+
+## Dynamic engagement
+
+| Class | Definition |
+|-------|------------|
+| `DynamicEngagement` | Online learning / bandit config (`dynamic_engagement`) |
+| `FeatureStoreRef` | DB + collection for customer/context lookup |
+| `OptionsStoreRef` | Options / arms store (alpha, beta, rewards) |
+
+**Key properties:** `engagementName`, `learningAlgorithm` (e.g. `binaryThompson`, `epsilonGreedy`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`; when `behaviorAlgos`, also set behavioral type via `sub_approach`)
+
+**Links:** `hasFeatureStore`, `hasOptionsStore`
+
+## Offer catalog
+
+| Class | Definition |
+|-------|------------|
+| `OfferMatrix` | First-class offer catalog (`offer_matrix`) with spec, version, status |
+| `OfferMatrixEntry` | Single offer row — **fixed six fields** for runtime scoring |
+
+See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
+
+## Campaigns & contacts
+
+| Class | Definition |
+|-------|------------|
+| `Campaign` | Binds patron sources, offer matrices, recommender deployments |
+| `ContactCatalog` | Catalog of contact sources (`contacts_catalog`) |
+| `ContactRecord` | Individual contact / patron document |
+| `ChannelProfile` | Delivery channel for ecogentic / engagement |
+| `AgentConfig` | Ecogentic agent (`agent_configs`) |
+
+## Supporting assets
+
+| Class | Typical collection |
+|-------|--------------------|
+| `DataConnection` | `data_connections` |
+| `Prompt` | `prompt_library` |
+| `FactInjectionConfig` | `chat_config` |
+| `Calendar` | `calendar` |
+| `Simulation` | `simulation` |
+| `ResponderConfig` | `responder_config` |
+| `Dashboard` | analytics dashboards |
+| `EnrichmentPipeline` | enrichment pipelines |
+| `DeploymentStep` | Embedded on Project — pushed to runtime |
+
+## Project asset links (object properties)
+
+| Property | From → To | Workbench field |
+|----------|-----------|-----------------|
+| `hasPredictor` | Project → Predictor | `project_predictors` |
+| `hasFrame` | Project → Frame | `project_models` |
+| `hasDynamicEngagement` | Project → DynamicEngagement | `project_dynamic_interactions` |
+| `hasOfferMatrix` | Project → OfferMatrix | `project_offer_matrices` |
+| `hasCampaign` | Project → Campaign | campaigns |
+| `hasAgent` | Project → AgentConfig | `project_agents` |
+| `hasDeploymentStep` | Project → DeploymentStep | `deployment_step` |
+| `hasPrompt` | Project → Prompt | `project_prompts` |
+| `hasCalendar` | Project → Calendar | `project_calendars` |
+| `hasSimulation` | Project → Simulation | `project_simulations` |
+| `hasResponderConfig` | Project → ResponderConfig | `project_api_configs` |
+| `hasFactInjectionConfig` | Project → FactInjectionConfig | `project_fact_injection_configs` |
+| `hasDataConnection` | Project → DataConnection | `presto_connections` |
+| `linkedToProject` | ContactCatalog → Project | `project_ids` |
+| `usesOfferMatrix` | Campaign → OfferMatrix | campaign actions |
+| `belongsToCatalog` | ContactRecord → ContactCatalog | — |
+
+Full tables (every class and property): [Entities Catalog](/docs/ontology/entities-catalog) · [Concept Index](/docs/ontology/concept-index)
+
+Download: [`/ontology/entities.ttl`](/ontology/entities.ttl) · shapes: [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl)
+
+---
+
+## Glossary
+
+Source: `docs/ontology/glossary.mdx`
+URL: https://ecosystem.ai/docs/ontology/glossary
+Summary: Definitions for platform ontology terms used across Ecosystem.Ai
+
+# Glossary
+
+| Term | Definition |
+|------|------------|
+| **Campaign / CampaignContext** | Isolated runtime unit identified by campaign (and often predictor) name; owns plugins, offer matrix, feature lookup |
+| **ContactLog** | Mongo document written on `/invocations` — scoring snapshot keyed by `uuid` |
+| **CustomerFeatureDocument** | Open-schema customer/context document from feature lookup |
+| **DeploymentStep** | Workbench project step that packages config for runtime |
+| **Dynamic engagement** | Online learning / multi-armed bandit configuration |
+| **Entities ontology** | Turtle module for Workbench `ecosystem_meta` concepts |
+| **Final result** | Ranked offer list returned by `/invocations` (`final_result` by `rank`) |
+| **Frame** | Training / reference dataset (e.g. H2O frame) |
+| **Indicative ontology** | Draft Turtle inferred from sampling a Mongo collection |
+| **Invocation** | `POST /invocations` scoring request |
+| **ModelingProject** | ecosystem-server UML / generation project |
+| **Offer matrix** | Closed six-field catalog of scoreable offers |
+| **OntologyContext** | Structured ontology blob on a ModelingProject |
+| **params (runtime)** | JSON **string** field on invocations (`""` or `{"input":[…],"value":[…]}`) |
+| **Platform ontology** | Umbrella Turtle for Ecosystem product concepts (this suite) |
+| **Predictor** | Static prediction case / model configuration |
+| **Project** | Workbench hub grouping assets for a use case |
+| **Response / ResponseLog** | Feedback via `POST /response`; logged with embedded contact |
+| **SHACL** | Shapes Constraint Language — structural constraints on RDF |
+| **Solution case** | Productized pack (e.g. Spend Personality, Two Tower) |
+| **Synthetic data (Workbench)** | LLM-generated Mongo documents, optionally guided by open TTL |
+| **uuid** | Shared id linking invocation, ContactLog, and response |
+
+For class-level catalogs see [Entities](/docs/ontology/entities), [Runtime](/docs/ontology/runtime), [Server](/docs/ontology/server), [Workbench](/docs/ontology/workbench).
+
+---
+
+## Ontology Overview
+
+Source: `docs/ontology/index.mdx`
+URL: https://ecosystem.ai/docs/ontology
+Summary: Semantic layer for ecosystem.Ai — Workbench entities, modeling server, and runtime decisioning concepts
+
+# Ontology
+
+The ecosystem.Ai **Ontology** is how you discover and share the **concepts** the platform uses: projects, predictors, offer matrices, invocations, contact logs, and how they connect.
+
+It is the semantic layer over:
+
+- **Workbench2** — configuration entities in `ecosystem_meta`
+- **ecosystem-server** — modeling projects, diagrams, generation
+- **ecosystem-runtime** — real-time `/invocations` and `/response`
+
+Like an operational ontology elsewhere, it connects digital assets (Mongo collections, deployments, models) to their counterparts (customers, offers, channels) so products reason consistently about decisioning.
+
+## How to use this documentation
+
+| Goal | Start here |
+|------|------------|
+| Learn why ontology exists | [Why create an Ontology?](/docs/ontology/why) |
+| **Browse every class & property** | [Concept Index](/docs/ontology/concept-index) |
+| Workbench meta concepts | [Entities](/docs/ontology/entities) · [full catalog](/docs/ontology/entities-catalog) |
+| Runtime API & logging | [Runtime](/docs/ontology/runtime) · [full catalog](/docs/ontology/runtime-catalog) |
+| Modeling server concepts | [Server](/docs/ontology/server) · [full catalog](/docs/ontology/server-catalog) |
+| Fixed offer catalog shape | [Offer Matrix](/docs/ontology/offer-matrix) |
+| Open customer / feature docs | [Customer Feature Lookup](/docs/ontology/customer-features) |
+| Machine-readable downloads | [Downloads](/docs/ontology/downloads) |
+| Term lookup | [Glossary](/docs/ontology/glossary) |
+
+## Modules at a glance
+
+| Module | Namespace | Concepts |
+|--------|-----------|----------|
+| [Entities](/docs/ontology/entities) | `…/ontology/entities#` | Project, Frame, Predictor, DynamicEngagement, OfferMatrix, Campaign, Contacts, DeploymentStep, … |
+| [Workbench](/docs/ontology/workbench) | `…/ontology/workbench#` | Solution cases, AsyncJob, SyntheticDataRequest, RuntimeConsole |
+| [Server](/docs/ontology/server) | `…/ontology/server#` | ModelingProject, Diagram, OntologyContext, generation jobs |
+| [Runtime](/docs/ontology/runtime) | `…/ontology/runtime#` | InvocationRequest/Response, ContactLog, ResponseLog, plugins, Option |
+| Platform | `…/ontology/platform#` | Umbrella + [alignments](/docs/ontology/alignments) |
+
+Full IRIs use the base `https://ecosystem.ai/ontology/`. See [Namespaces](/docs/ontology/namespaces).
+
+## Two schema rules (critical)
+
+1. **Offer Matrix rows are closed** — `offer_id`, `offer_name`, `cost`, `price`, `category`, `static_offers`
+2. **Customer / feature lookup is open** — any document shape keyed by customer (or configured lookup key)
+
+## Formal artifacts
+
+Turtle (OWL 2 + RDFS + SKOS) and SHACL shapes are published under [`/ontology/*.ttl`](/docs/ontology/downloads). Use them in tooling, synthetic data grounding, or as the contract for integrations.
+
+---
+
+## Link Types
+
+Source: `docs/ontology/link-types.mdx`
+URL: https://ecosystem.ai/docs/ontology/link-types
+Summary: Object properties that connect platform ontology concepts across modules
+
+# Link Types
+
+Object properties (edges) in the platform ontology. Prefixed by module: `ent:` entities, `wb:` workbench, `srv:` server, `rt:` runtime, `plat:` platform alignments.
+
+## Entities — project graph
+
+| Property | Domain → Range |
+|----------|----------------|
+| `ent:hasPredictor` | Project → Predictor |
+| `ent:hasFrame` | Project → Frame |
+| `ent:hasDynamicEngagement` | Project → DynamicEngagement |
+| `ent:hasOfferMatrix` | Project → OfferMatrix |
+| `ent:hasCampaign` | Project → Campaign |
+| `ent:hasAgent` | Project → AgentConfig |
+| `ent:hasDeploymentStep` | Project → DeploymentStep |
+| `ent:hasPrompt` | Project → Prompt |
+| `ent:hasCalendar` | Project → Calendar |
+| `ent:hasSimulation` | Project → Simulation |
+| `ent:hasResponderConfig` | Project → ResponderConfig |
+| `ent:hasFactInjectionConfig` | Project → FactInjectionConfig |
+| `ent:hasDataConnection` | Project → DataConnection |
+| `ent:usesFrame` | Predictor → Frame |
+| `ent:hasFeatureStore` | DynamicEngagement → FeatureStoreRef |
+| `ent:hasOptionsStore` | DynamicEngagement → OptionsStoreRef |
+| `ent:linkedToProject` | ContactCatalog → Project |
+| `ent:usesOfferMatrix` | Campaign → OfferMatrix |
+| `ent:belongsToCatalog` | ContactRecord → ContactCatalog |
+
+## Workbench
+
+| Property | Domain → Range |
+|----------|----------------|
+| `wb:usesSolutionCase` | Project → SolutionCase |
+
+## Server
+
+| Property | Domain → Range |
+|----------|----------------|
+| `srv:hasDiagram` | ModelingProject → Diagram |
+| `srv:hasOntologyContext` | ModelingProject → OntologyContext |
+| `srv:usesDomainCatalog` | OntologyContext → DomainCatalogEntry |
+| `srv:triggeredByProject` | UmlGenerationJob → ModelingProject |
+| `srv:producesArtifact` | AppGenerationJob → PlantUmlArtifact |
+
+## Runtime closed loop
+
+| Property | Domain → Range |
+|----------|----------------|
+| `rt:hasFinalResult` | InvocationResponse / ContactLog → FinalResultEntry |
+| `rt:scoringData` | ContactLog → CustomerFeatureDocument |
+| `rt:embedsContactLog` | ResponseLog → ContactLog |
+| `rt:hasResponsePayload` | ResponseLog → ResponseFeedback |
+| `rt:respondsTo` | ResponseFeedback → InvocationResponse (via uuid) |
+| `rt:hasOfferMatrix` | CampaignContext → OfferMatrixEntry |
+| `rt:hasFeatureLookup` | CampaignContext → FeatureLookupConfig |
+| `rt:hasDynamicEngagement` | CampaignContext → DynamicEngagementConfig |
+| `rt:usesPrePredict` / `usesPostPredict` / `usesReward` | CampaignContext → plugins |
+
+## Cross-module (alignments)
+
+See [Alignments](/docs/ontology/alignments) for `plat:` bridges (e.g. DeploymentStep → CampaignContext, ModelingProject ↔ Project).
+
+---
+
+## Namespaces
+
+Source: `docs/ontology/namespaces.mdx`
+URL: https://ecosystem.ai/docs/ontology/namespaces
+Summary: IRI prefixes for the ecosystem.Ai platform ontology modules
+
+# Namespaces
+
+| Prefix (docs) | Ontology IRI | Default term prefix |
+|---------------|--------------|---------------------|
+| Entities | `https://ecosystem.ai/ontology/entities` | `https://ecosystem.ai/ontology/entities#` |
+| Workbench | `https://ecosystem.ai/ontology/workbench` | `https://ecosystem.ai/ontology/workbench#` |
+| Server | `https://ecosystem.ai/ontology/server` | `https://ecosystem.ai/ontology/server#` |
+| Runtime | `https://ecosystem.ai/ontology/runtime` | `https://ecosystem.ai/ontology/runtime#` |
+| Platform | `https://ecosystem.ai/ontology/platform` | `https://ecosystem.ai/ontology/platform#` |
+| Alignments | `https://ecosystem.ai/ontology/platform/alignments` | — |
+
+Example term: `https://ecosystem.ai/ontology/entities#Project`
+
+Standard vocabularies used in the Turtle files: `owl`, `rdfs`, `xsd`, `skos`, `sh` (SHACL).
+
+Indicative ontologies inferred from Mongo use:
+
+`https://ecosystem.ai/ontology/indicative/{database}/{collection}#`
+
+---
+
+## Object Types
+
+Source: `docs/ontology/object-types.mdx`
+URL: https://ecosystem.ai/docs/ontology/object-types
+Summary: Redirect — Workbench entity classes live under Entities
+
+# Object Types
+
+This page moved.
+
+- Narrative overview: [Entities (Workbench Meta)](/docs/ontology/entities)
+- Full class and property tables: [Entities Catalog](/docs/ontology/entities-catalog)
+- Offer row schema: [Offer Matrix](/docs/ontology/offer-matrix)
+- A–Z across modules: [Concept Index](/docs/ontology/concept-index)
+
+---
+
+## Offer Matrix (Closed Schema)
+
+Source: `docs/ontology/offer-matrix.mdx`
+URL: https://ecosystem.ai/docs/ontology/offer-matrix
+Summary: Canonical six-field OfferMatrixEntry used by runtime scoring
+
+# Offer Matrix
+
+The offer catalog is **closed** at scoring time. Every linked row used by the runtime must carry exactly these six fields (names and types as used in production configs and logs).
+
+## Canonical row JSON
+
+```json
+{
+  "cost": 150,
+  "price": 200,
+  "category": "a",
+  "offer_id": "Product B",
+  "offer_name": "Product B",
+  "static_offers": 1
+}
+```
+
+| Field | Type | Role |
+|-------|------|------|
+| `cost` | number | Cost / margin input |
+| `price` | number | Price / value input |
+| `category` | string | Grouping / eligibility |
+| `offer_id` | string | Stable id (often same as name) |
+| `offer_name` | string | Display / match key for `/response` |
+| `static_offers` | number | Static offer flag / weight |
+
+## Ontology class
+
+- **`OfferMatrixEntry`** — `https://ecosystem.ai/ontology/entities#OfferMatrixEntry` (also used from runtime)
+- Workbench **`OfferMatrix`** — first-class catalog document that owns versions and rows
+- Runtime **`CampaignContext`** links to offer matrix rows via `hasOfferMatrix`
+
+## Why closed?
+
+Pre/post scoring plugins and bandit arms join on `offer_name` / option keys. Open-ended extra fields on matrix rows break matching and learning. Put customer context in the **open** feature lookup instead — see [Customer Feature Lookup](/docs/ontology/customer-features).
+
+## SHACL
+
+Shapes live in [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl) and [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl).
+
+---
+
+## Platform Modules
+
+Source: `docs/ontology/platform.mdx`
+URL: https://ecosystem.ai/docs/ontology/platform
+Summary: Umbrella platform ontology and how modules compose
+
+# Platform Modules
+
+The platform umbrella (`https://ecosystem.ai/ontology/platform#`) imports four modules and cross-links them in alignments.
+
+| Module | Docs | Turtle |
+|--------|------|--------|
+| Entities | [Overview](/docs/ontology/entities) · [Catalog](/docs/ontology/entities-catalog) | [`entities.ttl`](/ontology/entities.ttl) |
+| Workbench | [Overview](/docs/ontology/workbench) · [Catalog](/docs/ontology/workbench-catalog) | [`workbench.ttl`](/ontology/workbench.ttl) |
+| Server | [Overview](/docs/ontology/server) · [Catalog](/docs/ontology/server-catalog) | [`server.ttl`](/ontology/server.ttl) |
+| Runtime | [Overview](/docs/ontology/runtime) · [Catalog](/docs/ontology/runtime-catalog) | [`runtime.ttl`](/ontology/runtime.ttl) |
+| Alignments | [Alignments](/docs/ontology/alignments) | [`alignments.ttl`](/ontology/alignments.ttl) |
+| Umbrella | — | [`platform.ttl`](/ontology/platform.ttl) |
+
+Server module **does not** copy industry domain catalogs (`crm`, `fin`, …). Those remain under `https://ecosystemcode.com/ontology/{id}`.
+
+## Example alignments
+
+- `entities:OfferMatrix` ≡ `runtime:OfferMatrix`
+- `entities:OfferMatrixEntry` ≡ `runtime:OfferMatrixEntry` (six canonical fields)
+- `entities:DeploymentStep` seeAlso `runtime:CampaignContext`
+- `entities:DynamicEngagement` seeAlso `runtime:DynamicEngagementConfig`
+
+Full A–Z: [Concept Index](/docs/ontology/concept-index).
+
+---
+
+## Runtime concept catalog
+
+Source: `docs/ontology/runtime-catalog.mdx`
+URL: https://ecosystem.ai/docs/ontology/runtime-catalog
+Summary: Complete class and property catalog from runtime.ttl
+
+# Runtime concept catalog
+
+Generated from the published Turtle. Download [`/ontology/runtime.ttl`](/ontology/runtime.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/runtime#`
+
+## Classes (29)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AcceptedOffer` | Accepted Offer | Element of offers_accepted; typically mirrors slim OfferResult fields. |
+| `CampaignContext` | Campaign Context | Isolated runtime unit keyed by campaign/predictor name: models, corpora, plugins, logging collections, feature lookup, and optional linked offer matrix. |
+| `ContactLog` | Contact Log | Mongo logging document for an invocation (logging.ecosystemruntime): uuid, predictor, api_params, params lookup, final_result, stats, scoring_data, date indexes. |
+| `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
+| `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| `FeatureLookupConfig` | Feature Lookup Config | Configuration for customer/feature DB lookup (database, collection, key, typically customer). |
+| `FinalResultEntry` | Final Result Entry | One ranked row in final_result with rank, slim result, and result_full. |
+| `GlobalSettings` | Global Settings | Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora). |
+| `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
+| `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
+| `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
+| `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
+| `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
+| `InvocationStats` | Invocation Stats | Timing and model metadata on a contact log (duration, epsilon, predictor, error). |
+| `OfferMatrix` | Offer Matrix | Runtime-linked offer catalog loaded via predictor.offer.matrix. Rows follow a fixed field format. |
+| `OfferMatrixEntry` | Offer Matrix Entry | Canonical offer row: offer_id, offer_name, cost, price, category, static_offers. |
+| `OfferResult` | Offer Result | Slim scored offer: uuid, offer, offer_name, score, final_score, cost, price, offer_value, arm_reward, modified_offer_score. |
+| `Option` | Option | Dynamic engagement options row: optionKey joins OfferMatrixEntry.offer_id; alpha, beta, arm_reward, propensity. |
+| `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
+| `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| `PrePredictPlugin` | Pre-Predict Plugin | plugin.prescore class that mutates params before scoring. |
+| `ProductOfferResult` | Product Offer Result | Recommender result_full with nested product catalog fields and bandit stats (alpha, beta, propensity). |
+| `ResponseFeedback` | Response Feedback | POST /response body: uuid required; offers_accepted with offer_name (preferred match key). |
+| `ResponseLog` | Response Log | Mongo logging document for feedback (logging.ecosystemruntime_response): uuid, response_uuid, embedded response_log (ContactLog), response payload, stats. |
+| `RewardPlugin` | Reward Plugin | plugin.reward class that updates learning state after /response. |
+| `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
+| `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
+
+## Object properties (24)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `embedsContactLog` | embeds contact log | `runtime:ResponseLog` | `runtime:ContactLog` | response_log field. |
+| `featuresObj` | features object | `runtime:ScoringParams` | `runtime:CustomerFeatureDocument` |  |
+| `hasAcceptedOffer` | has accepted offer | `runtime:ResponseFeedback` | `runtime:AcceptedOffer` |  |
+| `hasDebug` | has debug | `runtime:InvocationResponse` | `runtime:InvocationDebug` |  |
+| `hasDebugConfig` | has debug config | `runtime:InvocationDebug` | `runtime:InvocationDebugConfig` |  |
+| `hasDebugDatabase` | has debug database | `runtime:InvocationDebug` | `runtime:InvocationDebugDatabase` |  |
+| `hasDebugError` | has debug error | `runtime:InvocationDebug` | `runtime:InvocationDebugError` |  |
+| `hasDebugParams` | has debug params | `runtime:InvocationDebug` | `runtime:InvocationDebugParams` |  |
+| `hasDynamicEngagement` | has dynamic engagement | `runtime:CampaignContext` | `runtime:DynamicEngagementConfig` |  |
+| `hasEntry` | has entry | `runtime:OfferMatrix` | `runtime:OfferMatrixEntry` |  |
+| `hasFeatureLookup` | has feature lookup | `runtime:CampaignContext` | `runtime:FeatureLookupConfig` | Open-schema binding; target documents are CustomerFeatureDocument instances of any shape. |
+| `hasFinalResult` | has final result | `runtime:InvocationResponse` | `runtime:FinalResultEntry` |  |
+| `hasOfferMatrix` | links offer matrix | `runtime:CampaignContext` | `runtime:OfferMatrix` | Campaign links one offer matrix with fixed row schema. |
+| `hasResponsePayload` | has response payload | `runtime:ResponseLog` | `runtime:ResponseFeedback` |  |
+| `hasServerInfo` | has server info | `runtime:ContactLog` | `runtime:ServerInfo` |  |
+| `hasSettings` | has settings | `runtime:CampaignContext` | `runtime:GlobalSettings` |  |
+| `hasSlimResult` | has slim result | `runtime:FinalResultEntry` | `runtime:OfferResult` |  |
+| `hasStats` | has stats | `runtime:ContactLog` | `runtime:InvocationStats` |  |
+| `joinsOffer` | joins offer | `runtime:Option` | `runtime:OfferMatrixEntry` | optionKey equals matrix offer_id. |
+| `respondsTo` | responds to | `runtime:ResponseFeedback` | `runtime:InvocationResponse` | Matched by shared uuid. |
+| `scoringData` | scoring data | `runtime:ContactLog` | `runtime:CustomerFeatureDocument` | Open feature bag logged when logging.detail is true; may also echo options-store state. |
+| `usesPostPlugin` | uses post plugin | `runtime:CampaignContext` | `runtime:PostPredictPlugin` |  |
+| `usesPrePlugin` | uses pre plugin | `runtime:CampaignContext` | `runtime:PrePredictPlugin` |  |
+| `usesRewardPlugin` | uses reward plugin | `runtime:CampaignContext` | `runtime:RewardPlugin` |  |
+
+## Datatype properties (29)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `alpha` | alpha | `runtime:Option` | `xsd:decimal` |  |
+| `armReward` | arm reward | `runtime:OfferResult` | `xsd:decimal` |  |
+| `beta` | beta | `runtime:Option` | `xsd:decimal` |  |
+| `cache` | cache | `—` | `xsd:integer` |  |
+| `campaign` | campaign | `runtime:InvocationRequest` | `xsd:string` |  |
+| `campaignId` | campaign id | `runtime:CampaignContext` | `xsd:string` | Runtime case name (predictor.name / api_params.campaign). |
+| `category` | category | `runtime:OfferMatrixEntry` | `xsd:string` |  |
+| `channel` | channel | `runtime:InvocationRequest` | `xsd:string` |  |
+| `cost` | cost | `runtime:OfferMatrixEntry` | `xsd:decimal` |  |
+| `customer` | customer | `runtime:InvocationRequest` | `xsd:string` |  |
+| `dateLog` | date log | `—` | `xsd:dateTime` |  |
+| `debugEnabled` | debug | `runtime:InvocationRequest` | `xsd:string` | Optional opt-in flag (true, 1). When set, the response includes a debug sibling object with pipeline errors and config snapshots. Not for production traffic. |
+| `explore` | explore | `—` | `xsd:integer` |  |
+| `finalScore` | final score | `runtime:OfferResult` | `xsd:decimal` |  |
+| `lookupKey` | lookup key | `runtime:FeatureLookupConfig` | `xsd:string` |  |
+| `modifiedOfferScore` | modified offer score | `runtime:OfferResult` | `xsd:decimal` |  |
+| `numberOffers` | number offers | `runtime:InvocationRequest` | `xsd:integer` |  |
+| `offerId` | offer id | `runtime:OfferMatrixEntry` | `xsd:string` |  |
+| `offerName` | offer name | `runtime:OfferMatrixEntry` | `xsd:string` |  |
+| `optionKey` | option key | `runtime:Option` | `xsd:string` |  |
+| `paramsJson` | params | `runtime:InvocationRequest` | `xsd:string` | Must be a JSON string on the wire, not a nested object. |
+| `predictor` | predictor | `—` | `xsd:string` |  |
+| `price` | price | `runtime:OfferMatrixEntry` | `xsd:decimal` |  |
+| `rank` | rank | `runtime:FinalResultEntry` | `xsd:integer` |  |
+| `responseUuid` | response uuid | `runtime:ResponseLog` | `xsd:string` |  |
+| `score` | score | `runtime:OfferResult` | `xsd:decimal` |  |
+| `staticOffers` | static offers | `runtime:OfferMatrixEntry` | `xsd:decimal` |  |
+| `subcampaign` | subcampaign | `runtime:InvocationRequest` | `xsd:string` |  |
+| `uuid` | uuid | `—` | `xsd:string` | Invocation / contact correlation id shared across logs and /response. |
+
+---
+
+## Runtime Closed Loop
+
+Source: `docs/ontology/runtime.mdx`
+URL: https://ecosystem.ai/docs/ontology/runtime
+Summary: Invocations, response, ContactLog, ResponseLog, plugins, and campaign context concepts
+
+# Runtime Closed Loop
+
+Namespace: [`https://ecosystem.ai/ontology/runtime#`](/ontology/runtime.ttl)
+
+Concepts for **ecosystem-runtime**: score offers, log contacts, accept feedback, and learn.
+
+## Sequence
+
+```
+Client → POST /invocations → InvocationResponse (final_result by rank)
+       → ContactLog written (uuid)
+Client → POST /response (uuid + offer_name) → ResponseFeedback
+       → ResponseLog written (response_uuid, embeds ContactLog)
+```
+
+Same **`uuid`** ties invocation, contact log, and response.
+
+## API classes
+
+| Class | Role |
+|-------|------|
+| `InvocationRequest` | `/invocations` body: `campaign`, `subcampaign`, `customer`, `channel`, `numberOffers`, `paramsJson` (**string**), optional `debug` |
+| `InvocationResponse` | Return: `uuid`, `final_result`, explore/cache, `in_params`; optional `hasDebug` when `debug` was requested |
+| `InvocationDebug` | Developer diagnostics: `explanations`, `errors`, `config`, `database`, `params` (not persisted in ContactLog) |
+| `InvocationDebugError` | One `debug.errors[]` row: `stage`, `code`, `exception`, `at`, `message` |
+| `InvocationDebugExplanation` | One `debug.explanations[]` row: `code`, `severity`, `title`, `message`, optional `hint` |
+| `FinalResultEntry` | Ranked row: `rank` + slim `OfferResult` + `result_full` |
+| `OfferResult` | Slim offer: `uuid`, `offerName`, scores, cost/price |
+| `PersonalityOfferResult` | Trait-oriented `result_full` (Spend Personality) |
+| `ProductOfferResult` | Product + bandit `result_full` (recommenders) |
+| `ResponseFeedback` | `/response` body: `uuid` + `offers_accepted` |
+| `AcceptedOffer` | Accepted slim offer row |
+
+**Matching accepted offers:** prefer `offer_name` (also `offer` / `offer_treatment_code`).
+
+## Logging
+
+| Class | Store (typical) | Role |
+|-------|-----------------|------|
+| `ContactLog` | `logging.ecosystemruntime` | Invocation log: uuid, predictor, api_params, params, final_result, stats, scoring_data |
+| `ResponseLog` | `logging.ecosystemruntime_response` | Feedback log: uuid, responseUuid, embedsContactLog, response payload |
+| `ServerInfo` | nested | hostname, address, port, version |
+| `InvocationStats` | nested | durations, epsilon, model, error |
+
+**Links:** `hasFinalResult`, `scoringData` → open `CustomerFeatureDocument`; `embedsContactLog`; `hasResponsePayload`; `respondsTo`
+
+## Campaign context
+
+| Class | Role |
+|-------|------|
+| `CampaignContext` | Isolated runtime unit (campaign / predictor name) |
+| `GlobalSettings` | Properties: plugins, logging, offer matrix, param lookup, corpora |
+| `FeatureLookupConfig` | Open customer/feature DB lookup |
+| `DynamicEngagementConfig` | Algorithm + contextual variables corpora |
+| `Option` | Options-store arm; `optionKey` joins OfferMatrixEntry |
+| `ScoringParams` | Internal pipeline bag for plugins |
+
+**Links:** `hasOfferMatrix` (fixed rows), `hasFeatureLookup` (open docs), `hasDynamicEngagement`, plugin uses*
+
+## Plugins
+
+| Class | Config key |
+|-------|------------|
+| `PrePredictPlugin` | `plugin.prescore` |
+| `PostPredictPlugin` | `plugin.postscore` |
+| `RewardPlugin` | `plugin.reward` |
+
+## Related
+
+- [Offer Matrix](/docs/ontology/offer-matrix)
+- [Customer Feature Lookup](/docs/ontology/customer-features)
+- [Runtime & Deployment docs](/docs/runtime)
+- [Runtime MCP — ontology tools & agent flow](/docs/runtime/mcp#recommended-agent-flow-closed-loop)
+- [Ontology for agents](/docs/ontology/agents) — Explorer UI and REST catalog
+- Examples TTL: [`/ontology/runtime-examples.ttl`](/ontology/runtime-examples.ttl)
+
+## MCP & agent grounding
+
+The runtime exposes its ontology for AI agents via **MCP resources** and **validation tools** on `POST {RUNTIME}/mcp`:
+
+| MCP resource | Purpose |
+| --- | --- |
+| `ontology://runtime` | Module summary and entry points |
+| `ontology://runtime/closed-loop` | Canonical agent recipe (markdown) |
+| `ontology://runtime/examples` | Annotated ContactLog / ResponseLog examples |
+| `ontology://runtime/concept/{name}` | Concept card (e.g. `InvocationRequest`) |
+
+| MCP tool | Purpose |
+| --- | --- |
+| `getClosedLoopRecipe` | JSON workflow: listCampaigns → validate → invoke → validate → response |
+| `lookupRuntimeConcept` | Search concepts by name, label, or related MCP tool |
+| `validateInvokeRequest` | Pre-flight `InvocationRequest` before `invoke` |
+| `validateResponseRequest` | Pre-flight `ResponseFeedback` before `response` |
+
+REST mirror: `GET /ontology/runtime/*` and `POST /ontology/runtime/validate/*` on the Java runtime. See [MCP Support](/docs/runtime/mcp).
+
+Full tables: [Runtime Catalog](/docs/ontology/runtime-catalog) · [Concept Index](/docs/ontology/concept-index)
+
+Download: [`/ontology/runtime.ttl`](/ontology/runtime.ttl) · shapes: [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl)
+
+---
+
+## Server concept catalog
+
+Source: `docs/ontology/server-catalog.mdx`
+URL: https://ecosystem.ai/docs/ontology/server-catalog
+Summary: Complete class and property catalog from server.ttl
+
+# Server concept catalog
+
+Generated from the published Turtle. Download [`/ontology/server.ttl`](/ontology/server.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/server#`
+
+## Classes (10)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AppGenerationJob` | App Generation Job | Async job that generates application code from diagrams and ontology context. |
+| `Diagram` | Diagram | Saved UML diagram (class, sequence, etc.) belonging to a modeling project. |
+| `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
+| `GenerationStrategy` | Generation Strategy | Selectable strategy or plugin binding for app/UML generation. |
+| `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| `OntologyContext` | Ontology Context | Structured ontologyContext on a modeling project: domain ids, structuredModel, promptContext, roles, and related generation metadata. |
+| `OntologySynthesisRun` | Ontology Synthesis Run | Enhance/export run that merges diagrams, DB import, and roles into ontologyContext and Turtle export. |
+| `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |
+| `SyntheticDataPackageJob` | Synthetic Data Package Job | Modeling synthetic-data job that produces ZIP packages (JSON/CSV/SQL/DDL) from class diagrams — distinct from Workbench2 Mongo synthetic. |
+| `UmlGenerationJob` | UML Generation Job | Async job that generates or analyzes UML diagrams for a modeling project. |
+
+## Object properties (5)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `hasDiagram` | has diagram | `server:ModelingProject` | `server:Diagram` |  |
+| `hasOntologyContext` | has ontology context | `server:ModelingProject` | `server:OntologyContext` |  |
+| `producesArtifact` | produces artifact | `server:AppGenerationJob` | `server:PlantUmlArtifact` |  |
+| `triggeredByProject` | triggered by project | `server:UmlGenerationJob` | `server:ModelingProject` |  |
+| `usesDomainCatalog` | uses domain catalog | `server:OntologyContext` | `server:DomainCatalogEntry` |  |
+
+## Datatype properties (4)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `diagramName` | diagram name | `server:Diagram` | `xsd:string` |  |
+| `diagramType` | diagram type | `server:Diagram` | `xsd:string` |  |
+| `domainId` | domain id | `server:DomainCatalogEntry` | `xsd:string` |  |
+| `modelingProjectId` | project id | `server:ModelingProject` | `xsd:string` |  |
+
+---
+
+## Modeling Server Concepts
+
+Source: `docs/ontology/server.mdx`
+URL: https://ecosystem.ai/docs/ontology/server
+Summary: ecosystem-server modeling project, diagram, ontology context, and generation job concepts
+
+# Modeling Server
+
+Namespace: [`https://ecosystem.ai/ontology/server#`](/ontology/server.ttl)
+
+Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code generation. This module does **not** duplicate industry domain catalogs (CRM, banking, …); those live under `https://ecosystemcode.com/ontology/{domainId}`.
+
+## Core
+
+| Class | Definition |
+|-------|------------|
+| `ModelingProject` | UML / modeling project with description and optional `OntologyContext` |
+| `Diagram` | Saved UML diagram (class, sequence, …) |
+| `OntologyContext` | Structured ontology on the project: domain ids, structuredModel, promptContext, roles |
+| `DomainCatalogEntry` | Hosted business-domain seed (`ontology.ttl` + `shapes.ttl`) via DomainCatalogService |
+| `PlantUmlArtifact` | PlantUML text/SVG from diagram JSON |
+
+## Jobs & synthesis
+
+| Class | Definition |
+|-------|------------|
+| `UmlGenerationJob` | Async UML analyze / generate |
+| `AppGenerationJob` | Async application code generation |
+| `SyntheticDataPackageJob` | Diagram-driven ZIP synthetic packages (distinct from Workbench2 Mongo synthetic) |
+| `OntologySynthesisRun` | Merge diagrams / DB / roles → ontologyContext + Turtle export |
+| `GenerationStrategy` | Selectable generation strategy / plugin binding |
+
+## Links
+
+| Property | From → To |
+|----------|-----------|
+| `hasDiagram` | ModelingProject → Diagram |
+| `hasOntologyContext` | ModelingProject → OntologyContext |
+| `usesDomainCatalog` | OntologyContext → DomainCatalogEntry |
+| `triggeredByProject` | UmlGenerationJob → ModelingProject |
+| `producesArtifact` | AppGenerationJob → PlantUmlArtifact |
+
+`ModelingProject` is related to Workbench `Project` only when intentionally shared — see [Alignments](/docs/ontology/alignments).
+
+Full tables: [Server Catalog](/docs/ontology/server-catalog)
+
+Download: [`/ontology/server.ttl`](/ontology/server.ttl)
+
+---
+
+## Why create an Ontology?
+
+Source: `docs/ontology/why.mdx`
+URL: https://ecosystem.ai/docs/ontology/why
+Summary: Why ecosystem.Ai publishes a shared concept vocabulary for Workbench, modeling, and runtime
+
+# Why create an Ontology?
+
+Without a shared vocabulary, each product invents field names, guesses `/invocations` shapes, or describes Offer Matrix columns inconsistently. The ontology makes platform meaning **explicit and accessible**.
+
+## What it gives users
+
+1. **A concept catalog** — start at [Concept Index](/docs/ontology/concept-index) for every class and property; module overviews + generated catalogs under Ontology in the docs nav
+2. **Stable contracts** — Turtle downloads for integrations, validation, and AI grounding
+3. **Clear open vs closed data** — flexible customer features; fixed offer rows
+4. **Round trip with Mongo** — export indicative ontology from a collection on `/data`, or ground synthetic generation with any uploaded TTL
+
+## Generate and synthetic reliability
+
+Ontology improves generation when treated as a **contract** (classes, properties, shapes), not only soft prompt text. Workbench2 synthetic can ingest any Turtle; collection **Export → ttl** drafts an indicative ontology from live data.
+
+Industry business domains (CRM, banking, …) remain in the separate domain catalog (`https://ecosystemcode.com/ontology/…`). This platform ontology covers **ecosystem.Ai product concepts**.
+
+---
+
+## Workbench concept catalog
+
+Source: `docs/ontology/workbench-catalog.mdx`
+URL: https://ecosystem.ai/docs/ontology/workbench-catalog
+Summary: Complete class and property catalog from workbench.ttl
+
+# Workbench concept catalog
+
+Generated from the published Turtle. Download [`/ontology/workbench.ttl`](/ontology/workbench.ttl) for machine-readable definitions.
+
+Namespace: `https://ecosystem.ai/ontology/workbench#`
+
+## Classes (11)
+
+| Local name | Pref label | Definition |
+|------------|------------|------------|
+| `AnalyticsDashboard` | Analytics Dashboard | Workbench analytics studio dashboard with charts and filters over Mongo collections. |
+| `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
+| `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
+| `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
+| `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
+| `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
+| `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
+| `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
+| `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
+| `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
+
+## Object properties (2)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `monitorsCampaign` | monitors campaign deployment | `workbench:RuntimeConsole` | `entities:DeploymentStep` |  |
+| `usesSolutionCase` | uses solution case | `entities:Project` | `workbench:SolutionCase` |  |
+
+## Datatype properties (5)
+
+| Local name | Pref label | Domain | Range | Definition |
+|------------|------------|--------|-------|------------|
+| `jobId` | job id | `workbench:AsyncJob` | `xsd:string` |  |
+| `jobLifecycleState` | lifecycle state | `workbench:AsyncJob` | `xsd:string` | Queued \| Running \| Succeeded \| Failed \| Cancelled. |
+| `ontologyTtl` | ontology turtle | `workbench:SyntheticDataRequest` | `xsd:string` | Optional open Turtle ontology text guiding synthetic generation. |
+| `targetCollection` | target collection | `workbench:SyntheticDataRequest` | `xsd:string` |  |
+| `targetDatabase` | target database | `workbench:SyntheticDataRequest` | `xsd:string` |  |
+
+---
+
+## Workbench Application Concepts
+
+Source: `docs/ontology/workbench.mdx`
+URL: https://ecosystem.ai/docs/ontology/workbench
+Summary: Workbench2 solution cases, jobs, synthetic data, and console concepts
+
+# Workbench Application
+
+Namespace: [`https://ecosystem.ai/ontology/workbench#`](/ontology/workbench.ttl)
+
+Concepts beyond raw `ecosystem_meta` collections — productized solutions and Workbench application surfaces.
+
+## Solution cases
+
+| Class | Definition |
+|-------|------------|
+| `SolutionCase` | Productized solution configuration |
+| `SpendPersonalityCase` | Spend / money personality scoring and messaging |
+| `TwoTowerCase` | Two-tower recommender training and deployment |
+
+**Link:** `usesSolutionCase` (Project → SolutionCase)
+
+## Operations & UI
+
+| Class | Definition |
+|-------|------------|
+| `AsyncJob` | Background job (training, synthetic, enrichment, …) |
+| `AnalyticsDashboard` | Analytics studio dashboard |
+| `RuntimeConsole` | UI for operating deployed runtime campaigns |
+| `NetworkGraph` | Networks submodule graph |
+| `NetworkOntologyDefinition` | JSON ontology for Networks KG (not the Turtle platform ontology) |
+| `PublicApiCatalogEntry` | Public API catalog mapping |
+
+**Job properties:** `jobId`, `jobLifecycleState` (`Queued` \| `Running` \| `Succeeded` \| `Failed` \| `Cancelled`)
+
+## Synthetic data & indicative ontology
+
+| Class | Definition |
+|-------|------------|
+| `SyntheticDataRequest` | Generate Mongo docs from a prompt; optional open `ontologyTtl` |
+| `IndicativeOntologyInference` | Sample a collection → draft Turtle (Data Management **Export → ttl**) |
+
+**Properties:** `targetDatabase`, `targetCollection`, `ontologyTtl`
+
+Forward path: ontology guides synthetic generation. Reverse path: collection export produces indicative TTL. See [Data and Ontology](/docs/ontology/data-and-ontology).
+
+Full tables: [Workbench Catalog](/docs/ontology/workbench-catalog)
+
+Download: [`/ontology/workbench.ttl`](/ontology/workbench.ttl)
+
+---
+
 ## Index
 
 Source: `docs/opensource/index.mdx`
@@ -10202,11 +15693,15 @@ URL: https://ecosystem.ai/docs/quick_start/docker
 
 # Docker Compose
 
-## Docker Compose
+Docker Compose starts Workbench, Server, Runtime, Notebooks, and optional Grafana on one `ecosystem` network. Scoring is the Runtime on **8091** (`POST /invocations`, then `POST /response`). Grafana on **3000** is infra charts, not the [Runtime Dashboard](/docs/runtime/dashboard).
 
-Docker Compose is a tool for defining and running multi-container Docker applications. With Compose, you use a YAML file to configure your application's services. Then, with a single command, you create and start all the services from your configuration.
+After `start.sh` (or `docker compose up`), log in on port **80**, then follow [Post-install](/docs/quick_start/post_install) and score a campaign. Hosted demo if you are not running locally: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
-## ecosystem.Ai Docker Compose
+**Ports in this file:** Workbench **80**, Server **3001**, first Runtime **8091**, extra Runtimes **8092–8095**, Notebooks **5111** / **8010**, Grafana **3000**. Port **8092** here is a second scoring Runtime, not MCP. Builtin MCP is `POST http://127.0.0.1:8091/mcp`. Overview: [Quick Start](/docs/quick_start).
+
+## Service map
+
+The YAML file defines multiple Docker services on a common network named `ecosystem`. Here is a breakdown of what each segment of code means:
 
 The YAML file is a Docker Compose configuration file which defines multiple Docker services to be run together, connected by a common network named 'ecosystem'. Here is a breakdown of what each segment of code means:
 
@@ -10414,42 +15909,179 @@ networks:
 
 [Additional variables](/docs/runtime/environment_variables) can be set for the runtime engine.
 
+## After the stack is up
+
+1. Change the default Workbench password (`admin@ecosystem.ai` / `password`).
+2. Open the [Runtime Dashboard](/docs/runtime/dashboard) against **8091**.
+3. **Invoke** a campaign, then **Accept** (`POST /response`).
+4. Optional: [campaign BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents).
+
 ---
 
-## Index
+## Quick Start
 
 Source: `docs/quick_start/index.mdx`
 URL: https://ecosystem.ai/docs/quick_start
+Summary: Install the stack, score a campaign, and close the learning loop
+
+Boxes,
+  Cloud,
+  FlaskConical,
+  Monitor,
+  Network,
+  Server,
+  Zap,
+} from 'lucide-react'
 
 # Quick Start
 
-Follow the guides below to get up and running with ecosystem.Ai as quickly as possible.
+Get from zero to a ranked offer and a recorded response. Workbench configures campaigns; the **Runtime** (Client Pulse Responder) scores them in real time. Learning only happens if you close the loop.
 
-## Overview
+**Try before you install:** Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai). Point the [Runtime Dashboard](/docs/runtime/dashboard) **Runtime URL** at that host (or at your local Runtime on **8091** / **8099**) and Invoke a campaign.
 
-The platform contains the following components:
+## What you are running
 
-![image](/images/overview.png)
+Current Workbench train: **2.0.3** (pins Runtime **0.9.7.0**, Server **0.7.9.0**, Notebooks **0.3**). Runtime runs on **Java 25** (Amazon Corretto 25). Workbench 2 local backend is **Python 3.14**.
 
-The core of the platform is the Prediction Server which is responsible for running the models and making predictions. The Workbench is the user interface for the platform. The Workbench is where you can load modules, create and train models, and make predictions. Python can be used to create custom modules and models.
+| Piece | Role | Current pin |
+| --- | --- | --- |
+| **Runtime** | Java 25 scoring engine: plugins, `/invocations`, `/response`, builtin MCP, dashboard, campaign BDD | **0.9.7.0** |
+| **Workbench** | Operator UI: projects, deployments, EcoGentic journeys, Claude Operator | **2.0.3** |
+| **Server** | Modeling, corpora, push to Runtime | **0.7.9.0** |
+| **Notebooks** | Processing / generative workers (not the scorer) | **0.3** |
 
-- **Workbench**: The Workbench is the user interface for the platform. The Workbench is where you can load modules, create and train models, and make predictions.
-- **Prediction Server**: The core of the platform is the Prediction Server which is responsible for running the models and making predictions. The server is accessible via API's and can be called from various architectural topologies.
-- **Notebooks Server**: The Notebooks Server is where you can create and run Jupyter notebooks. The Notebooks Server is accessible via API's and can be called from various architectural topologies. We have core capabilities in Chat-to-SQL, Vector Stores, Fact-Injection for RAG and other generative capabilities.
-- **Python**: Python can be used to ingest data, create models, deploy models and other key functions.
-- **Runtime (Client Pulse Responder)**: The runtime is the core of the platform. It is responsible for running the models and making predictions. The runtime can be installed on a local machine or in the cloud. The runtime is accessible via API's and can be called from various architectural topologies.
+Product differences live in **plugins and properties**, not `if (product == …)` in the Runtime. See [architecture](/docs/runtime).
 
-The prediction server focuses on a [worker architecture](/docs/workers/worker_arch) that allows us to implement and evolve the latest technology and make it accessible universally.
+## Closed loop (required)
 
-## Install
+```
+Your app or dashboard
+  → POST /invocations   (params is a JSON string)
+  ← ranked final_result (save uuid + offer_name)
+  → POST /response      (singular — never /responses)
+```
 
-#### [Local Setup](./quick_start/local_setup)
+```json
+{
+  "campaign": "your_campaign",
+  "subcampaign": "your_campaign",
+  "customer": "none",
+  "channel": "app",
+  "numberoffers": "2",
+  "userid": "ecosystem",
+  "params": "{}"
+}
+```
 
-Use this easy setup guide and start using ecosystem.Ai Workbench and load a sample module.
+`params` stays a **string** (`""` or encoded `{"input":[...],"value":[...]}`). Nested JSON in `params` is rejected.
 
-#### [Marketplace Apps](./quick_start/marketplace)
+On accept, send that row’s `uuid` plus `offer_name`:
 
-Install the ecosystem.Ai stack from your favorite cloud marketplace. Azure, AWS and Google Cloud are supported.
+```json
+{
+  "uuid": "dcb54a23-0737-4768-845d-48162598c0f7",
+  "offers_accepted": [{ "offer_name": "OFFER_A" }],
+  "channel_name": "app"
+}
+```
+
+Full contract: [API Access](/docs/runtime/access).
+
+![Runtime Dashboard — invoke a campaign and accept an offer](/images/runtime/dashboard.png)
+
+## First score (after install, or on the demo)
+
+1. Open the [Runtime Dashboard](/docs/runtime/dashboard). Default Runtime port is **8091** (local `run_local.sh` often **8099**).
+2. Pick an **ACTIVE** campaign, set customer / channel / number of offers, **Invoke**.
+3. **Accept** a ranked row. That sends `POST /response` with that row’s `uuid` and `offer_name`.
+4. Optional: **MCP** tab → Ontology Explorer; **Testing** tab → properties-driven BDD.
+
+  }
+  />
+  }
+  />
+  }
+  />
+
+![Runtime Ontology Explorer — search concepts and related MCP tools](/images/runtime/ontology-explorer.png)
+
+![Campaign Testing — properties-driven BDD report](/images/runtime/campaign-testing.png)
+
+## Install the stack
+
+  }
+  />
+  }
+  />
+  }
+  />
+  }
+  />
+
+Longer local guide: [Local Installation](/docs/local). Compose detail: [Docker Compose](/docs/quick_start/docker). OpenShift: [OpenShift](/docs/quick_start/openshift). After containers are up: [Post-install](/docs/quick_start/post_install).
+
+**Keys and secrets:** Copy `ecosystem_env.txt` to `.env`. Set `ECOSYSTEM_API_KEY` (license). `OPENAI_API_KEY` is only needed for generative paths. Do not commit `.env`.
+
+## Ports (typical)
+
+| Surface | Port | Notes |
+| --- | --- | --- |
+| Workbench (Docker / marketplace) | **80** / mapped path | Default login `admin@ecosystem.ai` / `password` — change it |
+| Workbench 2 local SPA | **5270** | `frontend/run.sh` |
+| Workbench private API | **8001** | Workbench MCP Streamable HTTP `POST /mcp` |
+| Server | **3001** | Modeling APIs |
+| Runtime | **8091** | Scoring; builtin MCP is `POST {RUNTIME}/mcp` on this port. Local debug often **8099** |
+| Grafana | **3000** | Optional infra charts — not the Runtime tester UI |
+
+**8092 is not MCP in the default compose file:** Default Docker Compose maps **8092–8095** to extra Runtime scoring instances (`ecosystem-runtime-solo2` …). Builtin MCP is on the **same** scoring port as `/invocations` (**8091**). A separate Python MCP **sidecar** image exists for MLFlow / custom FastAPI; do not confuse it with Runtime-solo2.
+
+There are **three** MCP-related surfaces. They share the path `/mcp` but are not interchangeable. See [MCP Support](/docs/runtime/mcp).
+
+| Surface | Where | Use |
+| --- | --- | --- |
+| Runtime builtin MCP | `POST {RUNTIME}/mcp` (0.9.7+) | Score, feedback, ontology validate, campaign admin |
+| Workbench MCP | Workbench API **8001** `POST /mcp` | Deployments, enrichment, operator tools |
+| Runtime MCP sidecar | Optional Python image | MLFlow refresh, custom FastAPI |
+
+## Configure a campaign
+
+1. In Workbench, create or open a **project** and **deployment**.
+2. Choose predictor type: Dynamic Engagement (named `approach` / `sub_approach`), static H2O, or Two-Tower (`predictor.model.type=similarity` — not a bandit approach). Catalog: [Algorithms](/docs/configuration/algorithms).
+3. Set pre-score / post-score / reward plugins. Single-class custom Java can **Compile** (JIT `/generateClass` from Runtime 0.9.6.0). Multi-class plugins still need a build pipeline.
+4. **Push** the deployment to the Runtime. Confirm `/ping` and the campaign on the dashboard.
+
+Do not invent algorithm IDs. Python `create_online_learning(..., algorithm="ecosystem_rewards")` is a **document type**, not the scoring `approach`.
+
+## Agents
+
+Runtime **0.9.7+** exposes ontology REST (`GET /ontology/runtime/...`) and MCP tools so agents validate payloads before scoring.
+
+Recommended flow: `getClosedLoopRecipe` → `listCampaigns` → `validateInvokeRequest` → `invoke` → `validateResponseRequest` → `response`.
+
+Walkthrough: [Ontology for agents](/docs/ontology/agents). Prompts such as `runtime-closed-loop` are listed on [MCP Support](/docs/runtime/mcp).
+
+## What 0.9.7 / Workbench 2 added
+
+Use these after the stack is up — they are the operator surfaces that used to be missing from this page.
+
+| Capability | Where |
+| --- | --- |
+| Runtime Dashboard (invoke / accept) | [Dashboard](/docs/runtime/dashboard) |
+| Ontology Explorer + REST catalog | [Ontology for agents](/docs/ontology/agents) |
+| Campaign Cucumber / BDD | [Campaign testing](/docs/runtime/testing) (`POST /test/campaign`) |
+| Builtin MCP | [MCP Support](/docs/runtime/mcp) |
+| JIT plugin compile | [Parameters](/docs/configuration/deployment/parameters) (`/generateClass`) |
+| Virtual variables on all deployment types | [Virtual variables](/docs/user_guides/virtual_variables) |
+| Model convergence (Dynamic Engagement) | [Model convergence](/docs/runtime/model_convergence) |
+
+Release notes: [Runtime 0.9.7.0](/docs/runtime/runtimeversion), [Workbench 2.0.3](/changelog/workbench-2.0.3).
+
+## Next
+
+- [User guides](/docs/user_guides) — recommenders, plugins, virtual variables
+- [Runtime plugins](/docs/runtime/plugins) — pre / post / reward
+- [Model convergence](/docs/runtime/model_convergence) — Dynamic Engagement tuning
+- [Changelog](/changelog) — Runtime 0.9.x and Workbench 2.0.x
 
 ---
 
@@ -10461,6 +16093,8 @@ URL: https://ecosystem.ai/docs/quick_start/kubernetes
 # Kubernetes
 
 ecosystem.Ai can be installed on Kubernetes. This can be tested locally using Minikube. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
+
+The Runtime service in these samples listens on **8091**. After pods are ready, score with `POST /invocations` then `POST /response` (`params` is a JSON string). Grafana is optional. OpenShift-specific samples: [OpenShift](/docs/quick_start/openshift). Overview: [Quick Start](/docs/quick_start). Demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## Environment Variables
 
@@ -10978,6 +16612,13 @@ spec:
 
 ```
 
+## After deploy
+
+1. Expose or port-forward the Runtime service (**8091**) and Workbench.
+2. Confirm `/ping`, then open the [Runtime Dashboard](/docs/runtime/dashboard).
+3. **Invoke** and **Accept** so learning is recorded (`POST /response`).
+4. Optional: [campaign BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents), [MCP](/docs/runtime/mcp).
+
 ## Conclusion
 
 **That's it!** You have now configured your ecosystem.Ai instance on Kubernetes.
@@ -10998,9 +16639,9 @@ This is a condensed version of our [Local Installation Guide](/docs/local/)
 ### Manual Download
 
 1. **Go to the Install Option for your Architecture**
-    - Project Install Page for x86**: Visit [docker-x86](https://github.com/ecogenetic/ecosystem/tree/main/docker-x86).
-    - Project Install Page for ARM64**: Visit [docker-arm](https://github.com/ecogenetic/ecosystem/tree/main/docker-arm).
-    - Project Install Page for Windows**: Visit [docker-windows](https://github.com/ecogenetic/ecosystem/tree/main/docker-windows).
+    - Project Install Page for x86: Visit [docker-x86](https://github.com/ecogenetic/ecosystem/tree/main/docker-x86).
+    - Project Install Page for ARM64: Visit [docker-arm](https://github.com/ecogenetic/ecosystem/tree/main/docker-arm).
+    - Project Install Page for Windows: Visit [docker-windows](https://github.com/ecogenetic/ecosystem/tree/main/docker-windows).
 
 2. **Download the ZIP File**: Click the green "Code" button, then click "Download ZIP."
 
@@ -11037,7 +16678,7 @@ git pull
     - Copy the contents of `ecosystem_env.txt` to a new file named `.env`.
     - Fill in any necessary values.
 
-    **Add your keys** for **OPENAI_API_KEY** and **ECOSYSTEM_API_KEY**.
+    **Add your keys.** `ECOSYSTEM_API_KEY` is the license. `OPENAI_API_KEY` is only needed for generative paths.
         ```
         DATA_PATH=./data
         OPENAI_API_KEY=
@@ -11077,7 +16718,15 @@ git pull
 
 ## Post-Install
 
-To access your installation follow the [Post Install Setup Guide](/docs/quick_start/post_install).
+Log in and wire Grafana using the [Post Install Setup Guide](/docs/quick_start/post_install).
+
+Then score something:
+
+1. Open the [Runtime Dashboard](/docs/runtime/dashboard) against port **8091** (or **8099** if that is how you launched Runtime).
+2. **Invoke** a campaign, then **Accept** an offer (`POST /response`).
+3. Optional: [campaign BDD tests](/docs/runtime/testing) and [ontology for agents](/docs/ontology/agents).
+
+Hosted demo if you are not running locally: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## Conclusion
 
@@ -11144,7 +16793,7 @@ http://127.0.0.1
 
 ## Step 5. Post-Install
 
-To access your installation follow the [Post Install Setup Guide](/docs/quick_start/post_install).
+Follow the [Post Install Setup Guide](/docs/quick_start/post_install), then score a campaign on the [Runtime Dashboard](/docs/runtime/dashboard) (`POST /invocations`, then **Accept** → `/response`). Demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## Conclusion
 
@@ -11160,6 +16809,8 @@ URL: https://ecosystem.ai/docs/quick_start/openshift
 # OpenShift
 
 ecosystem.Ai can be installed on OpenShift. This can be tested locally using `crc`. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
+
+The Runtime route should land on **8091**. Score with `POST /invocations` then `POST /response`. Kubernetes (non-OpenShift) samples: [Kubernetes](/docs/quick_start/kubernetes). Overview: [Quick Start](/docs/quick_start). Demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## Environment Variables
 
@@ -11824,6 +17475,12 @@ oc expose deployment workbench2 --port=5270
 oc expose svc workbench2 --port=5270
 ```
 
+## After deploy
+
+1. Confirm the Runtime route (`/ping`), then open the [Runtime Dashboard](/docs/runtime/dashboard).
+2. **Invoke** a campaign and **Accept** an offer (`POST /response`).
+3. Optional: [campaign BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents).
+
 ## Conclusion
 
 **That's it!** You have now configured your ecosystem.Ai instance on OpenShift. Superset and Airflow components can be added using helm charts if required.
@@ -11837,13 +17494,17 @@ URL: https://ecosystem.ai/docs/quick_start/post_install
 
 # Post Install Setup Guide
 
+The base install is Workbench, Server, Runtime, Notebooks, and optional Grafana. Scoring and learning happen on the **Runtime**, not Grafana.
+
+After login, open the [Runtime Dashboard](/docs/runtime/dashboard) (Runtime **8091**, or **8099** for local debug). Invoke a campaign, then Accept an offer (`POST /response`). Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
 ## Base Install
 
-The ecosystem.Ai platform contain many different options and capabilities. The base install is the starting point from where you can configure other capabilities. The base installation contains the following components:
-- **App Workbench**: The main interface for the ecosystem.Ai platform.
-- **Prediction Server**: A server for running predictions.
-- **Notebooks**: A Jupyter Notebook environment for running Python code.
-- **Grafana**: A data visualization tool for creating dashboards.
+- **Workbench**: Operator UI for projects and deployments.
+- **Server**: Modeling and push to Runtime.
+- **Runtime**: `POST /invocations` and `POST /response` (params is a JSON string).
+- **Notebooks**: Processing / generative workers.
+- **Grafana**: Optional infra charts on port **3000** — not the Runtime tester UI.
 
 ### Step 1. Log in to the App Workbench
 
@@ -11851,7 +17512,7 @@ The default username and password is `admin@ecosystem.ai` and `password`. Please
 
 ### Step 2. Log in to Notebooks
 
-You need to create a new user account for the Notebooks. The default username is `admin@ecosystem.ai`. You can assign any password during the registration proces.
+You need to create a new user account for the Notebooks. The default username is `admin@ecosystem.ai`. You can assign any password during the registration process.
 
 ### Step 3. Setup key and login to Grafana
 
@@ -11874,6 +17535,16 @@ Bearer <your key>
 ```
 
 ```Save & Test``` might produce an error, but you can ignore this. You can now create dashboards and panels in Grafana. Navigate to the **Dashboards**.
+
+### Step 4. Score a campaign on the Runtime
+
+Grafana is not the scoring UI. Open the [Runtime Dashboard](/docs/runtime/dashboard) against port **8091** (or **8099** for local debug):
+
+1. **Invoke** an ACTIVE campaign (`POST /invocations`; `params` is a JSON string).
+2. **Accept** a ranked offer (`POST /response` with that row’s `uuid` and `offer_name`).
+3. Optional: **MCP** → Ontology Explorer; **Testing** → [campaign BDD](/docs/runtime/testing).
+
+Demo host: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## Additional Components Install
 
@@ -11921,7 +17592,10 @@ curl -X POST http://ecosystem-runtime:8091/invocations \
     }'
 ```
 
-Here is another example payload with a in_param set that can later be used in the model.
+Here is another example payload with feature values inside `params`. The field remains a JSON **string** (URL-encoded form is also accepted).
+
+**params is a string:** Do not send a nested JSON object in `params`. Encode the object as a string. The closed-loop feedback endpoint is `POST /response` (singular).
+
 ```json
 {
     "campaign": "spending_personality",
@@ -11930,11 +17604,7 @@ Here is another example payload with a in_param set that can later be used in th
     "customer": "1234",
     "numberoffers": "1",
     "userid": "openai",
-    "params": {
-        "airtime_balance": 200,
-        "airtime_advance_limit": 30,
-        "api_payment_method": "p"
-    }
+    "params": "{\"airtime_balance\":200,\"airtime_advance_limit\":30,\"api_payment_method\":\"p\"}"
 }
 ```
 Modules have different endpoints and payloads. The following is an example of the Spend Personality `/invocations` API in [OpenAPI 3.0](https://swagger.io/specification/) standard.
@@ -12185,8 +17855,8 @@ components:
           example: "2024-12-20T13:04:43.000774Z"
 ```
 
-If you do not want the API to return an array or document in document JSON objects then use the flatten option. This is especially useful for UI and other technologies that have difficulty with processing nested JSON objects. The example uses the in_param to force a flattened response: `{"in_param": {"flatten_json": true}}`
-**Example Flattened `/invocations` Response for Spend Personality:** This is the return for the Spend Personality API when called with `{"in_param": {"flatten_json": true}}`:
+If you do not want the API to return nested JSON objects then encode flatten inside the `params` **string**: `"params": "{\"flatten_json\": true}"` (URL-encoded form is also accepted).
+**Example Flattened `/invocations` Response for Spend Personality:** This is the return for the Spend Personality API when called with `"params": "{\"flatten_json\": true}"`:
 ```yaml
 openapi: 3.0.0
 info:
@@ -12394,7 +18064,7 @@ paths:
                     example: 0.4742771310552009
 ```
 
-URL Encoding is required for the in_param field.
+URL Encoding is accepted for the `params` string.
 
 ```json
 {
@@ -13119,6 +18789,68 @@ As project settings are toggled, accordians will appear at the bottom of the scr
 
 ---
 
+## Runtime Dashboard
+
+Source: `docs/runtime/dashboard.mdx`
+URL: https://ecosystem.ai/docs/runtime/dashboard
+Summary: Tester UI for campaigns, closed-loop scoring, MCP, ontology, and campaign BDD
+
+# Runtime Dashboard
+
+The Runtime Dashboard is the tester UI that ships with Runtime **0.9.7.0**. Use it to ping the endpoint, pick a campaign, call `POST /invocations`, accept an offer with `POST /response`, and open the MCP, ontology, and campaign-test surfaces without writing cURL.
+
+![Runtime Dashboard — campaigns, invoke, and ranked offers](/images/runtime/dashboard.png)
+
+Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai). Point the dashboard **Runtime URL** at a running Java runtime (default scoring port **8091**; local `run_local.sh` often uses **8099**). The separate Vite app in `ecosystem-runtime/frontend` serves the same UI on **:3000** during development and proxies API calls to the runtime.
+
+## What it is for
+
+| Surface | What you do |
+| --- | --- |
+| **System Health** | Ping the runtime; refresh campaign configs |
+| **Campaigns** | Select an active campaign (predictor name) |
+| **Test Invocation** | Build a closed-loop request and **Invoke** |
+| **Results** | Ranked `final_result` rows; **Accept** writes `/response` |
+| **MCP** | JSON-RPC `POST /mcp`, Ontology Explorer, prompts |
+| **Testing** | Properties-driven Cucumber / BDD campaign tests |
+| **Config** | Runtime URL and dashboard settings |
+
+This is an operator / developer console. Production traffic should still call `/invocations` and `/response` from your channel (app, web, call center) with `params` as a JSON **string**.
+
+## Debug explanations
+
+Turn **Debug** on (Workbench Test defaults it on) so `/invocations` returns `debug.explanations`: short operator-facing titles, what happened, and what to do. The dashboard Results panel and Workbench Debug analysis tab both render that list. Typical codes include `MONGO_LOOKUP_NULL`, `EMPTY_OFFERS_CONTEXT`, `CONTEXT_DEFAULTED` (API omitted both contextual variables, so scoring used the first options-store cell), and `SCORED_OFFERS`.
+
+## Closed loop from the UI
+
+1. Choose a campaign, customer, channel, and number of offers.
+2. **Invoke** sends `POST /invocations`. The request preview at the bottom of the form is the payload your app should send.
+3. Ranked offers appear with score, price, and arm reward.
+4. **Accept** on a row sends `POST /response` with that row’s `uuid` and `offer_name`. That is the learning feedback — never `/responses`.
+
+```json
+{
+  "campaign": "online_recommender_twotower",
+  "subcampaign": "online_recommender_twotower",
+  "customer": "none",
+  "channel": "app",
+  "numberoffers": "2",
+  "userid": "ecosystem",
+  "params": "{}"
+}
+```
+
+`params` must stay a string (`""` or a JSON-encoded object). Nested JSON objects in `params` are rejected.
+
+## Related
+
+- [API Access](/docs/runtime/access) — REST `/invocations` and `/response`
+- [MCP Support](/docs/runtime/mcp) — agent tools on `POST /mcp`
+- [Ontology for agents](/docs/ontology/agents) — concept catalog the MCP tab explores
+- [Campaign testing](/docs/runtime/testing) — BDD runner on the Testing tab
+
+---
+
 ## Push Your Deployment
 
 Source: `docs/runtime/deployment.mdx`
@@ -13130,6 +18862,8 @@ Pushing your Deployment is the process of sending your [Deployment](/docs/config
 1. Using template pre and post scoring logic: There is no java compilation required so the basic push functionality can be used.
 2. Custom post scoring logic: Use the built in compilation functionality in the workbench or python before doing the push
 3. Additional custom classes: When using custom pre scoring or API logic or post scoring logic made up of multiple classes, you will need to implement a build pipeline to compile the java classes. These compiled java classes can then be copied to the plugins structure of a runtime before using the push functionality.
+
+From Runtime **0.9.6.0**, single custom pre/post-score classes can be compiled in place with Just-In-Time `/generateClass` (Workbench **Compile**). Use a **build pipeline** when you have extra classes, custom APIs, or a multi-class plugin set. JIT does not replace the pipeline for those cases.
 
 ## Template pre and post scoring logic
 If you are using one of the template pre and post scoring logic options, as described in the documentation on the [Deployment parameters](/docs/configuration/deployment/parameters) documentation. Once your Deployment is configured either click the `Push` button in the workbench or use the python functionality. Note that when using python there are two options for pushing the deployment show in the code snippet below. The first shows how to push the deployment to a single runtime endpoint. The second shows how to push the deployment to an endpoint which may have multiple replicas being load balanced behind a single endpoint.
@@ -14062,15 +19796,29 @@ Summary: Runtime
 
 # Runtime Overview: Client Pulse Responder
 
-The ecosystem.Ai platform is a powerful tool that allows you to build, train, and deploy machine learning models. Use the runtime to deploy your predictors, track their performance, and make predictions in real-time.
+The ecosystem.Ai Runtime is the Java **25** scoring engine (Amazon Corretto 25). It loads campaign properties, runs pre-score / model / post-score / reward plugins, and exposes the closed loop: `POST /invocations` then `POST /response`.
 
-## Why do you need a runtime?
+## Why a runtime?
 
-The runtime is the core component of the ecosystem.Ai platform. It is responsible for managing the lifecycle of your predictors, tracking their performance, and making predictions in real-time. The runtime provides a set of tools and libraries that help you build, deploy, and manage your predictors.
+The runtime is the production prediction process. Workbench and Server configure models and deployments; the runtime serves them with millisecond latency, writes ContactLog / ResponseLog, and (for Dynamic Engagement) runs rolling learning.
 
-## What is a runtime?
+## What it does
 
-The runtime engine is used to access data, score models, perform other related real-time functions and manage the lifecycle of the predictor. The runtime engine is responsible for processing user input, generating responses, and managing conversations.
+- Score campaigns and return ranked `final_result` rows
+- Learn from accepted offers on `/response` (singular)
+- Load Java plugins (`plugin.prescore`, `plugin.postscore`, `plugin.reward`)
+- Expose **MCP** (`POST /mcp`), **ontology** (`/ontology/runtime/*`), and **campaign BDD** (`/test/campaign*`)
+- Host the [Runtime Dashboard](/docs/runtime/dashboard) tester UI
+
+Default HTTP port is **8091**. Local `run_local.sh` often uses **8099**. Hosted demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
+## Start here
+
+- [API Access](/docs/runtime/access)
+- [Runtime Dashboard](/docs/runtime/dashboard)
+- [Campaign testing](/docs/runtime/testing)
+- [MCP Support](/docs/runtime/mcp)
+- [Ontology for agents](/docs/ontology/agents)
 
 ---
 
@@ -14419,99 +20167,305 @@ On accepted return action this message will be logged in the system:
 
 Source: `docs/runtime/mcp.mdx`
 URL: https://ecosystem.ai/docs/runtime/mcp
-Summary: MCP and custom API configuration
+Summary: Model Context Protocol surfaces for the Ecosystem Runtime and Workbench
 
-# Ecosystem Runtime MCP
+# Model Context Protocol (MCP)
 
-The Ecosystem Runtime MCP provides an MCP interface to the ecosystem Runtime as well as providing a python interface which can be used to provide custom APIs to the ecosystem Runtime.
+Ecosystem exposes **three different MCP-related surfaces**. They share the path `/mcp` but are **not interchangeable**. Pick the surface that matches your integration.
 
-## Installing the Runtime MCP
+| Surface | Where | Transport | Primary use |
+| --- | --- | --- | --- |
+| **Runtime builtin MCP** | Java `ecosystem-runtime` | `POST /mcp` (JSON-RPC, dual-era) | Score campaigns, feedback loop, campaign admin from AI agents |
+| **Workbench MCP server** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` (+ legacy SSE) | Deployments, enrichment jobs, scoring via Workbench |
+| **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` image | FastAPI `/mcp` + custom Python routers | MLFlow model refresh, custom FastAPI APIs |
 
-The Runtime MCP can be added to your ecosystem environment using a configuration similar to the docker compose snippet below
+Protocol reference: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
 
-```sh
-  ecosystem-runtime-solo:
-    image: ecosystemai/ecosystem-runtime-mcp:arm64
-    container_name: ecosystem-runtime
-    restart: unless-stopped
-    environment:
-      RUNTIME_URL: 'http://ecosystem-runtime-backend:8081'
-      PORT: 8091
-      MLFLOW_TRACKING_URI: 'http://mlflowurl:8085'
-      RUNTIME_CONFIG: '/data/config/runtime_config.json'
-      MONGO_CONNECT: ${MONGO_CONNECT_STRING}
-    volumes:
-      - ${DATA_PATH}:/data
-    networks:
-      - ecosystem
-    ports:
-      - "8091:8091"
-    depends_on:
-      ecosystem-runtime-backend:
-        condition: service_healthy
+---
+
+## Runtime builtin MCP (Java, 0.9.7+)
+
+Built into the Java runtime. Stateless **Streamable HTTP-shaped** endpoint:
+
+```text
+POST {RUNTIME_BASE}/mcp
+Content-Type: application/json
 ```
 
-For this configuration the OpenAPI style docs can be accessed at `http://ecosystem-runtime:8091/docs` and the MCP interface can be access at `http://ecosystem-runtime:8091/mcp`.
+### Protocol support
 
-## Environment Variables
+- **Legacy (2024-11-05 – 2025-11-25):** `initialize` handshake, `tools/list`, `tools/call`, `resources/list`, `resources/read`, `prompts/list`, `prompts/get`, `ping`
+- **Modern (2026-07-28):** `server/discover`, per-request `_meta`, `MCP-Protocol-Version` / `Mcp-Method` / `Mcp-Name` headers, `resultType` on results, MCP `content[]` on `tools/call`, `ttlMs` + `cacheScope` on list results
+- **Streamable HTTP responses:** each POST to `/mcp` returns either `application/json` or a **per-request** `text/event-stream` body (scoped to that request — not a persistent session). Clients **must** send `Accept: application/json, text/event-stream`. Prefer SSE by listing `text/event-stream` first or with a higher `q` value.
+- **Change notifications:** `subscriptions/listen` opens a long-lived SSE stream on the POST response (ack + optional keep-alives).
+- **Deprecated HTTP+SSE (2024-11-05):** `GET /mcp` opens a legacy session stream (when no modern protocol headers); responses are delivered on that stream via `POST /mcp/message?sessionId=…`. New clients should use Streamable HTTP on `POST /mcp` only.
 
-The following environment variables can be used to set the behaviour of the Runtime MCP:
-- **RUNTIME_URL**: The master key for the ecosystem.Ai instance.
-- **PORT**: The port exposed by the Runtime MCP
-- **MLFLOW_TRACKING_URI**: The MLFlow link to use for downloading models
-- **RUNTIME_CONFIG**: The location of the config file giving the details of the MLFlow models to use
-- **MONGO_CONNECT**: The mongo connect string used by the runtime
+When `MASTER_KEY` is configured, **mutating tools** (`campaignCreate`, `campaignDelete`, `generateClass`, `updateProperties*`, `learningTrigger`) require `X-API-KEY` or `Authorization: Bearer {MASTER_KEY}`.
 
-## Custom APIs
+### Prompts
 
-Custom APIs can be set up by creating a python file aligned with the following template
+Curated agent templates (visible in MCP Playground and `prompts/list`):
+
+| Prompt | Use when |
+| --- | --- |
+| `runtime-closed-loop` | Full MCP workflow: listCampaigns → validate → invoke → validate → response |
+| `score-customer` | Score one customer; args: campaign, customer, channel, numberoffers |
+| `send-offer-feedback` | Send `/response` feedback after user accepts an offer |
+| `validate-before-mcp-call` | Pre-flight rules (params as JSON string, required fields) |
+| `campaign-admin` | Create/refresh/delete campaigns; notes MASTER_KEY for mutating tools |
+| `developer-http-integration` | REST integration via `/invocations` and `/response` (non-MCP apps) |
+| `ask-about-algorithms` | Recommend algorithms; args: question (natural language) |
+
+Call `prompts/get` with `name` and optional `arguments` to render a prompt message with substituted values.
+
+For algorithm questions, call `askAboutAlgorithms` or read `ecosystem://algorithms/selection-guide` (full `ECOSYSTEM_ALGORITHMS.md`).
+
+### Tools
+
+**Scoring & campaigns:** `listCampaigns`, `invoke`, `response`, `updateProperties`, `updatePropertiesJson`, `generateClass`, `campaignCreate`, `campaignGet`, `campaignDelete`, `configGet`, `learningTrigger`
+
+**Runtime ontology (agent grounding):** `lookupRuntimeConcept`, `getClosedLoopRecipe`, `validateInvokeRequest`, `validateResponseRequest`
+
+**Algorithm selection:** `askAboutAlgorithms` — recommends `approach` / `sub_approach` from natural-language questions using `ECOSYSTEM_ALGORITHMS.md`
+
+Use ontology tools **before** `invoke` / `response` to validate payloads against the [Runtime Closed Loop](/docs/ontology/runtime) vocabulary. Dashboard walkthrough: [Ontology for agents](/docs/ontology/agents).
+
+### Recommended agent flow (closed loop)
+
+1. Read `ontology://runtime/closed-loop` (resource) or call `getClosedLoopRecipe`
+2. `listCampaigns` — resolve `campaign`
+3. `validateInvokeRequest` — pre-flight `InvocationRequest` (`params` must be a JSON **string**)
+4. `invoke` — save `uuid` and `offer_name` from `final_result`
+5. `validateResponseRequest` — pre-flight `ResponseFeedback`
+6. `response` — same `uuid` ties ContactLog and ResponseLog for learning
+
+Optional: `lookupRuntimeConcept` with `query: "InvocationRequest"` for concept cards and related MCP tools.
+
+### REST ontology API
+
+Headless catalog (same content as MCP resources/tools):
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /ontology/runtime` | Module summary |
+| `GET /ontology/runtime/concepts?q=invocation` | Search concept index |
+| `GET /ontology/runtime/concepts/{localName}` | Single concept card |
+| `GET /ontology/runtime/recipes/closed-loop` | Closed-loop recipe JSON |
+| `POST /ontology/runtime/validate/invoke` | Validate invoke body |
+| `POST /ontology/runtime/validate/response` | Validate response body |
+| `GET /ontology/runtime/downloads/runtime.ttl` | Bundled Turtle |
+
+```bash
+curl -X POST "$RUNTIME/mcp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "invoke",
+      "arguments": {
+        "campaign": "my_campaign",
+        "customer": "customer-123",
+        "channel": "app",
+        "numberoffers": 3,
+        "userid": "mcp-user",
+        "params": "{}"
+      }
+    }
+  }'
+```
+
+### Example: modern discovery
+
+```bash
+curl -X POST "$RUNTIME/mcp" \
+  -H "Content-Type: application/json" \
+  -H "MCP-Protocol-Version: 2026-07-28" \
+  -H "Mcp-Method: server/discover" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "server/discover",
+    "params": {
+      "_meta": {
+        "io.modelcontextprotocol/protocolVersion": "2026-07-28"
+      }
+    }
+  }'
+```
+
+Closed-loop learning: after `invoke`, send feedback with `response` using the returned `uuid` and `offer_name`. See [API Access](/docs/runtime/access).
+
+### Browser MCP testers
+
+Remote browser tools such as [MCP Playground](https://mcpplaygroundonline.com/mcp-test-server) and MCP Inspector can connect to a public runtime over HTTPS.
+
+| Setting | Value |
+| --- | --- |
+| Server URL | `https://{your-runtime-host}/mcp` |
+| Transport | **HTTP / Streamable HTTP** (required for 2026-07-28) |
+| MCP version | Autodetect or **Stateless 2026-07-28** |
+| Accept header | `application/json, text/event-stream` (Streamable HTTP) |
+| Auth header | Required only for **mutating tools** when `MASTER_KEY` is set — use `X-API-KEY: {MASTER_KEY}` or `Authorization: Bearer {MASTER_KEY}` |
+
+The runtime supports **per-request SSE** on `POST /mcp` when the client prefers `text/event-stream`. Protocol-level sessions (`Mcp-Session-Id`) were removed in 2026-07-28; legacy clients may still use `GET /mcp` + `POST /mcp/message` (deprecated HTTP+SSE).
+
+Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `response`) work without auth unless Spring `--security` is enabled on the deployment.
+
+### Resources
+
+- `ecosystem://campaigns`, `ecosystem://config`
+- Dynamic: `ecosystem://campaign/{id}`, `.../config`, `.../metrics`, `.../models`
+- **Runtime ontology:** `ontology://runtime`, `ontology://runtime/closed-loop`, `ontology://runtime/examples`, `ontology://runtime/concept/{localName}` (e.g. `InvocationRequest`)
+- **Algorithms:** `ecosystem://algorithms/selection-guide` — `ECOSYSTEM_ALGORITHMS.md` for approach / sub_approach selection
+
+---
+
+## Workbench MCP server
+
+Operator-facing guide (credentials, dual auth, full tool list, public vs private APIs): [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
+
+The Workbench backend exposes deployments, enrichment, catalog escape-hatch (`call_endpoint`), and related tools. See also [Claude Agent](/docs/workers/agent_framework/claude-agent) for Operator vs Campaign Management vs external attach.
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| Streamable HTTP | `POST http://localhost:8001/mcp` | **Preferred** for Cursor, Claude Desktop, MCP Inspector |
+| Legacy SSE (deprecated) | `GET http://localhost:8001/mcp/sse/` | Still mounted; use only for older clients |
+| REST info | `GET /api/v1/mcp/` | Tool list and connection hints (requires JWT) |
+
+**Dual auth (required for HTTP `/mcp`):** `Authorization: Bearer <user-jwt>` and `X-API-Key: ewb_public_...` (same as the public API gateway).
+
+Configure the public base URL with `MCP_PUBLIC_BASE_URL` (default `http://localhost:8001`). The Vite UI port (`5270`) does **not** proxy `/mcp` in local dev — point clients at the backend port or nginx.
+
+### Three Workbench MCP modes
+
+| Mode | Who | Notes |
+| --- | --- | --- |
+| **In-process** | In-app Claude Operator (`tool_profile: operator`) | Same tool implementations as HTTP; no public API key required |
+| **HTTP `POST /mcp`** | External Claude Code / Agent SDK | Dual-auth JWT + `X-API-Key` |
+| **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Typed tools; optional alongside HTTP |
+
+External attach does **not** require Workbench’s in-image Agent SDK bundled CLI — the client brings its own. In-app Operator readiness (`GET /api/v1/claude-agent/status`) does require the bundled binary (Debian slim image).
+
+### Cursor configuration (Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "ecosystem-workbench": {
+      "url": "http://localhost:8001/mcp",
+      "headers": {
+        "Authorization": "Bearer <user-jwt>",
+        "X-API-Key": "ewb_public_..."
+      }
+    }
+  }
+}
+```
+
+### Tools
+
+`list_api_catalog`, `call_endpoint`, `list_campaign_channel_catalog`, `get_campaign_channels`, `set_campaign_channel_selection`, `list_custom_channel_modules`, `list_deployments`, `get_deployment_info`, `score_customer`, `send_feedback`, **Networks jobs** (`networks_job`, `networks_job_status`, `networks_job_events`, `networks_job_result`, `networks_cancel_job` — see [Networks Jobs & API](/docs/modules/networks/api)), enrichment helpers (`date_enrich`, `mcc_enrich`, …), and related catalog tools.
+
+Campaign delivery channels (email, WhatsApp, WhatsApp Local, SMS, push, Python, webhook, web robot, CSV) are listed by `list_campaign_channel_catalog`. Assign published options with `set_campaign_channel_selection` (`confirm=true`). Do not confuse these with runtime scoring `channel` (`app` / `web` / `api`).
+
+### `call_endpoint` path rules
+
+Accepts `/api/v1/...`, `/public/v1/...`, or relative paths (e.g. `/campaigns`). Prefixes are stripped; the internal client calls private `/api/v1`. Known remaps:
+
+- `/money-personality/process` → `/algorithms/money-personality/process`
+- `/sentimental-equilibrium/process` → `/algorithms/sentimental-equilibrium/process`
+
+Mutating methods require `confirm=true`.
+
+### Resources
+
+- `ecosystem://deployments`
+- `ecosystem://deployment/{name}`
+
+Per-deployment MCP snippets: `GET /api/v1/deployments/{name}/mcp`.
+
+---
+
+## Runtime MCP sidecar (Python image)
+
+Separate container for **custom FastAPI APIs** and **MLFlow model download** — not the JSON-RPC builtin server above.
+
+```yaml
+ecosystem-runtime-mcp:
+  image: ecosystemai/ecosystem-runtime-mcp:arm64
+  environment:
+    RUNTIME_URL: "http://ecosystem-runtime-backend:8081"
+    PORT: 8092
+    MLFLOW_TRACKING_URI: "http://mlflow:8085"
+    RUNTIME_CONFIG: "/data/config/runtime_config.json"
+    MONGO_CONNECT: ${MONGO_CONNECT_STRING}
+  ports:
+    - "8092:8092"
+```
+
+| Endpoint | Purpose |
+| --- | --- |
+| `/docs` | OpenAPI for custom Python routers |
+| `/mcp` | Sidecar MCP/FastAPI surface (not runtime JSON-RPC) |
+| `/refresh` | MLFlow model download into runtime |
+
+### Environment variables
+
+| Variable | Description |
+| --- | --- |
+| `RUNTIME_URL` | Base URL of the Java runtime backend |
+| `PORT` | Port exposed by the sidecar (default `8092` — do not collide with Runtime `8091`) |
+| `MLFLOW_TRACKING_URI` | MLFlow tracking server |
+| `RUNTIME_CONFIG` | JSON config listing models to pull |
+| `MONGO_CONNECT` | MongoDB connection string |
+
+### Custom APIs
+
+Author Python `APIRouter` modules and compile them from the Workbench deployment **API** tab. Template:
+
 ```python
 from fastapi import APIRouter, Body
 from .custom_api_super import invocations, response
 from ..type_models import Invocation, Response
 
-# Create a logger instance
-logger = logging.getLogger(__name__)
-
 router = APIRouter()
 
-@router.post(
-    "/myCustomInvocationsName",
-    operation_id="custom_invocations_call",
-    description="Get a list of responses from the runtime",
-    tags=["Predictors"]
-    )
+@router.post("/myCustomInvocationsName", tags=["Predictors"])
 async def my_custom_invocations(
-    customer: str = Body(..., description="The customer ID for the custom invocation."),
-    params: str = Body(..., description="Parameters for the custom invocation, typically a JSON string.")
+    customer: str = Body(...),
+    params: str = Body(...),
 ):
-    """
-    Custom endpoint to call /invocations on the runtime
-    """
-    body = Invocation(
-        customer=customer,
-        params=params
-    )
-    logger.info(f"Received request for custom invocations: {body}")
+    body = Invocation(customer=customer, params=params)
     return await invocations(body)
-
-@router.post(
-    "/myCustomResponseName",
-    operation_id="custom_response_call",
-    description="Send a response to the ecosystem.Ai runtime if the customer reaction generated using the result from the /invocations endpoint is a success",
-    tags=["Predictors"]
-    )
-async def my_custom_response(
-    body: Response = Body(..., description="The response to send to the runtime")
-):
-    """
-    Customer endpoint to call /response on the runtime
-    """
-    logger.info(f"Received request for custom response: {body}")
-    return await response(body)
 ```
 
-This python file can be passed to the MCP using the workbench. When configuring [plugins in a deployment](/docs/configuration/deployment/parameters), place your python file in the editor in the API tab and push the Compile button.
+See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via the sidecar.
+
+---
+
+## Client compatibility
+
+| Client | Runtime builtin `POST /mcp` | Workbench Streamable HTTP | Workbench legacy SSE | Sidecar |
+| --- | --- | --- | --- | --- |
+| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes | Deprecated | No |
+| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes | Deprecated | No |
+| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes | Legacy only | No |
+| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` | — | Custom FastAPI only |
+| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK | — | No |
+
+**stdio harness:** the `ecosystem_workbench_mcp` Python package exposes Workbench public APIs over stdio for local agent hosts (Hermes, Cursor `command` config). That is separate from the HTTP `/mcp` servers above.
+
+---
+
+## Which surface should I use?
+
+- **Score runtime campaigns from an agent** → Runtime builtin MCP (`invoke` + `response`)
+- **Score Workbench deployments / run enrichment / catalog via `call_endpoint`** → Workbench MCP server
+- **In-app Operator or Campaign Management Claude turns** → [Claude Agent](/docs/workers/agent_framework/claude-agent)
+- **MLFlow model pull + custom Python APIs** → Runtime MCP sidecar
+- **Local agent with full Workbench API** → `ecosystem_workbench_mcp` stdio SDK
 
 ---
 
@@ -14531,10 +20485,10 @@ If models are not trained using the ecosystem Server, the trained models need to
   alongside `ecosystem-runtime` — see the
   [MLRun module](/docs/modules/mlrun).
 
-**Note:** Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the Runtime MCP has access to an h2o server used by MLFlow
+**Note:** Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the **Runtime MCP sidecar** has access to an h2o server used by MLFlow
 
 ## Configuration
-MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api interface. The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format:
+MLFlow integration requires the **Runtime MCP sidecar** (the Python `ecosystem-runtime-mcp` image — not the Java `POST /mcp` builtin server). See [MCP Support](/docs/runtime/mcp). The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format:
 ```json
 {
     "mlflow_models": [
@@ -14543,7 +20497,7 @@ MLFlow integration requires the use of the [Runtime MCP](/docs/runtime/mcp) api 
                     ]
 }
 ```
-The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file. The currently supported types in the config file are `h2o_mojo` and `h2o_model`. `h2o_mojo` is preferred and requires that the mojo is stored as an artifact in MLFlow. `h2o_model` can be used when the mojo is not stored in MLFlow but it requires that the Runtime MCP have access to the H2O server used by MLFlow so that the model can be loaded into MLFlow and the mojo can be downloaded.
+The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file. The currently supported types in the config file are `h2o_mojo` and `h2o_model`. `h2o_mojo` is preferred and requires that the mojo is stored as an artifact in MLFlow. `h2o_model` can be used when the mojo is not stored in MLFlow but it requires that the Runtime MCP sidecar have access to the H2O server used by MLFlow so that the model can be loaded into MLFlow and the mojo can be downloaded.
 
 Calling the `/refresh` API on the Runtime MCP will, in addition to the standard `/refresh` functionality, download and load the models from MLFlow.
 
@@ -14614,6 +20568,27 @@ with mlflow.start_run():
 
 ---
 
+## Model Convergence
+
+Source: `docs/runtime/model_convergence.mdx`
+URL: https://ecosystem.ai/docs/runtime/model_convergence
+Summary: Runtime cross-link for how dynamic recommender scores converge and how priors influence ranking
+
+# Model Convergence
+
+Dynamic Engagement learning is documented in the operator guide:
+
+**[Model Convergence](/docs/user_guides/model_convergence)** — six tables covering convergence mechanics for all algorithms, what acts as a prior, prior strength versus score, user levers, switching approach, and diagnosing non-convergence.
+
+Runtime sources:
+
+- Options-store posterior: `alpha = alpha_zero + success_reward * successes`
+- Training fields: `predictor.param.dynamic` plus optional `predictor.param.dynamic.types`
+- Tabular partition key: `training_cell` (`binaryThompson`, `epsilonGreedy`, `QLearning`)
+- Agent catalog: `ECOSYSTEM_ALGORITHMS.md` section 20
+
+---
+
 ## Plugins
 
 Source: `docs/runtime/plugins/index.mdx`
@@ -14626,7 +20601,7 @@ Plugins are a powerful way to extend the functionality of the ecosystem.Ai platf
 
 ## Why do you need plugins?
 
-Runtime plugins are used to extend scoring functionality by adding custom scoring logic. This allows you to customize the scoring process to meet your specific needs and requirements. Plugins can be used to add new scoring algorithms, preprocessors, postprocessors, and other components to the scoring pipeline.
+Runtime plugins are Java **25** classes used to extend scoring by adding custom pre-score, post-score, and reward logic. Develop them against Amazon Corretto 25 (same JVM as the Runtime images). This allows you to customize the scoring process to meet your specific needs and requirements.
 
 The following default plugins are available in the ecosystem.Ai platform:
 - **Pre-predict** plugin: This plugin is used to preprocess input data before it is passed to the predictor.
@@ -15897,14 +21872,21 @@ Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 
 # ecosystem.Ai runtime release history
 
-## 0.9.7 - Preview
+## 0.9.7.0
+
+Current Runtime pin (`pom.xml` / Workbench `platform/versions.json`). Version opened 2025-12-15; still the 2026 line.
 
 ### New functionality
-- Builtin MCP
+- Runs on **Java 25** (Amazon Corretto 25; production images `amazoncorretto:25-alpine-full`)
+- Builtin MCP (`POST /mcp`, dual-era JSON-RPC / Streamable HTTP). See [MCP Support](/docs/runtime/mcp).
 - Improved threading
-- Deploy multiple use cases to a single runtime instance
-- Automated testing
+- Deploy multiple campaigns / use cases to a single runtime instance
+- Automated testing (campaign Cucumber / BDD)
 - Runtime dashboard
+- Two-Tower lookup and scoring performance
+- MCP tools for the algorithm catalog
+- Spend and Money Personality drift support
+- Optional stdout logging; Kubernetes deployment samples
 
 ## 0.9.6.1.4
 
@@ -15943,7 +21925,7 @@ Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 - `/refreshWithOptions` API call which updates the Options Store.
 - `/learning` API call which manually triggers the Dynamic Interaction learning.
 - `/updateCassandraConfig` API call which updates the cassandra.conf file.
-- MCP server functionality
+- MCP sidecar (Python image; builtin Java `POST /mcp` lands on 0.9.7)
 - Custom API configuration in python.
 - MLFlow integration
 - Miscellaneous
@@ -16139,6 +22121,83 @@ Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 - org.rocksdb.rocksdbjni: 6.29.5
 - org.fusesource.leveldbjni.leveldbjni-all: 1.8
 - org.mapdb.mapdb: 3.0.9
+
+---
+
+## Campaign Testing
+
+Source: `docs/runtime/testing.mdx`
+URL: https://ecosystem.ai/docs/runtime/testing
+Summary: Built-in Cucumber BDD tests driven by campaign properties files
+
+# Campaign Testing
+
+Runtime **0.9.7.0** includes a Cucumber BDD runner for campaign plugins. The campaign `.properties` file is the test specification: the runner generates fixtures, loads pre-score / post-score / reward classes, and returns a structured report. Tests do not touch live Mongo or Cassandra.
+
+Open **Testing** on the [Runtime Dashboard](/docs/runtime/dashboard), pick a campaign, then **Run Tests**. Filters (All, Pre-Score, Post-Score, Reward, Pipeline) map to the REST paths below.
+
+![Campaign Testing — properties-driven BDD report](/images/runtime/campaign-testing.png)
+
+The screenshot shows a typical properties-driven result: most scenarios pass, one fixture assertion fails, and later steps skip. That is expected when the generated `featuresObj` does not contain every name listed in `predictor.param.lookup.features`.
+
+## REST API
+
+Default runtime port is **8091** (local debug often **8099**).
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `POST` | `/test/campaign` | All scenarios for one properties file |
+| `POST` | `/test/campaign/prescore` | Pre-score only |
+| `POST` | `/test/campaign/postscore` | Post-score only |
+| `POST` | `/test/campaign/reward` | Reward only |
+| `POST` | `/test/campaign/pipeline` | Pre-score → post-score → reward |
+| `GET` | `/test/campaigns` | List available properties files |
+
+```bash
+curl -X POST http://localhost:8091/test/campaign \
+  -H "Content-Type: application/json" \
+  -d '{"properties": "ecosystem-online_recommender_twotower.properties"}'
+```
+
+From the Runtime repo you can also run the full Cucumber suite:
+
+```bash
+mvn -B test
+```
+
+## Properties-driven fixtures
+
+The generator reads the campaign properties and builds `params`, `featuresObj`, offer-matrix rows, and dynamic corpora. No separate fixture file is required for standard campaigns.
+
+| Property | Test effect |
+| --- | --- |
+| `plugin.prescore` / `plugin.postscore` / `plugin.reward` | Classes under test |
+| `predictor.param.lookup.features` | Names that **must** appear on `featuresObj` |
+| `predictor.param.lookup.default` | Realistic values for those names (JSON) |
+| `predictor.offer.matrix` | Synthetic offers |
+| `mojo.key` | Model-scored path vs empty-score path |
+| `predictor.corpora` | Dynamic Engagement options |
+
+If a scenario fails with `featuresObj should contain feature: <name>`, add that name to `predictor.param.lookup.default`, or remove it from `predictor.param.lookup.features` if it is not a scoring feature. Following steps in the same scenario skip until the fixture step passes.
+
+## Feature coverage
+
+| Feature file | Coverage |
+| --- | --- |
+| `campaign_configuration.feature` | Plugin class names resolve; JSON in properties is well-formed |
+| `campaign_from_properties.feature` | Auto-generated fixtures and feature presence |
+| `prescore.feature` / `postscore.feature` / `reward.feature` | Isolated plugin stages |
+| `campaign_pipeline.feature` | End-to-end plugin chain |
+
+Campaign-specific Gherkin can live under `src/main/resources/features/`. Prefer the parameterless `Given the properties file under test` so the REST body selects the campaign.
+
+## Isolation
+
+- Endpoints are under `/test/*` only.
+- Each run uses an isolated `GlobalSettings`.
+- Concurrent API runs keep the properties path in a `ThreadLocal` that is cleared in `finally`.
+
+Source of truth in the Runtime repo: `TESTING.md`.
 
 ---
 
@@ -16667,16 +22726,13 @@ Click **Execute** to bring back the API results and ensure your deployment is fu
 
 ![Execute API test](/images/recommender/7_Testing/5_testing_api_test.png)
 
-### 2. Build a simulation
-**Coming soon!:** Simulation documentation for the Workbench in progress, please check back again.
+## 2. Build a simulation
 
-Now that you have built, deployed and tested the configuration of your recommender, it is time to watch it in action.
+Drive closed-loop traffic against the pushed deployment from Workbench 2 **Simulation** (`/entities/simulation`): iterations, take-up, connections, logs, and Beta / options-store results.
 
-In the <u>Dashboard</u> you will find the worker ecosystem with links to various accompanying elements. 
+See **[Simulations](/docs/configuration/simulations)** for the current process (Validate connections, nested runs, optional scenario describe). Single-call tests belong on the [Runtime Dashboard](/docs/runtime/dashboard). To analyze the resulting logs, run an [Interactions Analytic](/docs/modules/data_agents/interactions) job.
 
-![Simulations in Notebooks](/images/recommender/7_Testing/7_testing_dashboard_notebooks.png)
-
-Click on the Jupyter Notebooks to configure the simulation of your recommender deployment. The steps of how to complete this part of the journey is laid out in the Notebooks.
+The Jupyter notebook worker is no longer the primary simulation UI.
 
 ---
 
@@ -17128,10 +23184,139 @@ Whether you're a new user or looking to explore more advanced features, this com
 - [**Runtime Plugin Development**](/docs/user_guides/runtime_plugin_development): This guide provides an overview of how to set up your local environment for pre and post scoring logic development and includes guidelines on developing the logic.
 - [**Exploration Using Epsilon**](/docs/user_guides/epsilon_exploration): Provides an overview of the different ways in which $\epsilon$ exploration can be implemented in ecosystem.Ai.
 - [**Virtual Variables**](/docs/user_guides/virtual_variables): This guide provides an overview of the Virtual Variables functionality in ecosystem.Ai. The Virtual Variable functionality allows new variables to be derived from the customer lookups.
-- [**Network Selector**](/docs/user_guides/network): Provides an overview of how to configure the Network Selector. The Network Selector allows you to route traffic to different runtimes based on a number of different criteria.
+- [**Network Selector**](/docs/user_guides/network): Route `POST /invocations` traffic to different Runtime configurations. This is **not** the Workbench [Networks](/docs/modules/networks) graph workspace.
 - [**Testing Dynamic Interaction Deployments**](/docs/user_guides/dynamic_interaction_deployments): This guide provides an overview of how to test Dynamic Interaction deployments using the `callParallelDeployment` method in PostScoreSuper.
 - [**Converting static model deployments to Dynamic Interaction Deployments**](/docs/user_guides/static_to_dynamic): Provides detailed instructions for converting deployments configured using static models to use a Dynamic Interaction configuration.
 - [**Use runtimes as data sources**](/docs/user_guides/external_runtime_data): This guide details how runtimes can be used as data sources.
+
+---
+
+## Model Convergence
+
+Source: `docs/user_guides/model_convergence.mdx`
+URL: https://ecosystem.ai/docs/user_guides/model_convergence
+Summary: How dynamic recommender scores converge, what acts as a prior, and which levers change the score over time
+
+# Model Convergence
+
+This guide covers **behaviour over time** for Dynamic Engagement algorithms: how the options store posterior (and each algorithm’s own score) moves after `/invocations` and `/response`, what counts as a prior, and how operator knobs change both the **score** and the **speed** of arm separation.
+
+It complements the day-one catalog in [Dynamic Interaction Algorithms](/docs/configuration/algorithms) (cold-start tables, prior recipes, algorithm selection). For formulas and options-store fields see the runtime [README_DYNAMIC.md](https://github.com/ecosystemai/ecosystem-runtime/blob/main/README_DYNAMIC.md). For agent-facing cards see [ECOSYSTEM_ALGORITHMS.md](https://github.com/ecosystemai/ecosystem-runtime/blob/main/ECOSYSTEM_ALGORITHMS.md) section 20.
+
+**Closed loop:** Scores only move when the runtime sees presentations in `ecosystemruntime` and outcomes in `ecosystemruntime_response`. `POST /invocations` ranks from the options store. `POST /response` with that row’s `uuid` + `offer_name` is what the rolling process counts as a success.
+
+## Posterior every algorithm maintains
+
+Every rolling processor writes a **Beta posterior** on the options store:
+
+```
+alpha = alpha_zero + success_reward * successes
+beta  = beta_zero  + fail_reward * failures
+```
+
+`alpha_zero` / `beta_zero` resolve from the options document, then `randomisation.prior_success_reward` / `prior_fail_reward`, then `1.0`. Ranking still uses each algorithm’s own `propensity` / `arm_reward` / Q / PageRank / factorised likelihood. Thompson Sampling **samples the stored** `Beta(alpha, beta)` — it does not add `success_reward` a second time.
+
+Tabular approaches (`binaryThompson`, `epsilonGreedy`, `QLearning`) partition that posterior on optional `training_cell` derived from Dynamic Recommender Training Fields. Factorised approaches (`naiveBayes`, `behaviorAlgos`, `Network`) discretise each field independently and never concatenate a cell.
+
+---
+
+## 1. Convergence mechanics (all algorithms)
+
+| Algorithm | Accumulated state | What drives arm separation | What stalls it | Persisted vs rebuilt |
+|-----------|-------------------|----------------------------|----------------|----------------------|
+| Ecosystem Rewards (`binaryThompson`) | Beta posterior per offer × context × optional `training_cell` | Accept/reject counts × `success_reward` / `fail_reward` | Missing `/response`; tiny window; unique cells (unbinned numerics) | **Persisted** in options store |
+| Epsilon Greedy (`epsilonGreedy`) | Empirical propensity; Beta posterior still written | `response_count / logging_count`; ε randomizes | All arms tied at 0; ε = 0 with no data | **Persisted** |
+| Bayesian Probabilistic (`naiveBayes`) | `P(field\|offer)` with Laplace; Beta alongside | Distinct discrete features | Unbinned numerics; missing Lookup Parameters | Likelihood **rebuilt from window**; Beta persisted |
+| Q-Learning (`QLearning`) | Q-table over states (history + optional cell) and offers | Bellman updates + reward plugin | Sparse per-customer states; no `plugin.reward` | Q **persisted**; Beta alongside |
+| Network Analysis (`Network`) | Offer graph PageRank | Co-presentation / co-acceptance | No co-occurrence yet | Graph **rebuilt from window**; Beta persisted |
+| Human Behavioral (`behaviorAlgos`) | Type-specific in-memory scores | See type rows | `RollingBehavior.resetBehaviorAlgorithms()` discards in-memory posteriors **every cycle** | **Rebuilt from the processing window** each cycle; platform Beta still persisted |
+| Loss Aversion (`lossAversion`) | Ignored-offer penalty + UCB | Failures hurt more than accepts help | Naturally low take-up on every arm | Rebuilt |
+| Risk Aversion (`riskAversion`) | Mean–variance utility | Low variance + decent mean | No history → no scores | Rebuilt |
+| Prospect Theory (`prospectTheory`) | Seeded values + drift | Adaptive drift + internal ε | Need for a single winner | Rebuilt |
+| Sentimental Equilibrium | Aggregate sentiment/effort | Not a per-offer ranker | Used as NBO | Single-shot / rebuilt |
+| Coverage-Aware Thompson | Thompson + long-tail boost | Coverage fights concentration | Fairness KPI vs fastest winner | Rebuilt behavioral state; Beta-like sampling |
+| Long-Tail Boost MF | WRMF/ALS factors | Matrix density | Sparse logs / cold start | Rebuilt |
+| Generative (`generative`) | None (LLM per request) | Prompt + lookup vars | Latency, cost, audit | Not accumulated |
+
+---
+
+## 2. What acts as a prior
+
+| Algorithm | Prior | Notes |
+|-----------|-------|-------|
+| Ecosystem Rewards / Coverage-Aware Thompson | **Conjugate Beta:** `alpha_zero`, `beta_zero` | Defaults: options store → `prior_success_reward` / `prior_fail_reward` → `1.0`. Workbench **Generate options** seeds `alpha_zero` to `prior_success_reward` (not the computed posterior). |
+| Epsilon Greedy | Same Beta fields for inspection | Ranking uses propensity, not the sample |
+| Loss Aversion | Smoothing + UCB | Not a conjugate prior |
+| Prospect Theory | `baseDriftRate` seeding | All offers start with a seeded value |
+| Bayesian Probabilistic | Laplace α = 1 | Unseen feature/offer pairs stay non-zero |
+| Risk Aversion, Network, Long-Tail Boost MF | **None** | Platform uniform/random until history exists |
+| Q-Learning | **None** | Random until the Q-table fills |
+| Generative | Prompt only | Not statistical |
+
+---
+
+## 3. Prior strength vs score (worked numbers)
+
+For a Thompson arm the posterior mean is \((\alpha_0 + s) / (\alpha_0 + \beta_0 + n)\) and the **prior weight** is \((\alpha_0 + \beta_0) / (\alpha_0 + \beta_0 + n)\), with \(n = s + f\).
+
+Assume 4 successes and 6 failures in the window (`success_reward = fail_reward = 1` so \(s=4\), \(n=10\)). Observed rate = 0.40.
+
+| Prior | \(\alpha_0\) | \(\beta_0\) | Posterior mean | Prior weight at n=10 | When the prior stops dominating |
+|-------|-------------|-------------|----------------|----------------------|----------------------------------|
+| Default uninformative | 1.0 | 1.0 | 5/12 = **0.417** | 2/12 = 17% | After ~20 events prior weight &lt; 10% |
+| From `prior_success_reward=0.1`, `prior_fail_reward=0.01` | 0.1 | 0.01 | 4.1/10.11 ≈ **0.406** | 1% | Almost immediately |
+| Optimistic | 2.0 | 1.0 | 6/13 ≈ **0.462** | 23% | Needs ~30 events for &lt; 10% |
+| Strong popular | 10.0 | 5.0 | 14/25 = **0.560** | 60% | Needs ~135 events for &lt; 10% |
+| Strong popular at n=100 (40/60) | 10.0 | 5.0 | 50/115 ≈ **0.435** | 13% | Still pulling toward 10/15 = 0.67 |
+
+**Prior that never lets go:** If Generate options used to copy the **computed** \(\alpha\) into `alpha_zero`, the rolling loop treated historical take-up as a permanent prior. The runtime now persists the true prior and recomputes \(\alpha = \alpha_0 + success\_reward \times successes\) from the window.
+
+---
+
+## 4. User levers
+
+| Lever | Where it is set | Effect on convergence speed | Effect on score | Risk |
+|-------|-----------------|----------------------------|-----------------|------|
+| Deployment ε | Deployment / properties `predictor.epsilon` | Forces uniform explore before post-score | Can override a converged ranking | Too high → never exploits |
+| Algorithm ε | Dynamic Engagement `randomisation.epsilon` | Thompson: extra uniform mix; ε-greedy: the policy; Q: random actions | Directly changes who wins | Confusing the three ε layers |
+| `success_reward` / `fail_reward` | `randomisation` | Larger values move α/β faster per event | Inflates posterior vs raw counts | `fail_reward` ≫ `success_reward` pessimism |
+| `prior_success_reward` / `prior_fail_reward` | `randomisation` + Generate options | Stronger prior → slower data takeover | Shifts early Thompson samples | Arms frozen at the prior if α₀, β₀ huge |
+| `processing_window` | `randomisation` (ms) | Shorter window → faster adaptation | Recency bias | Too short → n=0, random |
+| `processing_count` | `randomisation` | Caps rows per cycle | Same as a short window if hit | 0 with huge logs → slow cycles |
+| `decay_gamma` | `randomisation` | Down-weights older customer repeats | Recency for multi-touch | 1.0 = no decay |
+| `interaction_count` | `randomisation` | Caps per-customer events | Stops one customer dominating | 0 = unlimited |
+| Options `weighting` | Options store | Multiplies `arm_reward` at score | Business boost independent of learning | Can hide a true loser |
+| `learning_reward` | Reward plugin | Scales the learning update | Changes α/β growth | Plugin bugs look like non-convergence |
+| Training-field typing | Deployment `parameter_access.dynamic_training_fields` + types | Numeric binning keeps cells shared | Partitions tabular posteriors | Unbinned numerics → n=1 cells, random |
+
+---
+
+## 5. Switching approach to change score behaviour
+
+| Goal | Approach | Knobs |
+|------|----------|-------|
+| Faster convergence to a winner | `naiveBayes` (features) or `epsilonGreedy` with decaying ε | Lookup Parameters; lower ε over time |
+| More stable scores | `riskAversion`; longer `processing_window` | 7–30 day window; modest rewards |
+| More exploration | `binaryThompson` with weak priors; or raise ε | `alpha_zero=beta_zero=1`; deployment ε 0.1–0.2 |
+| Fairer catalog coverage | `coverageAwareThompson` | Do not also crank ε if coverage boost is enough |
+| Feature-driven accuracy | `naiveBayes` | Discrete/binned training fields; Lookup Parameters |
+| Sequential journeys | `QLearning` | Reward plugin; `training_cell` on state |
+| Default online NBO | `binaryThompson` | Closed loop + processing window |
+
+---
+
+## 6. Diagnosing non-convergence
+
+| Symptom | Likely cause | Fix |
+|---------|--------------|-----|
+| Arms frozen at the prior | Missing `alpha_zero` used to NPE (now defaults); or huge α₀/β₀; or no `/response` | Confirm `/response` matching `offer_name`; set modest priors; check rolling logs |
+| All arms tied | No events in window; ε-greedy propensity 0; unbinned unique cells | Widen window; bin numerics; raise ε until n grows |
+| One arm dominating | High `success_reward`; popular arm + no coverage; `weighting` | Coverage-Aware Thompson; cap weighting; lower success_reward |
+| Scores never stabilise | Window too short; high ε; Thompson sampling (stochastic by design) | Lengthen window; lower ε; inspect posterior **mean** `alpha/(alpha+beta)` not the sample |
+| Behavioral scores reset | `resetBehaviorAlgorithms()` every cycle | Expected — look at the window, not yesterday’s in-memory state |
+| Tabular cells empty at score | Options seeded without `training_cell` while fields are configured | Re-generate options after setting training fields, or wait for rolling upserts |
+
+Public algorithm catalog: [Dynamic Interaction Algorithms](/docs/configuration/algorithms). Exploration layers: [Exploration Using Epsilon](/docs/user_guides/epsilon_exploration).
 
 ---
 
@@ -17142,6 +23327,8 @@ URL: https://ecosystem.ai/docs/user_guides/network
 Summary: The Network Selector enables routing of calls to the ecosystem.Ai runtime to different logic configurations.
 
 # Network Selector
+
+**Not Workbench Networks:** Graph analysis (PageRank, Louvain, timeline) lives in Workbench2 **Solutions → Network Analysis**. See [Networks](/docs/modules/networks). This page is Runtime **traffic routing** (`PostScoreNetwork`) only.
 
 The Network Selector is a powerful tool that allows you to define and manage the routing of requests based on various criteria.
 
@@ -17871,14 +24058,11 @@ Click **Execute** to bring back the API results and ensure your deployment is fu
 
 ## 2. Build a simulation
 
-**Coming soon!:** Simulation documentation for the Workbench in progress, please check back again.
+Drive closed-loop traffic against the pushed deployment from Workbench 2 **Simulation** (`/entities/simulation`): iterations, take-up, connections, logs, and Beta / options-store results.
 
-Now that you have built, deployed and tested the configuration of your recommender, it is time to watch it in action.
+See **[Simulations](/docs/configuration/simulations)** for the current process (Validate connections, nested runs, optional scenario describe). Single-call tests belong on the [Runtime Dashboard](/docs/runtime/dashboard). To analyze the resulting logs, run an [Interactions Analytic](/docs/modules/data_agents/interactions) job.
 
-In the <u>Dashboard</u> you will find the worker ecosystem with links to various accompanying elements. 
-Click on the Jupyter Notebooks icon to configure the simulation of your recommender deployment. The steps of how to complete this part of the journey is laid out in the Notebooks.
-
-![Simulations in Notebooks](/images/recommender/7_Testing/7_testing_dashboard_notebooks.png)
+The Jupyter notebook worker is no longer the primary simulation UI.
 
 **Note:** Test your predictions and revert back to any one of the previous steps in order to get the expected outcome. Once your predictions are actively in production, move on the <u>Monitoring</u> step to configure and view your dashboards.
 
@@ -17896,7 +24080,7 @@ In order to develop your own java classes to use for pre and post scoring and AP
 ## Prerequisites
 Before you can configure your pre and post scoring logic, you will need to have the following set up on your local machine:
 - Install IntelliJ or update your current install to the latest version
-- Install Java Corretto 17 
+- Install **Amazon Corretto 25** (the Runtime JVM; Docker images use `amazoncorretto:25-alpine-full`) 
 - Clone the ecosystem-runtime-localbuild repo from GitHub https://github.com/ecogenetic/ecosystem-runtime-localbuild. There are different branches for different versions of the runtime. The default branch is for the latest version of the runtime. If you are working with a specific version of the runtime then check out the branch for that version. 
 
 ## IntelliJ Configuration
@@ -17940,7 +24124,7 @@ Open the Tool menu and select Pull Plugin from ecosystem.Ai server.
 Right click on the project root folder and select Refresh from Disk to have the pulled files appear in the tree.
 ![Refresh from disk](/images/local_dev_setup/08_refresh-from-disk.png)
 
-Now in the IntelliJ menu go to File -> Project Structure, select SDKs under Platform Settings, click the + to add a new SDK and select corretto-17.
+Now in the IntelliJ menu go to File → Project Structure, select SDKs under Platform Settings, click the + to add a new SDK and select **Amazon Corretto 25**.
 ![Add SDK](/images/local_dev_setup/09_add-sdk.png)
 
 Now go to the Run menu and select Edit Configurations.
@@ -18456,9 +24640,9 @@ Below we give more details on implementing each of these steps.
 ## Selecting a Dynamic Interaction algorithm
 There are a number of different [Dynamic Interaction algorithms](/docs/configuration/dynamic) available, which are described in detail in the Dynamic Models section of the documentation. Here we give a brief overview of the algorithms:
 1. **$\epsilon$-greedy**: This is the simplest algorithm. A portion ($\epsilon$) of the recommendations are made at random, with the remainder being the best performing offer, given the values of the contextual variables. This is a good algorithm to use when you want to explore your prediction space and have a clean set of data to use for further modelling or when you want the behaviour of the algorithm to be as explainable as possible.
-2. **[Ecosystem Rewards](/docs/configuration/dynamic/ecosystemrewards)**: This algorithm uses a Thompson Sampling approach to rank offers. A Beta distribution is generated and updated for each option and combination of contextual variable values and options are scored by sampling from the Beta distributions. The Ecosystem Rewards algorithm provides a good balance between learning and explainability, and it has more optionality in how historical data is used in the learning process than the other algorithms.
-3. **[Bayesian Probabilistic](/docs/configuration/dynamic/baysianprobabilistic)**: This algorithm uses a Naive Bayes model to score options, with a number of approaches available to impact how missing data in the Naive Bayes training is handled. This algorithm has less focus on balancing exploration and exploitation and instead uses a larger number of features to aim to improve the prediction accuracy. While still explainable, this algorithm is less interpretable than the Ecosystem Rewards and $\epsilon$-greedy algorithms.
-4. **[Q-learning](/docs/configuration/dynamic/qlearning)**: The Q-learning algorithm allows for specific rewards and policies to be taken into account. However, it is the most complex algorithm to implement as the reward function must be implemented using the java plugin system. 
+2. **[Ecosystem Rewards](/docs/configuration/algorithms/ecosystemrewards)**: This algorithm uses a Thompson Sampling approach to rank offers. A Beta distribution is generated and updated for each option and combination of contextual variable values and options are scored by sampling from the Beta distributions. The Ecosystem Rewards algorithm provides a good balance between learning and explainability, and it has more optionality in how historical data is used in the learning process than the other algorithms.
+3. **[Bayesian Probabilistic](/docs/configuration/algorithms/baysianprobabilistic)**: This algorithm uses a Naive Bayes model to score options, with a number of approaches available to impact how missing data in the Naive Bayes training is handled. This algorithm has less focus on balancing exploration and exploitation and instead uses a larger number of features to aim to improve the prediction accuracy. While still explainable, this algorithm is less interpretable than the Ecosystem Rewards and $\epsilon$-greedy algorithms.
+4. **[Q-learning](/docs/configuration/algorithms/qlearning)**: The Q-learning algorithm allows for specific rewards and policies to be taken into account. However, it is the most complex algorithm to implement as the reward function must be implemented using the java plugin system.
 
 While one of these algorithms should be selected initially, it is possible to test multiple algorithms in parallel using the [Network Runtime](/docs/user_guides/network) and then select the best performing algorithm based on the results of the tests. This is described in more detail in the last section of this lesson.
 
@@ -19045,7 +25229,7 @@ The Virtual Variable functionality allows you to make use of variables derived f
 
 The configuration and usage of the Virtual Variables requires the following steps:
 1. Configure your Virtual Variables in the [Deployment](/docs/configuration/deployment) settings.
-2. Use your Virtual Variables in a Dynamic Interaction configuration or in your model training.
+2. Use your Virtual Variables in any deployment type (Dynamic Interaction contextual variables, model features, or plugin params). From **0.9.6.1**, Virtual Variables are not limited to Dynamic Interaction.
 
 Below we give more details on implementing each of these steps and how the Virtual Variables are used in the pre and post scoring logic.
 
@@ -19303,6 +25487,129 @@ When configuring [multiple customer lookups](/docs/configuration/deployment/para
 
 ---
 
+## Claude Agent
+
+Source: `docs/workers/agent_framework/claude-agent.mdx`
+URL: https://ecosystem.ai/docs/workers/agent_framework/claude-agent
+Summary: Workbench Claude Agent SDK packaging, Operator MCP, Campaign Management access, and external attach
+
+# Claude Agent on Workbench
+
+Claude Agent is the Workbench **operator** surface: in-app `/assistant`, Campaign Management private chat turns, and external Claude Code / Agent SDK attach. It is **not** a ninth product agent and does not replace EcoGentic customer chat.
+
+Branding: use **Claude Agent** (not “Claude Code Agent”) per Anthropic guidelines.
+
+## Usage map
+
+```mermaid
+flowchart TB
+  subgraph cm [CM backend]
+    Conv[conversation.service]
+    Bridge[wb2-agent-bridge]
+    CmMcp["/agentic/mcp tool pack"]
+    Gen[campaigns/_generate]
+    Ops[campaigns CRUD trigger]
+    Conv --> Bridge
+    Conv --> Gen
+  end
+  subgraph wb [Workbench :8001]
+    CA["/claude-agent profile: campaign_management"]
+    SDK[ClaudeSDKClient bundled]
+    Msg["/v1/messages"]
+    LLM[default LLM]
+    MCP[in-process MCP]
+    Pub["public API :8004"]
+    CA --> SDK
+    SDK --> Msg --> LLM
+    SDK --> MCP
+    MCP -->|"call_endpoint"| Api["/api/v1/*"]
+  end
+  Bridge -->|JWT| CA
+  SDK -->|"JWT + X-API-Key"| CmMcp
+  Gen -->|JWT| Api
+  Ops -->|JWT| Api
+  Asst["/assistant operator"] -->|JWT| CA
+```
+
+| Consumer | Needs from Workbench | Does **not** need |
+| --- | --- | --- |
+| **Campaign Management** | Private `/claude-agent/*` with `tool_profile: campaign_management` (CM MCP tool pack + read-only Workbench subset); `/campaigns/_generate/*`; campaigns CRUD/trigger; JWT | Workbench mutating tools (hard-denied on this profile); Claude CLI in the CM image |
+| **Workbench `/assistant`** | Ready Agent SDK + default LLM + in-process MCP | CM |
+| **External Claude Code / Agent SDK** | `ANTHROPIC_BASE_URL` → Workbench host `:8001` (`POST /v1/messages`); optional dual-auth `POST /mcp` | Workbench in-image `_bundled/claude` (client supplies its own SDK/CLI) |
+
+## Packaging
+
+The [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview) **bundles** the Claude binary (`_bundled/claude`). Workbench Docker uses **`python:3.14-slim` (Debian/glibc)** so the platform wheel includes that binary. Alpine/musl images are unsupported for the in-app Operator.
+
+- No Anthropic API key in the image.
+- Model traffic always uses Workbench `POST /v1/messages` → default LLM (`LLMService.get_config("default")`).
+- Readiness: `GET /api/v1/claude-agent/status` → `ready: true` when enabled + default LLM + SDK + resolved CLI.
+
+## Catalog agents
+
+Admin Agents list product agents (spend/money personality, interaction science, intelligent sales, real-time recommender, conversational, EcoGentic, etc.) plus Claude Operator. Operator reaches them via in-process MCP tools and `call_endpoint` on private `/api/v1/*` paths.
+
+Prefer:
+
+```text
+GET  /api/v1/campaigns
+POST /api/v1/algorithms/money-personality/process   (confirm=true)
+POST /api/v1/algorithms/sentimental-equilibrium/process
+```
+
+`/public/v1/...` paths are accepted and remapped where needed. See [MCP Support](/docs/runtime/mcp) for Workbench MCP details.
+
+## Campaign Management
+
+Set:
+
+```bash
+# CM side — reach the WB2 agent runtime
+WORKBENCH_PRIVATE_API_BASE_URL=http://ecosystem-workbench2:8001/api/v1
+CM_AGENT_MCP_API_KEY=<optional; hardens CM /agentic/mcp>
+
+# WB2 side — mount the CM tool pack for tool_profile: campaign_management
+AGENT_APP_CM_MCP_URL=http://ecosystem-campaign-management:54310/api/extensions/campaign-platform/agentic/mcp
+AGENT_APP_CM_MCP_API_KEY=<same value as CM_AGENT_MCP_API_KEY>
+```
+
+CM bridges chat turns to private Claude with `tool_profile: campaign_management`
+(flag `CAMPAIGN_PLATFORM_AGENTIC_WB2_RUNTIME`). The WB2 runtime plans the turn and
+calls back into CM's `/agentic/mcp` tool pack with the acting user's JWT — campaign
+mutations apply through CM's own intent pipeline (undo checkpoints + audit), and the
+profile hard-denies Workbench mutations. Generative analyze/execute and campaign ops
+use the same private API base with the user JWT.
+
+## External attach
+
+| Surface | Auth | Purpose |
+| --- | --- | --- |
+| `POST /v1/messages` | Public path; model remapped to default LLM | What external Agent SDK / Claude Code calls when `ANTHROPIC_BASE_URL` = Workbench |
+| `POST /mcp` | `Authorization: Bearer` + `X-API-Key` | Full HTTP MCP tool set |
+
+Copy live snippets from Workbench **Administration → Agents → Access**.
+
+## Ontology-aware Q&A
+
+When Ontology Management is enabled, Operator MCP includes:
+
+| Tool | Role |
+| --- | --- |
+| `list_ontologies` / `describe_ontology` | Discover ontologies and enabled mappings |
+| `resolve_ontology_term` | Map business terms → properties / fields |
+| `generate_ontology_query` | Build a read-only Mongo pipeline or Trino SQL from Accepted mappings |
+| `query_data_via_ontology` | Execute (`mode=auto\|filter\|aggregate`) against the mapped source |
+
+Example: “Using xyz ontology, how many customers spent money last month?” →
+resolve ontology by name → generate query → execute → report tool counts only.
+
+Workbench Ontology Overview **Test** opens the agent drawer with that prompt
+prepared (composer filled, not auto-sent).
+
+Related: [MCP Support](/docs/runtime/mcp) (Operator in-process vs HTTP `/mcp` vs stdio SDK).
+
+---
+
 ## Agent Framework
 
 Source: `docs/workers/agent_framework/index.mdx`
@@ -19310,42 +25617,28 @@ URL: https://ecosystem.ai/docs/workers/agent_framework
 
 # Agent Framework
 
-### Why do you need a framework?
+Agents in ecosystem.Ai are operators and journey orchestrators that **call** the Runtime. They do not replace `/invocations` scoring or `/response` learning.
 
-The Agent Framework is a set of tools and libraries that help you build and manage agents. Agents are the core components of the ecosystem.Ai platform. They are responsible for processing user input, generating responses, and managing conversations.
+## Surfaces
 
-### What is an agent?
+| Surface | Role |
+| --- | --- |
+| [Runtime MCP](/docs/runtime/mcp) | `invoke` / `response`, ontology tools, campaign admin |
+| [Ontology for agents](/docs/ontology/agents) | Concept catalog and payload validation |
+| [Claude Operator](/docs/workers/agent_framework/claude-agent) | In-app Workbench agent (Workbench MCP) |
+| [Public APIs, Agents & MCP](/docs/configuration/workbench_apis) | Workbench `:8004` / `:8001`, API Keys, catalog agents |
+| [Journeys](/docs/workers/agent_framework/journeys) | EcoGentic conversational journeys |
 
-An agent is a software program that acts on behalf of a user. It can perform tasks, answer questions, and interact with other agents. Agents can be simple or complex, depending on the task they are designed to perform.
+Ground every scoring tool with the Runtime ontology before `invoke`. Use Workbench MCP for deployments and enrichment; use Runtime MCP for campaign scoring.
 
-### What can you do with the Agent Framework?
+## Workbench agent configurations
 
-The framework provides a set of tools and libraries that help you build, train, and deploy agents. You can use the framework to create chatbots, virtual assistants, and other conversational agents. The framework also provides tools for managing conversations, handling user input, and generating responses.
+The Workbench provides a graphical editor for ecosystem agent configurations.
 
-### How does the Agent Framework work?
+- **Agents List:** table of configurations; select a row to edit or delete.
+- **Agent Configuration:** node editor (right) and node forms (left).
 
-The framework is built on top of the ecosystem.Ai platform. It provides a set of APIs that allow you to interact with the platform and build agents. The framework also provides a set of tools and libraries that help you build, train, and deploy agents.
-
-### What are the key features of the Agent Framework?
-
-- **Agent Management:** The framework provides tools for managing agents, including creating, training, and deploying agents.
-- **Conversation Management:** The framework provides tools for managing conversations, including handling user input, generating responses, and managing conversation history.
-- **User Management:** The framework provides tools for managing users, including tracking user interactions, preferences, and history.
-- **Integration:** The framework provides tools for integrating agents with other systems, including APIs, databases, and external services.
-- **Customization:** The framework provides tools for customizing agents, including adding new features, training data, and responses.
-- **Journey Management:** The framework provides tools for managing user journeys, including tracking user interactions, preferences, and history.
-
-### Ecosystem.ai Workbench Agent Configurations
-
-The Ecosystem.ai Workbench provides a graphical user interface tool for managing ecosystem agent configurations.
-
-The interface is split into two tabs:
-- **Agents List:** This tab shows a table listing agent configurations and some key configuration metadata. Configurations can be selected for editing by clicking on rows of the table. Configurations can also be deleted from here.
-- **Agent Configuration:** This tab shows two columns. The right column contains a node editor for adding and connecting agent nodes. The left column shows forms for editing node data when a node is selected and hints for how to use the interface if no node or more than one node is selected.
-
-The URL for the workbench agent nodes page is:
-
-``<your_workbench_domain>/pages/ecosystem-agents/nodes``
+URL: `<your_workbench_domain>/pages/ecosystem-agents/nodes`
 
 ---
 
@@ -19389,24 +25682,22 @@ The URL for the workbench journey management system page is:
 
 ---
 
-## Python
+## Language Chat Models
 
 Source: `docs/workers/generative.mdx`
 URL: https://ecosystem.ai/docs/workers/generative
 
 # Generative Models
 
-### Overview
-
-Generative models are a class of models that generate new data instances that resemble the training data. They are used in various applications such as image generation, text generation, and music generation. Generative models are used in unsupervised learning and are used to learn the underlying distribution of the data.
+Generative serving is optional around the Runtime. Dynamic Engagement `sub_approach` **`generative`** still scores through the Runtime; the LLM call is configured on the Dynamic Engagement document (`prompt_parameters`), not by swapping the scoring endpoint.
 
 ### Ollama
 
-[ecosystem.Ai Ollama](https://hub.docker.com/r/ecosystemai/ecosystem-ollama) is a container that runs the ecosystem.Ai Ollama service. Ollama is a generative model serving service that generates text based on a prompt.
+[ecosystem.Ai Ollama](https://hub.docker.com/r/ecosystemai/ecosystem-ollama) is a container that runs Ollama for local text generation.
 
 ### Chat
 
-[ecosystem.Ai Chat Server](https://hub.docker.com/r/ecosystemai/ecosystem-chat) is a container that runs the ecosystem.Ai Chat Server service. The Chat Server is a generative service that generates text based on a prompt.
+[ecosystem.Ai Chat Server](https://hub.docker.com/r/ecosystemai/ecosystem-chat) serves chat completions from a prompt. Customer-facing chat is not a replacement for `/invocations` + `/response` learning.
 
 ---
 
@@ -19417,16 +25708,20 @@ URL: https://ecosystem.ai/docs/workers
 
 # Workers
 
-### Why do you need a worker architecture?
+Workers are integration and processing components around the Runtime and Server: file services, generative model serving, and agent configuration. They are **not** the scoring engine. Scoring, plugins, MCP, and campaign tests live in [Runtime](/docs/runtime).
 
-The worker architecture is a set of tools and libraries that help you build and manage workers. Workers are the core components of the ecosystem.Ai platform. They are responsible for processing user input, generating responses, and managing conversations.
+## Worker types
 
-### What is a worker?
+- **Data workers** — ingest and prepare corpora, feature stores, and files for deployments.
+- **Prediction workers** — call the Runtime closed loop (`POST /invocations`, then `POST /response`).
+- **Algorithm workers** — training and enrichment jobs (Server / Workbench), not in-request scoring.
 
-There are two types of workers in the ecosystem.Ai platform:
-- data workers
-- prediction workers
-- algorithm workers
+## In this section
+
+- [Worker architecture](/docs/workers/worker_arch) — stack and integration points
+- [Python](/docs/workers/python) — packages and SDK usage
+- [Language chat models](/docs/workers/generative) — Ollama and chat serving
+- [Agent framework](/docs/workers/agent_framework) — EcoGentic journeys and Claude Operator
 
 ---
 
@@ -19437,35 +25732,32 @@ URL: https://ecosystem.ai/docs/workers/python
 
 # Python
 
-### Python Development
+Use Python to configure deployments, push properties, and call the Runtime from notebooks or services.
 
-Python is a popular programming language for developing machine learning models. The ecosystem.Ai AI platform supports Python for developing and deploying models.
-
-### Python Libraries
+- Workbench / Server package: [Python package](/docs/configuration/pythonpackage) (`prediction` APIs, default Runtime `http://localhost:8091`).
+- Public SDK and MCP: Workbench `sdk/` (`ecosystem_workbench_mcp`).
+- Runtime closed loop: `POST /invocations` then `POST /response`. `params` is a JSON string.
 
 ```python
 ```
 
 ---
 
-## Workers
+## Worker Architecture
 
 Source: `docs/workers/worker_arch.mdx`
 URL: https://ecosystem.ai/docs/workers/worker_arch
 
-# Workers
+# Worker Architecture
 
-### Worker Architecture
+Workers sit at the **adapter** edge: they talk to files, model servers, and channel APIs. Domain scoring stays in the Java Runtime.
 
-The worker architecture is a set of tools and libraries that help you build and manage workers. Workers are the core components of the ecosystem.Ai platform. They are responsible for processing user input, generating responses, and managing conversations.
+## Components
 
-## Components of Worker Architecture
-
-The worker architecture consists of the following components:
-- Technology stack
-- Integration
-- Customization
-- Journey management
+- **Technology stack** — Python 3.14 Workbench backend, Java 25 Runtime (Amazon Corretto 25), optional Ollama / chat containers.
+- **Integration** — HTTP to Runtime (`/invocations`, `/response`, `/mcp`) and Server APIs. Bind hosts with config, not hardcoded product URLs.
+- **Customization** — pre/post-score Java plugins and Workbench deployments, not forks of worker containers.
+- **Journeys** — EcoGentic conversational journeys and campaign channels. See [Journey management](/docs/workers/agent_framework/journeys).
 
 ---
 
@@ -19477,10 +25769,24 @@ Source: `changelog.mdx`
 URL: https://ecosystem.ai/changelog
 Summary: The latest release updates from ecosystem.Ai.
 
-Latest release updates ✨</>}
+Latest release updates</>}
       className="mb-8"
       h="h1"
     />
+  
+  
+    
+      2024 entries use a single platform train (<code>v0.6.x</code> → <code>v0.7.900</code>).
+      From 2025 the scoring engine is <strong>Runtime <code>0.9.x</code></strong> (Maven/Docker
+      <code>0.9.6.0</code> is git tag <code>0.96.0</code>; patches add a fourth digit, e.g.
+      <code>0.9.6.1.4</code>).       Runtime <code>0.9.7.0</code> opened in December 2025 and is still
+      the current pin; it runs on <strong>Java 25</strong> (Amazon Corretto 25). <strong>Workbench <code>2.0.patch</code></strong> is a separate operator
+      line with a monotonic <code>build</code> in <code>platform/versions.json</code>; it pins
+      Runtime, Server (<code>0.7.9.0</code>), and Notebooks. Compile pre/post-score plugins
+      against the Runtime you deploy. Closed loop is always
+      <code>POST /invocations</code> then <code>POST /response</code> with <code>params</code> as
+      a JSON string. Canonical Runtime notes:
+      release history.
 
 ---
 
@@ -19511,7 +25817,7 @@ Date: 2024/06/29
 
 ---
 
-## 🚀 ecosystem.Ai v0.6.304.04
+## ecosystem.Ai v0.6.304.04
 
 Source: `changelog/v0.6.304.04.mdx`
 URL: https://ecosystem.ai/changelog/v0.6.304.04
@@ -19539,7 +25845,7 @@ Date: 2024/06/29
 
 ---
 
-## 🚀 ecosystem.Ai v0.6.401.00
+## ecosystem.Ai v0.6.401.00
 
 Source: `changelog/v0.6.401.00.mdx`
 URL: https://ecosystem.ai/changelog/v0.6.401.00
@@ -19567,7 +25873,7 @@ Date: 2024/07/15
 
 ---
 
-## 🚀 ecosystem.Ai v0.6.500.01
+## ecosystem.Ai v0.6.500.01
 
 Source: `changelog/v0.6.500.01.mdx`
 URL: https://ecosystem.ai/changelog/v0.6.500.01
@@ -19595,7 +25901,7 @@ Date: 2024/08/29
 
 ---
 
-## 🚀 ecosystem.Ai v0.6.601.00
+## ecosystem.Ai v0.6.601.00
 
 Source: `changelog/v0.6.601.00.mdx`
 URL: https://ecosystem.ai/changelog/v0.6.601.00
@@ -19623,7 +25929,7 @@ Date: 2024/09/25
 
 ---
 
-## 🚀 ecosystem.Ai v0.7.900.00
+## ecosystem.Ai v0.7.900.00
 
 Source: `changelog/v0.7.900.00.mdx`
 URL: https://ecosystem.ai/changelog/v0.7.900.00
@@ -19642,6 +25948,318 @@ Date: 2024/12/16
 - Intent management and processing updates
 - Chat endpoints LLM updates across the entire execution thread
 - Improved model configuration and management
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Runtime v0.9.5.0
+
+Source: `changelog/v0.9.5.0.mdx`
+URL: https://ecosystem.ai/changelog/v0.9.5.0
+Summary: OpenAPI, /config, Virtual Variable refresh, Java 17 / Spring Boot 3.4.
+Date: 2025/03/25
+
+---
+
+Runtime `0.9.5.0` (git tag `0.95` / `0.94` train). Pin Docker/Maven **`0.9.5.0`**. Plugins still compile as **Java 17**. Swagger UI is gone; OpenAPI is the contract.
+
+## What's Changed
+
+### Runtime
+- `/config` now dumps the live runtime configuration (resilience / support starting point).
+- `/refresh` reloads Virtual Variables without a process restart.
+- Dynamic Eligibility: conditional variables and rules; lookups from any in-process scoring structure.
+- Bayesian missing-offer handling: `uniform` samples instead of silently dropping unseen offers.
+- Q-learning can use logging data for state.
+- `MONGO_CONNECT` env var for the Mongo connection string at startup.
+- Pre-score: `PrePredictAutoDate` date enrichments; `mongoClient` passed into `/invocations`.
+- Localbuild: `DateUtils` moved to `com.ecosystem.utils.DateUtilities.DateUtils` — update imports.
+
+### Dependencies
+- Spring Boot **3.4.1**, MongoDB driver **5.3.1**, H2O **3.46.0.6**, DJL **0.31.1**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion). Closed loop is still `POST /invocations` then `POST /response` (`params` is a JSON string).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Runtime v0.9.6.0
+
+Source: `changelog/v0.9.6.0.mdx`
+URL: https://ecosystem.ai/changelog/v0.9.6.0
+Summary: JIT pre/post-score, custom rewards, parallel Dynamic Interaction calls.
+Date: 2025/05/17
+
+---
+
+Runtime `0.9.6.0` (git tag `0.96.0`). Pin **`0.9.6.0`**. Customer pre/post-score Java no longer needs a separate compile pipeline if you use JIT source generation.
+
+## What's Changed
+
+### Runtime
+- **JIT compilation** of customer pre/post-score Java from source (no mandatory plugin build pipeline).
+- Runtime split: default image **without** deeplearning; opt in when you need DJL/PyTorch.
+- `PostScoreSuper.callParallelDeployment` for exercising Dynamic Interaction deployments.
+- Pre-score classes whose name contains `PreScoreLookup` receive `mongoClient` (aggregation pipelines in pre-score). Feature store can be assembled from **multiple** lookup tables.
+- **Custom reward plugins** for Dynamic Interaction algorithms.
+- Localbuild rename: `rollingMaster` → `rollingEcosystemRewards`; Q-learning rolling init added.
+- Project-level epsilon now shows up in `params` for Ecosystem Rewards (older images lied here).
+- Failed `offerMatrixStatic` load is a **warning**, not a hard error — `offerMatrix` may still be present.
+
+### Dependencies
+- Spring Boot **3.4.4**, MongoDB **6.0.20**, springdoc OpenAPI **2.8.5**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Runtime v0.9.6.1.2
+
+Source: `changelog/v0.9.6.1.2.mdx`
+URL: https://ecosystem.ai/changelog/v0.9.6.1.2
+Summary: H2O CVE-2025-6544, multi-offer Dynamic Recommender learning, Spring Boot 3.5.6.
+Date: 2025/10/21
+
+---
+
+Runtime `0.9.6.1.2` (tag `0.9.6.1.2`). Pin **`0.9.6.1.2`**. Security + learning correctness.
+
+## What's Changed
+
+### Runtime
+- Dynamic Recommender learning fix when **multiple offers** are in play.
+- H2O bumped to **3.46.0.8** for **CVE-2025-6544** (nightly was used briefly, then pinned back to this release).
+- Network `in_params` accepts strings (not only numeric) so selector keys match server-side types.
+
+### Dependencies
+- Spring Boot **3.5.6**, `ai.h2o.h2o-core` **3.46.0.8**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Runtime v0.9.6.1.3
+
+Source: `changelog/v0.9.6.1.3.mdx`
+URL: https://ecosystem.ai/changelog/v0.9.6.1.3
+Summary: Param-lookup default JSON fix; overlapping Ecosystem Rewards learning stopped.
+Date: 2025/11/12
+
+---
+
+Runtime `0.9.6.1.3`. Pin this patch (or later on the 0.9.6.1 line) if you hit options-store index errors or overlapping Ecosystem Rewards rolls.
+
+## What's Changed
+
+- Fix `predictor.param.lookup.default` JSON formatting that caused index creation errors with Dynamic Recommenders.
+- Prevent learning iterations from overlapping when using Ecosystem Rewards (`binaryThompson`).
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion).
+
+---
+
+## Runtime v0.9.6.1.4
+
+Source: `changelog/v0.9.6.1.4.mdx`
+URL: https://ecosystem.ai/changelog/v0.9.6.1.4
+Summary: Overlapping Ecosystem Rewards learning stopped; /refresh reloads every config.
+Date: 2025/12/13
+
+---
+
+Runtime `0.9.6.1.3` + `0.9.6.1.4` (tags on 2025-12-10 and 2025-12-13). Pin **`0.9.6.1.4`**. Last 0.9.6 line before `0.9.7.0`.
+
+## What's Changed
+
+### `0.9.6.1.3`
+- `predictor.param.lookup.default` JSON could break **index creation** on Dynamic Recommenders — formatting fixed.
+- Ecosystem Rewards: learning iterations no longer **overlap** (conflict / double-apply).
+
+### `0.9.6.1.4`
+- `/refresh` could skip some configs; it now reloads the full set.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Runtime v0.9.6.1
+
+Source: `changelog/v0.9.6.1.mdx`
+URL: https://ecosystem.ai/changelog/v0.9.6.1
+Summary: Behavioural algorithms, /learning, virtual variables everywhere, MCP sidecar.
+Date: 2025/08/21
+
+---
+
+Runtime `0.9.6.1` / `0.9.6.1.1` (tag `0.9.6.1.1`). Pin **`0.9.6.1.1`** or later on the 0.9.6.1 line. This is the behavioural-algorithm and operator-API drop.
+
+## What's Changed
+
+### Runtime (`0.9.6.1`)
+- **Human behavioural** Dynamic Interaction algorithms (configure via `approach` + `sub_approach`; see [algorithm catalog](/docs/configuration/algorithms) — do not invent IDs).
+- **Virtual variables** on all deployment types (not only Dynamic Interaction).
+- External runtime data lookups / extra corpora (share stores, cut socket fan-out).
+- New APIs: `POST /refreshWithOptions`, `POST /learning` (manual Dynamic Interaction learn), `POST /updateCassandraConfig`.
+- MCP server surface (sidecar era; builtin Java MCP lands on 0.9.7).
+- Custom API configuration in Python; **MLFlow** integration.
+- Bayesian Probabilistic score scaling changed — do not compare raw scores 1:1 with 0.9.6.0.
+- Fix: Dynamic Interaction behind a network runtime could stop learning.
+
+### Patch `0.9.6.1.1`
+- Batch process response logging.
+- Asymmetric custom rewards for Ecosystem Rewards.
+- `/refresh` no longer fails on some Dynamic Interaction configs.
+
+### Dependencies
+- Spring Boot **3.5.0**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Runtime v0.9.7.0
+
+Source: `changelog/v0.9.7.0.mdx`
+URL: https://ecosystem.ai/changelog/v0.9.7.0
+Summary: Builtin MCP, multi-campaign JVM, Java 25, dashboard and campaign BDD. Current Runtime pin.
+Date: 2026/05/06
+
+---
+
+Runtime `0.9.7.0` (Maven version since 2025-12-15; public notes 2026-05-06). Current Workbench pin. Builtin **MCP** and **multi-campaign** are the developer-facing breaks from 0.9.6.x.
+
+## What's Changed
+
+### Runtime
+- **Builtin MCP:** `POST {RUNTIME_BASE}/mcp` (JSON-RPC). Dual-era: legacy `tools/list` / `tools/call` and 2026-07-28 Streamable HTTP (`MCP-Protocol-Version`). Mutating tools need `MASTER_KEY`. See [MCP Support](/docs/runtime/mcp).
+- **Multiple campaigns** on one JVM (scheduler + isolation). Watch logs for campaign-id, not a single global properties file.
+- Runtime dashboard and campaign **Cucumber / BDD** suite (`TESTING.md` / `POST /test/campaign`).
+- Two-Tower lookup path and scoring performance (corpus + Mongo).
+- Threading and multi-campaign error handling.
+- Optional logging to stdout; Kubernetes deployment samples in-repo.
+
+### Platform
+- Spring Boot parent **4.1.1**. Runtime JVM is **Java 25** (Amazon Corretto 25; Docker `amazoncorretto:25-alpine-full`). Develop plugins against JDK 25.
+- Closed loop unchanged: `POST /invocations` → `POST /response` (singular). `params` remains a **JSON string**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion) · [MCP](/docs/runtime/mcp).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Workbench 2.0.3
+
+Source: `changelog/workbench-2.0.3.mdx`
+URL: https://ecosystem.ai/changelog/workbench-2.0.3
+Summary: Campaigns, ontology, operator agents, convergence. Pins Runtime 0.9.7.0.
+Date: 2026/09/18
+
+---
+
+Current platform train as of **2026-09-18**: Workbench **`2.0.3`** (build `2072`) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+
+## What's Changed
+
+### Workbench
+- Campaign manager + Campaign / Claude operator agents; form and dashboard iteration on Dynamic Interaction configs.
+- Data connections, API portal, and runtime **debug** from the operator UI.
+- Ontology + MCP tool expansion (deployments, networks, simulations).
+- Model **convergence** guidance grounded in the Runtime algorithm catalog (`explain_convergence` / `ECOSYSTEM_ALGORITHMS.md`).
+- Synthetic data generation and processing-limit cleanup for personality / Two-Tower jobs.
+
+### Runtime (same `0.9.7.0` pin, 2026 H2 commits)
+- MCP tools for the **algorithm catalog**.
+- Spend / Money Personality **drift**.
+- Post-score and data-connection fixes for new corpora.
+- Cursor/Cloud agent briefing so Runtime `/response` (singular) stays documented correctly.
+
+### What to pin
+```json
+{ "runtime": "0.9.7.0", "workbench": "2.0.3", "server": "0.7.9.0" }
+```
+
+Recompile customer plugins against Runtime `0.9.7.0`. Feedback endpoint is **`POST /response`**, not `/responses`.
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
+
+---
+
+## Workbench 2.0
+
+Source: `changelog/workbench-2.0.mdx`
+URL: https://ecosystem.ai/changelog/workbench-2.0
+Summary: Operator UI 2.0.x line. Pins Runtime 0.9.7.0 — does not replace it.
+Date: 2026/07/30
+
+---
+
+Workbench **2.0** is a new product version line (`platform/versions.json`: `workbench.version` + monotonic `build`). It does **not** replace Runtime `0.9.7.0` — it **pins** it, plus Server `0.7.9.0` and Notebooks `0.3`.
+
+## What's Changed
+
+### Operator surface
+- FastAPI private API (`:8001`) + Vite SPA. Domain work stays on the backend; the UI is presentation.
+- Campaign management workflows, runtime **push**, and simulation invocation with visible failure reasons.
+- Spend Personality / Money Personality / Two-Tower processing, notebooks generation, and personality **drift**.
+- Networks (including temporal algorithm analysis) and EcoGentic journey tooling.
+- Ontology support for modeling and project generation.
+- **MCP** on the Workbench backend (`POST /mcp`) for deployments, enrichment, and scoring — separate from Runtime builtin MCP. See [MCP Support](/docs/runtime/mcp).
+
+### For developers
+- Read `platform/versions.json` only (About panel). Do not invent a second version source.
+- Python **3.14** for the Workbench backend. Pre/post-score Java samples here must match the pinned Runtime.
+- Companion pins in this train: Runtime **0.9.7.0**, Server **0.7.9.0**.
 
 ## Contributors
 - [@ramsay](https://github.com/ramsaylouw)
@@ -19701,6 +26319,8 @@ URL: https://ecosystem.ai/blog/2024-06-30_2024_roadmap
 Summary: In this blog post, we'll explore our roadmap for the ecosystem.Ai platform in 2024-2025.
 Date: 2024/06/30
 Tags: roadmap, deployment
+
+This 2024–2025 planning post is **superseded** by the [2025–2026 roadmap](/blog/2025-07-03_2026_roadmap), which records what actually shipped (Runtime 0.9.7 dashboard, MCP, campaign BDD, named algorithms).
 
 ## Introduction
 We are excited to share our roadmap for the ecosystem.Ai platform in 2024-2025. Our goal is to continue to provide cutting-edge AI solutions to our customers and partners. We are committed to delivering new features and enhancements that will help you achieve your business goals and drive innovation in your industry.
@@ -19800,127 +26420,149 @@ With ecosystem.Ai’s cutting-edge architecture, businesses can unlock instantan
 
 Source: `blog/2025-07-03_2026_roadmap.mdx`
 URL: https://ecosystem.ai/blog/2025-07-03_2026_roadmap
-Summary: In this blog post, we'll explore our roadmap for the ecosystem.Ai platform in 2025-2026.
+Summary: The 2025–2026 platform roadmap, updated with the innovations that shipped — Runtime 0.9.7, Workbench 2, behavioral algorithms, Two-Tower, and MCP.
 Date: 2025/07/03
 Tags: roadmap, deployment
 
+*Updated September 2026.* We published this roadmap in July 2025. This revision keeps the original intent and records **what we actually built** on Runtime `0.9.5` → `0.9.7.0` and Workbench `2.0.x`.
+
 ## Introduction
-Our **2025–2026 roadmap** for the ecosystem.Ai platform is an evolving process of delivering value to our clients. Building on our successes in 2024 and early 2025, we’re doubling down on powerful, real‑time AI capabilities that empower developers, data teams, and enterprise partners. Our mission remains: to deliver cutting‑edge AI solutions that help you solve real business problems—faster, smarter, and more reliably.
+
+The **2025–2026** plan was not a marketing list. It was a bet that real-time scoring, interaction science, and agent tooling had to live in **one prediction platform** — not as wrappers on a batch stack. That bet is now in production: a Java Runtime that scores and learns in the closed loop, and a Workbench that configures, pushes, and operates it.
+
+Pins today: **Runtime `0.9.7.0`**, **Workbench `2.0.3`**, **Server `0.7.9.0`**. See the [changelog](/changelog) and [Runtime release notes](/docs/runtime/runtimeversion).
 
 ---
 
-## Next‑Gen Real‑Time Scoring
-In 2025–2026, we’re taking real‑time scoring to new heights: AI sub‑millisecond latency, auto‑scaling under peak load, additional behavioral algorithms, and granular usage analytics. Expect enhanced monitoring dashboards and SLAs for mission‑critical operations—keeping your scoring pipelines fast, stable, and transparent.
+## Next-gen real-time scoring — shipped
+
+The Runtime is still a self-contained scorer. What changed is how much of the platform you can run **in one process**, and how much of the contract is visible to operators.
+
+- **Multi-campaign JVM.** Several use cases on a single Runtime instance, with a scheduler and campaign-scoped logs — not one properties file per box.
+- **OpenAPI + `/config`.** Live configuration dump for support and resilience ([0.9.5](/changelog/v0.9.5.0)).
+- **JIT pre/post-score.** Customer Java plugins compile from source in the Runtime; no mandatory plugin build pipeline ([0.9.6.0](/changelog/v0.9.6.0)).
+- **Virtual variables** on every deployment type, not only Dynamic Interaction ([0.9.6.1](/changelog/v0.9.6.1), [guide](/docs/user_guides/virtual_variables)).
+- **External runtime lookups** so many scorers can share corpora without exploding Mongo sockets.
+- **Two-Tower** large-catalog retrieval (`predictor.model.type=similarity`) — embeddings, not a Dynamic Engagement `approach`. Docs: [Two-Tower](/docs/modules/two_tower).
+- **[Runtime Dashboard](/docs/runtime/dashboard)**, [campaign Cucumber/BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents), Kubernetes samples. Hosted demo: [medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
+Closed loop is unchanged and non-negotiable: `POST /invocations` then `POST /response` (singular). `params` is a **JSON string**.
 
 ---
 
-## Ultra‑Personalized Dynamic Interactions
-Our dynamic interaction engine is evolving into an intelligent, context‑aware system. We’re integrating richer behavioral signals and adaptive feedback loops so that recommendations become genuinely responsive—learning from micro‑moments to personalize experiences at scale.
+## Interaction science — shipped as algorithms, not slogans
+
+Dynamic Engagement still rolls statistics in the **options store** and ranks offers on each `/invocations` call. The innovation is a **catalog you can name in config**, with [model convergence](/docs/user_guides/model_convergence) as an operator skill — not a black box.
+
+**Dynamic Algorithm `approach` IDs** (do not invent others):
+
+| Intent | `approach` |
+| --- | --- |
+| Default / Thompson-style rewards | `binaryThompson` (Ecosystem Rewards) |
+| Simple explore/exploit | `epsilonGreedy` |
+| Online Naive Bayes | `naiveBayes` |
+| State-based learning | `QLearning` |
+| Route to other campaigns | `Network` |
+
+**Human Behavioral** requires **both** `approach=behaviorAlgos` **and** a `sub_approach`:
+
+| Behavioral type | `sub_approach` |
+| --- | --- |
+| High cost of bad offers | `lossAversion` (default if `sub_approach` is missing) |
+| Consistency / regulated | `riskAversion` |
+| Marketing framing | `prospectTheory` |
+| Sentiment / equilibrium | `sentimentalEquilibrium` |
+| Coverage-aware exploration | `coverageAwareThompson` |
+| Long-tail catalog | `longTailBoostMF` |
+| Generative Dynamic Engagement | `generative` |
+
+Custom **reward plugins**, `POST /learning`, `POST /refreshWithOptions`, and asymmetric rewards landed on the 0.9.6.1 line. Network Selector (`lookup` / `lookup_passthrough`) routes traffic without turning the selector into a bandit.
+
+Full selection tree: [Algorithms overview](/docs/configuration/algorithms).
 
 ---
 
-## Advanced Generative Models
-We’re upping the ante on generative AI. In 2025–2026, we’ll support:
-- Fine‑tuning domain‑specific models
-- Multi‑modal outputs
-- Integration of private knowledge bases for context‑aware generation
+## Agents, MCP, and Workbench 2 — shipped
 
-This expands your ability to generate product descriptions, marketing copy, data‑driven summaries—and beyond.
+The 2025 note promised MCP as a unified tool surface. We shipped **three** MCP surfaces on purpose — they are not interchangeable ([MCP Support](/docs/runtime/mcp)):
 
----
+1. **Runtime builtin MCP** (`POST /mcp` on the Java Runtime, 0.9.7+) — score, close the loop, campaign admin from an agent. Dual-era JSON-RPC and 2026-07-28 Streamable HTTP.
+2. **Workbench MCP** — deployments, enrichment, scoring through the operator API.
+3. **Runtime MCP sidecar** — MLFlow refresh and custom Python routers.
 
-## Some Technology Focus Areas
-
-### 1. Chat‑to‑SQL V2
-The next iteration of our Chat‑to‑SQL tool will learn schema changes, support join and window hints, offer execution plan previews, and provide SQL refactoring suggestions.
-
-### 2. Vector Store Integration
-We’re refining vector store support with turnkey connectors. Our MCP server will offer compatibility with a number of technologies via a unified MCP interface. Expect seamless ingestion pipelines, hybrid similarity search (vector + metadata), tuning options, and tools for migrating vectors across stores. This ensures optimal semantic retrieval for RAG and similarity‑based generation.
+**Workbench 2.0** is the operator product (`platform/versions.json`). It pins Runtime; it does not replace it. Campaign manager, runtime push, simulations with visible failures, Spend/Money Personality (including **drift**), EcoGentic journeys, ontology-backed generation, and Claude/operator agents all sit here.
 
 ---
 
-### 3. Real‑Time Fact Injection & Retrieval
-Every prediction can leverage up‑to‑the‑moment facts sourced in real time—whether from documents, databases, news feeds, or internal logs. Our MCP server exposes tools for two‑way context exchange: retrieve relevant external facts and inject them into the LLM input, with confidence scoring. This ensures generated content is precise, grounded, and verifiable.
+## Generative stack — what landed vs what is still moving
+
+Shipped in the generative configuration:
+
+- [Fact injection](/docs/configuration/generative/facts) — prompt library, RAG, and Chat-to-SQL paths that call Runtime APIs.
+- [Chat to SQL](/docs/configuration/generative/chat_sql) — natural language to SQL against configured stores.
+- [Vector stores](/docs/configuration/generative/vector_stores) — connectors for retrieval, not a single vendor lock-in.
+- [MLRun (Train + Deploy)](/docs/modules/mlrun) — train/serve path for teams that need a modeling console next to the Runtime.
+
+Still on the path (not claimed as done): Chat-to-SQL **V2** extras (schema-diff learning, join/window hints, plan preview), and fully multi-modal generation. We will not pretend those are GA.
 
 ---
 
-### 4. Agent Orchestration Framework
-Our MCP implementation supports agentic workflows with structured orchestration: support for chaining LLM calls, condition‑based branching (e.g., based on scoring thresholds or retrieved context), embedded session memory, and multi‑step planning. Agents can programmatically discover MCP endpoints, invoke tools, and maintain state across calls. Configuration is available via YAML or GUI orchestration with JSON‑RPC command semantics.
+## Observability and convergence
+
+We did not bolt on a generic APM. We instrumented **the learning loop**:
+
+- Options store + contacts/responses logging (the data `/learning` and rolling jobs consume).
+- `/config` and `/refresh` so Virtual Variables and Dynamic Interaction state can move without a restart.
+- [Model convergence](/docs/user_guides/model_convergence) — priors, levers, and when to switch `approach` instead of “training longer”.
+- Spend / Money Personality **drift** on the 0.9.7 line.
+
+Grafana-style infra dashboards remain a deployment choice. The platform-native signal is **whether scores converge and whether `/response` is actually closing the loop**.
 
 ---
 
-### 5. Embedded Observability
-We’re baking end‑to‑end observability into the core platform: call tracing, response time metrics, anomaly detection, prompt performance analytics, drift‑alerts, and versioned baselines—with DevOps‑ready integrations across various cloud platforms.
+## Solutions & modules (current)
+
+| Module | What it is now |
+| --- | --- |
+| **EcoGentic** | Conversational / journey agents on Workbench + Runtime plugins — not a replacement for your customer chat stack. |
+| **Spend / Money Personality** | Trait scoring, processing, notebooks, drift. |
+| **Data Agents** | Agentic Data Analytics (`ecosystem-data-agents`) — Analytic / Interactions / Personality / Financial jobs and reports. Docs: [Data Agents](/docs/modules/data_agents). |
+| **Interaction Science** | The Dynamic Engagement catalog above — personality, experimentation, memory, behavioral types. |
+| **Real-time recommenders** | Dynamic Engagement **or** Two-Tower similarity, plus Network Selector. |
+| **Networks** | Workbench2 `/networks/` graph lab (centrality, communities, jobs). Distinct from Selector and from `approach: Network`. Docs: [Networks](/docs/modules/networks). |
+| **Dynamic experimentation** | Epsilon, Thompson, coverage-aware Thompson, custom rewards. |
+| **Two-Tower** | Embedding retrieval for large catalogs. |
+| **MLRun** | Train + deploy alongside the Runtime. |
+| **Ontology** | Shared language across Workbench meta, Server, Runtime closed loop, offer matrix, feature lookup. |
+| **Intelligent Sales / Campaigns** | Campaign manager, push to Runtime, operator agents. |
+| **Fraud management** | Same Runtime scoring loop; domain logic in plugins, not a fork of core. |
 
 ---
 
-## Why This Matters
-- **Better performance under load**: Score thousands of inputs in real time with reliability and transparency.
-- **Deeper personalization**: Tailor experiences with adaptive interaction logic.
-- **Safer generative outputs**: Keep content updated, trustworthy, and auditable.
-- **Modular AI workflows**: Orchestrate complex reasoning tasks with clear debugging and optimization tools.
-- **Built for production at scale**: Engineered observability ensures you maintain control, reliability, and compliance.
+## How they fit together
+
+```
+Channel  →  POST /invocations  →  Runtime 0.9.7 (plugins + approach)
+         ←  ranked offers / uuid
+Channel  →  POST /response     →  learning / options store
+
+Workbench 2  configures, pushes, MCP-operates
+Server 0.7.9 trains / orchestrates
+Ontology     names the same objects across all three
+```
+
+Low-code in Workbench, Java plugins when you need them, Python SDK and notebooks when you are modeling. Prediction as a Service is the product; the versions above are how you pin it.
 
 ---
 
-## Solutions & Modules
-A refined overview of the **Solutions** section from ecosystem.Ai, including the suite of Modules currently offered:
+## Why this still matters
 
-1. **Ecogentic AI Agent Module**
-   Enables the creation and orchestration of intelligent AI agents—ideal for building conversational assistants, autonomous workflows, and domain‑specific bots.
+- **Milliseconds** still win the session — see [Milliseconds Matter](/blog/2025-04-02_millisecondsmatter).
+- **Behavioral intelligence is an architecture**, not a plugin — [February 2026](/blog/2026-02-17_behavioral-intelligence-architecture-not-plugin).
+- **Named algorithms** beat “the AI model”: you can choose `lossAversion` vs `binaryThompson` and explain it to risk and marketing.
+- **Agents that can score** (MCP) are only safe if `/response` stays in the loop.
 
-2. **Spend Personality Module**
-   Profiles customer behavior and spending patterns to personalize offers, timing, messaging, and channel selection for improved ROI.
-
-3. **Interaction Science Module**
-   A comprehensive toolkit for:
-   - Personality Modeling
-   - Generative Messaging
-   - Continuous Experimentation
-   - Interaction Memory
-   - Emotion Detection
-
-4. **Fraud Management Module**
-   Offers AI tools to detect and prevent fraudulent behavior in real time.
-
-5. **Intelligent Sales Module**
-   Designed to assist with and optimize sales journeys by leveraging predictive AI for sales triggers and customized outreach strategies.
-
-6. **Real‑Time Recommenders Module**
-   Delivers always‑on, behavior‑driven product or content recommendations, powered by real‑time scoring and dynamic personalization.
-
-7. **Dynamic Experimentation Module**
-   Automates and optimizes experiments across user touchpoints, feeding results directly into AI models to adapt experiences on‑the‑fly.
-
-8. **Personality Modules**
-   Additional modules focused on using behavioral traits and personality analytics to customize engagement beyond broad segmentation.
-
----
-
-## How They Fit Together
-All modules are integrated within the **ecosystem.Ai Prediction Platform**, enabling:
-- Low‑code/no‑code deployment
-- Real‑time machine learning
-- API support
-- Jupyter notebook customization and Python SDK access
-- Real‑time scoring, logging, and observability dashboards (e.g., via Grafana)
-
----
-
-## Summary Table
-
-| Module Name                    | Core Capabilities                                                                 |
-|-------------------------------|-----------------------------------------------------------------------------------|
-| Ecogentic AI Agent            | Build autonomous AI agents and conversational workflows                          |
-| Spend Personality             | Profile and segment users based on spending behavior                             |
-| Interaction Science           | Messaging, experimentation, emotion detection, memory, personality modeling      |
-| Fraud Management              | Real‑time fraud detection and prevention                                         |
-| Intelligent Sales             | Predictive analytics for sales engagement                                        |
-| Real‑Time Recommenders        | Behavior‑driven recommendations via real‑time scoring                            |
-| Dynamic Experimentation       | Automated experiments with live optimization feedback                            |
-| Personality Modules           | Advanced behavioral insights beyond standard segmentation                         |
-
-We have a key focus on delivering Prediction as a Service capabilities to our clients.
+If you are upgrading: compile pre/post-score plugins against **Runtime `0.9.7.0`**, keep `params` a string, and never call `/responses`.
 
 ---
 
@@ -19931,8 +26573,6 @@ URL: https://ecosystem.ai/blog/2026-02-02_conversationalAI
 Summary: In this blog post, we'll explore how banking will be the defining moment for agentic AI.
 Date: 2026/02/02
 Tags: banking, customer, conversational AI
-
-The Hardest Place to Deploy Conversational AI - and Why It Matters
 
 ## Introduction
 We’re sure you’ve heard the latest buzzword ‘conversational AI’  floating around. The technology seems tantalizing, but many businesses remain skeptical of its practical application. What about the glaring failures of generative AI - hallucinations, data breaches, or their clear ineptness at answering complex queries?
@@ -19945,7 +26585,7 @@ Banking is a particularly personal affair. Customers want to know that what they
 Conversational banking’s success won’t come from the likes of a basic chatbot button on the FAQ page answering pre-defined questions. Rather, conversational banking will redefine entire customer journeys.
 
 ## AI agents that can detect intent
-Our Conversational Banking AI Agent Builder achieves this by embedding behavioral intelligence at every step of the conversational journey. In the agent builder, you can configure guardrails and fact injection at every point, and make use of behavioral algorithms to detect intent.
+Our EcoGentic conversational journeys achieve this by embedding behavioral intelligence at every step of the conversational journey. In the journey builder you can configure guardrails and fact injection at every point, and make use of behavioral algorithms to detect intent. Scoring and learning still go through the Runtime closed loop (`POST /invocations` then `POST /response`).
 
 This way, you can:
 

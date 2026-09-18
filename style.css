@@ -1,1 +1,4 @@
 @import 'tailwindcss';
+
+/* Match Nextra: dark utilities follow the html.dark class, not OS preference */
+@custom-variant dark (&:where(.dark, .dark *));

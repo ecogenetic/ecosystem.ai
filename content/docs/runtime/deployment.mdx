@@ -9,6 +9,8 @@ Pushing your Deployment is the process of sending your [Deployment](/docs/config
 2. Custom post scoring logic: Use the built in compilation functionality in the workbench or python before doing the push
 3. Additional custom classes: When using custom pre scoring or API logic or post scoring logic made up of multiple classes, you will need to implement a build pipeline to compile the java classes. These compiled java classes can then be copied to the plugins structure of a runtime before using the push functionality.
 
+From Runtime **0.9.6.0**, single custom pre/post-score classes can be compiled in place with Just-In-Time `/generateClass` (Workbench **Compile**). Use a **build pipeline** when you have extra classes, custom APIs, or a multi-class plugin set. JIT does not replace the pipeline for those cases.
+
 ## Template pre and post scoring logic
 If you are using one of the template pre and post scoring logic options, as described in the documentation on the [Deployment parameters](/docs/configuration/deployment/parameters) documentation. Once your Deployment is configured either click the `Push` button in the workbench or use the python functionality. Note that when using python there are two options for pushing the deployment show in the code snippet below. The first shows how to push the deployment to a single runtime endpoint. The second shows how to push the deployment to an endpoint which may have multiple replicas being load balanced behind a single endpoint.
 ```python

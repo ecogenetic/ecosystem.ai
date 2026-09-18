@@ -10,13 +10,25 @@ import Link from 'next/link'
   <div className="flex flex-col items-center content-center text-center my-10">
     <Header
       title="Changelog"
-      description={<>Latest release updates ✨</>}
+      description={<>Latest release updates</>}
       className="mb-8"
       h="h1"
     />
-    {/* <div className="mb-8">
-      <Signup source="changelog" />
-    </div> */}
+  </div>
+  <div className="max-w-6xl mx-auto mb-12 text-left text-[17px] leading-7 text-primary/80">
+    <div>
+      2024 entries use a single platform train (<code>v0.6.x</code> → <code>v0.7.900</code>).
+      From 2025 the scoring engine is <strong>Runtime <code>0.9.x</code></strong> (Maven/Docker{' '}
+      <code>0.9.6.0</code> is git tag <code>0.96.0</code>; patches add a fourth digit, e.g.{' '}
+      <code>0.9.6.1.4</code>).       Runtime <code>0.9.7.0</code> opened in December 2025 and is still
+      the current pin; it runs on <strong>Java 25</strong> (Amazon Corretto 25). <strong>Workbench <code>2.0.patch</code></strong> is a separate operator
+      line with a monotonic <code>build</code> in <code>platform/versions.json</code>; it pins
+      Runtime, Server (<code>0.7.9.0</code>), and Notebooks. Compile pre/post-score plugins
+      against the Runtime you deploy. Closed loop is always{' '}
+      <code>POST /invocations</code> then <code>POST /response</code> with <code>params</code> as
+      a JSON string. Canonical Runtime notes:{' '}
+      <Link href="/docs/runtime/runtimeversion">release history</Link>.
+    </div>
   </div>
   <ChangelogIndex />
 </div>

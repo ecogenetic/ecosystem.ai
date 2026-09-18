@@ -9,9 +9,9 @@ This is a condensed version of our [Local Installation Guide](/docs/local/)
 ### Manual Download
 
 1. **Go to the Install Option for your Architecture**
-    - Project Install Page for x86**: Visit [docker-x86](https://github.com/ecogenetic/ecosystem/tree/main/docker-x86).
-    - Project Install Page for ARM64**: Visit [docker-arm](https://github.com/ecogenetic/ecosystem/tree/main/docker-arm).
-    - Project Install Page for Windows**: Visit [docker-windows](https://github.com/ecogenetic/ecosystem/tree/main/docker-windows).
+    - Project Install Page for x86: Visit [docker-x86](https://github.com/ecogenetic/ecosystem/tree/main/docker-x86).
+    - Project Install Page for ARM64: Visit [docker-arm](https://github.com/ecogenetic/ecosystem/tree/main/docker-arm).
+    - Project Install Page for Windows: Visit [docker-windows](https://github.com/ecogenetic/ecosystem/tree/main/docker-windows).
 
 2. **Download the ZIP File**: Click the green "Code" button, then click "Download ZIP."
 
@@ -48,7 +48,7 @@ git pull
     - Copy the contents of `ecosystem_env.txt` to a new file named `.env`.
     - Fill in any necessary values.
 
-    **Add your keys** for **OPENAI_API_KEY** and **ECOSYSTEM_API_KEY**.
+    **Add your keys.** `ECOSYSTEM_API_KEY` is the license. `OPENAI_API_KEY` is only needed for generative paths.
         ```
         DATA_PATH=./data
         OPENAI_API_KEY=
@@ -88,7 +88,15 @@ git pull
 
 ## Post-Install
 
-To access your installation follow the [Post Install Setup Guide](/docs/quick_start/post_install).
+Log in and wire Grafana using the [Post Install Setup Guide](/docs/quick_start/post_install).
+
+Then score something:
+
+1. Open the [Runtime Dashboard](/docs/runtime/dashboard) against port **8091** (or **8099** if that is how you launched Runtime).
+2. **Invoke** a campaign, then **Accept** an offer (`POST /response`).
+3. Optional: [campaign BDD tests](/docs/runtime/testing) and [ontology for agents](/docs/ontology/agents).
+
+Hosted demo if you are not running locally: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## Conclusion
 

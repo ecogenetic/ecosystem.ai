@@ -1,0 +1,25 @@
+Runtime `0.9.5.0` (git tag `0.95` / `0.94` train). Pin Docker/Maven **`0.9.5.0`**. Plugins still compile as **Java 17**. Swagger UI is gone; OpenAPI is the contract.
+
+## What's Changed
+
+### Runtime
+- `/config` now dumps the live runtime configuration (resilience / support starting point).
+- `/refresh` reloads Virtual Variables without a process restart.
+- Dynamic Eligibility: conditional variables and rules; lookups from any in-process scoring structure.
+- Bayesian missing-offer handling: `uniform` samples instead of silently dropping unseen offers.
+- Q-learning can use logging data for state.
+- `MONGO_CONNECT` env var for the Mongo connection string at startup.
+- Pre-score: `PrePredictAutoDate` date enrichments; `mongoClient` passed into `/invocations`.
+- Localbuild: `DateUtils` moved to `com.ecosystem.utils.DateUtilities.DateUtils` — update imports.
+
+### Dependencies
+- Spring Boot **3.4.1**, MongoDB driver **5.3.1**, H2O **3.46.0.6**, DJL **0.31.1**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion). Closed loop is still `POST /invocations` then `POST /response` (`params` is a JSON string).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)

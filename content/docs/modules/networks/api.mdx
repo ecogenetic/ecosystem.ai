@@ -1,0 +1,90 @@
+---
+title: Networks Jobs and API
+description: Async graph jobs on Workbench2 — graphtheory routes and the public Networks API.
+---
+
+import { Callout } from 'nextra/components'
+
+# Jobs and API
+
+All graph work is **Workbench2 FastAPI**, not the Java Runtime. The SPA uses `/api/graphtheory/*` with the Workbench JWT. Automation and MCP use the **public gateway** (`:8004`) under `/public/v1/networks/*`.
+
+<Callout type="info" title="Auth">
+Browser calls need a Workbench session. Public routes need the gateway scopes (`networks:jobs`, `networks:read`, `networks:analyze`). Mutating MCP tools require confirm.
+</Callout>
+
+## Operator flow (SPA)
+
+```
+POST /api/graphtheory/graphs          → 202 { jobId }
+GET  /api/graphtheory/jobs/{jobId}    → status / progress
+GET  /api/graphtheory/jobs/{jobId}/events   → SSE
+GET  /api/graphtheory/jobs/{jobId}/result   → displayGraph + graphId
+POST /api/graphtheory/graphs/{graphId}/analyze
+GET  /api/graphtheory/graphs/{graphId}/display
+```
+
+Build is always **async + display sample**. The result must not include the full analysis edge list.
+
+Cancel: `DELETE /api/graphtheory/jobs/{jobId}`.
+
+## Configs
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/graphtheory/configs` | List saved networks |
+| `GET` | `/api/graphtheory/configs/{unique_key}` | Load one |
+| `POST` | `/api/graphtheory/configs` | Save |
+| `POST` | `/api/graphtheory/configs/import` | Import `ecosystem-network-v1` |
+| `DELETE` | `/api/graphtheory/configs/{unique_key}` | Delete |
+
+Mongo: database **`networks`**, collection **`network_configs`**. Graph job artifacts use `ecosystem_graphtheory` (`graph_node_metrics`, `graph_analysis_meta`).
+
+## Public API (gateway)
+
+Same jobs, scoped for integrations:
+
+| Method | Path | Scope |
+| --- | --- | --- |
+| `POST` | `/public/v1/networks/jobs` | `networks:jobs` |
+| `GET` | `/public/v1/networks/jobs/{job_id}` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/events` | `networks:read` |
+| `GET` | `/public/v1/networks/jobs/{job_id}/result` | `networks:read` |
+| `DELETE` | `/public/v1/networks/jobs/{job_id}` | `networks:jobs` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/display` | `networks:read` |
+| `GET` | `/public/v1/networks/graphs/{graph_id}/metrics` | `networks:read` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/analyze` | `networks:analyze` |
+| `POST` | `/public/v1/networks/graphs/{graph_id}/temporal/{category}` | `networks:analyze` |
+
+Job result typically includes `graphId`, `analysisStats`, `displayGraph`, and `metricsSummary`.
+
+## Other graphtheory routes the UI uses
+
+- Metadata: databases, collections, fetch-data preview
+- Time periods histogram
+- Shortest path, social-analysis, knowledge infer/query/semantic-path
+- Layout, subgraph expand, metrics writeback
+- Temporal: `structural-shift`, `influence`, `community-evolution`, `tie-formation`, `cascade`
+
+## Limits (server)
+
+| Cap | Value |
+| --- | --- |
+| Display sample | 1 000 default, 5 000 max |
+| Timeline buckets | 500 |
+| Heavy-algorithm edge hint | ~100 000 |
+| Hard edge ceiling | 2 000 000 |
+
+## MCP (Workbench)
+
+Dedicated tools on the Workbench MCP server (gateway `:8004`):
+
+| Tool | Maps to |
+| --- | --- |
+| `networks_job` | `POST /public/v1/networks/jobs` (confirm required) |
+| `networks_job_status` | `GET …/jobs/{job_id}` |
+| `networks_job_events` | `GET …/jobs/{job_id}/events` |
+| `networks_job_result` | `GET …/jobs/{job_id}/result` |
+| `networks_cancel_job` | `DELETE …/jobs/{job_id}` (confirm required) |
+
+Do not send Runtime scoring `params` here — that contract is `POST /invocations` only.

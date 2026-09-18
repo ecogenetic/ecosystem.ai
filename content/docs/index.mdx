@@ -2,58 +2,140 @@
 title: Get Started
 ---
 
-import { QuickStartLocal } from '@/components/CardIcons/QuickStartLocal'
-import { CustomEndpoints } from '@/components/CardIcons/CustomEndpoints'
-import { Logo } from '@/components/CardIcons/AboutLogo'
-import { ToolKit } from '@/components/CardIcons/ToolKit'
-import { Changelog } from '@/components/CardIcons/Changelog'
-import { Roadmap } from '@/components/CardIcons/Roadmap'
-import { Blog } from '@/components/CardIcons/Blog'
-import { OurAuthors } from '@/components/CardIcons/OurAuthors'
+import { GuideCard, GuideCardGrid } from '@/components/docs/GuideCard'
+import {
+  BookOpen,
+  Boxes,
+  Cloud,
+  Library,
+  Monitor,
+  FlaskConical,
+  Network,
+  Settings2,
+  Store,
+  Zap,
+  Bot,
+  KeyRound,
+} from 'lucide-react'
 
 # Get Started
 
 ### Quick Start Guides
 
-<div>
-  <Cards num={2}>
-    <Cards.Card title="" href="/docs/quick_start/local_setup" icon={<QuickStartLocal />} />
-    <Cards.Card title="" href="/docs/quick_start/marketplace" icon={<CustomEndpoints />} />
-  </Cards>
-</div>
+<GuideCardGrid columns={2}>
+  <GuideCard
+    href="/docs/quick_start"
+    title="Quick Start Overview"
+    description="Closed loop, dashboard, MCP, ontology, and install paths."
+    icon={<Zap className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/quick_start/local_setup"
+    title="Quick Local Setup"
+    description="Run Workbench and Runtime on your machine."
+    icon={<Monitor className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/quick_start/marketplace"
+    title="Marketplace Install"
+    description="Deploy from AWS or Azure Marketplace."
+    icon={<Cloud className="h-5 w-5" strokeWidth={1.75} />}
+  />
+</GuideCardGrid>
 
 ### Explore our Documentation
 
-<Cards num={6}>
-  <Cards.Card href="/docs/local" title="Local Installation" arrow>
-    ![Local Installation](/images/cards/local.svg)
-  </Cards.Card>
-  <Cards.Card href="/docs/marketplace" title="Marketplace Apps" arrow>
-    ![Remote Hosting](/images/cards/remote.svg)
-  </Cards.Card>
-  <Cards.Card href="/docs/configuration" title="Configuration" arrow>
-    ![Configuration](/images/cards/config.svg)
-  </Cards.Card>
-  <Cards.Card href="/docs/user_guides" title="User Guides" arrow>
-    ![Features](/images/cards/guides.svg)
-  </Cards.Card>
-  <Cards.Card href="/docs/modules" title="Modules" arrow>
-    ![Modules](/images/cards/code.svg)
-  </Cards.Card>
-  <Cards.Card href="/docs/documentation" title="Documentation" arrow>
-    ![Documentation](/images/cards/docs.svg)
-  </Cards.Card>
-</Cards>
+<GuideCardGrid>
+  <GuideCard
+    href="/docs/local"
+    title="Local Installation"
+    description="Docker Compose stack for local development."
+    icon={<Monitor className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/marketplace"
+    title="Marketplace Apps"
+    description="Cloud listings for platform and modules."
+    icon={<Store className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/configuration"
+    title="Configuration"
+    description="Projects, deployments, and dynamic config."
+    icon={<Settings2 className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/user_guides"
+    title="User Guides"
+    description="Closed loop, plugins, and recommenders."
+    icon={<BookOpen className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules"
+    title="Modules"
+    description="Data Agents, Networks, Spend Personality, Two-Tower, and MLRun."
+    icon={<Boxes className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/runtime"
+    title="Runtime"
+    description="Scoring API, dashboard, MCP, and plugins."
+    icon={<Library className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/configuration/workbench_apis"
+    title="Public APIs, Agents & MCP"
+    description="Workbench gateway, private API, API Keys, and operator MCP."
+    icon={<KeyRound className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules/data_agents"
+    title="Data Agents"
+    description="Configure analytics, run jobs, and open markdown reports."
+    icon={<Bot className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules/networks"
+    title="Networks"
+    description="Workbench graph lab: PageRank, communities, jobs at /networks/."
+    icon={<Network className="h-5 w-5" strokeWidth={1.75} />}
+  />
+</GuideCardGrid>
+
+### Operate the Runtime
+
+<GuideCardGrid>
+  <GuideCard
+    href="/docs/runtime/dashboard"
+    title="Runtime Dashboard"
+    description="Invoke campaigns and accept offers in the tester UI."
+    icon={<Monitor className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/ontology/agents"
+    title="Ontology for agents"
+    description="Ground MCP tools on the closed-loop vocabulary."
+    icon={<Network className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/runtime/testing"
+    title="Campaign testing"
+    description="Properties-driven Cucumber / BDD on the runtime."
+    icon={<FlaskConical className="h-5 w-5" strokeWidth={1.75} />}
+  />
+</GuideCardGrid>
 
 ---
 
-<div>
-  <Cards num={3}>
-    <Cards.Card title="" href="/about" icon={<Logo />} />
-    <Cards.Card title="" href="/changelog" icon={<Changelog />} />
-    <Cards.Card title="" href="/blog/2025-07-03_2026_roadmap" icon={<Roadmap />} />
-    <Cards.Card title="" href="/docs/workers" icon={<ToolKit />} />
-    <Cards.Card title="" href="/blog" icon={<Blog />} />
-    <Cards.Card title="" href="/authors" icon={<OurAuthors />} />
-  </Cards>
+<div className="not-prose mb-0 mt-10 text-[0.7rem] font-normal uppercase tracking-[0.14em] text-zinc-400 dark:text-zinc-600">
+  Support
 </div>
+
+<GuideCardGrid quiet>
+  <GuideCard quiet href="/about" title="About" />
+  <GuideCard quiet href="/changelog" title="Changelog" />
+  <GuideCard quiet href="/blog/2025-07-03_2026_roadmap" title="Roadmap" />
+  <GuideCard quiet href="/docs/workers" title="ToolKit" />
+  <GuideCard quiet href="/blog" title="Blog" />
+  <GuideCard quiet href="/authors" title="Authors" />
+</GuideCardGrid>

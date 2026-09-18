@@ -20,21 +20,21 @@ export function Logo() {
         }}
       >
         <Image src="/ecosystem.svg" alt="ecosystem.Ai Alt Logo" width={30} height={30} />
-        <span className="ml-2 text-lg font-bold text-gray-600 dark:text-gray-300">ecosystem.Ai</span>
+        <span className="ml-2 text-lg font-bold text-slate-800 dark:text-slate-200">ecosystem.Ai</span>
         {/* CSS for hover effect */}
         <style jsx>{`
           div {
             padding: 0.5rem 0.5rem 0.5rem 0;
-            mask-image: linear-gradient(
-              60deg,
-              #bba0ff 25%,
-              rgba(187, 160, 255, 0.2) 50%,
-              #bba0ff 75%
-            );
-            mask-size: 400%;
-            mask-position: 0%;
+            mask-image: none;
           }
           div:hover {
+            mask-image: linear-gradient(
+              60deg,
+              #00aeef 25%,
+              rgba(0, 174, 239, 0.7) 50%,
+              #00aeef 75%
+            );
+            mask-size: 400%;
             mask-position: 100%;
             transition:
               mask-position 1s ease,

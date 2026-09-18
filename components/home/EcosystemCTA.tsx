@@ -10,7 +10,7 @@ export function EcosystemCTA() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          ecosystem.Ai Git Repo <span>↗</span>
+          Source on GitHub <span>↗</span>
         </a>
       </div>
     </section>

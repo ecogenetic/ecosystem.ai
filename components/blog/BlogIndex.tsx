@@ -14,6 +14,11 @@ export async function BlogIndex({ maxItems }: { maxItems?: number }) {
     .filter((item): item is typeof item & { frontMatter: Record<string, unknown> } =>
       'frontMatter' in item && item.frontMatter != null
     )
+    .filter((item) => {
+      const route = 'route' in item ? (item as { route: string }).route : ''
+      const fm = (item as { frontMatter: Record<string, unknown> }).frontMatter
+      return route !== '/blog' && Boolean(fm?.date)
+    })
     .map(item => ({
       route: 'route' in item ? (item as { route: string }).route : '',
       name: 'name' in item ? (item as { name: string }).name : '',

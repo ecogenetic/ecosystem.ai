@@ -1,7 +1,7 @@
 ---
 title: ecosystem.Ai 2026 Roadmap
 date: 2025/07/03
-description: In this blog post, we'll explore our roadmap for the ecosystem.Ai platform in 2025-2026.
+description: The 2025–2026 platform roadmap, updated with the innovations that shipped — Runtime 0.9.7, Workbench 2, behavioral algorithms, Two-Tower, and MCP.
 tags:
   - roadmap
   - deployment
@@ -10,122 +10,144 @@ ogImage: /images/blog/2024-06-30_2024_roadmap.png
 ---
 import { BlogHeader } from '@/components/blog/BlogHeader'
 
-<BlogHeader title="ecosystem.Ai 2026 Roadmap" date="2025/07/03" description="In this blog post, we'll explore our roadmap for the ecosystem.Ai platform in 2025-2026." authorid="jayvanzyl" ogImage="/images/blog/2024-06-30_2024_roadmap.png" />
+<BlogHeader title="ecosystem.Ai 2026 Roadmap" date="2025/07/03" description="The 2025–2026 platform roadmap, updated with the innovations that shipped — Runtime 0.9.7, Workbench 2, behavioral algorithms, Two-Tower, and MCP." authorid="jayvanzyl" ogImage="/images/blog/2024-06-30_2024_roadmap.png" />
+
+*Updated September 2026.* We published this roadmap in July 2025. This revision keeps the original intent and records **what we actually built** on Runtime `0.9.5` → `0.9.7.0` and Workbench `2.0.x`.
 
 ## Introduction
-Our **2025–2026 roadmap** for the ecosystem.Ai platform is an evolving process of delivering value to our clients. Building on our successes in 2024 and early 2025, we’re doubling down on powerful, real‑time AI capabilities that empower developers, data teams, and enterprise partners. Our mission remains: to deliver cutting‑edge AI solutions that help you solve real business problems—faster, smarter, and more reliably.
+
+The **2025–2026** plan was not a marketing list. It was a bet that real-time scoring, interaction science, and agent tooling had to live in **one prediction platform** — not as wrappers on a batch stack. That bet is now in production: a Java Runtime that scores and learns in the closed loop, and a Workbench that configures, pushes, and operates it.
+
+Pins today: **Runtime `0.9.7.0`**, **Workbench `2.0.3`**, **Server `0.7.9.0`**. See the [changelog](/changelog) and [Runtime release notes](/docs/runtime/runtimeversion).
 
 ---
 
-## Next‑Gen Real‑Time Scoring
-In 2025–2026, we’re taking real‑time scoring to new heights: AI sub‑millisecond latency, auto‑scaling under peak load, additional behavioral algorithms, and granular usage analytics. Expect enhanced monitoring dashboards and SLAs for mission‑critical operations—keeping your scoring pipelines fast, stable, and transparent.
+## Next-gen real-time scoring — shipped
+
+The Runtime is still a self-contained scorer. What changed is how much of the platform you can run **in one process**, and how much of the contract is visible to operators.
+
+- **Multi-campaign JVM.** Several use cases on a single Runtime instance, with a scheduler and campaign-scoped logs — not one properties file per box.
+- **OpenAPI + `/config`.** Live configuration dump for support and resilience ([0.9.5](/changelog/v0.9.5.0)).
+- **JIT pre/post-score.** Customer Java plugins compile from source in the Runtime; no mandatory plugin build pipeline ([0.9.6.0](/changelog/v0.9.6.0)).
+- **Virtual variables** on every deployment type, not only Dynamic Interaction ([0.9.6.1](/changelog/v0.9.6.1), [guide](/docs/user_guides/virtual_variables)).
+- **External runtime lookups** so many scorers can share corpora without exploding Mongo sockets.
+- **Two-Tower** large-catalog retrieval (`predictor.model.type=similarity`) — embeddings, not a Dynamic Engagement `approach`. Docs: [Two-Tower](/docs/modules/two_tower).
+- **[Runtime Dashboard](/docs/runtime/dashboard)**, [campaign Cucumber/BDD](/docs/runtime/testing), [ontology for agents](/docs/ontology/agents), Kubernetes samples. Hosted demo: [medemo.ecosystem.ai](https://medemo.ecosystem.ai).
+
+Closed loop is unchanged and non-negotiable: `POST /invocations` then `POST /response` (singular). `params` is a **JSON string**.
 
 ---
 
-## Ultra‑Personalized Dynamic Interactions
-Our dynamic interaction engine is evolving into an intelligent, context‑aware system. We’re integrating richer behavioral signals and adaptive feedback loops so that recommendations become genuinely responsive—learning from micro‑moments to personalize experiences at scale.
+## Interaction science — shipped as algorithms, not slogans
+
+Dynamic Engagement still rolls statistics in the **options store** and ranks offers on each `/invocations` call. The innovation is a **catalog you can name in config**, with [model convergence](/docs/user_guides/model_convergence) as an operator skill — not a black box.
+
+**Dynamic Algorithm `approach` IDs** (do not invent others):
+
+| Intent | `approach` |
+| --- | --- |
+| Default / Thompson-style rewards | `binaryThompson` (Ecosystem Rewards) |
+| Simple explore/exploit | `epsilonGreedy` |
+| Online Naive Bayes | `naiveBayes` |
+| State-based learning | `QLearning` |
+| Route to other campaigns | `Network` |
+
+**Human Behavioral** requires **both** `approach=behaviorAlgos` **and** a `sub_approach`:
+
+| Behavioral type | `sub_approach` |
+| --- | --- |
+| High cost of bad offers | `lossAversion` (default if `sub_approach` is missing) |
+| Consistency / regulated | `riskAversion` |
+| Marketing framing | `prospectTheory` |
+| Sentiment / equilibrium | `sentimentalEquilibrium` |
+| Coverage-aware exploration | `coverageAwareThompson` |
+| Long-tail catalog | `longTailBoostMF` |
+| Generative Dynamic Engagement | `generative` |
+
+Custom **reward plugins**, `POST /learning`, `POST /refreshWithOptions`, and asymmetric rewards landed on the 0.9.6.1 line. Network Selector (`lookup` / `lookup_passthrough`) routes traffic without turning the selector into a bandit.
+
+Full selection tree: [Algorithms overview](/docs/configuration/algorithms).
 
 ---
 
-## Advanced Generative Models
-We’re upping the ante on generative AI. In 2025–2026, we’ll support:
-- Fine‑tuning domain‑specific models
-- Multi‑modal outputs
-- Integration of private knowledge bases for context‑aware generation
+## Agents, MCP, and Workbench 2 — shipped
 
-This expands your ability to generate product descriptions, marketing copy, data‑driven summaries—and beyond.
+The 2025 note promised MCP as a unified tool surface. We shipped **three** MCP surfaces on purpose — they are not interchangeable ([MCP Support](/docs/runtime/mcp)):
 
----
+1. **Runtime builtin MCP** (`POST /mcp` on the Java Runtime, 0.9.7+) — score, close the loop, campaign admin from an agent. Dual-era JSON-RPC and 2026-07-28 Streamable HTTP.
+2. **Workbench MCP** — deployments, enrichment, scoring through the operator API.
+3. **Runtime MCP sidecar** — MLFlow refresh and custom Python routers.
 
-## Some Technology Focus Areas
-
-### 1. Chat‑to‑SQL V2
-The next iteration of our Chat‑to‑SQL tool will learn schema changes, support join and window hints, offer execution plan previews, and provide SQL refactoring suggestions.
-
-### 2. Vector Store Integration
-We’re refining vector store support with turnkey connectors. Our MCP server will offer compatibility with a number of technologies via a unified MCP interface. Expect seamless ingestion pipelines, hybrid similarity search (vector + metadata), tuning options, and tools for migrating vectors across stores. This ensures optimal semantic retrieval for RAG and similarity‑based generation.
+**Workbench 2.0** is the operator product (`platform/versions.json`). It pins Runtime; it does not replace it. Campaign manager, runtime push, simulations with visible failures, Spend/Money Personality (including **drift**), EcoGentic journeys, ontology-backed generation, and Claude/operator agents all sit here.
 
 ---
 
-### 3. Real‑Time Fact Injection & Retrieval
-Every prediction can leverage up‑to‑the‑moment facts sourced in real time—whether from documents, databases, news feeds, or internal logs. Our MCP server exposes tools for two‑way context exchange: retrieve relevant external facts and inject them into the LLM input, with confidence scoring. This ensures generated content is precise, grounded, and verifiable.
+## Generative stack — what landed vs what is still moving
+
+Shipped in the generative configuration:
+
+- [Fact injection](/docs/configuration/generative/facts) — prompt library, RAG, and Chat-to-SQL paths that call Runtime APIs.
+- [Chat to SQL](/docs/configuration/generative/chat_sql) — natural language to SQL against configured stores.
+- [Vector stores](/docs/configuration/generative/vector_stores) — connectors for retrieval, not a single vendor lock-in.
+- [MLRun (Train + Deploy)](/docs/modules/mlrun) — train/serve path for teams that need a modeling console next to the Runtime.
+
+Still on the path (not claimed as done): Chat-to-SQL **V2** extras (schema-diff learning, join/window hints, plan preview), and fully multi-modal generation. We will not pretend those are GA.
 
 ---
 
-### 4. Agent Orchestration Framework
-Our MCP implementation supports agentic workflows with structured orchestration: support for chaining LLM calls, condition‑based branching (e.g., based on scoring thresholds or retrieved context), embedded session memory, and multi‑step planning. Agents can programmatically discover MCP endpoints, invoke tools, and maintain state across calls. Configuration is available via YAML or GUI orchestration with JSON‑RPC command semantics.
+## Observability and convergence
+
+We did not bolt on a generic APM. We instrumented **the learning loop**:
+
+- Options store + contacts/responses logging (the data `/learning` and rolling jobs consume).
+- `/config` and `/refresh` so Virtual Variables and Dynamic Interaction state can move without a restart.
+- [Model convergence](/docs/user_guides/model_convergence) — priors, levers, and when to switch `approach` instead of “training longer”.
+- Spend / Money Personality **drift** on the 0.9.7 line.
+
+Grafana-style infra dashboards remain a deployment choice. The platform-native signal is **whether scores converge and whether `/response` is actually closing the loop**.
 
 ---
 
-### 5. Embedded Observability
-We’re baking end‑to‑end observability into the core platform: call tracing, response time metrics, anomaly detection, prompt performance analytics, drift‑alerts, and versioned baselines—with DevOps‑ready integrations across various cloud platforms.
+## Solutions & modules (current)
+
+| Module | What it is now |
+| --- | --- |
+| **EcoGentic** | Conversational / journey agents on Workbench + Runtime plugins — not a replacement for your customer chat stack. |
+| **Spend / Money Personality** | Trait scoring, processing, notebooks, drift. |
+| **Data Agents** | Agentic Data Analytics (`ecosystem-data-agents`) — Analytic / Interactions / Personality / Financial jobs and reports. Docs: [Data Agents](/docs/modules/data_agents). |
+| **Interaction Science** | The Dynamic Engagement catalog above — personality, experimentation, memory, behavioral types. |
+| **Real-time recommenders** | Dynamic Engagement **or** Two-Tower similarity, plus Network Selector. |
+| **Networks** | Workbench2 `/networks/` graph lab (centrality, communities, jobs). Distinct from Selector and from `approach: Network`. Docs: [Networks](/docs/modules/networks). |
+| **Dynamic experimentation** | Epsilon, Thompson, coverage-aware Thompson, custom rewards. |
+| **Two-Tower** | Embedding retrieval for large catalogs. |
+| **MLRun** | Train + deploy alongside the Runtime. |
+| **Ontology** | Shared language across Workbench meta, Server, Runtime closed loop, offer matrix, feature lookup. |
+| **Intelligent Sales / Campaigns** | Campaign manager, push to Runtime, operator agents. |
+| **Fraud management** | Same Runtime scoring loop; domain logic in plugins, not a fork of core. |
 
 ---
 
-## Why This Matters
-- **Better performance under load**: Score thousands of inputs in real time with reliability and transparency.
-- **Deeper personalization**: Tailor experiences with adaptive interaction logic.
-- **Safer generative outputs**: Keep content updated, trustworthy, and auditable.
-- **Modular AI workflows**: Orchestrate complex reasoning tasks with clear debugging and optimization tools.
-- **Built for production at scale**: Engineered observability ensures you maintain control, reliability, and compliance.
+## How they fit together
+
+```
+Channel  →  POST /invocations  →  Runtime 0.9.7 (plugins + approach)
+         ←  ranked offers / uuid
+Channel  →  POST /response     →  learning / options store
+
+Workbench 2  configures, pushes, MCP-operates
+Server 0.7.9 trains / orchestrates
+Ontology     names the same objects across all three
+```
+
+Low-code in Workbench, Java plugins when you need them, Python SDK and notebooks when you are modeling. Prediction as a Service is the product; the versions above are how you pin it.
 
 ---
 
-## Solutions & Modules
-A refined overview of the **Solutions** section from ecosystem.Ai, including the suite of Modules currently offered:
+## Why this still matters
 
-1. **Ecogentic AI Agent Module**
-   Enables the creation and orchestration of intelligent AI agents—ideal for building conversational assistants, autonomous workflows, and domain‑specific bots.
+- **Milliseconds** still win the session — see [Milliseconds Matter](/blog/2025-04-02_millisecondsmatter).
+- **Behavioral intelligence is an architecture**, not a plugin — [February 2026](/blog/2026-02-17_behavioral-intelligence-architecture-not-plugin).
+- **Named algorithms** beat “the AI model”: you can choose `lossAversion` vs `binaryThompson` and explain it to risk and marketing.
+- **Agents that can score** (MCP) are only safe if `/response` stays in the loop.
 
-2. **Spend Personality Module**
-   Profiles customer behavior and spending patterns to personalize offers, timing, messaging, and channel selection for improved ROI.
-
-3. **Interaction Science Module**
-   A comprehensive toolkit for:
-   - Personality Modeling
-   - Generative Messaging
-   - Continuous Experimentation
-   - Interaction Memory
-   - Emotion Detection
-
-4. **Fraud Management Module**
-   Offers AI tools to detect and prevent fraudulent behavior in real time.
-
-5. **Intelligent Sales Module**
-   Designed to assist with and optimize sales journeys by leveraging predictive AI for sales triggers and customized outreach strategies.
-
-6. **Real‑Time Recommenders Module**
-   Delivers always‑on, behavior‑driven product or content recommendations, powered by real‑time scoring and dynamic personalization.
-
-7. **Dynamic Experimentation Module**
-   Automates and optimizes experiments across user touchpoints, feeding results directly into AI models to adapt experiences on‑the‑fly.
-
-8. **Personality Modules**
-   Additional modules focused on using behavioral traits and personality analytics to customize engagement beyond broad segmentation.
-
----
-
-## How They Fit Together
-All modules are integrated within the **ecosystem.Ai Prediction Platform**, enabling:
-- Low‑code/no‑code deployment
-- Real‑time machine learning
-- API support
-- Jupyter notebook customization and Python SDK access
-- Real‑time scoring, logging, and observability dashboards (e.g., via Grafana)
-
----
-
-## Summary Table
-
-| Module Name                    | Core Capabilities                                                                 |
-|-------------------------------|-----------------------------------------------------------------------------------|
-| Ecogentic AI Agent            | Build autonomous AI agents and conversational workflows                          |
-| Spend Personality             | Profile and segment users based on spending behavior                             |
-| Interaction Science           | Messaging, experimentation, emotion detection, memory, personality modeling      |
-| Fraud Management              | Real‑time fraud detection and prevention                                         |
-| Intelligent Sales             | Predictive analytics for sales engagement                                        |
-| Real‑Time Recommenders        | Behavior‑driven recommendations via real‑time scoring                            |
-| Dynamic Experimentation       | Automated experiments with live optimization feedback                            |
-| Personality Modules           | Advanced behavioral insights beyond standard segmentation                         |
-
-We have a key focus on delivering Prediction as a Service capabilities to our clients.
+If you are upgrading: compile pre/post-score plugins against **Runtime `0.9.7.0`**, keep `params` a string, and never call `/responses`.

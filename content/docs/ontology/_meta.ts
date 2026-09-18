@@ -10,6 +10,7 @@ export default {
   server: 'Modeling Server',
   'server-catalog': 'Server Catalog',
   runtime: 'Runtime Closed Loop',
+  agents: 'Ontology for Agents',
   'runtime-catalog': 'Runtime Catalog',
   'offer-matrix': 'Offer Matrix',
   'customer-features': 'Customer Feature Lookup',

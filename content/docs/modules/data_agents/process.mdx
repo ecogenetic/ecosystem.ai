@@ -1,0 +1,66 @@
+---
+title: Data Agents Process Jobs
+description: Run a configuration — LangGraph extract, prepare, and analysis steps — then open logs and the analysis dashboard.
+---
+
+# Process Jobs
+
+Processing is always a **server job**. The browser posts `config_id` to `POST /process` and polls `/jobs`.
+
+## Start a job
+
+From **Configurations**:
+
+1. **Run** on the card (or table row).
+2. Confirm **Run Analytic Job** (or Interactions / Personality / Financial).
+3. You land on **Jobs**. A toast appears if the job fails.
+
+From **Jobs**: pick a configuration and create a job (optional LLM interpretation override).
+
+Only one active job per configuration: **queued** or **running** locks that config’s editor.
+
+## Pipeline steps
+
+LangGraph (`EcosystemDataWorkflow`) walks:
+
+| Step | Label in UI |
+| --- | --- |
+| `queued` | Queued |
+| `initialization` | Initializing |
+| `data_extraction` | Mongo or Trino extract |
+| `data_preparation` | Clean, types, quality |
+| `data_analysis` | Main analysis (Analytic) |
+| `categorical_analysis` | Categorical |
+| `actuarial_analysis` | Actuarial |
+| `time_series_analysis` | Time series |
+| `feature_engineering` | Feature engineering |
+| `ml_analysis` | Machine learning |
+| `recommender_analysis` | Interactions |
+| `personality_analysis` | Personality |
+| `financial_analysis` | Financial |
+| `results_persistence` | Saving results |
+| `completed` / `failed` / `cancelled` | Terminal |
+
+A failed **family** should not always abort the rest; remaining enabled modules can still write reports. Watch **Jobs** and the sidebar **Running Jobs** list.
+
+Optional `--sample-size` / config sample limits cap documents for trials. Unlimited Mongo/Trino scans use disk partitions; Trino still does not write analysis collections.
+
+## Monitor
+
+- Sidebar: running jobs (elapsed) and last four completed
+- **Jobs** table: status, duration, sample size, report badges
+- **`/jobs/:jobId/logs`** — step and log level
+- Force-stop a stuck run; delete can remove artifacts (confirm in the modal)
+
+**Analytics** (`/analytics`) is **ops**: job counts and success rate over 1–90 days — not ARPU or personality mix.
+
+## After completion
+
+| Action | Where |
+| --- | --- |
+| Interactive charts | **Analysis Insights** `/analysis/:jobId` (consolidated JSON) |
+| Full artifact list | [Reports](/docs/modules/data_agents/reports) (one docs page per report type) |
+| Domain UI | Interactions / Personality / Financial / Time Series pages (latest completed job for that config) |
+| Eye on a config card | Opens the domain page if a completed job exists |
+
+Artifacts land under `backend/reports/<YYYY-MM-DD_HHMMSS>/` including `config_parameters.json` (secrets masked) for reproducibility.

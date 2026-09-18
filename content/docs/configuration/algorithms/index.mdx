@@ -15,6 +15,10 @@ All algorithms share the same operational architecture: a background **rolling p
 The [Two-Tower recommender](/docs/modules/two_tower) uses `predictor.model.type=similarity` and embedding cosine/dot scoring. It is **not** a Dynamic Engagement `randomisation.approach` — it bypasses H2O and dynamic bandit scoring.
 </Callout>
 
+<Callout type="warning" title="Python SDK document type vs scoring approach">
+`create_online_learning(..., algorithm="ecosystem_rewards")` (or `q_learning` / `bayesian_probabilistic`) creates a Dynamic Engagement **document**. Scoring is selected by `randomisation.approach` / `sub_approach` — the **Config value** on each algorithm page — not by that SDK argument. Do not invent approach IDs.
+</Callout>
+
 ## Selection tree
 
 Use this tree to pick a Dynamic Engagement **Dynamic Algorithm** (`approach`). When you select **Human Behavioral** (`behaviorAlgos`), you must also pick a **Dynamic Engagement behavioral type** (`sub_approach`).

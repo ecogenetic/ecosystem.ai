@@ -7,7 +7,7 @@ export default {
       pagination: true,
       layout: 'default',
       breadcrumb: true,
-      timestamp: true,
+      timestamp: false,
     },
   },
 }

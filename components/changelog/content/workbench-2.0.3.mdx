@@ -1,0 +1,30 @@
+Current platform train as of **2026-09-18**: Workbench **`2.0.3`** (build `2072`) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+
+## What's Changed
+
+### Workbench
+- Campaign manager + Campaign / Claude operator agents; form and dashboard iteration on Dynamic Interaction configs.
+- Data connections, API portal, and runtime **debug** from the operator UI.
+- Ontology + MCP tool expansion (deployments, networks, simulations).
+- Model **convergence** guidance grounded in the Runtime algorithm catalog (`explain_convergence` / `ECOSYSTEM_ALGORITHMS.md`).
+- Synthetic data generation and processing-limit cleanup for personality / Two-Tower jobs.
+
+### Runtime (same `0.9.7.0` pin, 2026 H2 commits)
+- MCP tools for the **algorithm catalog**.
+- Spend / Money Personality **drift**.
+- Post-score and data-connection fixes for new corpora.
+- Cursor/Cloud agent briefing so Runtime `/response` (singular) stays documented correctly.
+
+### What to pin
+```json
+{ "runtime": "0.9.7.0", "workbench": "2.0.3", "server": "0.7.9.0" }
+```
+
+Recompile customer plugins against Runtime `0.9.7.0`. Feedback endpoint is **`POST /response`**, not `/responses`.
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)

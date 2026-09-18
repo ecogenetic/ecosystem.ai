@@ -1,0 +1,46 @@
+---
+title: "Config Parameters"
+description: "Config Parameters (config_parameters) for Data Agents jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Config Parameters
+
+**Report type key:** `config_parameters`  
+**Configuration type:** All types  
+**Group:** Shared
+
+Snapshot of the configuration used for the run (secrets masked) for reproducibility.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) any saved configuration.
+2. Enable: Always saved next to reports (`config_parameters.json`).
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Reports UI → **Other** (JSON/CSV), or `GET /reports/JOB_ID/config_parameters`  
+API: `GET /reports/JOB_ID/config_parameters`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Copy mappings and family flags from here if you need to re-run the same analysis.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `config_parameters` | JSON snapshot |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

@@ -42,16 +42,11 @@ Click **Execute** to bring back the API results and ensure your deployment is fu
 
 ## 2. Build a simulation
 
-<Callout type="banner" title="Coming soon!">
-Simulation documentation for the Workbench in progress, please check back again.
-</Callout>
+Drive closed-loop traffic against the pushed deployment from Workbench 2 **Simulation** (`/entities/simulation`): iterations, take-up, connections, logs, and Beta / options-store results.
 
-Now that you have built, deployed and tested the configuration of your recommender, it is time to watch it in action.
+See **[Simulations](/docs/configuration/simulations)** for the current process (Validate connections, nested runs, optional scenario describe). Single-call tests belong on the [Runtime Dashboard](/docs/runtime/dashboard). To analyze the resulting logs, run an [Interactions Analytic](/docs/modules/data_agents/interactions) job.
 
-In the <u>Dashboard</u> you will find the worker ecosystem with links to various accompanying elements. 
-Click on the Jupyter Notebooks icon to configure the simulation of your recommender deployment. The steps of how to complete this part of the journey is laid out in the Notebooks.
-
-![Simulations in Notebooks](/images/recommender/7_Testing/7_testing_dashboard_notebooks.png)
+The Jupyter notebook worker is no longer the primary simulation UI.
 
 <Callout style="banner" title="">
 Test your predictions and revert back to any one of the previous steps in order to get the expected outcome. Once your predictions are actively in production, move on the <u>Monitoring</u> step to configure and view your dashboards.

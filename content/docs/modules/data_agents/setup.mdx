@@ -1,0 +1,118 @@
+---
+title: Data Agents Setup
+description: Create Analytic, Interactions, Personality, or Financial configurations — Mongo or Trino, analysis families, and LLM interpretation.
+---
+
+import { Callout } from 'nextra/components'
+
+# Setup
+
+Open **Configurations** (`/configurations`). Tabs: **Configurations List**, **Analysis & LLM**, **Agents**. **Import** (JSON) sits on the right.
+
+## Create a configuration
+
+1. **Create New** (Quick Access) or click a card to edit.
+2. Name and optional description.
+3. Set **configuration type**: Analytic, Interactions, Personality, or Financial (help modal shows sample rows).
+4. Bind a **data source**:
+   - **MongoDB** — database + collection (optional aggregation pipeline). Default collection in samples is often `logging.data_ecosystemruntime_flatten` for runtime logs.
+   - **Trino** — catalog / schema / table or SQL. Trino is **extract-only**; report writes stay on Mongo.
+5. Map fields the type requires (especially Financial — aliases alone are not enough).
+6. Enable **analysis families** (or leave defaults). Disable unused families to keep jobs fast.
+7. **Save**. You cannot edit a config while a job for it is **running** or **queued**.
+
+**Import** loads a previously exported JSON (metadata stripped). Use this to clone environments.
+
+## Analytic
+
+Best for a single wide table (events, customers, transactions).
+
+Enable on **Analysis & LLM** (or the form):
+
+| Module | What it produces |
+| --- | --- |
+| **Main analysis** | Profiling, correlations, histograms — [Main analysis](/docs/modules/data_agents/reports/main) |
+| **Categorical** | Tests and charts for categories — [Categorical](/docs/modules/data_agents/reports/categorical) |
+| **Actuarial** | Risk, extremes, survival-style metrics — [Actuarial](/docs/modules/data_agents/reports/actuarial) |
+| **Feature engineering** | ML-ready features — [Feature engineering](/docs/modules/data_agents/reports/feature_engineering) |
+| **Time series** | Off by default. Needs a datetime column — [Time series](/docs/modules/data_agents/reports/time_series) |
+
+Optional: LLM interpretation on the analysis agent. Time Series also has its own page for datetime, grain, journeys, and event association.
+
+## Interactions
+
+Full walkthrough: **[Interactions Analytic](/docs/modules/data_agents/interactions)**.
+
+Pair **calls** (`ecosystemruntime`) with **responses** (`ecosystemruntime_response`) by UUID. Mongo connection and database come from **Source**. Then:
+
+1. Set calls and responses collections.
+2. **Discover Predictors** — pick specific predictors or **Analyze all**. Required before Run on Mongo.
+3. Optional date range and **attribution window** (hours, default 168).
+4. Optional declared experiment groups (control + treatments).
+5. Enable families on **Analysis & LLM**. Marketing mix is **off** by default.
+
+| Family | Focus |
+| --- | --- |
+| General performance | [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general) — also channels, convergence, economics, fairness |
+| Offers and catalog | [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer) — also experimentation |
+| Customer engagement | [Customer uptake](/docs/modules/data_agents/reports/recommender_customer) |
+| Market intelligence | [Market intelligence](/docs/modules/data_agents/reports/recommender_market_intelligence) |
+| Marketing mix | [Adstock / saturation](/docs/modules/data_agents/reports/recommender_marketing_mix) — **off** by default |
+| Entity clustering | [Offers by category](/docs/modules/data_agents/reports/recommender_entity_clusters) — on by default when enough catalog rows |
+
+Acceptance is **uptake**, not purchase or causal lift. LLM interpretation cannot change metrics. After a [simulation](/docs/configuration/simulations), point this config at the same logging collections.
+
+## Personality
+
+Requires **transactions** with customer, amount, merchant/category, timestamp. Optional score / campaign collections (often suggested from the source name).
+
+| Family | Focus |
+| --- | --- |
+| General / spend / money | [Overview](/docs/modules/data_agents/reports/personality_general), [spend](/docs/modules/data_agents/reports/personality_spend), [money](/docs/modules/data_agents/reports/personality_money) |
+| Drift | [Transitions](/docs/modules/data_agents/reports/personality_drift) |
+| Category patterns | [Txn-scan co-occurrence](/docs/modules/data_agents/reports/personality_category_patterns) |
+| Calendar | [Weekend, DOW, daypart](/docs/modules/data_agents/reports/personality_calendar) |
+| Recommendations | [Lifecycle cards](/docs/modules/data_agents/reports/personality_recommendations) |
+| Intelligent campaigning | [Playbook / export](/docs/modules/data_agents/reports/personality_campaigns) |
+| Customers / data quality | [Change reasons](/docs/modules/data_agents/reports/personality_customer_change) |
+
+Needs enough history for drift. Not a substitute for [Spend Personality](/docs/modules/spend_personality) **scoring** in Runtime.
+
+## Financial
+
+Map **identity**, **time**, and **recognized revenue**. Map **cost** if you need ROI/CAC. Industry profile: generic, banking, telco, or gambling.
+
+| Family | KPIs (when mapped) |
+| --- | --- |
+| Unit economics | [ARPU / ARPA / ARPPU](/docs/modules/data_agents/reports/financial_unit_economics) |
+| Returns | [ROI, ROAS, CAC](/docs/modules/data_agents/reports/financial_returns) |
+| Value | [Observed LTV](/docs/modules/data_agents/reports/financial_value) |
+| Profitability | [Margin, cost-to-serve](/docs/modules/data_agents/reports/financial_profitability) |
+| Growth | [NRR, GRR, churn](/docs/modules/data_agents/reports/financial_growth) |
+| Time / breakdowns / distributions / comparisons | [Time](/docs/modules/data_agents/reports/financial_time), [breakdowns](/docs/modules/data_agents/reports/financial_breakdowns), [distributions](/docs/modules/data_agents/reports/financial_distributions), [comparisons](/docs/modules/data_agents/reports/financial_comparisons) |
+| Campaigns | [Attribution](/docs/modules/data_agents/reports/financial_campaigns) |
+| Ledgers | [AR/AP/GL](/docs/modules/data_agents/reports/financial_ledgers) |
+| Industry pack | [Profile-specific](/docs/modules/data_agents/reports/financial_industry) |
+| Data quality | [Mapping coverage](/docs/modules/data_agents/reports/financial_data_quality) |
+
+<Callout type="warning" title="Unmapped cost">
+ROI is **skipped**, never invented, if cost/investment is not mapped.
+</Callout>
+
+Dimensions (product, region, customer, division, category, account, type) slice measures. Hierarchies such as region → category → product run when two or more levels are mapped.
+
+## Analysis & LLM tab
+
+After Save, use **Analysis & LLM** for the selected config:
+
+- Agent LLM interpretation
+- Module LLM interpretation (Personality / Interactions / Financial)
+- Per-type family checkboxes (same families as above)
+
+**Save Settings** applies to **new** jobs, not in-flight ones.
+
+## Agents tab
+
+Embedded test console: bind the saved config, pick a specialist, ask questions over jobs and reports (MCP tools). Same catalog as the **Agents** sidebar page.
+
+After a job completes, each family has its own report page under [Reports](/docs/modules/data_agents/reports).

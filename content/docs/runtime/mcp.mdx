@@ -62,7 +62,7 @@ For algorithm questions, call `askAboutAlgorithms` or read `ecosystem://algorith
 
 **Algorithm selection:** `askAboutAlgorithms` — recommends `approach` / `sub_approach` from natural-language questions using `ECOSYSTEM_ALGORITHMS.md`
 
-Use ontology tools **before** `invoke` / `response` to validate payloads against the [Runtime Closed Loop](/docs/ontology/runtime) vocabulary.
+Use ontology tools **before** `invoke` / `response` to validate payloads against the [Runtime Closed Loop](/docs/ontology/runtime) vocabulary. Dashboard walkthrough: [Ontology for agents](/docs/ontology/agents).
 
 ### Recommended agent flow (closed loop)
 
@@ -130,7 +130,7 @@ curl -X POST "$RUNTIME/mcp" \
   }'
 ```
 
-Closed-loop learning: after `invoke`, send feedback with `response` using the returned `uuid` and `offer_name`. See [Runtime integration](/docs/runtime/integration).
+Closed-loop learning: after `invoke`, send feedback with `response` using the returned `uuid` and `offer_name`. See [API Access](/docs/runtime/access).
 
 ### Browser MCP testers
 
@@ -158,6 +158,8 @@ Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `
 ---
 
 ## Workbench MCP server
+
+Operator-facing guide (credentials, dual auth, full tool list, public vs private APIs): [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
 
 The Workbench backend exposes deployments, enrichment, catalog escape-hatch (`call_endpoint`), and related tools. See also [Claude Agent](/docs/workers/agent_framework/claude-agent) for Operator vs Campaign Management vs external attach.
 
@@ -199,7 +201,7 @@ External attach does **not** require Workbench’s in-image Agent SDK bundled CL
 
 ### Tools
 
-`list_api_catalog`, `call_endpoint`, `list_campaign_channel_catalog`, `get_campaign_channels`, `set_campaign_channel_selection`, `list_custom_channel_modules`, `list_deployments`, `get_deployment_info`, `score_customer`, `send_feedback`, enrichment helpers (`date_enrich`, `mcc_enrich`, …), and related catalog tools.
+`list_api_catalog`, `call_endpoint`, `list_campaign_channel_catalog`, `get_campaign_channels`, `set_campaign_channel_selection`, `list_custom_channel_modules`, `list_deployments`, `get_deployment_info`, `score_customer`, `send_feedback`, **Networks jobs** (`networks_job`, `networks_job_status`, `networks_job_events`, `networks_job_result`, `networks_cancel_job` — see [Networks Jobs & API](/docs/modules/networks/api)), enrichment helpers (`date_enrich`, `mcc_enrich`, …), and related catalog tools.
 
 Campaign delivery channels (email, WhatsApp, WhatsApp Local, SMS, push, Python, webhook, web robot, CSV) are listed by `list_campaign_channel_catalog`. Assign published options with `set_campaign_channel_selection` (`confirm=true`). Do not confuse these with runtime scoring `channel` (`app` / `web` / `api`).
 
@@ -230,12 +232,12 @@ ecosystem-runtime-mcp:
   image: ecosystemai/ecosystem-runtime-mcp:arm64
   environment:
     RUNTIME_URL: "http://ecosystem-runtime-backend:8081"
-    PORT: 8091
+    PORT: 8092
     MLFLOW_TRACKING_URI: "http://mlflow:8085"
     RUNTIME_CONFIG: "/data/config/runtime_config.json"
     MONGO_CONNECT: ${MONGO_CONNECT_STRING}
   ports:
-    - "8091:8091"
+    - "8092:8092"
 ```
 
 | Endpoint | Purpose |
@@ -249,7 +251,7 @@ ecosystem-runtime-mcp:
 | Variable | Description |
 | --- | --- |
 | `RUNTIME_URL` | Base URL of the Java runtime backend |
-| `PORT` | Port exposed by the sidecar (default `8091`) |
+| `PORT` | Port exposed by the sidecar (default `8092` — do not collide with Runtime `8091`) |
 | `MLFLOW_TRACKING_URI` | MLFlow tracking server |
 | `RUNTIME_CONFIG` | JSON config listing models to pull |
 | `MONGO_CONNECT` | MongoDB connection string |

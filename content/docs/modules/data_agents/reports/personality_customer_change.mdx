@@ -1,0 +1,47 @@
+---
+title: "Customer Personality Change & Reasons"
+description: "Customer Personality Change & Reasons (personality_customer_change_markdown) for Data Agents Personality jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Customer Personality Change & Reasons
+
+**Report type key:** `personality_customer_change_markdown`  
+**Configuration type:** Personality  
+**Group:** Personality
+
+Pseudonymous customer-level personality changes with reason codes, score movers, and history paths.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Personality** configuration.
+2. Enable: Personality family **customers** / customer change.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/personality_customer_change_markdown`  
+API: `GET /reports/JOB_ID/personality_customer_change_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Reason codes explain *why* a label moved. Magnitudes are in the notebook and JSON.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `personality_customer_change_markdown` | Markdown report |
+| `personality_customer_change_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

@@ -108,5 +108,5 @@ deployment_step = dm.create_deployment(
 ```
 
 <Callout type="tip" title="Deployment pattern">
-Set `approach` to `behaviorAlgos` and `sub_approach` to `longTailBoostMF` in the `randomisation` object. Tune `latentDim`, `numIters`, `regLambda`, and `gamma` for your traffic volume and catalog size.
+`algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "longTailBoostMF"`. Tune `latentDim`, `numIters`, `regLambda`, and `gamma` for your traffic volume and catalog size.
 </Callout>

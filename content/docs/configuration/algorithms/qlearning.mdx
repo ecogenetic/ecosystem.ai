@@ -3,11 +3,15 @@ title: Q-Learning
 description: Q-Learning
 ---
 
+import { Callout } from 'nextra/components'
+
 # Q-Learning
 
 The Q-learning algorithm uses the Q-learning reinforcement learning framework with actions being presenting offers to clients and states being whether the client accepted the offers. The algorithm works at a customer level, training is done per customer. Segment level implementations are planned for future releases.
 
 ## Algorithm
+
+**Config value:** `"approach": "QLearning"`
 
 The Q-learning algorithm represents offers as the set of actions $\mathcal{A}$ and the states $\mathcal{S}$ represent take up of offers. The algorithm then uses a Q-table to score and rank offers using the Q value as this expresses the expected utility of the offer.
 
@@ -199,4 +203,8 @@ deployment_step = dm.create_deployment(
     multi_armed_bandit=online_learning
 )
 ```
+
+<Callout type="tip" title="Note">
+`algorithm="q_learning"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation.approach` **`QLearning`**.
+</Callout>
 

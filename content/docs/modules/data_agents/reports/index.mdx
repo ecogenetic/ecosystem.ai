@@ -1,0 +1,85 @@
+---
+title: Data Agents Reports
+description: How to open Data Agents reports, plus a page for every report type.
+---
+
+import { Callout } from 'nextra/components'
+
+# Reports
+
+Open **Reports** (`/reports`) and select a **completed** job. Artifacts group as **Markdown**, **Notebooks**, **Graphs**, and **Other** (JSON/CSV).
+
+Each **report type** has its own page in this section (sidebar). The key in the UI matches the `reportType` on `GET /reports/JOB_ID/REPORT_TYPE`.
+
+<Callout type="info" title="Only enabled families appear">
+If a type is missing, that analysis family was off, mapping was incomplete, or the step failed.
+</Callout>
+
+## How to open any type
+
+| Viewer | Path |
+| --- | --- |
+| Markdown | `/markdown/JOB_ID/REPORT_TYPE` |
+| Notebook | `/notebook/JOB_ID/REPORT_TYPE` |
+| Graphs | `/graphs/JOB_ID/REPORT_TYPE` |
+
+1. [Run a job](/docs/modules/data_agents/process).
+2. **Reports** → select the job → pick the labeled row.
+3. Or use a [domain analysis view](/docs/modules/data_agents/analysis) (latest completed job).
+
+## Analytic
+
+- [Main analysis](/docs/modules/data_agents/reports/main) (`main_markdown`)
+- [Categorical](/docs/modules/data_agents/reports/categorical)
+- [Actuarial](/docs/modules/data_agents/reports/actuarial)
+- [Feature engineering](/docs/modules/data_agents/reports/feature_engineering)
+- [Machine learning](/docs/modules/data_agents/reports/ml)
+- [Time series](/docs/modules/data_agents/reports/time_series)
+
+## Shared artifacts
+
+- [Pipeline notebook](/docs/modules/data_agents/reports/pipeline_notebook)
+- [Consolidated results](/docs/modules/data_agents/reports/consolidated_results)
+- [Config parameters](/docs/modules/data_agents/reports/config_parameters)
+
+## Interactions
+
+How the type works (sources, predictors, attribution, privacy): [Interactions Analytic](/docs/modules/data_agents/interactions).
+
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general)
+- [Offers & catalog](/docs/modules/data_agents/reports/recommender_offer)
+- [Customer uptake](/docs/modules/data_agents/reports/recommender_customer)
+- [Market intelligence](/docs/modules/data_agents/reports/recommender_market_intelligence)
+- [Marketing mix](/docs/modules/data_agents/reports/recommender_marketing_mix)
+- [Entity clusters](/docs/modules/data_agents/reports/recommender_entity_clusters)
+- [Interaction manifest](/docs/modules/data_agents/reports/recommender_manifest)
+
+## Personality
+
+- [Overview](/docs/modules/data_agents/reports/personality_general)
+- [Time measures](/docs/modules/data_agents/reports/personality_time)
+- [Customer change](/docs/modules/data_agents/reports/personality_customer_change)
+- [Spend](/docs/modules/data_agents/reports/personality_spend)
+- [Money](/docs/modules/data_agents/reports/personality_money)
+- [Drift](/docs/modules/data_agents/reports/personality_drift)
+- [Category patterns](/docs/modules/data_agents/reports/personality_category_patterns)
+- [Calendar](/docs/modules/data_agents/reports/personality_calendar)
+- [Lifecycle recommendations](/docs/modules/data_agents/reports/personality_recommendations)
+- [Intelligent campaigning](/docs/modules/data_agents/reports/personality_campaigns)
+
+## Financial
+
+- [Overview](/docs/modules/data_agents/reports/financial_general)
+- [Unit economics (ARPU)](/docs/modules/data_agents/reports/financial_unit_economics)
+- [Returns (ROI / CAC)](/docs/modules/data_agents/reports/financial_returns)
+- [Customer value (LTV)](/docs/modules/data_agents/reports/financial_value)
+- [Profitability](/docs/modules/data_agents/reports/financial_profitability)
+- [Growth & retention](/docs/modules/data_agents/reports/financial_growth)
+- [Time analytics](/docs/modules/data_agents/reports/financial_time)
+- [Breakdowns](/docs/modules/data_agents/reports/financial_breakdowns)
+- [Distributions](/docs/modules/data_agents/reports/financial_distributions)
+- [Comparisons](/docs/modules/data_agents/reports/financial_comparisons)
+- [Campaigns](/docs/modules/data_agents/reports/financial_campaigns)
+- [Ledgers](/docs/modules/data_agents/reports/financial_ledgers)
+- [Industry pack](/docs/modules/data_agents/reports/financial_industry)
+- [Data quality](/docs/modules/data_agents/reports/financial_data_quality)

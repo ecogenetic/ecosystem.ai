@@ -1,0 +1,47 @@
+---
+title: "Profitability"
+description: "Profitability (financial_profitability_markdown) for Data Agents Financial jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Profitability
+
+**Report type key:** `financial_profitability_markdown`  
+**Configuration type:** Financial  
+**Group:** Financial
+
+Gross profit, gross margin, contribution, cost-to-serve, and latest-period P&L bridge.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) a **Financial** configuration.
+2. Enable: Financial family **profitability** — cost mapped.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/financial_profitability_markdown`  
+API: `GET /reports/JOB_ID/financial_profitability_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Headline KPIs use the latest period grain. Gross margin is (revenue − mapped cost) / revenue — never 100% if cost is unmapped.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `financial_profitability_markdown` | Markdown report |
+| `financial_profitability_notebook` | Jupyter notebook |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

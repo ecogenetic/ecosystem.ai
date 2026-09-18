@@ -1,0 +1,60 @@
+---
+title: "Customer Uptake & Channel"
+description: "Customer Uptake & Channel (recommender_customer_markdown) for Data Agents Interactions jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Customer Uptake & Channel
+
+**Report type key:** `recommender_customer_markdown`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Pseudonymous customer uptake, cohorts, repeat behavior, channel preferences, switching, journeys, and experiments.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Interactions family **customers**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/recommender_customer_markdown`  
+API: `GET /reports/JOB_ID/recommender_customer_markdown`
+
+<Callout type="info" title="Missing this type">
+The **customers** family was off or identity coverage was too low. Check job logs and **Analysis & LLM**.
+</Callout>
+
+## What it contains
+
+1. Tracked vs visible vs **suppressed** pseudonymous customers (`minimum_cell_size`, default 10).
+2. Offer/response timeline and ratios for **identified** customers only.
+3. Sample journeys (offers presented → responded → accepted, with channels).
+4. Daily interaction movement.
+5. Behavioral **cohorts** and repeat behavior (prefer exact `$group` counts when present).
+6. Channel preference scorecards, cross-channel journeys, switching, preference evidence.
+
+Customer identifiers are hashed. Do not expect raw PII.
+
+## How to read
+
+Use this for cohort mix and channel journeys, not ledger ARPU. Low-evidence rows disappear by design.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_customer_markdown` | Markdown report |
+| `recommender_customer_notebook` | Jupyter notebook |
+| `recommender_customer_results` | JSON results |
+| `recommender_customer_graphs` | Cohort / channel graphs |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [Campaign & predictor](/docs/modules/data_agents/reports/recommender_general)
+- [All report types](/docs/modules/data_agents/reports)

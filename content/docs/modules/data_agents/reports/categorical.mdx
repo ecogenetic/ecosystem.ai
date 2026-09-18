@@ -1,0 +1,49 @@
+---
+title: "Categorical Analysis Report"
+description: "Categorical Analysis Report (categorical_markdown) for Data Agents Analytic jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Categorical Analysis Report
+
+**Report type key:** `categorical_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Statistical tests and visualizations for categorical and mixed-type columns (chi-square, Cramér's V, bar charts).
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Categorical Analysis**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/categorical_markdown`  
+API: `GET /reports/JOB_ID/categorical_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Look for associations between categories, not continuous ARPU. Sparse levels can inflate tests — check counts in the JSON.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `categorical_markdown` | Markdown report |
+| `categorical_notebook` | Jupyter notebook |
+| `categorical_graphs` | PNG folder |
+| `categorical_results` | JSON results |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

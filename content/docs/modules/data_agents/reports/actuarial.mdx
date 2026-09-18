@@ -1,0 +1,49 @@
+---
+title: "Actuarial Analysis Report"
+description: "Actuarial Analysis Report (actuarial_markdown) for Data Agents Analytic jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Actuarial Analysis Report
+
+**Report type key:** `actuarial_markdown`  
+**Configuration type:** Analytic  
+**Group:** Analytic
+
+Risk-style metrics: extremes, tails, survival-style views, and actuarial summaries on numeric severity/frequency fields.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Analytic** configuration.
+2. Enable: Analysis & LLM → **Actuarial Analysis**.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Markdown viewer: `/markdown/JOB_ID/actuarial_markdown`  
+API: `GET /reports/JOB_ID/actuarial_markdown`
+
+<Callout type="info" title="Missing this type">
+The family was off, mappings were incomplete, or the step failed. Check job logs and **Analysis & LLM**. Skipped Financial KPIs mean unmapped fields, not zeros.
+</Callout>
+
+## How to read
+
+Treat tails and rare events carefully. This is not Financial DSO or insurance pricing unless your extract is built for that.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `actuarial_markdown` | Markdown report |
+| `actuarial_notebook` | Jupyter notebook |
+| `actuarial_graphs` | PNG folder |
+| `actuarial_results` | JSON results |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [All report types](/docs/modules/data_agents/reports)
+- [Setup](/docs/modules/data_agents/setup)
+- [Process jobs](/docs/modules/data_agents/process)

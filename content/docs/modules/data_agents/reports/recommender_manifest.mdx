@@ -1,0 +1,49 @@
+---
+title: "Interaction Analysis Manifest"
+description: "Interaction Analysis Manifest (recommender_manifest) for Data Agents Interactions jobs."
+---
+
+import { Callout } from 'nextra/components'
+
+# Interaction Analysis Manifest
+
+**Report type key:** `recommender_manifest`  
+**Configuration type:** Interactions  
+**Group:** Interactions
+
+Versioned source scope, report families, artifact locations, and analysis execution metadata.
+
+## How to get it
+
+1. [Create and save](/docs/modules/data_agents/setup) an **Interactions** configuration.
+2. Enable: Written with Interactions jobs.
+3. [Run the job](/docs/modules/data_agents/process) and wait until **completed**.
+4. Open **Reports** (`/reports`), select that job, and choose this type.
+
+Reports UI → **Other** (JSON/CSV), or `GET /reports/JOB_ID/recommender_manifest`  
+API: `GET /reports/JOB_ID/recommender_manifest`
+
+<Callout type="info" title="Missing this type">
+The job did not finish publishing artifacts. Check Jobs logs.
+</Callout>
+
+## What it contains
+
+Versioned source scope (collections, predictors, date window), which families ran, artifact paths, and execution metadata. Open this first when a markdown family is missing — it shows whether that family was disabled or skipped.
+
+## How to read
+
+Use this to see which families ran and where files landed before opening markdown.
+
+## Companion artifacts
+
+| Key | Artifact |
+| --- | --- |
+| `recommender_manifest` | Manifest JSON / markdown |
+
+Markdown, notebook, and graphs for the same family usually land together. JSON feeds [Analysis Insights](/docs/modules/data_agents/analysis).
+
+## Related
+
+- [Interactions Analytic](/docs/modules/data_agents/interactions)
+- [All report types](/docs/modules/data_agents/reports)

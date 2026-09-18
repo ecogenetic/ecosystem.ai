@@ -1,3 +1,9 @@
+:root {
+  --eco-blue: #00aeef;
+  --eco-blue-strong: #00aeef;
+  --eco-blue-hover: #0099d6;
+}
+
 /* make nav more blurry */
 .nextra-nav-container-blur {
   background: transparent !important;
@@ -14,17 +20,45 @@
   fill-opacity: 50;
 }
 
-/* smaller search bar */
+/* Search sits left of GitHub/Discord. Nextra's input uses md:w-64 which
+   overflows a smaller box and paints over the project icon. */
+.nextra-navbar nav {
+  gap: 1.25rem;
+}
+
+.nextra-navbar nav > div:has(.nextra-search) {
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
 .nextra-search {
-  width: 10rem;
+  width: 14rem;
+  max-width: 14rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .nextra-search input {
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
   border-radius: 0.25rem;
 }
 
-/* Fix logo overflowing */
-.nextra-nav-container > nav > a:first-child {
+/* GitHub / Discord / extra navbar children must not compress into search */
+.nextra-navbar nav > a {
+  flex-shrink: 0;
+}
+
+.nextra-navbar nav > a:not(:first-child) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+}
+
+.nextra-navbar-controls {
   flex-shrink: 0;
 }
 
@@ -39,9 +73,13 @@ media-outlet {
   background-color: transparent !important;
 }
 
-/* More gap between h2 in articles */
+/* More gap between h2 in articles — not inside blog index cards */
 article.nextra-body-typesetting-article h2 {
   margin-top: 6rem;
+}
+
+.blog-card h2 {
+  margin-top: 0 !important;
 }
 
 svg .nodeLabel,
@@ -71,4 +109,34 @@ html.dark .image-light-theme {
 
 html.dark .image-dark-theme {
   display: block;
+}
+
+/* Full-width layout: fill the viewport, then track window resizes */
+html[data-full-width='true'] {
+  --nextra-content-width: 100%;
+}
+
+html[data-full-width='true'] .nextra-navbar > nav,
+html[data-full-width='true'] .x\:max-w-\(--nextra-content-width\) {
+  max-width: var(--nextra-content-width);
+  width: 100%;
+}
+
+/* Light-mode body and card contrast */
+html:not(.dark) article {
+  color: #1e293b;
+}
+
+html:not(.dark) .nextra-card {
+  color: #0f172a;
+}
+
+html:not(.dark) .nextra-sidebar a,
+html:not(.dark) .nextra-sidebar button {
+  color: #334155;
+}
+
+html:not(.dark) .nextra-sidebar a[class*='bg-primary'],
+html:not(.dark) .nextra-sidebar a[class*='font-semibold'] {
+  color: var(--eco-blue, #00aeef);
 }

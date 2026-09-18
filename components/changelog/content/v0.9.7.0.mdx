@@ -1,0 +1,24 @@
+Runtime `0.9.7.0` (Maven version since 2025-12-15; public notes 2026-05-06). Current Workbench pin. Builtin **MCP** and **multi-campaign** are the developer-facing breaks from 0.9.6.x.
+
+## What's Changed
+
+### Runtime
+- **Builtin MCP:** `POST {RUNTIME_BASE}/mcp` (JSON-RPC). Dual-era: legacy `tools/list` / `tools/call` and 2026-07-28 Streamable HTTP (`MCP-Protocol-Version`). Mutating tools need `MASTER_KEY`. See [MCP Support](/docs/runtime/mcp).
+- **Multiple campaigns** on one JVM (scheduler + isolation). Watch logs for campaign-id, not a single global properties file.
+- Runtime dashboard and campaign **Cucumber / BDD** suite (`TESTING.md` / `POST /test/campaign`).
+- Two-Tower lookup path and scoring performance (corpus + Mongo).
+- Threading and multi-campaign error handling.
+- Optional logging to stdout; Kubernetes deployment samples in-repo.
+
+### Platform
+- Spring Boot parent **4.1.1**. Runtime JVM is **Java 25** (Amazon Corretto 25; Docker `amazoncorretto:25-alpine-full`). Develop plugins against JDK 25.
+- Closed loop unchanged: `POST /invocations` → `POST /response` (singular). `params` remains a **JSON string**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion) · [MCP](/docs/runtime/mcp).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)

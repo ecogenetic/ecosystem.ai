@@ -7,9 +7,9 @@ description: Endpoints
 
 Endpoints are used to access the scoring API. The API is used to access the scoring engine and return results for the configured use case.
 
-The recommended APIs to use to interact with the ecosystem.Ai runtime are the `/invocations` API for receiving results from the ecosystem.Ai runtime and the `/responses` API for sending feedback to the ecosystem.Ai runtime. If required the APIs can be [customised](/docs/runtime/apiconfiguration) to suit the use-case and the model being used.
+The recommended APIs to use to interact with the ecosystem.Ai runtime are `POST /invocations` for ranked offers and `POST /response` (singular) for learning feedback. If required the APIs can be [customised](/docs/runtime/apiconfiguration) to suit the use-case and the model being used.
 
-[UI Frameworks](/docs/frontend) contains examples of integation of these endpoints with different chaneel interfaces.
+[UI Frameworks](/docs/frontend) contains examples of integration of these endpoints with different channel interfaces. Try the closed loop in the [Runtime Dashboard](/docs/runtime/dashboard) or on [medemo.ecosystem.ai](https://medemo.ecosystem.ai).
 
 ## API Parameters
 
@@ -31,10 +31,10 @@ Different channels can be used to access the scores. This is useful when using t
 The number of responses to return. This is useful when using the API to return multiple scores. For data lookup options only one response is returned.
 
 #### Debug (optional)
-Add top-level `"debug": "true"` on `/invocations` to receive a sibling `debug` object with pipeline errors, Mongo status, and sanitized params when scoring fails silently. Use for developer diagnostics only — omit in production traffic. See [Runtime integration guide](https://github.com/ecogenetic/ecosystem-runtime/blob/main/ECOSYSTEM_INTEGRATION_RUNTIME.md#debug-response-opt-in).
+Add top-level `"debug": "true"` on `/invocations` to receive a sibling `debug` object with operator-facing `explanations`, pipeline errors, Mongo status, and sanitized params when scoring fails silently. Workbench Test renders those explanations. Use for developer diagnostics only — omit in production traffic. See [Runtime integration guide](https://github.com/ecogenetic/ecosystem-runtime/blob/main/ECOSYSTEM_INTEGRATION_RUNTIME.md#debug-response-opt-in).
 
-#### The in_param parameter
-With the `Score` API Selected, use the following options for in_params.
+#### The `params` field
+`params` on `/invocations` is a JSON **string**, not a nested object. With the Score API selected, encode one of the following objects as that string (`"{}"` or `'{"input":[...],"value":[...]}'`).
 
 Model based recommender:
 ```json

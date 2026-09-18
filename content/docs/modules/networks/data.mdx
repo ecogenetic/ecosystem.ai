@@ -1,0 +1,71 @@
+---
+title: Networks Data Sources
+description: MongoDB, generic REST, and Spotify sources for Workbench2 Networks — pipelines, display samples, and field mappings.
+---
+
+import { Callout } from 'nextra/components'
+
+# Data Sources
+
+Networks never scrapes the browser against Mongo. The SPA sends a config; Workbench2 FastAPI reads data and builds the graph.
+
+## Source types
+
+| Type (UI) | Config `type` | Typical use |
+| --- | --- | --- |
+| **ecosystem.Ai MongoDB** | `ecosystem.ai` | Platform collections (`master`, project DBs) |
+| **Generic API** | `generic_api` | REST with bearer token; optional JSON path to the records array |
+| **Spotify** | `spotify` | OAuth2 client credentials; catalog search as a demo graph |
+
+Legacy saved configs that only have `database` + `collection` (no `type`) are treated as Mongo.
+
+## MongoDB (ecosystem.Ai)
+
+1. Pick **database** and **collection** (lists come from `/api/graphtheory/metadata/*`).
+2. Optional **aggregation pipeline** (JSON array). Empty pipeline = match all documents the job is allowed to process.
+3. **Display max nodes** — canvas sample, default **1 000**, clamp **5 000**. Strategy is usually **top degree** or **top PageRank**.
+4. **Process full collection** — ignore `$limit` / `$sample` in the pipeline so analysis can see the full matching set. The canvas still shows only the display sample.
+5. **Empty pipeline for analysis** — send `[]` so the job is not constrained by a preview limit.
+
+<Callout type="warning" title="Canvas vs analysis">
+If display max is 5 000, you will not see 14 GB of documents as dots. You will see the highest-degree (or highest-PageRank) sample. Server jobs can still score the larger graph within the edge ceiling (2 000 000).
+</Callout>
+
+Preview/sample document fetch is available from the data-source panel so you can choose mapping fields. An LLM **suggest pipeline** helper can draft a Mongo aggregation from a prompt; review it before you run the job.
+
+## Generic API
+
+Provide:
+
+- API URL
+- Bearer token
+- GET or POST (optional body)
+- Optional **response data path** (dot path to the array, for example `data.results`)
+- Timeout
+
+The backend pulls that array and applies the same node/edge mappings as Mongo.
+
+## Spotify
+
+Client id + secret (client-credentials). Default search is a year/track catalog query. Use this as a **demo** social/item graph, not as production customer data.
+
+## Field mappings
+
+After records are available, **Graph parameters** bind document fields:
+
+| Mapping | Meaning |
+| --- | --- |
+| Node **id** | Unique vertex key |
+| Node **label** | Canvas text |
+| Edge **source** / **target** | Link endpoints |
+| Edge **weight** | Optional; used for weighted graphs and some metrics |
+| Extra **edge mappings** | Additional relation types (`typeName`, enable/disable) |
+| **Geocode** | Optional address field → lat/lng attributes for geo charts |
+
+Graph type: **directed**, **undirected**, **bipartite**, **weighted**.
+
+## Build job
+
+Generating a graph always starts an async job (`POST /api/graphtheory/graphs` → `202` + `jobId`). In the UI that is **Fetch Data** (load records) then **Generate Graph** (build). Poll status or subscribe to SSE events. The result includes a **displayGraph** only — not the full analysis edge list.
+
+Saved analytics settings can later **write metrics** onto source documents (`_network_metrics` prefix by default), **export scores only**, or **full-export** source records plus scores into another collection.

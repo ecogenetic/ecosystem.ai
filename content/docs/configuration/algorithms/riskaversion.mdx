@@ -112,5 +112,5 @@ deployment_step = dm.create_deployment(
 ```
 
 <Callout type="tip" title="Note">
-The `approach` should be set to `behaviorAlgos` and `sub_approach` to `riskAversion` in the `randomisation` object. A longer `processing_window` (e.g. 30 days) is recommended to produce stable variance estimates.
+`algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "riskAversion"`. A longer `processing_window` (e.g. 30 days) is recommended to produce stable variance estimates.
 </Callout>

@@ -1,0 +1,30 @@
+Runtime `0.9.6.1` / `0.9.6.1.1` (tag `0.9.6.1.1`). Pin **`0.9.6.1.1`** or later on the 0.9.6.1 line. This is the behavioural-algorithm and operator-API drop.
+
+## What's Changed
+
+### Runtime (`0.9.6.1`)
+- **Human behavioural** Dynamic Interaction algorithms (configure via `approach` + `sub_approach`; see [algorithm catalog](/docs/configuration/algorithms) — do not invent IDs).
+- **Virtual variables** on all deployment types (not only Dynamic Interaction).
+- External runtime data lookups / extra corpora (share stores, cut socket fan-out).
+- New APIs: `POST /refreshWithOptions`, `POST /learning` (manual Dynamic Interaction learn), `POST /updateCassandraConfig`.
+- MCP server surface (sidecar era; builtin Java MCP lands on 0.9.7).
+- Custom API configuration in Python; **MLFlow** integration.
+- Bayesian Probabilistic score scaling changed — do not compare raw scores 1:1 with 0.9.6.0.
+- Fix: Dynamic Interaction behind a network runtime could stop learning.
+
+### Patch `0.9.6.1.1`
+- Batch process response logging.
+- Asymmetric custom rewards for Ecosystem Rewards.
+- `/refresh` no longer fails on some Dynamic Interaction configs.
+
+### Dependencies
+- Spring Boot **3.5.0**.
+
+Full notes: [Runtime release history](/docs/runtime/runtimeversion).
+
+## Contributors
+- [@ramsay](https://github.com/ramsaylouw)
+- [@jayvanzyl](https://github.com/jayvanzyl)
+- [@eric](https://github.com/ericnewby)
+- [@francois](https://github.com/francois)
+- [@ecosystem](https://github.com/ecogenetic)
