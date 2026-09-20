@@ -77,14 +77,17 @@ predictor.selector.model={'key_value_a':[1],'key_value_b':[2]}
 
 ## Parameter From Data Source
 The configuration for the customer data lookup to be used by the runtime.
-- **Data Source**: The type of data source to be used for the lookup.
-- **Database**: The database to be used for the lookup.
-- **Table**: The table to be used for the lookup.
+- **Data Source**: Driver written to `predictor.param.lookup.database`. Workbench supports **MongoDB**, **Cassandra** (`keyspace.table`), **Trino** (persisted as `trino`; Presto remains a saved synonym), **API** (persisted as `rest`), and **Runtime**. The runtime treats `trino` as the existing Presto JDBC worker (`presto.url` / `presto.connection`). There is no silent Mongo fallback.
+- **Database**: Mongo database name. Optional for Cassandra/Trino.
+- **Table**: Mongo collection, Cassandra `keyspace.table`, or Trino `catalog.schema.table`. Hidden when the driver is Runtime.
+- **Runtime URL**: Required when Data Source is Runtime. Emitted as `url` on `predictor.param.lookup`. Lookup scoring calls `POST {url}/invocations` and reads `featuresObj`.
+- **API definition**: When Data Source is API, the REST URL, method, and `response.result` mapping are emitted as `url` / `apiSource` / `result`, plus `predictor.api.sources`.
 - **Key Field**: The name of the customer lookup field in the customer feature store.
 - **Key Type and Default**: You can specify a default customer key to use if the lookup fails. This field is also used to specify the type of the the customer lookup field. If the value entered is a string it denotes that the customer lookup field is a string. If the value entered is a number it denotes that the customer lookup field is a number. If you do not want to specify a default value you can use 123 or '123' to sepcify the type.
-- **Lookup Field List**: The fields to be looked up from the customer feature store.
-- **Lookup Defaults**: Default values to be used for the fields if they are missing from the customer feature store when the lookup is performed.
-- **URL**: The URL to be used for the lookup. This is only required if the Data Source is Runtime.
+- **Lookup Field List**: Fields discovered with **Validate** (or typed). Virtual variables, dynamic training fields, and Lookup Defaults pickers all use this list, for every driver.
+- **Verify**: **View** samples and **Validate** field discovery against the live source (Mongo aggregate, Cassandra `/getCassandra`, Trino `/getPrestoSQL`, REST URL, or Runtime `/invocations`).
+- **Lookup Defaults**: Default values when the lookup misses. **Assign** finds a row on the same driver and maps scalars onto the Field List. Cassandra Assign requires a Find value (partition key).
+- **Generate**: Writes synthetic Mongo documents only.
 - **Create Virtual Variables**: Checkbox to indicate whether Virtual Variables should be created based on the lookup from the customer feature store. The User Guide for [Virtual Variables](/docs/user_guides/virtual_variables) contains more information on how to use Virtual Variables.
 
 The details will be visible in the `properties` file with the following format:
@@ -93,6 +96,14 @@ The details will be visible in the `properties` file with the following format:
 predictor.param.lookup={predictor:'dynamic-recommender',mojo:1,database:'mongodb',db:'recommender_demos',table:'feature_store',lookup:{"value":123,"key":"msisdn"},result:{parm1:'field1', parm2:'field2'}}
 predictor.param.lookup.features=customer,age,location,
 predictor.param.lookup.default=customer,age
+```
+
+Cassandra, Trino, API, and Runtime emit the same object with a different `database` driver, for example:
+```properties
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"cassandra","db":"","table":"ecosystem.bank_customer","lookup":{"key":"customer","value":123},"virtual_variables":[],"result":{"parm1":"field1","parm2":"field2"}}
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"trino","table":"hive.default.customers","lookup":{"key":"customer","value":123}}
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"rest","url":"https://api.example.com/customer/{value}","apiSource":"customer_lookup_api","lookup":{"key":"customer","value":123},"result":{"age":"$.customer.age"}}
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"runtime","url":"http://ecosystem-runtime:8091","lookup":{"key":"customer","value":123}}
 ```
 
 You can configure lookups to multiple customer data sources using the `Add Lookup` button. If multiple lookups are configured that will be combined into the single `featuresObj` object in the runtime. The field names looked up from the multiple sources should therefore be unique. Up to 10 Parameter Access lookups can be configured. When multiple lookups are configured, the format in the `properties` file will be changed to an array.
@@ -128,10 +139,12 @@ If the Concatenate type is selected, the `Add Field` button will be available to
 
 ## Offer Matrix
 The Offer Matrix contains information about the items to be recommended by the Deployment. The Offer Matrix can be used in the post scoring logic when applying eligibility rules.
-- **Data Source**: The type of data source to be used for the lookup.
-- **Database**: The database to be used for the lookup.
-- **Table**: The table to be used for the lookup.
-- **Offer Lookup ID** The name of the field in the Offer Matrix that uniquely identifies the offer.
+- **Data Source**: **MongoDB**, **Cassandra**, **Trino** (`trino`, Presto synonym), or **API** (`rest`). Runtime is not an Offer Matrix source. After push, `CampaignContext` / `PreLoadCorpora` load the matrix from that driver (Presto JDBC for Trino). There is no silent Mongo fallback.
+- **Database**: Mongo database name. Optional for Cassandra/Trino.
+- **Table**: Mongo collection, Cassandra `keyspace.table`, or Trino `catalog.schema.table`.
+- **Offer Lookup ID** The name of the field in the Offer Matrix that uniquely identifies the offer. Emitted as `predictor.offer.matrix.key`. Use **Validate** on the live source to confirm the field exists.
+- **Verify**: **View** samples and **Validate** the Offer Lookup ID for all four drivers. **Generate** writes synthetic Mongo documents only.
+- **API definition**: REST URL / `apiSource` / `result` when Data Source is API.
 
 The Offer Matrix stored in the `params` JSONObject accessible in the post scoring logic. The runtime will attempt to load the Offer Matrix in three different forms:
  - `offerMatrix`: Loaded as a JSONArray with one element for each row in the Offer Matrix. The rows themselves will be loaded as JSONObjects with the column names as the keys. This structure can be used to efficiently loop through the Offer Matrix.
@@ -151,6 +164,9 @@ The Offer Matrix details will be visible in the `properties` file with the follo
 ```properties
 ### Offer Matrix (Offer Matrix) ###
 predictor.offer.matrix={database:'mongodb',db:'recommender_demos', table:'offer_matrix', key:'offer_name'}
+predictor.offer.matrix={"database":"cassandra","table":"ecosystem.offer_matrix","key":"offer_id"}
+predictor.offer.matrix={"database":"trino","table":"hive.default.offers","key":"offer_id"}
+predictor.offer.matrix={"database":"rest","url":"https://api.example.com/offers","apiSource":"offer_matrix_api","result":"$.offers","key":"offer_id"}
 ```
 
 ## Plugins
