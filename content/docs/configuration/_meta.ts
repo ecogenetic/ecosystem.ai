@@ -1,6 +1,7 @@
 export default {
   index: 'Intro',
   project: 'Project',
+  project_review: 'Project Review and Update',
   data: 'Data',
   static_models: 'Static Models',
   algorithms: 'Dynamic Algorithms',

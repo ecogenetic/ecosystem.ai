@@ -113,7 +113,7 @@ In addition, some algorithms have their own **built-in exploration** that operat
 | **Loss Aversion** | Yes | UCB exploration term boosts under-sampled offers |
 | **Risk Aversion** | Yes | None -- relies on deployment epsilon for exploration |
 | **Prospect Theory** | Yes | Adaptive drift + built-in epsilon-greedy mixing |
-| **Sentimental Equilibrium** | Yes | N/A (aggregate equilibrium, not per-offer) |
+| **Sentimental Equilibrium** | Yes | UCB mix on the offer rank. The equilibrium solve is not the rank. |
 | **Coverage-Aware Thompson** | Yes | Thompson sampling + inverse-popularity boost + optional epsilon mixing |
 | **Long-Tail Boost MF** | Yes | Inverse-popularity reweighting (diversity, not explicit exploration) |
 | **Network Analysis (PageRank)** | Yes | None -- relies on deployment epsilon for exploration |
@@ -130,7 +130,7 @@ In addition, some algorithms have their own **built-in exploration** that operat
 | **Loss Aversion** | Medium-Fast | Low | No | Yes | High-cost-of-rejection scenarios |
 | **Risk Aversion** | Fast | Very Low | No | No | Consistency-valued domains |
 | **Prospect Theory** | Medium | Low | Partial | No | Marketing with psychological modeling |
-| **Sentimental Equilibrium** | Single-shot | Low | No | No | Engagement intensity optimization |
+| **Sentimental Equilibrium** | Rebuilt each cycle | Low | No | Optional context keys | Offer rank from response-rate utility |
 | **Coverage-Aware Thompson** | Slow | Medium | Yes | Yes | Fairness / catalog coverage |
 | **Long-Tail Boost MF** | Medium | High (ALS) | No | Yes | Collaborative filtering with diversity |
 | **Network Analysis (PageRank)** | Fast | Medium | No | No | Inter-offer relationships |
@@ -159,7 +159,7 @@ The post-score class then controls the final offer selection, eligibility filter
 | **Loss Aversion** | New offers get smoothing alpha = 1.5. UCB gives under-sampled offers a boost. | Smoothing alpha = 1.5 + UCB exploration term. | **Moderate.** UCB helps under-sampled offers surface. |
 | **Risk Aversion** | Does not score offers without history. Platform random fallback applies. | None. Relies on platform-level random scoring. | **Random until data accumulates.** Algorithm begins influencing after sufficient history. |
 | **Prospect Theory** | Seeds all known offers with `baseDriftRate` (default 0.05). Adaptive drift + epsilon-greedy mixing. | `baseDriftRate` seed + drift + epsilon. | **Good.** Seeding gives all offers non-zero scores from day one. |
-| **Sentimental Equilibrium** | Computes aggregate engagement equilibrium, not per-offer scores. | Model parameters serve as the "prior". | **N/A.** Does not rank individual offers. |
+| **Sentimental Equilibrium** | Ranks offers from the response rate when history exists. Empty history uses the platform random fallback. | Defaults $r$, $a$, $\rho$. Not passed from the deployment document. | **Offer ranks, not an engagement rate.** |
 | **Coverage-Aware Thompson** | Beta(1,1) + `exposure=0` gives maximum inverse-popularity boost for unseen offers. | Beta(1,1) prior + max coverage boost. | **Excellent.** Best cold-start of all behavioral algorithms. |
 | **Long-Tail Boost MF** | Random latent vectors (~0.01 Gaussian noise) for unseen users/items. Near-zero scores. | Random Gaussian initialization. | **Random until data accumulates.** Needs substantial interaction volume. |
 | **Network Analysis (PageRank)** | Cannot build a graph without co-occurrence data. Platform random fallback applies. | Personalization based on acceptance weight (once data exists). | **Random until data accumulates.** Needs co-occurrence data. |
@@ -359,11 +359,11 @@ For more detail on the options store structure, see [Options Store](/docs/config
 }
 ```
 
-### Scenario 8: Engagement Fatigue Analysis
+### Scenario 8: Offer rank under engagement pressure
 
-**Problem:** Determine optimal frequency and intensity of customer engagement.
+**Problem:** Rank offers from response-rate utility when the person–app relationship matters, while keeping contact frequency as a separate Workbench batch.
 
-**Recommended:** `behaviorAlgos` with `sentimentalEquilibrium`
+**Recommended:** `behaviorAlgos` with `sentimentalEquilibrium` for live Dynamic Engagement ranking (`arm_reward` is an offer rank, not the contact rate). Run the Workbench Sentimental Equilibrium Process job when you need `recommended_engagement_rate` / `rate_adjustment`.
 
 ```json
 {
@@ -373,6 +373,8 @@ For more detail on the options store structure, see [Options Store](/docs/config
   "decay_gamma": 1.0
 }
 ```
+
+See [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium).
 
 ---
 

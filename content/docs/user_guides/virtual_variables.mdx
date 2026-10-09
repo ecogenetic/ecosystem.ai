@@ -66,7 +66,15 @@ There should now be a `virtual_variables` object saved in the JSON settings of t
                 ]
 ```
 
-To use your Virtual Variables you need to add them to your model or to your Dynamic Interaction configuration. To add a virtual variable to your model, add the derived variable to your model training feature store and train the model as usual. To add a virtual variable to your Dynamic Interaction configuration make sure your Dynamic Interaction configuration is linked to the Deployment in the New Knowledge accordion. Then go to the [Variables](/docs/configuration/dynamic/parameters/) tab and select the `Get values from external data store when scoring` checkbox. This will enable a dropdown list from which you can select a variable from the customer feature store configured in your deployment. The names of the Virtual Variables should be available in the list of variables. Select the desired variables and save your configuration. The same `virtual_variables` object that is saved in the Deployment json should now be saved record for the Dynamic Interaction in the `dynamic_engagement` collection in the `ecosystem_meta` database. 
+Defining a virtual variable does **not** train by itself. The runtime derives the `name` into `featuresObj` after customer lookup (discretize: default once, first inclusive `from`/`to` match wins; concatenate: space-join, skip nulls). Training uses those labels only when you select the **name** as Contextual Variable One/Two and/or a Dynamic Recommender training field, and Generate Options applies the same rules so seeded options match score-time labels.
+
+To use a virtual variable in Dynamic Engagement (Workbench2):
+1. Link the Dynamic Interaction to the Deployment (same prediction case / `uuid`).
+2. On the Variables tab, Contextual Variable One/Two dropdowns include feature-store keys **plus** virtual names from that linked deployment.
+3. Selecting a virtual name sets `contextual_variable_*_lookup` to that name, `*_from_data_source` to true, and prefills values from bucket labels plus `default`.
+4. Extra features for Naive Bayes and other factorised approaches belong in **training fields**, not a concatenated contextual slot. Do not list the same virtual name as both a contextual slot and a training field (double partition).
+
+Score time still reads `virtual_variables` from `predictor.param.lookup` (Push from the deployment). A copy on the `dynamic_engagement` document is for inspectability; it is not a second engine. 
 
 The following truncated example shows how to set the `virtual_variables` object in the python package:
 ```python
@@ -86,7 +94,7 @@ virtual_variables.append(virt_var)
 virt_var = dm.define_deployment_virtual_variable(
     name="segment_two"
     ,original_variable="customer_feature_two"
-    ,default="gt500"
+    ,default="gt-500"
     ,variable_type="discretize"
     ,buckets=[
               {"from": 0,"label": "lt-50","to": 50},
@@ -151,15 +159,15 @@ else:
 ```
 When you push your Deplyoment configuration to the runtime the properties file that is created will
 ```properties
-predictor.param.lookup={predictor:'dynamic-recommender',mojo:1,database:'mongodb',db:'telecommunications',table:'feature_store',url:'',lookup:{"value":123,"key":"customer"},virtual_variables:[{"default":"gt-15","buckets":[{"from":0,"label":"lt-15","to":15}],"name":"segment_one","type":"discretize","original_variable":"feature_one","fields":[]},{"default":"gt-500","buckets":[{"from":0,"label":"lt-50","to":50},{"from":50,"label":"50-250","to":250},{"from":250,"label":"250-500","to":500}],"name":"segment_two","type":"discretize","original_variable":"feature_one","fields":[]}],result:{parm1:'field1', parm2:'field2'}}
+predictor.param.lookup={predictor:'dynamic-recommender',mojo:1,database:'mongodb',db:'telecommunications',table:'feature_store',url:'',lookup:{"value":123,"key":"customer"},virtual_variables:[{"default":"gt-15","buckets":[{"from":0,"label":"lt-15","to":15}],"name":"segment_one","type":"discretize","original_variable":"customer_feature_one","fields":[]},{"default":"gt-500","buckets":[{"from":0,"label":"lt-50","to":50},{"from":50,"label":"50-250","to":250},{"from":250,"label":"250-500","to":500}],"name":"segment_two","type":"discretize","original_variable":"customer_feature_two","fields":[]}],result:{parm1:'field1', parm2:'field2'}}
 ```
 
 ## Virtual Variables and pre and post scoring logic
 
 ### Pre scoring logic
-If the Virtual Variables are configured in the `properties` file then they will be derived and added to `featuresObj` before the pre-scoring logic is called. Otherwise the `getVirtualVariables` method can be called in the pre-scoring logic to derive the Virtual Variables from the customer feature store lookup. The `getVirtualVariables` method will return `params` with an updated `featuresObj` which contains the values of the Virtual Variables.
+When `virtual_variables` are present on `predictor.param.lookup`, **StageParamsDB** derives them into `featuresObj` after customer lookup and **before** the pre-score plugin runs. `PreScoreDynamic` does **not** call `getVirtualVariables`. Post-score can fill contextual slots from `featuresObj` using `contextual_variable_*_name` (and `*_lookup` when set).
 
-To use Virtual Variables for the contextual variables in a Dynamic Interaction configuration, the `getDynamicSettings` and `getPrepopulateContextualVariables` methods need to be called in the pre scoring logic. The template for doing so is the `PreScoreDynamic` class which is shown below. `getDynamicSettings` will add the Dynamic Interaction configuration from `ecosystem_meta.dynamic_engagement` to `params` with the key `dynamicCorporaPreScore`. `getPrepopulateContextualVariables` will add the values of the virtual variables to `params.in_params` with the keys `contextual_variable_one` and `contextual_variable_two`. This will result in the values of the virtual variables being  added to the contextual variables objects in the `params` JSONObject that is passed through the runtime.
+To use Virtual Variables for the contextual variables in a Dynamic Interaction configuration, the `getDynamicSettings` and `getPrepopulateContextualVariables` methods still need to be called in the pre scoring logic. The template is `PreScoreDynamic` below. `getDynamicSettings` adds the Dynamic Interaction configuration from `ecosystem_meta.dynamic_engagement` to `params` as `dynamicCorporaPreScore`. `getPrepopulateContextualVariables` copies derived values into `params.in_params` as `contextual_variable_one` / `contextual_variable_two` when `*_lookup` is set.
 ```java
 package com.ecosystem.plugin.customer;
 
@@ -198,7 +206,7 @@ public class PreScoreDynamic extends PreScoreSuper {
 
         try {
 
-            /* Get dynamic properties and add virtual variables to the feature store. */
+            /* Dynamic Engagement settings. Virtual variables are already on featuresObj from lookup. */
             params = getDynamicSettings(mongoClient, params);
 
             /* Populate contextual variables by default based on settings. */
@@ -216,7 +224,7 @@ public class PreScoreDynamic extends PreScoreSuper {
 ```
 
 <Callout type="tip" title="Note">
-    Prior to version 0.9.4.3 `getPrePredict` is not passed the Mongo Connection (`mongoClient`). In this case you will need to open a close a Mongo connection in the pre scoring logic, as shown in the code below. Note that this will increase the load on the database.
+    Prior to version 0.9.4.3 `getPrePredict` is not passed the Mongo Connection (`mongoClient`). In this case you will need to open a close a Mongo connection in the pre scoring logic, as shown in the code below. Note that this will increase the load on the database. This legacy example also calls `getVirtualVariables`; current `PreScoreDynamic` does not — lookup derivation happens in StageParamsDB.
     
 ```java
 package com.ecosystem.plugin.customer;

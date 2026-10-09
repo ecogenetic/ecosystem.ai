@@ -142,7 +142,9 @@ Needs `spend-personality:configs`, `spend-personality:runs`, and `jobs:read` (pl
 
 | Method | Path | Scope | Purpose |
 | --- | --- | --- | --- |
-| `POST` | `/public/v1/sentimental-equilibrium/process` | `sentimental-equilibrium:runs` | Start analysis from prediction logs; poll jobs |
+| `POST` | `/public/v1/sentimental-equilibrium/process` | `sentimental-equilibrium:runs` | Start the Workbench contact-rate batch from prediction logs (or a field map / Mongo pipeline); poll jobs. Writes `recommended_engagement_rate` and `rate_adjustment`. Live Dynamic Engagement `arm_reward` for `sentimentalEquilibrium` is a separate offer-rank number — see [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium). |
+
+The ecosystem-server munge option `sentiment` is retired. Callers that still hit that path receive an error pointing at Workbench `POST /api/v1/algorithms/sentimental-equilibrium/process` (public gateway path above).
 
 ## Two-Tower
 

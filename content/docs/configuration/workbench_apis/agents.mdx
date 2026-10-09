@@ -27,7 +27,8 @@ Rows come from the Workbench agent catalog registry. Coverage is `wired`, `parti
 | `intelligent-sales` | Intelligent Sales Agent | Campaigns | List/trigger campaigns |
 | `real-time-recommender` | Real-Time Recommender Agent | Scoring | Workbench `score_customer` / `send_feedback` on a deployment |
 | `dynamic-experimentation` | Dynamic Experimentation Agent | Dynamic | Dynamic Engagement entities; `explain_algorithms`, `explain_convergence` |
-| `claude-operator` | Ecosystem Agent | Platform | In-process MCP; `/assistant`; HTTP MCP attach |
+| `runtime-testing` | Runtime Testing Agent | Runtime | Isolated business suites; `start_runtime_testing_run` (confirm), `list_runtime_testing_runs`, `get_runtime_testing_run` |
+| `claude-operator` | Ecosystem Agent | Platform | In-process MCP; `/assistant`; HTTP MCP attach; also Simulations tools (`start_simulation_run` / `cancel_simulation_run` confirm, status, logs, results, `explain_simulation_result`) |
 | `ecogentic` | EcoGentic | Platform | Customer journeys |
 
 Open a row for capabilities, MCP tool names, skills, and a Workbench deep link (`workbench_href`).

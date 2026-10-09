@@ -1,0 +1,54 @@
+---
+title: Project Review and Update
+description: Administration → Server Utilities — analyze a target Mongo for project and deployment hygiene, dual runtime versions, and optional successor clone or export.
+---
+
+import { Callout } from 'nextra/components'
+
+# Project Review and Update
+
+**Administration → Server Utilities → Project Review and Update** (`project-review-and-update`) is an operator migration utility. It analyzes projects on a target MongoDB, recommends fixes, and applies the ones you accept as an async job. It is not a public API contract change.
+
+<Callout type="info" title="Session-only Mongo URI">
+The target Mongo URI stays on the Workbench server for the session. The password field stays masked until you click to edit or reveal. If Details has no Mongo URI, Analyze and Apply use the local Workbench Mongo.
+</Callout>
+
+## Setup
+
+| Field | Purpose |
+| --- | --- |
+| Mongo URI + database | Target store to analyze |
+| **Runtime main** | Default `http://ecosystem-runtime:8091` — main deployment runtime path |
+| **Runtime local** | Default `http://localhost:8099` — used for `version=local` steps |
+| Target API URL + API key (optional) | Enables a remote full ZIP (CSV/MOJO) through that Workbench’s export API |
+| Use built-in successor project map | Optional clone into a mapped successor project id |
+
+**Test** pings Mongo. **Analyze** lists projects (include/exclude projects and individual deployments). Expand a row for successor id, runtime hosts, findings, and recommended actions.
+
+A session-only **Processing defaults log** (passwords masked) refills the form; it is not persisted.
+
+## Recommended actions
+
+Actions are checked by default except where noted. **Accept & run (N)** applies the selection; **Dry run** queues the same plan without writing.
+
+| Kind | What you accept |
+| --- | --- |
+| `dedupe_deployment_steps` | Drop duplicate `deployment_step` rows |
+| `add_version_local_step` | Add `version=local` pointing at Runtime local |
+| `normalize_runtime_main` | Point the main runtime path at Runtime main (test slot = Runtime local) |
+| `link_missing_de` | Dynamic engagement name is linked but missing (**critical**, off by default; not auto-applied — create the DE manually) |
+| `normalize_dynamic_config` | Set `project_type` to `dynamic_recommender` and/or link `dynamic_engagement_id` / `step_type=dynamic` |
+| `create_successor_project` | Clone into the mapped successor with dual runtime versions |
+| `archive_project` | Archive after successor (off by default) |
+| `export_default_zip` | ZIP export (off by default; full files only if API URL + key) |
+
+Per-row **Export** packages one project. Before packaging, lookup database/collection, offer matrix, Dynamic options store, whitelist, model selector, and budget tables are auto-attached. MOJO/CSV on this host are omitted unless the target API path is used.
+
+Jobs show Completed / Failed / Stalled in the utility panel.
+
+## Related
+
+- [Project](/docs/configuration/project) — project document shape
+- [Deployments](/docs/configuration/deployment) — deployment steps and runtime paths
+- [Simulations](/docs/configuration/simulations) — closed-loop traffic after runtime paths are correct
+- [Campaign Testing](/docs/runtime/testing) — Workbench Runtime Testing for one deployment

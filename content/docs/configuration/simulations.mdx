@@ -1,6 +1,6 @@
 ---
 title: Simulations
-description: Workbench 2 simulations — closed-loop /invocations and /response traffic against a Dynamic Interaction deployment.
+description: Workbench 2 simulations — closed-loop /invocations and /response traffic against a Dynamic Interaction deployment, run in-process on the Workbench backend.
 ---
 
 import { Callout } from 'nextra/components'
@@ -19,13 +19,17 @@ Two ways to run that loop:
 
 | Approach | Where | Best for |
 | --- | --- | --- |
-| **Workbench 2** | `/entities/simulation` | Operator setup, scenario describe, logs, Beta plots, options-store snapshots |
+| **Workbench 2** | `/entities/simulation` | Operator setup, scenario describe, logs, Beta plots, options-store snapshots, result Explain |
 | **Python** | [Python package](/docs/configuration/pythonpackage) or a custom script | Fully custom take-up, traffic, or batch logic |
 
-Workbench is easier. Python is more flexible. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
+Workbench runs the loop **in-process** on the Workbench FastAPI backend (Motor Mongo + async Runtime HTTP). Python is more flexible for custom scripts. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
 
 <Callout type="info" title="Not Data Agents">
 A simulation **writes** Runtime logs. To **analyze** those logs (funnel, rank uptake, catalog), run an [Interactions Analytic](/docs/modules/data_agents/interactions) job on the same `ecosystemruntime` / `ecosystemruntime_response` collections.
+</Callout>
+
+<Callout type="warning" title="Notebooks simulation deprecated">
+The ecosystem-notebooks `process_simulation` routes return **410**. Configure and run simulations in Workbench 2 only.
 </Callout>
 
 ## Workbench 2
@@ -42,9 +46,7 @@ Each simulation document has a **name**, **project**, **deployment**, and **depl
 
 - Simulation name
 - Project, deployment, and version
-- ecosystem-server username and password
-- MongoDB available
-- ecosystem-notebooks available
+- MongoDB available (Workbench database)
 
 The learning **algorithm** is not chosen on the simulation form. It is resolved from the Dynamic Engagement linked to the deployment. If none is linked, the Runtime scores naively.
 
@@ -65,10 +67,9 @@ Default new-run values (override per run):
 | Iterations per second | 100 |
 | Output every N iterations | 100 |
 | Plot + parameter output | on |
-| Server URL | `http://ecosystem-server:3001/api` |
-| Notebooks URL | `http://ecosystem-notebooks:8010/process_simulation` |
 | Pulse responder | `http://ecosystem-runtime:8091` |
-| Server credentials | `admin@ecosystem.ai` / `password` |
+
+Server URL, Notebooks URL, and ecosystem-server credentials are **not** required (legacy fields on old documents are ignored).
 
 ### Run configuration
 
@@ -90,18 +91,16 @@ Default new-run values (override per run):
 
 ### Connections
 
-Open the **Connections** accordion (not buried in Advanced). Simulations authenticate to **ecosystem-server with these credentials**, not the Workbench UI login.
+Open the **Connections** accordion. Simulations call the **Client pulse responder** (Runtime) from the Workbench backend.
 
 Click **Validate** (`POST /simulations/validate-connections`). The Workbench backend checks:
 
 | Check | What it proves |
 | --- | --- |
-| Database | Mongo ping |
-| ecosystem-notebooks | Process URL reachable (including localhost fallbacks when Docker DNS names fail) |
-| ecosystem-server | `POST` login on `server_url` (must end in `/api`) with the run username/password |
-| Pulse responder | Runtime `/invocations` host is reachable from notebooks |
+| Database | Mongo ping (Workbench Motor) |
+| Pulse responder | Runtime host is reachable from the Workbench backend |
 
-Typical local notebooks port is **8011** if the container maps that way. If Validate says notebooks is down, start `ecosystem-notebooks` or change **Notebooks URL**. If the pulse responder cannot resolve `ecosystem-runtime`, use a host the notebook server can reach (for example `http://localhost:8099` or `http://localhost:8091`).
+If the pulse responder cannot resolve `ecosystem-runtime`, use a host the Workbench API can reach (for example `http://localhost:8099` or `http://localhost:8091`).
 
 ### Describe scenario (optional)
 
@@ -140,26 +139,29 @@ If the lookup key does not match the collection, Run fails with a hint to fix Pa
 | Selection over time | `drift_lower_sequence` |
 | Traffic profile | Virtual-time intensity windows |
 
-### Run, logs, results
+### Run, logs, results, Explain
 
 1. Save the simulation (drafts are allowed).
 2. Validate connections.
-3. **Run Simulation** — Workbench FastAPI proxies to notebooks `POST .../process_simulation`. Progress shows in the run banner.
-4. **Logs** — `GET /simulations/logs?run_uuid=...` (Mongo `simulations.simulation_logs`; legacy `ecosystem_meta.threads` is still read). Cancel hits notebooks `/cancel_simulation`.
-5. **Results** — options-store parameter snapshots (`simulation_param_outputs`) and Beta / plot series (`simulation_plot_outputs`) when those outputs are enabled. Use plots to inspect Ecosystem Rewards (and similar) arm distributions after the run.
+3. **Run Simulation** — Workbench starts an in-process asyncio engine. Progress shows in the run banner. Cancel cooperatively stops the loop.
+4. **Logs** — `GET /simulations/logs?run_uuid=...` (Mongo `simulations.simulation_logs`). Success versus failed invocations is charted when those counters appear.
+5. **Results** — options-store parameter snapshots (`simulation_param_outputs`) and Beta / plot series (`simulation_plot_outputs`) when those outputs are enabled.
+6. **Explain** — on the Results panel, Explain produces a read-only overview (purpose, process, interpreted results) via the Workbench LLM. Versions are stored on the simulation document (max **10**). The **Explanations** table at the bottom of the editor opens a saved version without a new model call.
 
-Failures return a message **and a hint** (unreachable Runtime, empty customer collection, missing server password, notebooks down, bad customer pipeline).
+Failures return a message **and a hint** (unreachable Runtime, empty customer collection, bad customer pipeline, unsaved run uuid).
 
 ### Workbench APIs (operator)
 
 Thin UI; processing stays on the backend:
 
-- `GET /simulations/status` — Mongo + notebooks health
+- `GET /simulations/status` — Mongo health (engine is in-process)
 - `POST /simulations/validate-connections`
 - `POST /simulations/run` / cancel
 - `GET /simulations/logs`, `DELETE /simulations/logs`
 - `GET /simulations/results/parameters`, `/results/options`, `/results/plot`
+- Explain jobs: `kind=simulation_result` on the agents explain API
 - Scenario analyze/apply via the agents router (optional)
+- MCP: `start_simulation_run` / `cancel_simulation_run` (confirm), status, logs, results, `explain_simulation_result`
 
 ## Python simulations
 

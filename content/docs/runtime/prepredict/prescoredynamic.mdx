@@ -11,7 +11,9 @@ The Pre-Score Dynamic plugin is a plugin that is used to format the input to the
 
 ## How does it work?
 
-The Pre-Score Dynamic plugin loads the Dynamic Interaction configurations. It then uses these configurations to set any Virtual Variables that have been configured and then adds the values of the contextual variables to the params object that is carried through the runtime process.
+The Pre-Score Dynamic plugin loads the Dynamic Interaction configurations and pre-populates contextual variables on the params object that is carried through the runtime process.
+
+Lookup **virtual variables** are derived into `featuresObj` by **StageParamsDB** after customer lookup and **before** this plugin runs. Current `PreScoreDynamic` does **not** call `getVirtualVariables`. See [Virtual Variables](/docs/user_guides/virtual_variables).
 
 ## Java Code
 
@@ -21,11 +23,11 @@ Then, there is a static method named `getPrePredict(MongoClient mongoClient, JSO
 
 The function first checks if `lookupDatabase` is null, if it is then it returns the input `params` as is.
 
-If `lookupDatabase` isn't null, then the function uses `getDynamicSettings` to get the Dynamic Interaction configuration from the MongoDB database using the locations for the configurations contained in `params`. It uses the configuration to populate the Virtual variables using `getVirtualVariables` and populate the contextual variables using `getPrepopulateContextualVariables`.
+If `lookupDatabase` isn't null, then the function uses `getDynamicSettings` to get the Dynamic Interaction configuration from the MongoDB database using the locations for the configurations contained in `params`, then populates contextual variables using `getPrepopulateContextualVariables`. Virtual-variable derivation for `predictor.param.lookup` already happened in StageParamsDB.
 
 If any exception occurs during the execution of the function, it logs the error message (`LOGGER.error()`) including the UUID from the params and specifics of the failed dynamic parameters, also prints the stack trace of the exception (`e.printStackTrace();`). The function then returns the params object.
 
-The following is an example of the Post Score Basic plugin implemented in Java:
+The following is the current `PreScoreDynamic` pattern (no `getVirtualVariables` call):
 
 ```java
 package com.ecosystem.plugin.customer;
@@ -68,11 +70,10 @@ public class PreScoreDynamic extends PreScoreSuper {
 
         try {
 
-            /** Get dynamic properties and add virtual variables to the feature store. */
+            /** Load dynamic settings. Virtual variables were already derived by StageParamsDB. */
             params = getDynamicSettings(mongoClient, params);
-            params = getVirtualVariables(params);
 
-            /** Pupulate contextual variables by default based on settings. */
+            /** Populate contextual variables by default based on settings. */
             params = getPrepopulateContextualVariables(params);
 
         } catch (Exception e) {
@@ -85,3 +86,7 @@ public class PreScoreDynamic extends PreScoreSuper {
 
 }
 ```
+
+### Legacy (before 0.9.4.3)
+
+Older plugins called `getVirtualVariables(params)` after `getDynamicSettings`. That path is obsolete when StageParamsDB already writes lookup virtuals into `featuresObj`. Keep the call only if you maintain a custom pre-score that must re-derive virtuals for an older runtime.

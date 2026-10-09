@@ -1,12 +1,14 @@
 ---
 title: Testing
-description: Manage APIs is where you create, test, and manage APIs, ensuring they are robust and ready for integration with other systems.  Simulations is where you run and analyze simulations to validate the accuracy and performance of machine learning models before deployment.
+description: Test a pushed Dynamic Interaction deployment — Manage APIs for single calls, Simulations for closed-loop traffic, Runtime Testing for isolated business evidence.
 ---
 
 # Introduction 
-The Manage APIs section is where you create, test, and manage APIs, ensuring they are robust and ready for integration with other systems. The Simulations section is where you run and analyze simulations to validate the accuracy and performance of machine learning models before deployment.
+Once you have pushed your deployment configuration you should do some testing to see if the results align with your expectations.
 
-Once you have pushed your deployment configuration you should do some testing to see if the results align with your expectations. There are two ways to test your deployment:
+Configure and run closed-loop traffic at **Simulation** (`/entities/simulation`) — the loop runs **in-process** on the Workbench backend ([Simulations](/docs/configuration/simulations)). For automated business evidence on **one** project, deployment, and version, use **Runtime Testing** (`/runtime-testing`) ([Campaign Testing](/docs/runtime/testing)).
+
+There are two ways to test your deployment from the Laboratory walkthrough below:
 
 ## 1. Test your API
 
@@ -42,8 +44,6 @@ Click **Execute** to bring back the API results and ensure your deployment is fu
 
 ## 2. Build a simulation
 
-Drive closed-loop traffic against the pushed deployment from Workbench 2 **Simulation** (`/entities/simulation`): iterations, take-up, connections, logs, and Beta / options-store results.
+Drive closed-loop traffic against the pushed deployment from Workbench 2 **Simulation** (`/entities/simulation`): iterations, take-up, connections, logs, Beta / options-store results, and result Explain. The engine runs in-process on the Workbench backend (notebooks `process_simulation` returns **410**).
 
-See **[Simulations](/docs/configuration/simulations)** for the current process (Validate connections, nested runs, optional scenario describe). Single-call tests belong on the [Runtime Dashboard](/docs/runtime/dashboard). To analyze the resulting logs, run an [Interactions Analytic](/docs/modules/data_agents/interactions) job.
-
-The Jupyter notebook worker is no longer the primary simulation UI.
+See **[Simulations](/docs/configuration/simulations)** for the current process (Validate connections, optional scenario describe, MCP tools). Single-call tests belong on the [Runtime Dashboard](/docs/runtime/dashboard). Business evidence for one deployment: [Campaign Testing](/docs/runtime/testing). To analyze the resulting logs, run an [Interactions Analytic](/docs/modules/data_agents/interactions) job.

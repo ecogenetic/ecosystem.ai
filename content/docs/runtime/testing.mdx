@@ -71,3 +71,14 @@ Campaign-specific Gherkin can live under `src/main/resources/features/`. Prefer 
 - Concurrent API runs keep the properties path in a `ThreadLocal` that is cleared in `finally`.
 
 Source of truth in the Runtime repo: `TESTING.md`.
+
+## Workbench Runtime Testing (business evidence)
+
+Workbench2 **Runtime Testing** (`/runtime-testing`) is a **separate** product for automated business testing of **one** project, deployment, and version. It checks whether that deployment — including pre-score and post-score processing of invocations params — behaves as configured. It scores an **isolated** runtime with the normal closed loop (`POST /invocations` then `POST /response`), the same helpers as Runtime Console. It is **not** the in-process Simulations product (`/entities/simulation`). It may call `/test/campaign` as technical preflight and attach the unmodified report. A passing Cucumber run does **not** mean the business suite passed.
+
+Analyze extracts one-factor-at-a-time param values from pre/post score (plus operator-supplied values). Live runs evaluate assertions on the response and present case results, score/latency summaries, explanations, coverage, economics, drift, and convergence.
+
+Operators start suites and read results from the **Ecosystem Agent** or HTTP `POST /mcp`: `analyze_runtime_testing` → `plan_runtime_testing` (`confirm=true`) → `start_runtime_testing_run` (`confirm=true`) → `list_runtime_testing_runs` / `get_runtime_testing_run`. Live execution is isolated-only.
+
+Do not change `/test/campaign*` contracts or plugin signatures to support that Workbench product.
+

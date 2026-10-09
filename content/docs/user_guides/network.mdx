@@ -123,6 +123,8 @@ The `experiment_selector` network will randomly assign customers to experiment g
 - The logging connection and database should be the same for all of the ecosystem.Ai runtimes in the network, including the network runtime itself
 - An index `{"params.value":1,"predictor":1}` should be added to those already present in the logging collection
 
+**N-group allocations:** `groups.length` must be `random_splits.length + 1`. Splits are cumulative allocations that sum to ~1.0 (for example three groups `[0.2, 0.5, 0.3]`). Legacy two-group configs with a single split still treat that value as a threshold between `groups[0]` and `groups[1]`. Runtime reads splits and groups from `selector` first, then from the top-level document.
+
 ### **network_config**:
 ```json
 {
@@ -162,4 +164,22 @@ Besides the `no_logging_router` network type, both the Network Selector runtime 
 <Callout type="tip" title="Note">
   - The Network Selector and nodes should use the same contacts and response collections
   - The `/response` API should be called on the Network Selector runtime rather than the node runtime
+  - Closed loop is `POST /invocations` then `POST /response` (singular) with that row’s `uuid` + `offer_name`
 </Callout>
+
+## Nested selectors
+
+A child Network Selector is another named config. Nested hops stamp `in_params.ecosystem_network_uuid` (nearest logged parent), `ecosystem_network_path` (campaign@url list), and `ecosystem_network_depth`. Runtime rejects cycles and depth greater than 8 before making the child HTTP call. Connect and read timeouts are bounded on the dedicated network worker; global HTTP settings are unchanged. Each nested config has its own type, selector deployment `(project_id, deployment_id, version)`, logging policy, and targets.
+
+## Workbench workflow
+
+Named shared configs live in Workbench under **Project → Projects → Network Selector Configs**:
+
+- Shared library: `/entities/projects/network-selectors`
+- Project assignments: `/entities/projects/:projectId/network-selectors`
+- Identity is the unique immutable config **name**. Selector and target deployments use `(project_id, deployment_id, version)`. Mongo `_id` is not part of this contract.
+- Projects store `project_network_selectors: [{name, role, enabled}]`. The same named config can be assigned to many projects.
+- Save writes Workbench project, deployment, and collection configuration only. It does not publish, refresh, or restart Runtime.
+- Live tests require explicit confirmation against already-deployed campaigns and disclose that `/invocations` writes normal contact logs.
+- Rename is **Clone as new name**. Delete is blocked while any project is assigned.
+- Project Generate remains an entry point; after create, **Manage Network Selector** opens the named config editor.

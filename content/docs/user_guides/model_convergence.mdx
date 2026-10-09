@@ -43,7 +43,7 @@ Tabular approaches (`binaryThompson`, `epsilonGreedy`, `QLearning`) partition th
 | Loss Aversion (`lossAversion`) | Ignored-offer penalty + UCB | Failures hurt more than accepts help | Naturally low take-up on every arm | Rebuilt |
 | Risk Aversion (`riskAversion`) | Mean–variance utility | Low variance + decent mean | No history → no scores | Rebuilt |
 | Prospect Theory (`prospectTheory`) | Seeded values + drift | Adaptive drift + internal ε | Need for a single winner | Rebuilt |
-| Sentimental Equilibrium | Aggregate sentiment/effort | Not a per-offer ranker | Used as NBO | Single-shot / rebuilt |
+| Sentimental Equilibrium | Offer rank from response-rate utility | Equilibrium solve is unused by `score()` | Treating `arm_reward` as the contact rate | Rebuilt each cycle |
 | Coverage-Aware Thompson | Thompson + long-tail boost | Coverage fights concentration | Fairness KPI vs fastest winner | Rebuilt behavioral state; Beta-like sampling |
 | Long-Tail Boost MF | WRMF/ALS factors | Matrix density | Sparse logs / cold start | Rebuilt |
 | Generative (`generative`) | None (LLM per request) | Prompt + lookup vars | Latency, cost, audit | Not accumulated |

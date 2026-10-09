@@ -79,6 +79,8 @@ Same implementations as in-process MCP. Mutating tools require `confirm=true`.
 | `personality_drift` | Queue personality drift |
 | `get_enrichment_job` | Poll enrich / drift jobs |
 | Ontology family | `list_ontologies`, `describe_ontology`, create/update/delete (confirm), mappings, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology` |
+| Runtime Testing | `list_runtime_testing_suites`, `get_runtime_testing_suite`, `analyze_runtime_testing`, `plan_runtime_testing` (confirm), `start_runtime_testing_run` (confirm), `list_runtime_testing_runs`, `get_runtime_testing_run`, `cancel_runtime_testing_run` / `close_runtime_testing_run` (confirm), `compare_runtime_testing_runs`, `get_runtime_testing_artifact`, `delete_runtime_testing_suite` (confirm) |
+| Simulations | `start_simulation_run` / `cancel_simulation_run` (confirm), `get_simulation_run_status`, `get_simulation_logs`, `get_simulation_results`, `explain_simulation_result` |
 
 Resources: `ecosystem://deployments`, `ecosystem://deployment/{name}`. Per-deployment snippets: `GET /api/v1/deployments/{name}/mcp`.
 

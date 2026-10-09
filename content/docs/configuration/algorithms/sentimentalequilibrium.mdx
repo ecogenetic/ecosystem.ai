@@ -7,9 +7,11 @@ import { Callout } from 'nextra/components'
 
 # Sentimental Equilibrium
 
-Models the equilibrium between customer engagement utility and the effort or cost of engagement. The algorithm uses a dynamic system where a stock of engagement capital accumulates through effort and decays over time, then finds the steady-state equilibrium where marginal utility of engagement equals marginal cost, using Newton–Raphson optimization.
+Models one person–app relationship. Feeling fades unless outbound effort is supplied (`dx/dt = -r x + a c`). The sustaining rate solves `x* = (a/r) c*` and `a U'(x*) = (r + ρ) D'(c*)`.
 
-The formulation is inspired by economic models of habit formation and sentimental capital accumulation.
+Live Dynamic Engagement scoring does not return that rate. `score()` ranks offers from the response rate: feeling is the take-up, implied effort is `(r/a) x`, and the rank is `U(x) - D(c)/(r+ρ)` mixed with a UCB bonus. `RollingBehavior` writes that map to `arm_reward`. `computeEquilibrium()` solves the steady state and `score()` does not read it.
+
+How often to contact a person is the Workbench batch at `/sentimental-equilibrium`. A field map turns outbound events into effort and response events into feeling, then writes `recommended_engagement_rate` and `rate_adjustment`.
 
 ## Algorithm
 
@@ -35,7 +37,7 @@ Here $\rho$ is the discount rate (time preference). The equilibrium $(x^*, c^*)$
 
 **Disutility of effort** (configurable via `disutilityType`):
 
-- `quadratic`: $D(c) = \frac{1}{2} c^2$
+- `quadratic`: $D(c) = \frac{1}{2}(c - c_\star)^2$. Default $c_\star = 0$, which is $\frac{1}{2} c^2$.
 - `linear`: $D(c) = c$
 
 ## Parameters
@@ -50,22 +52,21 @@ Here $\rho$ is the discount rate (time preference). The equilibrium $(x^*, c^*)$
 
 ## Cold Start
 
-**Recommendations are always returned.** However, Sentimental Equilibrium operates differently from other behavioral algorithms:
+**Recommendations are always returned.** With no history, `RollingBehavior` assigns platform random scores. With history, Sentimental Equilibrium ranks each offer from its response rate.
 
-- It computes an **aggregate engagement equilibrium** ($x^*$, $c^*$), not per-offer scores. The output is derived from configured model parameters, not interaction history.
-- The `RollingBehavior` layer still produces a scored options array for the post-score class. When Sentimental Equilibrium is the sub-approach, the equilibrium values inform the overall engagement strategy rather than providing per-arm rankings.
-- The dynamic post-score class controls the final offer selection and response formatting.
+- `score()` does not return $x^*$ and $c^*$. Those values come from `computeEquilibrium()` and are not written to `arm_reward`.
+- A live run uses the default $r$, $a$, and $\rho$. `RollingBehavior` does not copy `decayRate`, `effortEfficiency`, or `discountRate` from the dynamic-engagement document onto the history row.
+- Live dynamic ranking: `PostScoreSentimentalEquilibrium` copies options-store `arm_reward`. It does not recompute the equilibrium.
+- Workbench Process job on the feature store: use **Sentimental Equilibrium PreScored** (`PostScoreSentimentalEquilibriumPreScored`) — a static extract of `engagementScore` / `sentimental_equilibrium` / … (same approach as spend personality). Do not use the dynamic post-score for that path.
 
 ## When To Use
 
-- Optimizing **engagement intensity** or relationship-level engagement vs. cost
-- Modeling **long-term customer relationship** dynamics and fatigue
-- **Research and analytics** on customer lifecycle and equilibrium engagement levels
+- Ranking offers by a utility of the response rate
+- Prescribing how often to contact someone, via the Workbench sentimental equilibrium job
 
 ## When NOT To Use
 
-- When you need **per-offer rankings** (this path returns aggregate equilibrium values, not arm-level scores)
-- When you need **real-time scoring of individual offers** in a multi-armed bandit sense
+- When `arm_reward` is expected to be the engagement rate. That rate is the Workbench batch, not this rank.
 
 ## Example
 
@@ -125,5 +126,5 @@ deployment_step = dm.create_deployment(
 </Callout>
 
 <Callout type="info" title="Training data">
-Sentimental Equilibrium parameters (for example `decayRate`, `effortEfficiency`, `discountRate`, `utilityType`, and `disutilityType`) are supplied through the **training data** pipeline so the rolling learner can read them consistently with your feature and options stores. Align field names with your ingestion job and runtime configuration.
+`setData` can read `decayRate`, `effortEfficiency`, `discountRate`, `utilityType`, and `disutilityType` from the first history row. A normal Dynamic Engagement call does not put those keys there, so scoring uses the defaults. The Workbench batch stores its own model settings on the sentimental-equilibrium config.
 </Callout>
