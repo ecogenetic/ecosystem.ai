@@ -1,13 +1,13 @@
 ---
 title: LoRA Recommender
-description: Low-rank residual recommender on frozen nomic-embed-text — train in Workbench, score through Runtime plugins
+description: Train a LoRA recommender in Workbench and score offers through the Runtime closed loop
 ---
 
 import { Callout } from 'nextra/components'
 
 # LoRA Recommender
 
-The **LoRA Recommender** is a **retrieval module**, not a generative LLM feature. It trains a low-rank residual on top of frozen **`nomic-embed-text`** embeddings, then scores offers in the Runtime closed loop like other recommenders.
+Train and deploy a **LoRA Recommender** in Workbench, then score ranked offers through the same Runtime closed loop as other recommenders (`POST /invocations`, then `POST /response`).
 
 Operator entry: **Solutions → LoRA Recommender** (`/lora`).
 
@@ -22,13 +22,12 @@ Embeddings and run metadata live in:
 
 ## Operator flow
 
-1. Configure a LoRA job (rank, corpora, train/validation split).
-2. **Train** — fits the residual on frozen encoder outputs (`rank=0` disables the residual for baseline comparisons).
-3. **Concept test** — offline checks before export.
-4. **Export** — artifacts for deployment binding.
-5. **Bind on deployment** — set runtime properties (below) and **Push** to the target runtime.
+1. Configure a LoRA job in the Workbench UI (training corpora and split).
+2. **Train**, then **Concept test** and **Export** when you are ready to deploy.
+3. **Bind on deployment** — open the deployment step, set **Model Type → LoRA Recommender**, and bind the training **`run_id`**. Set runtime properties (below) and **Push** to the target runtime. Push fails if required embedding data for that run is not present.
+4. Optional: **Generate Notebook** (`notebooks/lora_train.ipynb`) or **Use in Python** for a standalone script.
 
-Public HTTP routes also exist under Workbench `public_api/routers/lora.py` for scoped integrations.
+External integrations: [public gateway LoRA routes](/docs/configuration/workbench_apis/public#lora-recommender) with scopes `lora:configs` and `lora:train`.
 
 ## Runtime scoring
 
@@ -36,23 +35,28 @@ Set on the deployment / `ecosystem.properties`:
 
 ```properties
 predictor.model.type=lora
-predictor.lora.rank=8
-predictor.lora.user_embedding_collection=logging.lora_user_embeddings
-predictor.lora.item_embedding_collection=logging.lora_item_embeddings
-plugin.prescore=…PrePredictLoRA
-plugin.postscore=…PostScoreLoRA
+predictor.lora.run.id=<run_id>
+predictor.lora.embedding.db=logging
+predictor.lora.user.collection=lora_user_embeddings
+predictor.lora.item.collection=lora_item_embeddings
+predictor.lora.customer.key=<customer_field>
+predictor.lora.offer.key=<offer_field>
+predictor.lora.metric=cosine
+plugin.prescore=com.ecosystem.plugin.customer.PrePredictLoRA
+plugin.postscore=com.ecosystem.plugin.customer.PostScoreLoRA
 ```
 
-Exact property keys follow your project template; see Workbench deployment export for the bound class names.
+Replace `<run_id>`, `<customer_field>`, and `<offer_field>` with values from your project and flatten schema.
 
 Closed loop unchanged: `POST /invocations` then `POST /response` with `params` as a JSON **string**.
 
 ## Project Generate
 
-Project **Generate** can emit LoRA-related keywords and deployment snippets when the prompt describes embedding-based retrieval — use it after the flatten store and training corpora exist.
+After the flatten store exists, Project **Generate** can suggest LoRA-related deployment keywords and property snippets for your prompt.
 
 ## Related
 
 - [Two-Tower Module](/docs/modules/two_tower) — dual-encoder retrieval in the same embedding space family
 - [CPR Feature Store](/docs/configuration/cpr_feature_store) — flatten source for training
 - [Runtime plugins](/docs/runtime/plugins) — Pre-Predict and Post-Score binding
+- [Public APIs — LoRA](/docs/configuration/workbench_apis/public#lora-recommender)

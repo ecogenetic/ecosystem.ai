@@ -24,6 +24,8 @@ Two ways to run that loop:
 
 Workbench runs the loop **in-process** on the Workbench FastAPI backend (Motor Mongo + async Runtime HTTP). Python is more flexible for custom scripts. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
 
+The same knobs, including `simulation_type=log_replay`, are on the public gateway under `/public/v1/simulations/*` ([Public APIs — Simulations](/docs/configuration/workbench_apis/public#simulations)).
+
 <Callout type="info" title="Not Data Agents">
 A simulation **writes** Runtime logs. To **analyze** those logs (funnel, rank uptake, catalog), run an [Interactions Analytic](/docs/modules/data_agents/interactions) job on the same `ecosystemruntime` / `ecosystemruntime_response` collections.
 </Callout>
