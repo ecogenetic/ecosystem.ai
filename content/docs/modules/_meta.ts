@@ -5,4 +5,5 @@ export default {
   networks: 'Networks',
   mlrun: 'MLRun (Train + Deploy)',
   two_tower: 'Two-Tower',
+  lora: 'LoRA Recommender',
 }

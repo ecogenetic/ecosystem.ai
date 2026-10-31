@@ -1,6 +1,6 @@
 ---
 title: Modules
-description: Workbench and Runtime product modules — Data Agents, Networks, Spend Personality, Two-Tower, and MLRun.
+description: Workbench and Runtime product modules — Data Agents, Networks, Spend Personality, Two-Tower, LoRA, and MLRun.
 ---
 
 import { GuideCard, GuideCardGrid } from '@/components/docs/GuideCard'
@@ -34,6 +34,12 @@ Modules are operator products that sit on Workbench and compose with the Runtime
     title="Two-Tower"
     description="Dual-encoder retrieval scored in Runtime with similarity."
     icon={<Boxes className="h-5 w-5" strokeWidth={1.75} />}
+  />
+  <GuideCard
+    href="/docs/modules/lora"
+    title="LoRA Recommender"
+    description="Low-rank residual on frozen embeddings — train in Workbench, score in Runtime."
+    icon={<Sparkles className="h-5 w-5" strokeWidth={1.75} />}
   />
   <GuideCard
     href="/docs/modules/mlrun"

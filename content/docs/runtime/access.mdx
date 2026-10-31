@@ -14,6 +14,7 @@ The ecosystem.Ai runtime exposes APIs that can be used to access and manage your
 - The `/refreshWithOptions` endpoint is used to regenerate the [Options Store](/docs/configuration/dynamic/options) and then refresh the runtime.
 - The `/learning` endpoint is used to manually trigger the learning process for a Dynamic Interaction deployment. This process is normally triggered based on the [MONITORING_DELAY environment variable](/docs/runtime/environment_variables). Manually triggering the learning is useful for testing and simulation purposes
 - The `/updateCassandraConfig` endpoint is used to update the contents of the `conf` file that is use the detail the Cassandra connection information, if required. 
+- The `/callSqlServerProcedure` endpoint executes a Microsoft SQL Server stored procedure when SQL Server is configured. See [SQL Server](/docs/configuration/data/sqlserver).
 
 [Custom APIs](/docs/runtime/apiconfiguration/index) can also be exposed.
 
@@ -645,6 +646,25 @@ curl -X 'GET' \
   'http://localhost:8091/learning' \
   -H 'accept: */*'
 ```
+
+## `/callSqlServerProcedure`
+
+Executes a configured SQL Server stored procedure. Requires SQL Server env vars or `sqlserver.*` properties (Runtime 0.9.7.x).
+
+```bash
+curl -X POST 'http://localhost:8091/callSqlServerProcedure' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "procedure": "dbo.usp_X",
+    "parameters": [
+      {"name": "CustomerId", "value": "00000000-0000-0000-0000-000000000001", "type": "uniqueidentifier", "direction": "in"},
+      {"name": "Points", "type": "int", "direction": "out"}
+    ],
+    "type": "r"
+  }'
+```
+
+Response: `{ "data", "outputs", "updateCount" }`. Full parameter types and `type` `r` vs `c` are documented on [SQL Server](/docs/configuration/data/sqlserver).
 
 ## `/updateCassandraConfig`
 The `/updateCassandraConfig` API update the contents of the `conf` file which contains the details of the Cassandra connection to be used by the runtime. The `/refresh` API should be called in order for the new connection details to take effect.

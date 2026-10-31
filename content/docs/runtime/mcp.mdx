@@ -10,7 +10,7 @@ Ecosystem exposes **three different MCP-related surfaces**. They share the path 
 | Surface | Where | Transport | Primary use |
 | --- | --- | --- | --- |
 | **Runtime builtin MCP** | Java `ecosystem-runtime` | `POST /mcp` (JSON-RPC, dual-era) | Score campaigns, feedback loop, campaign admin from AI agents |
-| **Workbench MCP server** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` (+ legacy SSE) | Deployments, enrichment jobs, scoring via Workbench |
+| **Workbench MCP server** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` | Deployments, enrichment jobs, scoring via Workbench |
 | **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` image | FastAPI `/mcp` + custom Python routers | MLFlow model refresh, custom FastAPI APIs |
 
 Protocol reference: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
@@ -159,17 +159,17 @@ Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `
 
 ## Workbench MCP server
 
-Operator-facing guide (credentials, dual auth, full tool list, public vs private APIs): [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
+Operator-facing guide (credentials, auth, full tool list, public vs private APIs): [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
 
 The Workbench backend exposes deployments, enrichment, catalog escape-hatch (`call_endpoint`), and related tools. See also [Claude Agent](/docs/workers/agent_framework/claude-agent) for Operator vs Campaign Management vs external attach.
 
 | Setting | Default | Notes |
 | --- | --- | --- |
 | Streamable HTTP | `POST http://localhost:8001/mcp` | **Preferred** for Cursor, Claude Desktop, MCP Inspector |
-| Legacy SSE (deprecated) | `GET http://localhost:8001/mcp/sse/` | Still mounted; use only for older clients |
+| Legacy SSE | `GET /mcp/sse/`, `/mcp/messages/` | **Removed** (Workbench, Oct 2026) — use Streamable HTTP only |
 | REST info | `GET /api/v1/mcp/` | Tool list and connection hints (requires JWT) |
 
-**Dual auth (required for HTTP `/mcp`):** `Authorization: Bearer <user-jwt>` and `X-API-Key: ewb_public_...` (same as the public API gateway).
+**HTTP `/mcp` auth:** one credential — JWT **or** `X-API-Key: ewb_public_...` (same rule as the public API gateway). See [Workbench MCP](/docs/configuration/workbench_apis/mcp).
 
 Configure the public base URL with `MCP_PUBLIC_BASE_URL` (default `http://localhost:8001`). The Vite UI port (`5270`) does **not** proxy `/mcp` in local dev — point clients at the backend port or nginx.
 
@@ -178,7 +178,7 @@ Configure the public base URL with `MCP_PUBLIC_BASE_URL` (default `http://localh
 | Mode | Who | Notes |
 | --- | --- | --- |
 | **In-process** | In-app Claude Operator (`tool_profile: operator`) | Same tool implementations as HTTP; no public API key required |
-| **HTTP `POST /mcp`** | External Claude Code / Agent SDK | Dual-auth JWT + `X-API-Key` |
+| **HTTP `POST /mcp`** | External Claude Code / Agent SDK | JWT or `X-API-Key` |
 | **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Typed tools; optional alongside HTTP |
 
 External attach does **not** require Workbench’s in-image Agent SDK bundled CLI — the client brings its own. In-app Operator readiness (`GET /api/v1/claude-agent/status`) does require the bundled binary (Debian slim image).
@@ -191,7 +191,6 @@ External attach does **not** require Workbench’s in-image Agent SDK bundled CL
     "ecosystem-workbench": {
       "url": "http://localhost:8001/mcp",
       "headers": {
-        "Authorization": "Bearer <user-jwt>",
         "X-API-Key": "ewb_public_..."
       }
     }
@@ -282,13 +281,13 @@ See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via 
 
 ## Client compatibility
 
-| Client | Runtime builtin `POST /mcp` | Workbench Streamable HTTP | Workbench legacy SSE | Sidecar |
-| --- | --- | --- | --- | --- |
-| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes | Deprecated | No |
-| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes | Deprecated | No |
-| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes | Legacy only | No |
-| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` | — | Custom FastAPI only |
-| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK | — | No |
+| Client | Runtime builtin `POST /mcp` | Workbench Streamable HTTP | Sidecar |
+| --- | --- | --- | --- |
+| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes | No |
+| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes | No |
+| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes | No |
+| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` | Custom FastAPI only |
+| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK | No |
 
 **stdio harness:** the `ecosystem_workbench_mcp` Python package exposes Workbench public APIs over stdio for local agent hosts (Hermes, Cursor `command` config). That is separate from the HTTP `/mcp` servers above.
 

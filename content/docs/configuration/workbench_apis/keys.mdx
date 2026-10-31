@@ -37,6 +37,7 @@ Use this tab for notebooks, partner apps, Campaign Management, and MCP clients t
 | Owner ID / name / email | Who owns the key. `created_by` stays the acting admin |
 | Expires on | Optional. Empty means no expiry |
 | Scopes | Checkboxes. Only grant what the integration needs |
+| Linked internal key | Optional. When callers use **only** a public key on `:8004` or HTTP `/mcp`, private backend calls use this linked **internal API key** (Administration → API Keys → Public API Access → edit credential). Only the key id is stored server-side |
 
 The raw secret is shown **once** on create or rotate. Prefix is `ewb_public_`. If the owner loses it, **rotate** — do not expect reveal after the one-time display unless the admin uses the reveal endpoint while the hashed secret is still recoverable.
 
@@ -46,16 +47,20 @@ Status:
 - **revoked** — admin revoked; calls fail
 - **expired** — past `expires_on`
 
-### Dual auth after minting
+### Calling the gateway after minting
 
-Every public gateway call needs both:
+Send **one** credential:
 
-```http
-X-API-Key: ewb_public_…
-Authorization: Bearer <workbench-jwt>
-```
+- a **public key** — `X-API-Key: ewb_public_…` or `Authorization: Bearer ewb_public_…`, or
+- a **Workbench user JWT** — `Authorization: Bearer <jwt>`
 
-If `Authorization` is reserved, send the JWT as `X-User-Token`. Login without a public key:
+With a **public key**, that credential's scopes and resource bindings apply; private calls use the **internal API key linked on the credential** (Public API Access → edit credential → Linked internal key). Only the key id is stored. With a **JWT**, the user's Workbench roles apply and public scopes are ignored.
+
+Sending **both** still works: scopes apply and the JWT is forwarded. When `Authorization` already holds the public key, carry a JWT as `X-User-Token`.
+
+`PUBLIC_API_INTERNAL_SERVICE_TOKEN` is a deployment fallback for automated jobs only — not for interactive users.
+
+Login without a public key:
 
 ```http
 POST /public/v1/auth/login

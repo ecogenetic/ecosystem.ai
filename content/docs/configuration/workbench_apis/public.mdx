@@ -1,6 +1,6 @@
 ---
 title: Public APIs
-description: Workbench public gateway on port 8004 — dual auth, scopes, and every /public/v1 route
+description: Workbench public gateway on port 8004 — one-credential auth, scopes, and every /public/v1 route
 ---
 
 import { Callout } from 'nextra/components'
@@ -19,16 +19,18 @@ Administration → API Keys → Public API Access → **Public APIs** is generat
 
 ## Auth
 
+Send **one** credential on protected routes: a public key (`X-API-Key: ewb_public_…` or `Authorization: Bearer ewb_public_…`) **or** a Workbench user JWT (`Authorization: Bearer <jwt>`).
+
+With a public key only, scopes and resource bindings on that credential apply; the gateway uses the **linked internal API key** for private backend calls. With a JWT only, Workbench roles apply. Sending both still works.
+
 ```http
 GET http://localhost:8004/public/v1/health
 X-API-Key: ewb_public_…
-Authorization: Bearer <workbench-jwt>
 ```
 
-- **Public API key** — which gateway routes are allowed
-- **User JWT** — that user's Workbench roles on the private backend
+Health and login do not require a public key. Every other `/public/v1` route requires one of the credentials above.
 
-Login (no public key):
+Login (no public key required for this call):
 
 ```bash
 curl -s -X POST http://localhost:8004/public/v1/auth/login \
@@ -36,22 +38,19 @@ curl -s -X POST http://localhost:8004/public/v1/auth/login \
   -d '{"email":"you@example.com","password":"your-password"}'
 ```
 
-Then:
+Example with a public key only:
 
 ```python
 import os
 import requests
 
 BASE = "http://localhost:8004/public/v1"
-headers = {
-    "X-API-Key": os.environ["EWB_PUBLIC_API_KEY"],
-    "Authorization": f"Bearer {os.environ['EWB_USER_JWT']}",
-}
+headers = {"X-API-Key": os.environ["EWB_PUBLIC_API_KEY"]}
 projects = requests.get(f"{BASE}/entities/projects", headers=headers, params={"limit": 20})
 print(projects.json())
 ```
 
-Health and login do not require a public key. Every other `/public/v1` route does.
+The Python SDK's `login()` is **optional** when you call with a scoped public key that has a linked internal key.
 
 ## Grantable scopes
 
