@@ -5753,6 +5753,8 @@ Two ways to run that loop:
 
 Workbench runs the loop **in-process** on the Workbench FastAPI backend (Motor Mongo + async Runtime HTTP). Python is more flexible for custom scripts. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
 
+The same knobs, including `simulation_type=log_replay`, are on the public gateway under `/public/v1/simulations/*` ([Public APIs — Simulations](/docs/configuration/workbench_apis/public#simulations)).
+
 **Not Data Agents:** A simulation **writes** Runtime logs. To **analyze** those logs (funnel, rank uptake, catalog), run an [Interactions Analytic](/docs/modules/data_agents/interactions) job on the same `ecosystemruntime` / `ecosystemruntime_response` collections.
 
 **Notebooks simulation deprecated:** The ecosystem-notebooks `process_simulation` routes return **410**. Configure and run simulations in Workbench 2 only.
@@ -6646,7 +6648,7 @@ Summary: Workbench public gateway on port 8004 — one-credential auth, scopes, 
 
 # Public APIs
 
-The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates a public credential, forwards the **caller's JWT** to private Workbench `:8001/api/v1`, and writes audit events. It never uses a shared operator token for interactive user requests.
+The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates either a Workbench JWT or a public key. With a key alone, private calls use the [linked internal API key](/docs/configuration/workbench_apis/keys) on that credential (Administration → API Keys → Public API Access). When a JWT is present, it is forwarded to private Workbench `:8001/api/v1`. The gateway writes audit events and never uses a shared operator token for interactive user requests.
 
 `PUBLIC_API_INTERNAL_SERVICE_TOKEN` is an optional server-only fallback for automated jobs, not for people.
 
@@ -6703,6 +6705,9 @@ The Python SDK's `login()` is **optional** when you call with a scoped public ke
 | `money-personality:runs` | Money Personality process |
 | `sentimental-equilibrium:runs` | Sentimental equilibrium process |
 | `two-tower:configs` / `two-tower:train` | Two-Tower configs, train, export, batch-score |
+| `lora:configs` / `lora:train` | LoRA Recommender configs, train, export, batch-score |
+| `data-management:read` / `data-management:write` | Mongo Data Management (optional credential bindings `database_names`, `collection_refs` as `db.collection`) |
+| `simulation:read` / `simulation:runs` | Simulation status, logs, results; start and cancel runs |
 | `ontology:read` / `ontology:write` | Ontology documents and mappings |
 
 Grant the minimum set. Polling async work also needs `jobs:read`.
@@ -6797,6 +6802,57 @@ The ecosystem-server munge option `sentiment` is retired. Callers that still hit
 | `POST` | `/public/v1/two-tower/batch-score` | `two-tower:train` | Top-K offers to a collection |
 | `POST` | `/public/v1/two-tower/generate-python` | `two-tower:train` | Runnable Python + explanation |
 
+## LoRA Recommender
+
+Same shape as Two-Tower on the public gateway. Operator UI: [LoRA Recommender](/docs/modules/lora).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/lora/configs` | `lora:configs` | List or upsert |
+| `GET` / `PUT` | `/public/v1/lora/configs/{config_id}` | `lora:configs` | Read / update |
+| `GET` | `/public/v1/lora/predictors` | `lora:configs` | Distinct predictors in flatten |
+| `GET` | `/public/v1/lora/predictor-date-bounds` | `lora:configs` | Date range and row count |
+| `GET` | `/public/v1/lora/runs` | `lora:configs` | Recent training runs |
+| `POST` | `/public/v1/lora/train` | `lora:train` | Start training |
+| `POST` | `/public/v1/lora/concept-test` | `lora:train` | Sync concept rank for one customer |
+| `POST` | `/public/v1/lora/export-embeddings` | `lora:train` | Export user/item embeddings |
+| `POST` | `/public/v1/lora/batch-score` | `lora:train` | Top-K offers to a collection |
+| `POST` | `/public/v1/lora/generate-python` | `lora:train` | Runnable Python + explanation |
+
+## Simulations
+
+Workbench in-process simulation engine. UI and field semantics: [Simulations](/docs/configuration/simulations).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/simulations/status` | `simulation:read` | Mongo / engine health |
+| `POST` | `/public/v1/simulations/validate-connections` | `simulation:read` | Database and pulse-responder checks |
+| `POST` | `/public/v1/simulations/from-deployment` | `simulation:runs` | Materialize simulation from a deployment |
+| `POST` | `/public/v1/simulations/run` | `simulation:runs` | Start a run |
+| `POST` | `/public/v1/simulations/cancel` | `simulation:runs` | Cooperative cancel |
+| `GET` / `DELETE` | `/public/v1/simulations/logs` | `simulation:read` / `simulation:runs` | Read or clear run logs |
+| `GET` | `/public/v1/simulations/results/parameters` | `simulation:read` | Options-store parameter snapshots |
+| `GET` | `/public/v1/simulations/results/plot` | `simulation:read` | Plot series |
+| `GET` | `/public/v1/simulations/results/options` | `simulation:read` | Options-store snapshots |
+
+## Data Management
+
+Scoped Mongo inspection and document CRUD (not entity collections). Optional credential bindings: `database_names`, `collection_refs` (`db.collection`).
+
+**Hard-blocked and private-only:** The gateway rejects `admin`, `local`, and `config`, any `system.*` collection, and the public credential / audit collections. **Drop**, **rename**, **deleteMany**, **aggregate**, and **export** stay on the private API only.
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/data-management/databases` | read / write | List or create databases |
+| `GET` / `POST` | `/public/v1/data-management/databases/{database}/collections` | read / write | List or create collections |
+| `GET` | `/public/v1/data-management/databases/{database}/collections/{collection}/fields` | `data-management:read` | Field sample / schema |
+| `GET` | `/public/v1/data-management/databases/{database}/collections/{collection}/indexes` | `data-management:read` | Index list |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents/query` | `data-management:read` | Query documents |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents` | `data-management:write` | Insert documents |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents/update` | `data-management:write` | Update documents (**POST**, not PUT) |
+| — | (single-document delete — path in live catalog) | `data-management:write` | Delete one document |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/import` | `data-management:write` | Import documents |
+
 ## Ontology
 
 Updates use **POST**, not PUT/PATCH. Same contract as private `/api/v1/ontology/*`.
@@ -6879,6 +6935,9 @@ Public collections include: projects, agent configs / nodes / channels, custom c
 | `PUBLIC_API_INTERNAL_BASE_URL` | `http://localhost:8001/api/v1` | Private proxy target |
 | `PUBLIC_API_INTERNAL_SERVICE_TOKEN` | — | Job fallback only |
 | `PUBLIC_API_AUDIT_TTL_DAYS` | `0` = keep | Audit TTL |
+| `PUBLIC_API_DOCS_ENABLED` | — (see Workbench `public-api-gateway` runbook) | Enable OpenAPI at `/docs` on `:8004` |
+| `PUBLIC_API_DEFAULT_RATE_LIMIT_PER_MINUTE` | — (see runbook) | Default per-credential rate limit |
+| `PUBLIC_API_EXTERNAL_BASE_URL` | — | Public base URL for open-tracking and unsubscribe links (must be reachable from mail clients) |
 
 Related: [Private APIs](/docs/configuration/workbench_apis/private), [API Keys](/docs/configuration/workbench_apis/keys), [MCP](/docs/configuration/workbench_apis/mcp).
 
@@ -9969,11 +10028,11 @@ Modules are operator products that sit on Workbench and compose with the Runtime
 
 Source: `docs/modules/lora.mdx`
 URL: https://developer.ecosystem.ai/docs/modules/lora
-Summary: Low-rank residual recommender on frozen nomic-embed-text — train in Workbench, score through Runtime plugins
+Summary: Train a LoRA recommender in Workbench and score offers through the Runtime closed loop
 
 # LoRA Recommender
 
-The **LoRA Recommender** is a **retrieval module**, not a generative LLM feature. It trains a low-rank residual on top of frozen **`nomic-embed-text`** embeddings, then scores offers in the Runtime closed loop like other recommenders.
+Train and deploy a **LoRA Recommender** in Workbench, then score ranked offers through the same Runtime closed loop as other recommenders (`POST /invocations`, then `POST /response`).
 
 Operator entry: **Solutions → LoRA Recommender** (`/lora`).
 
@@ -9988,13 +10047,12 @@ Embeddings and run metadata live in:
 
 ## Operator flow
 
-1. Configure a LoRA job (rank, corpora, train/validation split).
-2. **Train** — fits the residual on frozen encoder outputs (`rank=0` disables the residual for baseline comparisons).
-3. **Concept test** — offline checks before export.
-4. **Export** — artifacts for deployment binding.
-5. **Bind on deployment** — set runtime properties (below) and **Push** to the target runtime.
+1. Configure a LoRA job in the Workbench UI (training corpora and split).
+2. **Train**, then **Concept test** and **Export** when you are ready to deploy.
+3. **Bind on deployment** — open the deployment step, set **Model Type → LoRA Recommender**, and bind the training **`run_id`**. Set runtime properties (below) and **Push** to the target runtime. Push fails if required embedding data for that run is not present.
+4. Optional: **Generate Notebook** (`notebooks/lora_train.ipynb`) or **Use in Python** for a standalone script.
 
-Public HTTP routes also exist under Workbench `public_api/routers/lora.py` for scoped integrations.
+External integrations: [public gateway LoRA routes](/docs/configuration/workbench_apis/public#lora-recommender) with scopes `lora:configs` and `lora:train`.
 
 ## Runtime scoring
 
@@ -10002,26 +10060,31 @@ Set on the deployment / `ecosystem.properties`:
 
 ```properties
 predictor.model.type=lora
-predictor.lora.rank=8
-predictor.lora.user_embedding_collection=logging.lora_user_embeddings
-predictor.lora.item_embedding_collection=logging.lora_item_embeddings
-plugin.prescore=…PrePredictLoRA
-plugin.postscore=…PostScoreLoRA
+predictor.lora.run.id=<run_id>
+predictor.lora.embedding.db=logging
+predictor.lora.user.collection=lora_user_embeddings
+predictor.lora.item.collection=lora_item_embeddings
+predictor.lora.customer.key=<customer_field>
+predictor.lora.offer.key=<offer_field>
+predictor.lora.metric=cosine
+plugin.prescore=com.ecosystem.plugin.customer.PrePredictLoRA
+plugin.postscore=com.ecosystem.plugin.customer.PostScoreLoRA
 ```
 
-Exact property keys follow your project template; see Workbench deployment export for the bound class names.
+Replace `<run_id>`, `<customer_field>`, and `<offer_field>` with values from your project and flatten schema.
 
 Closed loop unchanged: `POST /invocations` then `POST /response` with `params` as a JSON **string**.
 
 ## Project Generate
 
-Project **Generate** can emit LoRA-related keywords and deployment snippets when the prompt describes embedding-based retrieval — use it after the flatten store and training corpora exist.
+After the flatten store exists, Project **Generate** can suggest LoRA-related deployment keywords and property snippets for your prompt.
 
 ## Related
 
 - [Two-Tower Module](/docs/modules/two_tower) — dual-encoder retrieval in the same embedding space family
 - [CPR Feature Store](/docs/configuration/cpr_feature_store) — flatten source for training
 - [Runtime plugins](/docs/runtime/plugins) — Pre-Predict and Post-Score binding
+- [Public APIs — LoRA](/docs/configuration/workbench_apis/public#lora-recommender)
 
 ---
 
@@ -26576,6 +26639,14 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 
 ## October 2026
 
+- **Deployment Test phone.** Editable `/invocations` body in a phone frame; each scored row can **Accept** (`POST /deployments/test-response` closes the loop via `/response`); **Integrate** tab with TS/JS/Python/React/Vue snippets
+- **Project Git linking.** Projects link to GitHub/GitLab repositories (Project Versions)
+- **Solution templates.** Credit, credit priced offer, and personality × send-time
+- **Spend/Money Personality batch scoring.** Slices and a period interval; Process step shows errors on reattach
+- **Analytics.** Correlation chart, personality-drift template, dashboard generation from a prompt (built-in templates via `template_id`), Dashboard Studio interactive tables
+- **Marketing and sales outreach templates.** `wednesday_webinar_invite`, `recorded_mini_pitch`, `sales_three_email_sequence`
+- **Ontology Load Meta.** Loads the packaged platform graphs
+- **Public gateway.** Data Management, Simulations, and LoRA routes
 - **Custom Forms**, **Data Management & Campaign**, **Time Process Campaign**, **Table Views**, **Project Utilities**
 - **Explanations** and **Sentimental Equilibrium** operator updates
 - **Simulation transformations** and **log replay** (Shared notebook export; results in `simulations.simulation_logs` / `simulation_param_outputs`)
