@@ -157,7 +157,7 @@ If any of these three loads fails the corresponding item in `params` will be emp
 </Callout>
 
 <Callout type="tip" title="Note">
-    The default functionality in some of the template post scoring logic structures assumes the following columns are present in the [Offer Matrix](/docs/configuration/data/meta) `cost, price, offer_id, offer_name, static_offers`. 
+    The default functionality in some of the template post scoring logic structures assumes the following columns are present in the [Offer Matrix](/docs/configuration/data/metadata) `cost, price, offer_id, offer_name, static_offers`. 
 </Callout>
 
 The Offer Matrix details will be visible in the `properties` file with the following format:
@@ -173,7 +173,7 @@ predictor.offer.matrix={"database":"rest","url":"https://api.example.com/offers"
 The pre and post scoring logic, custom reward function for Dynamic Interactions and API structure java classes to use in the Deployment.
 
 ### API endpoint
-The API endpoint is used to configure the API structure to be used in the Deployment. To use the default API structure leave this section blank. See the [API configuration](/docs/runtime/api_configuration) for more information on how to configure the API structure.
+The API endpoint is used to configure the API structure to be used in the Deployment. To use the default API structure leave this section blank. See the [API configuration](/docs/runtime/apiconfiguration) for more information on how to configure the API structure.
 
 ### Pre Scoring logic
 The pre scoring logic is used to configure the pre scoring plugin to be used in the Deployment. The pre scoring plugin is used to perform any pre processing of the input data before it is passed to the model for scoring. For Dynamic Interaction configurations select PreScoreDynamic.java for a pre scoring template. For static model configurations PrePredictCustomer.java is the default template and is the pre scoring logic that will be used by default. If you wish to  customise your pre scoring logic see the [pre scoring logic](/docs/runtime/prepredict) documentation as well as the guide for setting up a [local development environment](/docs/user_guides/runtime_plugin_development).

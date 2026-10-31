@@ -200,6 +200,17 @@ Do **not** call `/responses` (plural). After the loop, inspect the options store
 
 For Beta plots from Mongo alpha/beta (Ecosystem Rewards), filter the options store by contextual variables and overlay `scipy.stats.beta.pdf` — same idea as the Workbench plot output.
 
+## Log replay and generated notebook
+
+A **log-replay** run can materialize a **Shared notebook** (`notebook_name` / `notebook_path`). The simulation form links the path as `/notebooks?path=…`.
+
+The generated notebook's **CONFIG** cell replays the same closed loop as Workbench simulations: `POST /invocations` then `POST /response` against the chosen deployment. Results land in:
+
+- `simulations.simulation_logs`
+- `simulations.simulation_param_outputs` (Hit@K, beyond-accuracy metrics)
+
+To execute the notebook **outside** Workbench, set `EXTERNAL_MONGO_URI` in the CONFIG cell (commented template in the export) so Mongo reads/writes target your runtime logging database.
+
 ## Related
 
 - [Deployments](/docs/configuration/deployment)

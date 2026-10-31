@@ -2,7 +2,7 @@
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://ecosystem.ai',
+  siteUrl: 'https://developer.ecosystem.ai',
   generateRobotsTxt: true,
   changefreq: 'daily',
   latex: true,

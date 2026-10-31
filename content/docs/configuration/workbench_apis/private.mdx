@@ -17,7 +17,7 @@ Authorization: Bearer <workbench-jwt>
 Local health (no JWT): `GET http://localhost:8001/health`. Root: `GET http://localhost:8001/` returns API name and version.
 
 <Callout type="warning" title="Do not expose :8001 to partners">
-Bind the private API to the cluster network. External notebooks and vendors should use **:8004** with a public credential. MCP HTTP still uses `:8001/mcp` but requires the same dual auth as the gateway.
+Bind the private API to the cluster network. External notebooks and vendors should use **:8004** with a public credential. MCP HTTP still uses `:8001/mcp` with the same **one-credential** rule as the gateway (public key or JWT).
 </Callout>
 
 ## How the SPA authenticates

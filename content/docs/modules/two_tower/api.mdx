@@ -206,7 +206,7 @@ Response:
 
 ## Public gateway (`/public/v1/two-tower`)
 
-Dual-auth (`X-API-Key` + user JWT). Scopes: `two-tower:configs`, `two-tower:train`, plus `jobs:read` to poll async jobs.
+One credential on the gateway: `X-API-Key` (link an internal API key on the public credential) or a user JWT. Generated clients typically send `X-API-Key` only. Scopes: `two-tower:configs`, `two-tower:train`, plus `jobs:read` to poll async jobs.
 
 | Method | Path | Scope |
 | --- | --- | --- |

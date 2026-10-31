@@ -18,8 +18,8 @@ Open **Administration → API Keys** (admin role). Switch **Public API Access** 
 | Surface | Default local URL | Who uses it | Auth |
 | --- | --- | --- | --- |
 | **Private Workbench API** | `http://localhost:8001/api/v1` | Workbench SPA, Campaign Management, internal services | Workbench session JWT (`Authorization: Bearer`) |
-| **Public API gateway** | `http://localhost:8004/public/v1` | Notebooks, partners, MCP harness, external apps | Dual: `X-API-Key: ewb_public_…` **and** a user JWT |
-| **Workbench MCP** | `POST http://localhost:8001/mcp` | Ecosystem Agent, Cursor, Claude Code | In-process for `/assistant`; dual-auth for HTTP MCP |
+| **Public API gateway** | `http://localhost:8004/public/v1` | Notebooks, partners, MCP harness, external apps | One credential: public key **or** Workbench JWT |
+| **Workbench MCP** | `POST http://localhost:8001/mcp` | Ecosystem Agent, Cursor, Claude Code | In-process for `/assistant`; public key or JWT for HTTP MCP |
 | **LLM proxy** | `POST http://localhost:8001/v1/messages` | Agent SDK / Claude Code | Workbench JWT; no Anthropic key in the image |
 | **Runtime scoring** | `http://localhost:8091/invocations` | Production apps, Runtime Dashboard | Runtime config; closed loop uses `/response` (singular) |
 | **Runtime MCP** | `POST http://localhost:8091/mcp` | Agents that score campaigns | Separate from Workbench MCP |
@@ -42,9 +42,9 @@ Create public credentials with an owner (user, service account, organization, or
 ## Typical access paths
 
 1. **Browser operator** — sign in to Workbench. The SPA uses the private API with your session JWT. No public key.
-2. **External integration** — mint a public credential, obtain a user JWT (`POST /public/v1/auth/login` or Workbench login), call `:8004/public/v1/…` with both headers.
+2. **External integration** — mint a public credential, link an internal API key on that credential, call `:8004/public/v1/…` with `X-API-Key` (or Bearer public key). JWT login is optional when you use a public key alone.
 3. **Ecosystem Agent** — **Administration → Agents** or `/assistant`. In-process MCP; no public key.
-4. **Cursor / Claude Code** — dual-auth `POST /mcp` plus `ANTHROPIC_BASE_URL` pointing at Workbench `:8001` for `POST /v1/messages`.
+4. **Cursor / Claude Code** — `POST /mcp` with a public key or JWT, plus `ANTHROPIC_BASE_URL` pointing at Workbench `:8001` for `POST /v1/messages`.
 5. **Campaign scoring** — Runtime `POST /invocations` then `POST /response`. Workbench MCP `score_customer` / `send_feedback` wrap a **deployment**; they are not Runtime `POST /mcp`.
 
 ## Pages in this section
