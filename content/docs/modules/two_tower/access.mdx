@@ -20,18 +20,20 @@ file is loaded):
 
 ```properties
 predictor.model.type=similarity
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
 
 # optional live user embedding via the PyTorch sidecar
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:two_tower_user_v1
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
 ```
+
+Bind **PrePredictTwoTower** and **PostScoreTwoTower** on the deployment step (or
+set `plugin.prescore` / `plugin.postscore` to the class names your project export
+emits).
 
 | Property | Required | Meaning |
 | --- | --- | --- |
 | `predictor.model.type=similarity` | yes | bypass H2O + dynamic; use cosine/dot scoring |
-| `plugin.prescore` | yes | `PrePredictTwoTower` (loads embeddings) |
-| `plugin.postscore` | yes | `PostScoreTwoTower` (ranks offers) |
+| PrePredictTwoTower (pre-score plugin) | yes | loads embeddings |
+| PostScoreTwoTower (post-score plugin) | yes | ranks offers |
 | `predictor.twotower.user.embed` | optional | live user vector via api:pytorch |
 | `mojo.key` | omit | not used in similarity mode |
 

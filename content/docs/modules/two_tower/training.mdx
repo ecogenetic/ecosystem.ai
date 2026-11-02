@@ -166,9 +166,9 @@ This is the exact computation the offline concept test and batch scoring use.
 
 ## PyTorch training engine
 
-PyTorch training runs through the `ecosystem-notebooks` `/pytorch` sidecar. From
-Workbench, a PyTorch configuration is translated into a `POST /pytorch/train`
-request with `model_type="two_tower"`.
+PyTorch training runs through the Workbench **PyTorch notebooks** engine. From
+Workbench, select `pytorch_notebooks` on the saved configuration and run **Train**
+(the same flow as the `/public/v1/two-tower/train` public API).
 
 ```json
 {
@@ -261,7 +261,7 @@ Item vectors may alternatively ride on the offer matrix as an `embedding` field.
 <Callout type="info" title="Exporting vectors">
   The training run produces the towers; populating the embedding collections is
   an explicit export job. H2O exports use `deepfeatures(layer=0)`. PyTorch
-  exports call `/pytorch/invocations` with `tower="user"` or `tower="item"`.
+  exports batch user and item tower embeddings through the Workbench export job.
   Both paths write the same normalized Mongo document shape.
 </Callout>
 

@@ -12756,18 +12756,20 @@ file is loaded):
 
 ```properties
 predictor.model.type=similarity
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
 
 # optional live user embedding via the PyTorch sidecar
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:two_tower_user_v1
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
 ```
+
+Bind **PrePredictTwoTower** and **PostScoreTwoTower** on the deployment step (or
+set `plugin.prescore` / `plugin.postscore` to the class names your project export
+emits).
 
 | Property | Required | Meaning |
 | --- | --- | --- |
 | `predictor.model.type=similarity` | yes | bypass H2O + dynamic; use cosine/dot scoring |
-| `plugin.prescore` | yes | `PrePredictTwoTower` (loads embeddings) |
-| `plugin.postscore` | yes | `PostScoreTwoTower` (ranks offers) |
+| PrePredictTwoTower (pre-score plugin) | yes | loads embeddings |
+| PostScoreTwoTower (post-score plugin) | yes | ranks offers |
 | `predictor.twotower.user.embed` | optional | live user vector via api:pytorch |
 | `mojo.key` | omit | not used in similarity mode |
 
@@ -12815,7 +12817,7 @@ Related pages: [Real-Time Scoring](/docs/modules/two_tower/runtime),
 
 Source: `docs/modules/two_tower/api.mdx`
 URL: https://developer.ecosystem.ai/docs/modules/two_tower/api
-Summary: Complete request and response JSON for two-tower training and scoring across the stack — workbench2 algorithm endpoints, the ecosystem-notebooks PyTorch sidecar, and the ecosystem-runtime invocations contract.
+Summary: Workbench algorithm and public API JSON for two-tower training, export, and runtime invocations.
 
 # API Reference
 
@@ -13039,97 +13041,10 @@ One credential on the gateway: `X-API-Key` (link an internal API key on the publ
 
 `POST /generate-python` returns `explanation_markdown`, `python_source`, `scopes`, and `endpoints` for the full pipeline. `generate-notebook` stays private/UI only.
 
-Client: `ecosystem_workbench_public` (`WorkbenchPublicClient.two_tower`).
-
-## MCP (stdio harness)
-
-Typed tools in `ecosystem_workbench_mcp` (not HTTP `/mcp` on :8001): `two_tower_configs`, `two_tower_get_config`, `two_tower_create_config`, `two_tower_update_config`, `two_tower_predictors`, `two_tower_predictor_date_bounds`, `two_tower_preview_schema`, `two_tower_prepare_feature_frame`, `two_tower_runs`, `two_tower_train`, `two_tower_concept_test`, `two_tower_export_embeddings`, `two_tower_batch_score`, `two_tower_generate_python`, plus `jobs_get`. Mutating calls require `confirm=true` when `EWB_PUBLIC_DESTRUCTIVE=confirm`.
-
-## ecosystem-notebooks — PyTorch sidecar
-
-Base URL: `http://<notebooks-host>:8010`.
-
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `POST` | `/pytorch/train` | train MLP or two-tower model |
-| `POST` | `/pytorch/invocations` | score / embed by `model_id` |
-| `GET` | `/pytorch/models` | list trained model ids |
-| `GET` | `/pytorch/health` | health check |
-
-### Train
-
-Request:
-
-```json
-{
-  "model_id": "customer_offer_retrieval_v1",
-  "model_type": "two_tower",
-  "async": true,
-  "problem_type": "binary_classification",
-  "data": {
-    "source": {
-      "database": "logging",
-      "collection": "ecosystemruntime_flatten",
-      "pipeline": [
-        { "$match": { "predictor": "my_predictor" } },
-        { "$project": { "_id": 0, "customer_id": 1, "offer": 1, "price": 1, "rank": 1, "score": 1, "accepted": 1 } }
-      ],
-      "limit": 100000
-    },
-    "csv_path": null,
-    "inline": null,
-    "target_column": "accepted",
-    "categorical_columns": ["customer_id", "offer"],
-    "train_test_split": 0.2,
-    "random_state": 42
-  },
-  "hyperparameters": {
-    "epochs": 25, "batch_size": 256, "hidden": 64, "learning_rate": 0.001,
-    "embedding_dim": 32,
-    "user_features": ["customer_id", "price", "rank", "score"],
-    "item_features": ["offer", "price", "rank", "score"],
-    "user_id_column": "customer_id", "item_id_column": "offer"
-  }
-}
-```
-
-Response:
-
-```json
-{
-  "run_id": "run_2f1c",
-  "status": "succeeded",
-  "model_id": "two_tower_user_v1",
-  "metrics": { "user_auc": 0.71, "item_auc": 0.67 },
-  "rows_total": 100000
-}
-```
-
-### Invocations (score / embed)
-
-Request:
-
-```json
-{
-  "model_id": "customer_offer_retrieval_v1",
-  "instances": [
-    { "customer_id": "user_1", "price": 0, "rank": 1, "score": 0, "tower": "user" }
-  ]
-}
-```
-
-Response:
-
-```json
-{
-  "predictions": [ { "prediction": 0.87, "embedding": [0.11, 0.20, 0.07] } ],
-  "final_result": [ { "prediction": 0.87, "embedding": [0.11, 0.20, 0.07] } ],
-  "framework": "pytorch"
-}
-```
-
-**Embedding shape:** `ApiModelClient.embed()` accepts the embedding at `predictions[0].embedding`,
-  or top-level `embedding` / `vector` / `outputs[0]`.
+For PyTorch engine training and optional live user embeddings, use Workbench
+**Train** / **Export embeddings** or the public routes above. Sidecar HTTP paths
+are not part of the operator contract — see
+[PyTorch Serving](/docs/modules/two_tower/pytorch).
 
 ## Python runner
 
@@ -13271,9 +13186,9 @@ clear responsibility:
 - **Workbench2** is the control plane. Users create saved Two-Tower
   configurations, choose an engine, launch jobs, run concept tests, export
   embeddings, and bind the exported run to a deployment.
-- **ecosystem-notebooks** is the PyTorch training and embedding sidecar. It is
-  used when the saved configuration selects the `pytorch_notebooks` engine.
-- **ecosystem-runtime** is the real-time scoring plane. It does not train
+- The **PyTorch notebooks sidecar** trains models when the saved configuration
+  selects the `pytorch_notebooks` engine.
+- The **runtime** is the real-time scoring plane. It does not train
   models; it reads the deployed configuration and ranks the request's offer
   matrix using exported embeddings and similarity scoring.
 
@@ -13285,8 +13200,8 @@ engine choice, export collections, and deployment defaults. Workbench2 then
 dispatches to the selected engine:
 
 - `h2o` uses the built-in Workbench H2O Deep Learning path.
-- `pytorch_notebooks` calls `ecosystem-notebooks /pytorch/train` with
-  `model_type="two_tower"`.
+- `pytorch_notebooks` runs training through the Workbench PyTorch notebooks engine
+  (`model_type="two_tower"`).
 
 After training, Workbench2 stores run metadata in `two_tower_runs`, lets the
 user run a concept test, and then runs an explicit embedding export job. That
@@ -13299,7 +13214,7 @@ flowchart TD
   Params --> Engine{"Training engine"}
 
   Engine --> H2O["Workbench2 H2O Deep Learning trainer"]
-  Engine --> PT["ecosystem-notebooks /pytorch/train"]
+  Engine --> PT["PyTorch notebooks engine"]
 
   H2O --> H2OModels["User tower + item tower models"]
   PT --> PTArtifacts["PyTorch two-tower artifacts"]
@@ -13323,7 +13238,7 @@ same: keyed, normalized vectors grouped by `run_id`.
 Runtime scoring starts after Workbench2 has generated deployment properties for
 the selected Two-Tower run. The deployment marks the model as
 `predictor.model.type=similarity` and selects the Two-Tower pre/post plugins.
-That tells ecosystem-runtime to bypass the normal H2O/dynamic scoring path for
+That tells the runtime to bypass the normal H2O/dynamic scoring path for
 that predictor and use vector similarity instead.
 
 ```mermaid
@@ -13342,11 +13257,11 @@ flowchart TD
   Similarity --> Ranked["Ranked offerMatrix response"]
 ```
 
-In this scoring flow, ecosystem-runtime does not need to load the training
-framework or run neural-network inference on every request. It only needs the
-customer vector, the candidate offer vectors, and the configured similarity
-metric. This keeps the hot path small while still allowing Workbench2 and
-ecosystem-notebooks to evolve the training engines independently.
+In this scoring flow, the runtime does not need to load the training framework or
+run neural-network inference on every request. It only needs the customer vector,
+the candidate offer vectors, and the configured similarity metric. This keeps the
+hot path small while still allowing Workbench and the training engines to evolve
+independently.
 
 ## Retrieval versus ranking
 
@@ -13576,7 +13491,7 @@ flowchart LR
 | Stage | Component | Repo |
 | --- | --- | --- |
 | Configure and operate | `/two-tower` saved configurations, jobs, concept tests, exports | `ecosystem-workbench2` |
-| Train towers | H2O Deep Learning or PyTorch engine | `ecosystem-workbench2` / `ecosystem-notebooks` |
+| Train towers | H2O Deep Learning or PyTorch notebooks engine | Workbench |
 | Export embeddings | runtime embedding export job to MongoDB | `ecosystem-workbench2` |
 | Real-time scoring | `similarity` model type + `SimilarityScorer` + `PostScoreTwoTower` | `ecosystem-runtime` |
 | Storage | embedding collections in MongoDB | shared |
@@ -13594,7 +13509,7 @@ real-time scoring carries no model-inference cost in the hot path.
 | `/two-tower` dashboard | table of saved configs, editable config panel, run buttons, concept test, export status, and per-config job history |
 | Python runner | scriptable entry point for train → concept test → export from a saved config or local JSON file |
 | H2O engine | trains H2O Deep Learning user/item towers and uses `deepfeatures(layer=0)` for embeddings |
-| PyTorch engine | trains `model_type="two_tower"` through `ecosystem-notebooks /pytorch/train` and serves embeddings through `/pytorch/invocations` |
+| PyTorch engine | trains two-tower models through the Workbench **PyTorch notebooks** engine; export embeddings for runtime lookup |
 | Embedding export | writes normalized user and item vectors to MongoDB for runtime lookup |
 | Runtime plugins | `PrePredictTwoTower` loads vectors; `PostScoreTwoTower` ranks offers with `SimilarityScorer` |
 
@@ -13637,7 +13552,7 @@ Use this checklist when configuring a new Two-Tower deployment:
    predictor visible to Projects through `project_predictors`.
 4. Select the training engine:
    - `h2o` for the built-in Workbench H2O Deep Learning trainer.
-   - `pytorch_notebooks` for `ecosystem-notebooks /pytorch/train`.
+   - `pytorch_notebooks` for the PyTorch notebooks training engine.
    - `pytorch_mlrun` only after a two-tower-capable MLRun handler is available.
 5. Confirm the data source: usually `logging.ecosystemruntime_flatten`, filtered
    by `predictor` and optional date range.
@@ -13658,10 +13573,9 @@ Use this checklist when configuring a new Two-Tower deployment:
 12. Set **Model Type** to **Two-Tower Similarity** / `similarity`.
 13. Bind the exported `run_id`, embedding database, user collection, item
     collection, customer key, and offer key.
-14. Select plugin classes:
-    - pre-score: `PrePredictTwoTower.java`
-    - post-score: `PostScoreTwoTower.java`
-15. Generate or push the deployment. Workbench emits:
+14. Bind **PrePredictTwoTower** and **PostScoreTwoTower** on the deployment step
+    (or set `plugin.prescore` / `plugin.postscore` to the class names your project
+15. Generate or push the deployment. Workbench emits keys such as:
 
 ```properties
 predictor.model.type=similarity
@@ -13671,8 +13585,6 @@ predictor.twotower.user.collection=two_tower_user_embeddings
 predictor.twotower.item.collection=two_tower_item_embeddings
 predictor.twotower.customer.key=customer_id
 predictor.twotower.offer.key=offer
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
 ```
 
 At runtime, `predictor.model.type=similarity` tells the runtime to bypass normal
@@ -13712,13 +13624,14 @@ For low-rank residual retrieval on frozen text embeddings, see [LoRA Recommender
 
 Source: `docs/modules/two_tower/pytorch.mdx`
 URL: https://developer.ecosystem.ai/docs/modules/two_tower/pytorch
-Summary: Running PyTorch models for two-tower and general scoring in the runtime — the engine options (api HTTP serving, DJL TorchScript, ONNX), the implemented api:pytorch paths, and the ecosystem-notebooks /pytorch train + invocations sidecar.
+Summary: Running PyTorch models for two-tower scoring — sidecar HTTP serving, precomputed embeddings, and Workbench training/export.
 
 # PyTorch Serving
 
 This page covers how **PyTorch** powers two-tower (and general) scoring in
-ecosystem.Ai. The runtime itself stays lightweight: PyTorch runs in a **sidecar**
-(ecosystem-notebooks `/pytorch`), and the runtime talks to it over HTTP.
+ecosystem.Ai. The runtime stays lightweight: PyTorch runs in a **notebooks
+sidecar**, and the runtime talks to it over HTTP when you opt in to live
+embeddings.
 
 In Workbench, PyTorch is an alternative training engine for the `/two-tower`
 module. It should produce the same run metadata and Mongo embedding export shape
@@ -13729,26 +13642,25 @@ as the H2O engine, so downstream deployment remains engine-agnostic.
 | Engine | Status | Two-tower suitability |
 | --- | --- | --- |
 | `api:` HTTP serving | **Production** | **Recommended** — PyTorch in a sidecar |
-| DJL + TorchScript (in-JVM) | Scaffolding only (Maven `-Pdeep`) | Possible later; single model slot |
+| DJL + TorchScript (in-JVM) | Scaffolding only | Possible later; single model slot |
 | ONNX Runtime | Not present | Would be a new integration |
 | Precomputed embeddings | Pattern in use | **Best latency** for items |
 
-The recommended path is **`api:` HTTP serving**: it is already wired through
-`ApiModelClient` + `ApiResponseNormalizer`, supports `framework=pytorch`, and
-keeps `libtorch` out of the JVM.
+The recommended path is **`api:` HTTP serving**: the runtime calls the sidecar over
+HTTP and keeps heavy ML dependencies out of the JVM.
 
-## Two implemented `api:pytorch` paths
+## Two `api:pytorch` configuration paths
 
 ### 1. General PyTorch model scoring
 
 Register an HTTP-served model directly in `mojo.key`:
 
 ```properties
-mojo.key=api:pytorch:http://ecosystem-notebooks:8010:my_model_v1
+mojo.key=api:pytorch:http://<notebooks-host>:8010:<model_id>
 ```
 
-The runtime POSTs `{model_id, instances:[features]}` to `{base_url}/invocations`
-and normalizes the response into the canonical score shape.
+The runtime sends feature instances to the sidecar and normalizes the response
+into the canonical score shape.
 
 ### 2. Two-tower user-tower embedding
 
@@ -13757,162 +13669,39 @@ precomputed vector exists:
 
 ```properties
 predictor.model.type=similarity
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:two_tower_user_v1
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
 ```
 
-`PrePredictTwoTower` calls `ApiModelClient.embed(...)`, which POSTs the customer
-features to `/pytorch/invocations` and reads the embedding from the response. Item
-vectors stay precomputed, so there is **one sidecar call per request**, not one
-per offer. The call carries explicit deadlines (3s connect / 10s read, tunable
-via `-Dembed.connect.timeout.ms` / `-Dembed.read.timeout.ms`) so a hung sidecar
-cannot block runtime request threads.
+**PrePredictTwoTower** requests a user embedding from the sidecar when needed.
+Item vectors stay precomputed, so there is **one sidecar call per request**, not
+one per offer. Timeouts are bounded so a hung sidecar cannot block runtime
+request threads indefinitely.
 
 ```mermaid
 flowchart LR
-  pre["PrePredictTwoTower"] --> embed["ApiModelClient.embed()"]
-  embed --> sidecar["ecosystem-notebooks /pytorch/invocations"]
-  sidecar --> vec["user embedding"]
+  pre["PrePredictTwoTower"] --> embed["Sidecar embed call"]
+  embed --> vec["user embedding"]
   vec --> sim["SimilarityScorer"]
 ```
 
-## The sidecar: ecosystem-notebooks `/pytorch`
+## Training and export in Workbench
 
-The concrete PyTorch service lives in **ecosystem-notebooks** (Flask, port
-`8010`) and exposes:
+1. On **`/two-tower`**, set `engine` to **`pytorch_notebooks`** on the saved
+   configuration.
+2. Run **Train** (same flow as `POST /public/v1/two-tower/train`).
+3. Run **Concept test**, then **Export embeddings for runtime** so MongoDB holds
+   normalized user and item vectors for **PrePredictTwoTower**.
 
-| Endpoint | Purpose |
-| --- | --- |
-| `POST /pytorch/train` | train an MLP or a two-tower model; save artifacts |
-| `POST /pytorch/invocations` | score / embed by `model_id` |
-| `GET /pytorch/models` | list trained model ids |
-| `GET /pytorch/health` | health check |
-
-### Training contract
-
-Workbench converts a saved Two-Tower configuration into this request. The
-`source.pipeline` should match the selected predictor/date filters from
-`logging.ecosystemruntime_flatten`.
-
-```json
-{
-  "model_id": "customer_offer_retrieval_v1",
-  "model_type": "two_tower",
-  "async": true,
-  "problem_type": "binary_classification",
-  "data": {
-    "source": {
-      "database": "logging",
-      "collection": "ecosystemruntime_flatten",
-      "pipeline": [
-        { "$match": { "predictor": "my_predictor" } },
-        { "$project": { "_id": 0, "customer_id": 1, "offer": 1, "price": 1, "rank": 1, "score": 1, "accepted": 1 } }
-      ],
-      "limit": 100000
-    },
-    "target_column": "accepted",
-    "categorical_columns": ["customer_id", "offer"],
-    "train_test_split": 0.2,
-    "random_state": 42
-  },
-  "hyperparameters": {
-    "epochs": 25, "batch_size": 256, "hidden": 64, "learning_rate": 0.001,
-    "embedding_dim": 32,
-    "user_features": ["customer_id", "price", "rank", "score"],
-    "item_features": ["offer", "price", "rank", "score"],
-    "user_id_column": "customer_id", "item_id_column": "offer"
-  }
-}
-```
-
-Training data is read from **MongoDB** (`MONGODB_URI`) via the `source` spec; a
-`csv_path` (under the existing `DATA_DIR`) or `inline` rows are also accepted.
-Artifacts are written under `DATA_DIR/pytorch_models/{model_id}/`.
-
-The Workbench run metadata should record:
-
-```json
-{
-  "run_id": "tt_pytorch_abc123",
-  "config_id": "customer_offer_retrieval_v1",
-  "engine": "pytorch",
-  "model_id": "customer_offer_retrieval_v1",
-  "pytorch_sidecar_url": "http://ecosystem-notebooks:8010",
-  "embedding_dim": 32,
-  "user_column": "customer_id",
-  "item_column": "offer"
-}
-```
-
-### Scoring / embedding contract
-
-```json
-{
-  "model_id": "customer_offer_retrieval_v1",
-  "instances": [
-    { "customer_id": "user_1", "price": 0, "rank": 1, "score": 0, "tower": "user" }
-  ]
-}
-```
-
-Response carries **both** a score and an embedding, so it satisfies general
-scoring and `ApiModelClient.embed()`:
-
-```json
-{
-  "predictions": [ { "prediction": 0.87, "embedding": [0.11, 0.20, 0.07] } ],
-  "final_result": [ { "prediction": 0.87, "embedding": [0.11, 0.20, 0.07] } ],
-  "framework": "pytorch"
-}
-```
-
-**Tower hint:** For `two_tower` models, set `"tower": "user"` or `"tower": "item"` on an
-  instance to choose which tower's embedding is returned (default: `user`).
-
-## Exporting PyTorch embeddings to Mongo
-
-For production runtime scoring, Workbench should usually export PyTorch vectors
-to MongoDB rather than call the sidecar for every request.
-
-The export job calls `/pytorch/invocations` in batches:
-
-```json
-{
-  "model_id": "customer_offer_retrieval_v1",
-  "instances": [
-    { "tower": "user", "customer_id": "user_1", "price": 0, "rank": 1, "score": 0 },
-    { "tower": "user", "customer_id": "user_2", "price": 0, "rank": 1, "score": 0 }
-  ]
-}
-```
-
-and:
-
-```json
-{
-  "model_id": "customer_offer_retrieval_v1",
-  "instances": [
-    { "tower": "item", "offer": "ProductA", "price": 0, "rank": 1, "score": 0 },
-    { "tower": "item", "offer": "ProductB", "price": 0, "rank": 1, "score": 0 }
-  ]
-}
-```
-
-In practice the export job fills the feature values from **sampled source
-rows** using the run's recorded `user_features` / `item_features` (the zeros
-above are illustrative). The returned embeddings are **L2-normalized in the
-workbench** when the export's `normalized` flag is set (the sidecar returns raw
-activations) and bulk-upserted into the configured embedding collections
-(default database `logging`) using the same document contract as H2O exports.
-Real-time scoring then uses the same `PrePredictTwoTower` and
-`PostScoreTwoTower` plugins regardless of training engine.
+For production, prefer exported Mongo embeddings over live sidecar calls for every
+customer. Use `predictor.twotower.user.embed` only when user vectors must be
+computed from fresh request features.
 
 **pytorch_mlrun is reserved:** The `pytorch_mlrun` engine value is rejected at request validation (HTTP
-  422). The MLRun trainer sidecar only ships a tabular-MLP handler — it has no
-  two-tower support. Use `pytorch` (this notebooks sidecar) for PyTorch
-  two-tower training.
+  422). Use **`pytorch_notebooks`** for PyTorch two-tower training in Workbench.
 
-See the full request/response samples in the
-[API Reference](/docs/modules/two_tower/api).
+Workbench algorithm and public API request shapes are in the
+[API Reference](/docs/modules/two_tower/api). Runtime scoring properties are in
+[Real-Time Scoring](/docs/modules/two_tower/runtime).
 
 ---
 
@@ -14034,9 +13823,10 @@ predictor.twotower.customer.key=customer_id
 predictor.twotower.offer.key=offer
 predictor.twotower.metric=cosine
 
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
 ```
+
+Bind **PrePredictTwoTower** and **PostScoreTwoTower** (or set `plugin.prescore` /
+`plugin.postscore` from your Workbench export).
 
 **run.id is required:** `predictor.twotower.run.id` is **mandatory** for similarity deployments. The
   runtime bulk-loads item embeddings filtered by `run_id`; without it the load
@@ -14059,7 +13849,7 @@ values fall back to cosine with a warning.
 Optional live user embedding via PyTorch:
 
 ```properties
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:customer_offer_retrieval_v1
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
 ```
 
 This optional property is most useful when user vectors must be generated from
@@ -14121,9 +13911,6 @@ predictor.model.type=similarity
 
 # no mojo.key, and no dynamic_engagement corpora
 
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
-
 predictor.twotower.run.id=tt_abc123
 predictor.twotower.embedding.db=logging
 predictor.twotower.user.collection=two_tower_user_embeddings
@@ -14133,7 +13920,7 @@ predictor.twotower.offer.key=offer
 predictor.twotower.metric=cosine
 
 # optional: live user-tower embedding via the PyTorch sidecar
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:customer_offer_retrieval_v1
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
 
 predictor.offer.matrix={ ... }
 ```
@@ -14665,9 +14452,9 @@ This is the exact computation the offline concept test and batch scoring use.
 
 ## PyTorch training engine
 
-PyTorch training runs through the `ecosystem-notebooks` `/pytorch` sidecar. From
-Workbench, a PyTorch configuration is translated into a `POST /pytorch/train`
-request with `model_type="two_tower"`.
+PyTorch training runs through the Workbench **PyTorch notebooks** engine. From
+Workbench, select `pytorch_notebooks` on the saved configuration and run **Train**
+(the same flow as the `/public/v1/two-tower/train` public API).
 
 ```json
 {
@@ -14758,7 +14545,7 @@ Item vectors may alternatively ride on the offer matrix as an `embedding` field.
 
 **Exporting vectors:** The training run produces the towers; populating the embedding collections is
   an explicit export job. H2O exports use `deepfeatures(layer=0)`. PyTorch
-  exports call `/pytorch/invocations` with `tower="user"` or `tower="item"`.
+  exports batch user and item tower embeddings through the Workbench export job.
   Both paths write the same normalized Mongo document shape.
 
 ### Engine parity contract

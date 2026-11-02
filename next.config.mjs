@@ -1,5 +1,21 @@
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import nextra from 'nextra'
 import NextBundleAnalyzer from '@next/bundle-analyzer'
+
+/** Changelog slugs use dots in filenames; some clients request hyphenated paths (e.g. RAG anchors). */
+function changelogHyphenSlugRedirects() {
+  const dir = join(process.cwd(), 'content/changelog')
+  return readdirSync(dir)
+    .filter((name) => name.endsWith('.mdx'))
+    .flatMap((name) => {
+      const slug = name.replace(/\.mdx$/, '')
+      if (!slug.includes('.')) return []
+      const hyphenSlug = slug.replace(/\./g, '-')
+      if (hyphenSlug === slug) return []
+      return [[`/changelog/${hyphenSlug}`, `/changelog/${slug}`]]
+    })
+}
 
 const withBundleAnalyzer = NextBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -7,6 +23,7 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 
 const nonPermanentRedirects = [
   ['/docs/changelog', '/changelog'],
+  ...changelogHyphenSlugRedirects(),
   ['/discord', 'https://discord.com/channels/1465898795949756458/1468558966513598526'],
   ['/demo', 'https://medemo.ecosystem.ai'],
   ['/issue', 'https://github.com/ecogenetic/developer/issues/new/choose'],
@@ -87,7 +104,7 @@ export default withBundleAnalyzer(
       ...nonPermanentRedirects.map(([source, destination]) => ({
         source,
         destination,
-        permanent: false,
+        permanent: source.startsWith('/changelog/') && destination.startsWith('/changelog/'),
       })),
       ...permanentRedirects.map(([source, destination]) => ({
         source,
