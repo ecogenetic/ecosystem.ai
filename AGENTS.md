@@ -1,6 +1,6 @@
 # ecosystem.ai — agent instructions
 
-Public documentation site for the ecosystem.Ai platform. Next.js App Router + Nextra. Deployed at https://ecosystem.ai.
+Public documentation site for the ecosystem.Ai platform. Next.js App Router + Nextra. Deployed at https://developer.ecosystem.ai.
 
 Cursor Online / Cloud Agents only see **this** git repo unless the Cloud environment is multi-repo.
 

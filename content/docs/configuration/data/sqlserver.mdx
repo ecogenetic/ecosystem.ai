@@ -1,0 +1,80 @@
+---
+title: SQL Server
+description: Runtime stored-procedure integration — SQLSERVER env vars and POST /callSqlServerProcedure (0.9.7.x)
+---
+
+import { Callout } from 'nextra/components'
+
+# SQL Server stored procedures
+
+Runtime **0.9.7.x** (Oct 2026) can call Microsoft SQL Server stored procedures through a single shared JDBC connection opened at startup.
+
+## Configuration
+
+| Setting | Source |
+| --- | --- |
+| JDBC URL | Env `SQLSERVER_URL`, or property `sqlserver.url` in `ecosystem.properties` |
+| User | Env `SQLSERVER_USER`, or `sqlserver.user` |
+| Password | Env `SQLSERVER_PASSWORD`, or `sqlserver.password` |
+| Query timeout (seconds) | Property `sqlserver.query.timeout` only (default **30**) |
+
+Environment variables **override** the matching `sqlserver.*` properties.
+
+If the connection fails at startup, the runtime logs `EcosystemMaster:E002` and continues without SQL Server.
+
+See also [Runtime environment variables](/docs/runtime/environment_variables).
+
+## API
+
+```http
+POST /callSqlServerProcedure
+Content-Type: application/json
+```
+
+Request body:
+
+```json
+{
+  "procedure": "dbo.usp_X",
+  "parameters": [
+    {
+      "name": "CustomerId",
+      "value": "00000000-0000-0000-0000-000000000001",
+      "type": "uniqueidentifier",
+      "direction": "in"
+    },
+    {
+      "name": "Points",
+      "type": "int",
+      "direction": "out"
+    }
+  ],
+  "type": "r"
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `procedure` | Stored procedure name (for example `dbo.usp_X`) |
+| `parameters` | Bindings with `name`, optional `value`, `type`, and `direction` (`in` or `out`) |
+| `type` | `r` — row objects (default); `c` — column arrays |
+
+Response shape:
+
+```json
+{
+  "data": [],
+  "outputs": {},
+  "updateCount": 0
+}
+```
+
+Supported parameter types: `varchar`, `nvarchar`, `int`, `bigint`, `bit`, `float`, `decimal`, `date`, `datetime`, `uniqueidentifier`.
+
+<Callout type="info" title="Auth">
+Confirm whether your deployment requires `MASTER_KEY` / `X-API-KEY` on this route the same way as other runtime admin endpoints. See [API Access](/docs/runtime/access).
+</Callout>
+
+## Local sample database
+
+The runtime repo ships `Docker/sqlserver/docker-compose.yml` (SQL Server 2022, **amd64**, host port **1433**, applies `init/*.sql`). Change the sample SA password before use.

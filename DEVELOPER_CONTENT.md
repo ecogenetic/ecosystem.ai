@@ -1,280 +1,284 @@
 # ecosystem.Ai Developer Documentation
 
-This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
+This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://developer.ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
 
-Corpus: 269 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
+Corpus: 273 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
 
 ## Document index
 
-- [Bayesian Probabilistic](#docs-configuration-algorithms-baysianprobabilistic) — `docs/configuration/algorithms/baysianprobabilistic.mdx` — https://ecosystem.ai/docs/configuration/algorithms/baysianprobabilistic
-- [Coverage-Aware Thompson](#docs-configuration-algorithms-coveragethompson) — `docs/configuration/algorithms/coveragethompson.mdx` — https://ecosystem.ai/docs/configuration/algorithms/coveragethompson
-- [Ecosystem Rewards](#docs-configuration-algorithms-ecosystemrewards) — `docs/configuration/algorithms/ecosystemrewards.mdx` — https://ecosystem.ai/docs/configuration/algorithms/ecosystemrewards
-- [Epsilon Greedy](#docs-configuration-algorithms-epsilongreedy) — `docs/configuration/algorithms/epsilongreedy.mdx` — https://ecosystem.ai/docs/configuration/algorithms/epsilongreedy
-- [Generative Model](#docs-configuration-algorithms-generativemodel) — `docs/configuration/algorithms/generativemodel.mdx` — https://ecosystem.ai/docs/configuration/algorithms/generativemodel
-- [Algorithms Overview](#docs-configuration-algorithms-index) — `docs/configuration/algorithms/index.mdx` — https://ecosystem.ai/docs/configuration/algorithms
-- [Long-Tail Boost MF](#docs-configuration-algorithms-longtailmf) — `docs/configuration/algorithms/longtailmf.mdx` — https://ecosystem.ai/docs/configuration/algorithms/longtailmf
-- [Loss Aversion](#docs-configuration-algorithms-lossaversion) — `docs/configuration/algorithms/lossaversion.mdx` — https://ecosystem.ai/docs/configuration/algorithms/lossaversion
-- [Network Analysis](#docs-configuration-algorithms-networkanalysis) — `docs/configuration/algorithms/networkanalysis.mdx` — https://ecosystem.ai/docs/configuration/algorithms/networkanalysis
-- [Prospect Theory](#docs-configuration-algorithms-prospecttheory) — `docs/configuration/algorithms/prospecttheory.mdx` — https://ecosystem.ai/docs/configuration/algorithms/prospecttheory
-- [Q-Learning](#docs-configuration-algorithms-qlearning) — `docs/configuration/algorithms/qlearning.mdx` — https://ecosystem.ai/docs/configuration/algorithms/qlearning
-- [Risk Aversion](#docs-configuration-algorithms-riskaversion) — `docs/configuration/algorithms/riskaversion.mdx` — https://ecosystem.ai/docs/configuration/algorithms/riskaversion
-- [Sentimental Equilibrium](#docs-configuration-algorithms-sentimentalequilibrium) — `docs/configuration/algorithms/sentimentalequilibrium.mdx` — https://ecosystem.ai/docs/configuration/algorithms/sentimentalequilibrium
-- [API Management](#docs-configuration-api-index) — `docs/configuration/api/index.mdx` — https://ecosystem.ai/docs/configuration/api
-- [Enrichment](#docs-configuration-data-enrichment) — `docs/configuration/data/enrichment.mdx` — https://ecosystem.ai/docs/configuration/data/enrichment
-- [Feature Engineering](#docs-configuration-data-feature-engineering) — `docs/configuration/data/feature_engineering.mdx` — https://ecosystem.ai/docs/configuration/data/feature_engineering
-- [Files](#docs-configuration-data-files) — `docs/configuration/data/files.mdx` — https://ecosystem.ai/docs/configuration/data/files
-- [Data Management](#docs-configuration-data-index) — `docs/configuration/data/index.mdx` — https://ecosystem.ai/docs/configuration/data
-- [Meta-Data](#docs-configuration-data-metadata) — `docs/configuration/data/metadata.mdx` — https://ecosystem.ai/docs/configuration/data/metadata
-- [Presto](#docs-configuration-data-presto) — `docs/configuration/data/presto.mdx` — https://ecosystem.ai/docs/configuration/data/presto
-- [Endpoints](#docs-configuration-deployment-endpoints) — `docs/configuration/deployment/endpoints.mdx` — https://ecosystem.ai/docs/configuration/deployment/endpoints
-- [Deployment Options](#docs-configuration-deployment-index) — `docs/configuration/deployment/index.mdx` — https://ecosystem.ai/docs/configuration/deployment
-- [Deployment Parameters](#docs-configuration-deployment-parameters) — `docs/configuration/deployment/parameters.mdx` — https://ecosystem.ai/docs/configuration/deployment/parameters
-- [Deployment Properties](#docs-configuration-deployment-properties) — `docs/configuration/deployment/properties.mdx` — https://ecosystem.ai/docs/configuration/deployment/properties
-- [Model Convergence](#docs-configuration-dynamic-convergence) — `docs/configuration/dynamic/convergence.mdx` — https://ecosystem.ai/docs/configuration/dynamic/convergence
-- [Custom Rewards](#docs-configuration-dynamic-customrewards) — `docs/configuration/dynamic/customrewards.mdx` — https://ecosystem.ai/docs/configuration/dynamic/customrewards
-- [Dynamic Interactions](#docs-configuration-dynamic-index) — `docs/configuration/dynamic/index.mdx` — https://ecosystem.ai/docs/configuration/dynamic
-- [Dynamic Interactions Options Store](#docs-configuration-dynamic-options) — `docs/configuration/dynamic/options.mdx` — https://ecosystem.ai/docs/configuration/dynamic/options
-- [Dynamic Parameters](#docs-configuration-dynamic-parameters) — `docs/configuration/dynamic/parameters.mdx` — https://ecosystem.ai/docs/configuration/dynamic/parameters
-- [Dynamic Interaction Process](#docs-configuration-dynamic-process) — `docs/configuration/dynamic/process.mdx` — https://ecosystem.ai/docs/configuration/dynamic/process
-- [Dynamic Interactions Runtime Settings](#docs-configuration-dynamic-runtime) — `docs/configuration/dynamic/runtime.mdx` — https://ecosystem.ai/docs/configuration/dynamic/runtime
-- [Architecture](#docs-configuration-generative-architecture) — `docs/configuration/generative/architecture.mdx` — https://ecosystem.ai/docs/configuration/generative/architecture
-- [Chat Approaches](#docs-configuration-generative-chat) — `docs/configuration/generative/chat.mdx` — https://ecosystem.ai/docs/configuration/generative/chat
-- [Chat to SQL](#docs-configuration-generative-chat-sql) — `docs/configuration/generative/chat_sql.mdx` — https://ecosystem.ai/docs/configuration/generative/chat_sql
-- [Fact Injection](#docs-configuration-generative-facts) — `docs/configuration/generative/facts.mdx` — https://ecosystem.ai/docs/configuration/generative/facts
-- [Generative Fact-Injection Tools and Plugins](#docs-configuration-generative-index) — `docs/configuration/generative/index.mdx` — https://ecosystem.ai/docs/configuration/generative
-- [Generative Models](#docs-configuration-generative-models) — `docs/configuration/generative/models.mdx` — https://ecosystem.ai/docs/configuration/generative/models
-- [Vector Stores](#docs-configuration-generative-vector-stores) — `docs/configuration/generative/vector_stores.mdx` — https://ecosystem.ai/docs/configuration/generative/vector_stores
-- [Intro](#docs-configuration-index) — `docs/configuration/index.mdx` — https://ecosystem.ai/docs/configuration
-- [Project / Module](#docs-configuration-project) — `docs/configuration/project.mdx` — https://ecosystem.ai/docs/configuration/project
-- [Project Review and Update](#docs-configuration-project-review) — `docs/configuration/project_review.mdx` — https://ecosystem.ai/docs/configuration/project_review
-- [ecosystem-notebooks Python Package](#docs-configuration-pythonpackage) — `docs/configuration/pythonpackage.mdx` — https://ecosystem.ai/docs/configuration/pythonpackage
-- [Simulations](#docs-configuration-simulations) — `docs/configuration/simulations.mdx` — https://ecosystem.ai/docs/configuration/simulations
-- [Predictors](#docs-configuration-static-models-index) — `docs/configuration/static_models/index.mdx` — https://ecosystem.ai/docs/configuration/static_models
-- [Model Types](#docs-configuration-static-models-model-types) — `docs/configuration/static_models/model_types.mdx` — https://ecosystem.ai/docs/configuration/static_models/model_types
-- [Models](#docs-configuration-static-models-models) — `docs/configuration/static_models/models.mdx` — https://ecosystem.ai/docs/configuration/static_models/models
-- [Predictor](#docs-configuration-static-models-predictor) — `docs/configuration/static_models/predictor.mdx` — https://ecosystem.ai/docs/configuration/static_models/predictor
-- [Agents](#docs-configuration-workbench-apis-agents) — `docs/configuration/workbench_apis/agents.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/agents
-- [Public APIs, Agents & MCP](#docs-configuration-workbench-apis-index) — `docs/configuration/workbench_apis/index.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis
-- [API Keys](#docs-configuration-workbench-apis-keys) — `docs/configuration/workbench_apis/keys.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/keys
-- [MCP](#docs-configuration-workbench-apis-mcp) — `docs/configuration/workbench_apis/mcp.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/mcp
-- [Private APIs](#docs-configuration-workbench-apis-private) — `docs/configuration/workbench_apis/private.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/private
-- [Public APIs](#docs-configuration-workbench-apis-public) — `docs/configuration/workbench_apis/public.mdx` — https://ecosystem.ai/docs/configuration/workbench_apis/public
-- [Intro](#docs-documentation-index) — `docs/documentation/index.mdx` — https://ecosystem.ai/docs/documentation
-- [Index](#docs-frontend-angular-index) — `docs/frontend/angular/index.mdx` — https://ecosystem.ai/docs/frontend/angular
-- [Index](#docs-frontend-index) — `docs/frontend/index.mdx` — https://ecosystem.ai/docs/frontend
-- [Index](#docs-frontend-ios-index) — `docs/frontend/ios/index.mdx` — https://ecosystem.ai/docs/frontend/ios
-- [Index](#docs-frontend-python-index) — `docs/frontend/python/index.mdx` — https://ecosystem.ai/docs/frontend/python
-- [Get Started](#docs-index) — `docs/index.mdx` — https://ecosystem.ai/docs
-- [Docker](#docs-local-docker) — `docs/local/docker.mdx` — https://ecosystem.ai/docs/local/docker
-- [Intro](#docs-local-index) — `docs/local/index.mdx` — https://ecosystem.ai/docs/local
-- [AWS Marketplace](#docs-marketplace-aws) — `docs/marketplace/aws.mdx` — https://ecosystem.ai/docs/marketplace/aws
-- [Azure Marketplace](#docs-marketplace-azure) — `docs/marketplace/azure.mdx` — https://ecosystem.ai/docs/marketplace/azure
-- [GCP Marketplace](#docs-marketplace-gcp) — `docs/marketplace/gcp.mdx` — https://ecosystem.ai/docs/marketplace/gcp
-- [Intro](#docs-marketplace-index) — `docs/marketplace/index.mdx` — https://ecosystem.ai/docs/marketplace
-- [Data Agents Analysis Views](#docs-modules-data-agents-analysis) — `docs/modules/data_agents/analysis.mdx` — https://ecosystem.ai/docs/modules/data_agents/analysis
-- [Data Agents](#docs-modules-data-agents-index) — `docs/modules/data_agents/index.mdx` — https://ecosystem.ai/docs/modules/data_agents
-- [Interactions Analytic](#docs-modules-data-agents-interactions) — `docs/modules/data_agents/interactions.mdx` — https://ecosystem.ai/docs/modules/data_agents/interactions
-- [Data Agents Process Jobs](#docs-modules-data-agents-process) — `docs/modules/data_agents/process.mdx` — https://ecosystem.ai/docs/modules/data_agents/process
-- [Actuarial Analysis Report](#docs-modules-data-agents-reports-actuarial) — `docs/modules/data_agents/reports/actuarial.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/actuarial
-- [Categorical Analysis Report](#docs-modules-data-agents-reports-categorical) — `docs/modules/data_agents/reports/categorical.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/categorical
-- [Config Parameters](#docs-modules-data-agents-reports-config-parameters) — `docs/modules/data_agents/reports/config_parameters.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/config_parameters
-- [Consolidated Results](#docs-modules-data-agents-reports-consolidated-results) — `docs/modules/data_agents/reports/consolidated_results.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/consolidated_results
-- [Feature Engineering Report](#docs-modules-data-agents-reports-feature-engineering) — `docs/modules/data_agents/reports/feature_engineering.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/feature_engineering
-- [Financial Breakdowns](#docs-modules-data-agents-reports-financial-breakdowns) — `docs/modules/data_agents/reports/financial_breakdowns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_breakdowns
-- [Financial Campaigns](#docs-modules-data-agents-reports-financial-campaigns) — `docs/modules/data_agents/reports/financial_campaigns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_campaigns
-- [Financial Comparisons](#docs-modules-data-agents-reports-financial-comparisons) — `docs/modules/data_agents/reports/financial_comparisons.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_comparisons
-- [Financial Data Quality](#docs-modules-data-agents-reports-financial-data-quality) — `docs/modules/data_agents/reports/financial_data_quality.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_data_quality
-- [Financial Distributions](#docs-modules-data-agents-reports-financial-distributions) — `docs/modules/data_agents/reports/financial_distributions.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_distributions
-- [Financial Overview](#docs-modules-data-agents-reports-financial-general) — `docs/modules/data_agents/reports/financial_general.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_general
-- [Growth & Retention](#docs-modules-data-agents-reports-financial-growth) — `docs/modules/data_agents/reports/financial_growth.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_growth
-- [Financial Industry Pack](#docs-modules-data-agents-reports-financial-industry) — `docs/modules/data_agents/reports/financial_industry.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_industry
-- [Ledgers (AR/AP/GL)](#docs-modules-data-agents-reports-financial-ledgers) — `docs/modules/data_agents/reports/financial_ledgers.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_ledgers
-- [Profitability](#docs-modules-data-agents-reports-financial-profitability) — `docs/modules/data_agents/reports/financial_profitability.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_profitability
-- [Returns (ROI / CAC)](#docs-modules-data-agents-reports-financial-returns) — `docs/modules/data_agents/reports/financial_returns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_returns
-- [Financial Time Analytics](#docs-modules-data-agents-reports-financial-time) — `docs/modules/data_agents/reports/financial_time.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_time
-- [Unit Economics (ARPU)](#docs-modules-data-agents-reports-financial-unit-economics) — `docs/modules/data_agents/reports/financial_unit_economics.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_unit_economics
-- [Customer Value (LTV)](#docs-modules-data-agents-reports-financial-value) — `docs/modules/data_agents/reports/financial_value.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/financial_value
-- [Data Agents Reports](#docs-modules-data-agents-reports-index) — `docs/modules/data_agents/reports/index.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports
-- [Main Analysis Report](#docs-modules-data-agents-reports-main) — `docs/modules/data_agents/reports/main.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/main
-- [Machine Learning Report](#docs-modules-data-agents-reports-ml) — `docs/modules/data_agents/reports/ml.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/ml
-- [Calendar Personality Patterns](#docs-modules-data-agents-reports-personality-calendar) — `docs/modules/data_agents/reports/personality_calendar.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_calendar
-- [Personality Intelligent Campaigning](#docs-modules-data-agents-reports-personality-campaigns) — `docs/modules/data_agents/reports/personality_campaigns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_campaigns
-- [Category Patterns](#docs-modules-data-agents-reports-personality-category-patterns) — `docs/modules/data_agents/reports/personality_category_patterns.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_category_patterns
-- [Customer Personality Change & Reasons](#docs-modules-data-agents-reports-personality-customer-change) — `docs/modules/data_agents/reports/personality_customer_change.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_customer_change
-- [Personality Drift](#docs-modules-data-agents-reports-personality-drift) — `docs/modules/data_agents/reports/personality_drift.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_drift
-- [Personality Overview](#docs-modules-data-agents-reports-personality-general) — `docs/modules/data_agents/reports/personality_general.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_general
-- [Money Personality Report](#docs-modules-data-agents-reports-personality-money) — `docs/modules/data_agents/reports/personality_money.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_money
-- [Personality Lifecycle Recommendations](#docs-modules-data-agents-reports-personality-recommendations) — `docs/modules/data_agents/reports/personality_recommendations.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_recommendations
-- [Spend Personality Report](#docs-modules-data-agents-reports-personality-spend) — `docs/modules/data_agents/reports/personality_spend.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_spend
-- [Personality Time Measures](#docs-modules-data-agents-reports-personality-time) — `docs/modules/data_agents/reports/personality_time.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/personality_time
-- [Runnable Pipeline Notebook](#docs-modules-data-agents-reports-pipeline-notebook) — `docs/modules/data_agents/reports/pipeline_notebook.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/pipeline_notebook
-- [Customer Uptake & Channel](#docs-modules-data-agents-reports-recommender-customer) — `docs/modules/data_agents/reports/recommender_customer.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_customer
-- [Entity Clusters (Offers by Category)](#docs-modules-data-agents-reports-recommender-entity-clusters) — `docs/modules/data_agents/reports/recommender_entity_clusters.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_entity_clusters
-- [Campaign & Predictor Performance](#docs-modules-data-agents-reports-recommender-general) — `docs/modules/data_agents/reports/recommender_general.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_general
-- [Interaction Analysis Manifest](#docs-modules-data-agents-reports-recommender-manifest) — `docs/modules/data_agents/reports/recommender_manifest.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_manifest
-- [Market Intelligence](#docs-modules-data-agents-reports-recommender-market-intelligence) — `docs/modules/data_agents/reports/recommender_market_intelligence.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_market_intelligence
-- [Marketing Mix (Adstock & Saturation)](#docs-modules-data-agents-reports-recommender-marketing-mix) — `docs/modules/data_agents/reports/recommender_marketing_mix.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_marketing_mix
-- [Offer Effectiveness & Catalog](#docs-modules-data-agents-reports-recommender-offer) — `docs/modules/data_agents/reports/recommender_offer.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/recommender_offer
-- [Time Series Report](#docs-modules-data-agents-reports-time-series) — `docs/modules/data_agents/reports/time_series.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/time_series
-- [Data Agents Setup](#docs-modules-data-agents-setup) — `docs/modules/data_agents/setup.mdx` — https://ecosystem.ai/docs/modules/data_agents/setup
-- [Modules](#docs-modules-index) — `docs/modules/index.mdx` — https://ecosystem.ai/docs/modules
-- [LoRA Recommender Module](#docs-modules-lora-index) — `docs/modules/lora/index.mdx` — https://ecosystem.ai/docs/modules/lora
-- [LoRA Runtime](#docs-modules-lora-runtime) — `docs/modules/lora/runtime.mdx` — https://ecosystem.ai/docs/modules/lora/runtime
-- [LoRA Training](#docs-modules-lora-training) — `docs/modules/lora/training.mdx` — https://ecosystem.ai/docs/modules/lora/training
-- [MLRun Module — Access & Scoring](#docs-modules-mlrun-access) — `docs/modules/mlrun/access.mdx` — https://ecosystem.ai/docs/modules/mlrun/access
-- [MLRun Module — Community Edition](#docs-modules-mlrun-community-edition) — `docs/modules/mlrun/community_edition.mdx` — https://ecosystem.ai/docs/modules/mlrun/community_edition
-- [MLRun Module — Console Tour](#docs-modules-mlrun-console-tour) — `docs/modules/mlrun/console_tour.mdx` — https://ecosystem.ai/docs/modules/mlrun/console_tour
-- [MLRun Module — Data Preparation](#docs-modules-mlrun-data) — `docs/modules/mlrun/data.mdx` — https://ecosystem.ai/docs/modules/mlrun/data
-- [MLRun Module — Use-Case Definition](#docs-modules-mlrun-definition) — `docs/modules/mlrun/definition.mdx` — https://ecosystem.ai/docs/modules/mlrun/definition
-- [MLRun Module — Kubernetes Deployment](#docs-modules-mlrun-deployment) — `docs/modules/mlrun/deployment.mdx` — https://ecosystem.ai/docs/modules/mlrun/deployment
-- [MLRun Module — Python & AI Generator](#docs-modules-mlrun-generator) — `docs/modules/mlrun/generator.mdx` — https://ecosystem.ai/docs/modules/mlrun/generator
-- [MLRun Module](#docs-modules-mlrun-index) — `docs/modules/mlrun/index.mdx` — https://ecosystem.ai/docs/modules/mlrun
-- [MLRun Module — Installation](#docs-modules-mlrun-install) — `docs/modules/mlrun/install.mdx` — https://ecosystem.ai/docs/modules/mlrun/install
-- [MLRun Module — Model Training](#docs-modules-mlrun-training) — `docs/modules/mlrun/training.mdx` — https://ecosystem.ai/docs/modules/mlrun/training
-- [Networks Social, Knowledge, and Time](#docs-modules-networks-advanced) — `docs/modules/networks/advanced.mdx` — https://ecosystem.ai/docs/modules/networks/advanced
-- [Networks Analysis](#docs-modules-networks-analysis) — `docs/modules/networks/analysis.mdx` — https://ecosystem.ai/docs/modules/networks/analysis
-- [Networks Jobs and API](#docs-modules-networks-api) — `docs/modules/networks/api.mdx` — https://ecosystem.ai/docs/modules/networks/api
-- [Networks Data Sources](#docs-modules-networks-data) — `docs/modules/networks/data.mdx` — https://ecosystem.ai/docs/modules/networks/data
-- [Networks](#docs-modules-networks-index) — `docs/modules/networks/index.mdx` — https://ecosystem.ai/docs/modules/networks
-- [Networks Workspace](#docs-modules-networks-workspace) — `docs/modules/networks/workspace.mdx` — https://ecosystem.ai/docs/modules/networks/workspace
-- [Spend Personality](#docs-modules-spend-personality-access) — `docs/modules/spend_personality/access.mdx` — https://ecosystem.ai/docs/modules/spend_personality/access
-- [Spend Personality](#docs-modules-spend-personality-chatgpt) — `docs/modules/spend_personality/chatgpt.mdx` — https://ecosystem.ai/docs/modules/spend_personality/chatgpt
-- [Spend Personality](#docs-modules-spend-personality-configuration) — `docs/modules/spend_personality/configuration.mdx` — https://ecosystem.ai/docs/modules/spend_personality/configuration
-- [Spend Personality](#docs-modules-spend-personality-data) — `docs/modules/spend_personality/data.mdx` — https://ecosystem.ai/docs/modules/spend_personality/data
-- [Spend Personality](#docs-modules-spend-personality-definition) — `docs/modules/spend_personality/definition.mdx` — https://ecosystem.ai/docs/modules/spend_personality/definition
-- [Spend Personality](#docs-modules-spend-personality-enrich) — `docs/modules/spend_personality/enrich.mdx` — https://ecosystem.ai/docs/modules/spend_personality/enrich
-- [Index](#docs-modules-spend-personality-index) — `docs/modules/spend_personality/index.mdx` — https://ecosystem.ai/docs/modules/spend_personality
-- [AWS Spend Personality](#docs-modules-spend-personality-install-aws) — `docs/modules/spend_personality/install/aws.mdx` — https://ecosystem.ai/docs/modules/spend_personality/install/aws
-- [Azure Spend Personality](#docs-modules-spend-personality-install-azure) — `docs/modules/spend_personality/install/azure.mdx` — https://ecosystem.ai/docs/modules/spend_personality/install/azure
-- [Two-Tower Module — Access & Operations](#docs-modules-two-tower-access) — `docs/modules/two_tower/access.mdx` — https://ecosystem.ai/docs/modules/two_tower/access
-- [Two-Tower Module — API Reference](#docs-modules-two-tower-api) — `docs/modules/two_tower/api.mdx` — https://ecosystem.ai/docs/modules/two_tower/api
-- [Two-Tower Module — Architecture & Theory](#docs-modules-two-tower-concepts) — `docs/modules/two_tower/concepts.mdx` — https://ecosystem.ai/docs/modules/two_tower/concepts
-- [Two-Tower Module — Data Preparation](#docs-modules-two-tower-data) — `docs/modules/two_tower/data.mdx` — https://ecosystem.ai/docs/modules/two_tower/data
-- [Two-Tower Module](#docs-modules-two-tower-index) — `docs/modules/two_tower/index.mdx` — https://ecosystem.ai/docs/modules/two_tower
-- [Two-Tower Module — PyTorch Serving](#docs-modules-two-tower-pytorch) — `docs/modules/two_tower/pytorch.mdx` — https://ecosystem.ai/docs/modules/two_tower/pytorch
-- [Two-Tower Module — Real-Time Scoring](#docs-modules-two-tower-runtime) — `docs/modules/two_tower/runtime.mdx` — https://ecosystem.ai/docs/modules/two_tower/runtime
-- [Two-Tower Module — Offline Scoring](#docs-modules-two-tower-scoring) — `docs/modules/two_tower/scoring.mdx` — https://ecosystem.ai/docs/modules/two_tower/scoring
-- [Two-Tower Module — Model Training](#docs-modules-two-tower-training) — `docs/modules/two_tower/training.mdx` — https://ecosystem.ai/docs/modules/two_tower/training
-- [Ontology for Agents](#docs-ontology-agents) — `docs/ontology/agents.mdx` — https://ecosystem.ai/docs/ontology/agents
-- [Alignments](#docs-ontology-alignments) — `docs/ontology/alignments.mdx` — https://ecosystem.ai/docs/ontology/alignments
-- [Concept Index](#docs-ontology-concept-index) — `docs/ontology/concept-index.mdx` — https://ecosystem.ai/docs/ontology/concept-index
-- [Customer Feature Lookup (Open)](#docs-ontology-customer-features) — `docs/ontology/customer-features.mdx` — https://ecosystem.ai/docs/ontology/customer-features
-- [Data and Ontology](#docs-ontology-data-and-ontology) — `docs/ontology/data-and-ontology.mdx` — https://ecosystem.ai/docs/ontology/data-and-ontology
-- [Entities concept catalog](#docs-ontology-entities-catalog) — `docs/ontology/entities-catalog.mdx` — https://ecosystem.ai/docs/ontology/entities-catalog
-- [Entities (Workbench Meta)](#docs-ontology-entities) — `docs/ontology/entities.mdx` — https://ecosystem.ai/docs/ontology/entities
-- [Glossary](#docs-ontology-glossary) — `docs/ontology/glossary.mdx` — https://ecosystem.ai/docs/ontology/glossary
-- [Ontology Overview](#docs-ontology-index) — `docs/ontology/index.mdx` — https://ecosystem.ai/docs/ontology
-- [Link Types](#docs-ontology-link-types) — `docs/ontology/link-types.mdx` — https://ecosystem.ai/docs/ontology/link-types
-- [Namespaces](#docs-ontology-namespaces) — `docs/ontology/namespaces.mdx` — https://ecosystem.ai/docs/ontology/namespaces
-- [Object Types](#docs-ontology-object-types) — `docs/ontology/object-types.mdx` — https://ecosystem.ai/docs/ontology/object-types
-- [Offer Matrix (Closed Schema)](#docs-ontology-offer-matrix) — `docs/ontology/offer-matrix.mdx` — https://ecosystem.ai/docs/ontology/offer-matrix
-- [Platform Modules](#docs-ontology-platform) — `docs/ontology/platform.mdx` — https://ecosystem.ai/docs/ontology/platform
-- [Runtime concept catalog](#docs-ontology-runtime-catalog) — `docs/ontology/runtime-catalog.mdx` — https://ecosystem.ai/docs/ontology/runtime-catalog
-- [Runtime Closed Loop](#docs-ontology-runtime) — `docs/ontology/runtime.mdx` — https://ecosystem.ai/docs/ontology/runtime
-- [Server concept catalog](#docs-ontology-server-catalog) — `docs/ontology/server-catalog.mdx` — https://ecosystem.ai/docs/ontology/server-catalog
-- [Modeling Server Concepts](#docs-ontology-server) — `docs/ontology/server.mdx` — https://ecosystem.ai/docs/ontology/server
-- [Why create an Ontology?](#docs-ontology-why) — `docs/ontology/why.mdx` — https://ecosystem.ai/docs/ontology/why
-- [Workbench concept catalog](#docs-ontology-workbench-catalog) — `docs/ontology/workbench-catalog.mdx` — https://ecosystem.ai/docs/ontology/workbench-catalog
-- [Workbench Application Concepts](#docs-ontology-workbench) — `docs/ontology/workbench.mdx` — https://ecosystem.ai/docs/ontology/workbench
-- [Index](#docs-opensource-index) — `docs/opensource/index.mdx` — https://ecosystem.ai/docs/opensource
-- [Superset](#docs-opensource-superset) — `docs/opensource/superset.mdx` — https://ecosystem.ai/docs/opensource/superset
-- [Docker](#docs-quick-start-docker) — `docs/quick_start/docker.mdx` — https://ecosystem.ai/docs/quick_start/docker
-- [Quick Start](#docs-quick-start-index) — `docs/quick_start/index.mdx` — https://ecosystem.ai/docs/quick_start
-- [Kubernetes](#docs-quick-start-kubernetes) — `docs/quick_start/kubernetes.mdx` — https://ecosystem.ai/docs/quick_start/kubernetes
-- [Local Setup](#docs-quick-start-local-setup) — `docs/quick_start/local_setup.mdx` — https://ecosystem.ai/docs/quick_start/local_setup
-- [Marketplace](#docs-quick-start-marketplace) — `docs/quick_start/marketplace.mdx` — https://ecosystem.ai/docs/quick_start/marketplace
-- [Openshift](#docs-quick-start-openshift) — `docs/quick_start/openshift.mdx` — https://ecosystem.ai/docs/quick_start/openshift
-- [Post Install](#docs-quick-start-post-install) — `docs/quick_start/post_install.mdx` — https://ecosystem.ai/docs/quick_start/post_install
-- [API Access](#docs-runtime-access) — `docs/runtime/access.mdx` — https://ecosystem.ai/docs/runtime/access
-- [API Configuration Plugin](#docs-runtime-apiconfiguration-index) — `docs/runtime/apiconfiguration/index.mdx` — https://ecosystem.ai/docs/runtime/apiconfiguration
-- [Product Master Plugin](#docs-runtime-apiconfiguration-productmaster) — `docs/runtime/apiconfiguration/productmaster.mdx` — https://ecosystem.ai/docs/runtime/apiconfiguration/productmaster
-- [Configuration](#docs-runtime-configuration) — `docs/runtime/configuration.mdx` — https://ecosystem.ai/docs/runtime/configuration
-- [Runtime Dashboard](#docs-runtime-dashboard) — `docs/runtime/dashboard.mdx` — https://ecosystem.ai/docs/runtime/dashboard
-- [Push Your Deployment](#docs-runtime-deployment) — `docs/runtime/deployment.mdx` — https://ecosystem.ai/docs/runtime/deployment
-- [Environment Variables](#docs-runtime-environment-variables) — `docs/runtime/environment_variables.mdx` — https://ecosystem.ai/docs/runtime/environment_variables
-- [Calling External Runtimes](#docs-runtime-externalruntimecalls) — `docs/runtime/externalruntimecalls.mdx` — https://ecosystem.ai/docs/runtime/externalruntimecalls
-- [Runtime](#docs-runtime-index) — `docs/runtime/index.mdx` — https://ecosystem.ai/docs/runtime
-- [Logging](#docs-runtime-logging) — `docs/runtime/logging.mdx` — https://ecosystem.ai/docs/runtime/logging
-- [MCP Support](#docs-runtime-mcp) — `docs/runtime/mcp.mdx` — https://ecosystem.ai/docs/runtime/mcp
-- [MLFlow Integration](#docs-runtime-mlflowintegration) — `docs/runtime/mlflowintegration.mdx` — https://ecosystem.ai/docs/runtime/mlflowintegration
-- [Model Convergence](#docs-runtime-model-convergence) — `docs/runtime/model_convergence.mdx` — https://ecosystem.ai/docs/runtime/model_convergence
-- [Plugins](#docs-runtime-plugins-index) — `docs/runtime/plugins/index.mdx` — https://ecosystem.ai/docs/runtime/plugins
-- [Post-Predict Plugins](#docs-runtime-plugins-postpredict) — `docs/runtime/plugins/postpredict.mdx` — https://ecosystem.ai/docs/runtime/plugins/postpredict
-- [Pre-Predict Plugins](#docs-runtime-plugins-prepredict) — `docs/runtime/plugins/prepredict.mdx` — https://ecosystem.ai/docs/runtime/plugins/prepredict
-- [Post-Predict Plugins](#docs-runtime-postpredict-index) — `docs/runtime/postpredict/index.mdx` — https://ecosystem.ai/docs/runtime/postpredict
-- [Platform Dynamic Engagement Plugin](#docs-runtime-postpredict-platformdynamicengagement) — `docs/runtime/postpredict/platformdynamicengagement.mdx` — https://ecosystem.ai/docs/runtime/postpredict/platformdynamicengagement
-- [Post-Score Basic Plugin](#docs-runtime-postpredict-postscorebasic) — `docs/runtime/postpredict/postscorebasic.mdx` — https://ecosystem.ai/docs/runtime/postpredict/postscorebasic
-- [Post Score Network Plugin](#docs-runtime-postpredict-postscorenetwork) — `docs/runtime/postpredict/postscorenetwork.mdx` — https://ecosystem.ai/docs/runtime/postpredict/postscorenetwork
-- [Post-Score Recommender Plugin](#docs-runtime-postpredict-postscorerecommenderoffers) — `docs/runtime/postpredict/postscorerecommenderoffers.mdx` — https://ecosystem.ai/docs/runtime/postpredict/postscorerecommenderoffers
-- [Pre-Predict Plugins](#docs-runtime-prepredict-index) — `docs/runtime/prepredict/index.mdx` — https://ecosystem.ai/docs/runtime/prepredict
-- [Pre-Predict Auto Date](#docs-runtime-prepredict-prepredictautodate) — `docs/runtime/prepredict/prepredictautodate.mdx` — https://ecosystem.ai/docs/runtime/prepredict/prepredictautodate
-- [Pre-Score Basic Plugin](#docs-runtime-prepredict-prescorebasic) — `docs/runtime/prepredict/prescorebasic.mdx` — https://ecosystem.ai/docs/runtime/prepredict/prescorebasic
-- [Pre-Score Dynamic Plugin](#docs-runtime-prepredict-prescoredynamic) — `docs/runtime/prepredict/prescoredynamic.mdx` — https://ecosystem.ai/docs/runtime/prepredict/prescoredynamic
-- [Pre-Score Lookup Plugin](#docs-runtime-prepredict-prescorelookup) — `docs/runtime/prepredict/prescorelookup.mdx` — https://ecosystem.ai/docs/runtime/prepredict/prescorelookup
-- [ecosystem.Ai runtime release notes](#docs-runtime-runtimeversion) — `docs/runtime/runtimeversion.mdx` — https://ecosystem.ai/docs/runtime/runtimeversion
-- [Campaign Testing](#docs-runtime-testing) — `docs/runtime/testing.mdx` — https://ecosystem.ai/docs/runtime/testing
-- [Deployment](#docs-user-guides-dynamic-deployment) — `docs/user_guides/dynamic/deployment.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/deployment
-- [Manage Files & Feature Engineering](#docs-user-guides-dynamic-files-features) — `docs/user_guides/dynamic/files_features.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/files_features
-- [How it Works](#docs-user-guides-dynamic-how-it-works) — `docs/user_guides/dynamic/how_it_works.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/how_it_works
-- [Introduction](#docs-user-guides-dynamic-index) — `docs/user_guides/dynamic/index.mdx` — https://ecosystem.ai/docs/user_guides/dynamic
-- [Get Started](#docs-user-guides-dynamic-intro) — `docs/user_guides/dynamic/intro.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/intro
-- [Monitoring](#docs-user-guides-dynamic-monitoring) — `docs/user_guides/dynamic/monitoring.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/monitoring
-- [Projects](#docs-user-guides-dynamic-projects) — `docs/user_guides/dynamic/projects.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/projects
-- [Dynamic Pulse Responder Configuration](#docs-user-guides-dynamic-pulse-responder) — `docs/user_guides/dynamic/pulse_responder.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/pulse_responder
-- [Testing](#docs-user-guides-dynamic-testing) — `docs/user_guides/dynamic/testing.mdx` — https://ecosystem.ai/docs/user_guides/dynamic/testing
-- [Testing Dynamic Interaction Deployments](#docs-user-guides-dynamic-interaction-deployments) — `docs/user_guides/dynamic_interaction_deployments.mdx` — https://ecosystem.ai/docs/user_guides/dynamic_interaction_deployments
-- [Exploration using epsilon](#docs-user-guides-epsilon-exploration) — `docs/user_guides/epsilon_exploration.mdx` — https://ecosystem.ai/docs/user_guides/epsilon_exploration
-- [Data From Another Runtime](#docs-user-guides-external-runtime-data) — `docs/user_guides/external_runtime_data.mdx` — https://ecosystem.ai/docs/user_guides/external_runtime_data
-- [Intro](#docs-user-guides-index) — `docs/user_guides/index.mdx` — https://ecosystem.ai/docs/user_guides
-- [Model Convergence](#docs-user-guides-model-convergence) — `docs/user_guides/model_convergence.mdx` — https://ecosystem.ai/docs/user_guides/model_convergence
-- [Network Selector](#docs-user-guides-network) — `docs/user_guides/network.mdx` — https://ecosystem.ai/docs/user_guides/network
-- [Deployment](#docs-user-guides-recommender-deployment) — `docs/user_guides/recommender/deployment.mdx` — https://ecosystem.ai/docs/user_guides/recommender/deployment
-- [Feature Stores](#docs-user-guides-recommender-feature-stores) — `docs/user_guides/recommender/feature_stores.mdx` — https://ecosystem.ai/docs/user_guides/recommender/feature_stores
-- [Files & Feature Engineering](#docs-user-guides-recommender-files-features) — `docs/user_guides/recommender/files_features.mdx` — https://ecosystem.ai/docs/user_guides/recommender/files_features
-- [How it Works](#docs-user-guides-recommender-how-it-works) — `docs/user_guides/recommender/how_it_works.mdx` — https://ecosystem.ai/docs/user_guides/recommender/how_it_works
-- [Introduction](#docs-user-guides-recommender-index) — `docs/user_guides/recommender/index.mdx` — https://ecosystem.ai/docs/user_guides/recommender
-- [Get Started](#docs-user-guides-recommender-intro) — `docs/user_guides/recommender/intro.mdx` — https://ecosystem.ai/docs/user_guides/recommender/intro
-- [Monitoring](#docs-user-guides-recommender-monitoring) — `docs/user_guides/recommender/monitoring.mdx` — https://ecosystem.ai/docs/user_guides/recommender/monitoring
-- [Predictions](#docs-user-guides-recommender-predictions) — `docs/user_guides/recommender/predictions.mdx` — https://ecosystem.ai/docs/user_guides/recommender/predictions
-- [Projects](#docs-user-guides-recommender-projects) — `docs/user_guides/recommender/projects.mdx` — https://ecosystem.ai/docs/user_guides/recommender/projects
-- [Testing](#docs-user-guides-recommender-testing) — `docs/user_guides/recommender/testing.mdx` — https://ecosystem.ai/docs/user_guides/recommender/testing
-- [Local Environment Setup](#docs-user-guides-runtime-plugin-development-environment-setup) — `docs/user_guides/runtime_plugin_development/environment_setup.mdx` — https://ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_setup
-- [Local Environment Update](#docs-user-guides-runtime-plugin-development-environment-update) — `docs/user_guides/runtime_plugin_development/environment_update.mdx` — https://ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_update
-- [Introduction](#docs-user-guides-runtime-plugin-development-index) — `docs/user_guides/runtime_plugin_development/index.mdx` — https://ecosystem.ai/docs/user_guides/runtime_plugin_development
-- [Pre and Post Scoring Logic Structures](#docs-user-guides-runtime-plugin-development-pre-post-scoring-structures) — `docs/user_guides/runtime_plugin_development/pre_post_scoring_structures.mdx` — https://ecosystem.ai/docs/user_guides/runtime_plugin_development/pre_post_scoring_structures
-- [Converting Static Model Cases to Dynamic Interactions](#docs-user-guides-static-to-dynamic) — `docs/user_guides/static_to_dynamic.mdx` — https://ecosystem.ai/docs/user_guides/static_to_dynamic
-- [Virtual Variables](#docs-user-guides-virtual-variables) — `docs/user_guides/virtual_variables.mdx` — https://ecosystem.ai/docs/user_guides/virtual_variables
-- [Claude Agent](#docs-workers-agent-framework-claude-agent) — `docs/workers/agent_framework/claude-agent.mdx` — https://ecosystem.ai/docs/workers/agent_framework/claude-agent
-- [Agent Framework](#docs-workers-agent-framework-index) — `docs/workers/agent_framework/index.mdx` — https://ecosystem.ai/docs/workers/agent_framework
-- [Journey Management](#docs-workers-agent-framework-journeys) — `docs/workers/agent_framework/journeys.mdx` — https://ecosystem.ai/docs/workers/agent_framework/journeys
-- [Language Chat Models](#docs-workers-generative) — `docs/workers/generative.mdx` — https://ecosystem.ai/docs/workers/generative
-- [Workers](#docs-workers-index) — `docs/workers/index.mdx` — https://ecosystem.ai/docs/workers
-- [Python](#docs-workers-python) — `docs/workers/python.mdx` — https://ecosystem.ai/docs/workers/python
-- [Worker Architecture](#docs-workers-worker-arch) — `docs/workers/worker_arch.mdx` — https://ecosystem.ai/docs/workers/worker_arch
-- [Changelog](#changelog) — `changelog.mdx` — https://ecosystem.ai/changelog
-- [⚙️ Config v0.6.304.04](#changelog-config-v0-6-304-04) — `changelog/config_v0.6.304.04.mdx` — https://ecosystem.ai/changelog/config_v0.6.304.04
-- [ecosystem.Ai v0.6.304.04](#changelog-v0-6-304-04) — `changelog/v0.6.304.04.mdx` — https://ecosystem.ai/changelog/v0.6.304.04
-- [ecosystem.Ai v0.6.401.00](#changelog-v0-6-401-00) — `changelog/v0.6.401.00.mdx` — https://ecosystem.ai/changelog/v0.6.401.00
-- [ecosystem.Ai v0.6.500.01](#changelog-v0-6-500-01) — `changelog/v0.6.500.01.mdx` — https://ecosystem.ai/changelog/v0.6.500.01
-- [ecosystem.Ai v0.6.601.00](#changelog-v0-6-601-00) — `changelog/v0.6.601.00.mdx` — https://ecosystem.ai/changelog/v0.6.601.00
-- [ecosystem.Ai v0.7.900.00](#changelog-v0-7-900-00) — `changelog/v0.7.900.00.mdx` — https://ecosystem.ai/changelog/v0.7.900.00
-- [Runtime v0.9.5.0](#changelog-v0-9-5-0) — `changelog/v0.9.5.0.mdx` — https://ecosystem.ai/changelog/v0.9.5.0
-- [Runtime v0.9.6.0](#changelog-v0-9-6-0) — `changelog/v0.9.6.0.mdx` — https://ecosystem.ai/changelog/v0.9.6.0
-- [Runtime v0.9.6.1.2](#changelog-v0-9-6-1-2) — `changelog/v0.9.6.1.2.mdx` — https://ecosystem.ai/changelog/v0.9.6.1.2
-- [Runtime v0.9.6.1.3](#changelog-v0-9-6-1-3) — `changelog/v0.9.6.1.3.mdx` — https://ecosystem.ai/changelog/v0.9.6.1.3
-- [Runtime v0.9.6.1.4](#changelog-v0-9-6-1-4) — `changelog/v0.9.6.1.4.mdx` — https://ecosystem.ai/changelog/v0.9.6.1.4
-- [Runtime v0.9.6.1](#changelog-v0-9-6-1) — `changelog/v0.9.6.1.mdx` — https://ecosystem.ai/changelog/v0.9.6.1
-- [Runtime v0.9.7.0](#changelog-v0-9-7-0) — `changelog/v0.9.7.0.mdx` — https://ecosystem.ai/changelog/v0.9.7.0
-- [Workbench 2.0.3](#changelog-workbench-2-0-3) — `changelog/workbench-2.0.3.mdx` — https://ecosystem.ai/changelog/workbench-2.0.3
-- [Workbench 2.0](#changelog-workbench-2-0) — `changelog/workbench-2.0.mdx` — https://ecosystem.ai/changelog/workbench-2.0
-- [Three essential steps to detect customer happiness](#blog-2024-06-29-happiness) — `blog/2024-06-29_happiness.mdx` — https://ecosystem.ai/blog/2024-06-29_happiness
-- [ecosystem.Ai 2024 Roadmap](#blog-2024-06-30-2024-roadmap) — `blog/2024-06-30_2024_roadmap.mdx` — https://ecosystem.ai/blog/2024-06-30_2024_roadmap
-- [Unlocking Customer Insights, The Power of Spend Personality](#blog-2024-11-06-spend) — `blog/2024-11-06_spend.mdx` — https://ecosystem.ai/blog/2024-11-06_spend
-- [Milliseconds Matter; What 'Real-Time' Means to Us](#blog-2025-04-02-millisecondsmatter) — `blog/2025-04-02_millisecondsmatter.mdx` — https://ecosystem.ai/blog/2025-04-02_millisecondsmatter
-- [ecosystem.Ai 2026 Roadmap](#blog-2025-07-03-2026-roadmap) — `blog/2025-07-03_2026_roadmap.mdx` — https://ecosystem.ai/blog/2025-07-03_2026_roadmap
-- [The Hardest Place to Deploy Conversational AI - and Why It Matters](#blog-2026-02-02-conversationalai) — `blog/2026-02-02_conversationalAI.mdx` — https://ecosystem.ai/blog/2026-02-02_conversationalAI
-- [Behavioral Intelligence is an Architecture, not a Plugin](#blog-2026-02-17-behavioral-intelligence-architecture-not-plugin) — `blog/2026-02-17_behavioral-intelligence-architecture-not-plugin.mdx` — https://ecosystem.ai/blog/2026-02-17_behavioral-intelligence-architecture-not-plugin
-- [Agentic capabilities when creating recommenders](#blog-2026-09-18-agentic-capabilities-recommenders) — `blog/2026-09-18_agentic-capabilities-recommenders.mdx` — https://ecosystem.ai/blog/2026-09-18_agentic-capabilities-recommenders
+- [Bayesian Probabilistic](#docs-configuration-algorithms-baysianprobabilistic) — `docs/configuration/algorithms/baysianprobabilistic.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/baysianprobabilistic
+- [Coverage-Aware Thompson](#docs-configuration-algorithms-coveragethompson) — `docs/configuration/algorithms/coveragethompson.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/coveragethompson
+- [Ecosystem Rewards](#docs-configuration-algorithms-ecosystemrewards) — `docs/configuration/algorithms/ecosystemrewards.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/ecosystemrewards
+- [Epsilon Greedy](#docs-configuration-algorithms-epsilongreedy) — `docs/configuration/algorithms/epsilongreedy.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/epsilongreedy
+- [Generative Model](#docs-configuration-algorithms-generativemodel) — `docs/configuration/algorithms/generativemodel.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/generativemodel
+- [Algorithms Overview](#docs-configuration-algorithms-index) — `docs/configuration/algorithms/index.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms
+- [Long-Tail Boost MF](#docs-configuration-algorithms-longtailmf) — `docs/configuration/algorithms/longtailmf.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/longtailmf
+- [Loss Aversion](#docs-configuration-algorithms-lossaversion) — `docs/configuration/algorithms/lossaversion.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/lossaversion
+- [Network Analysis](#docs-configuration-algorithms-networkanalysis) — `docs/configuration/algorithms/networkanalysis.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/networkanalysis
+- [Prospect Theory](#docs-configuration-algorithms-prospecttheory) — `docs/configuration/algorithms/prospecttheory.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/prospecttheory
+- [Q-Learning](#docs-configuration-algorithms-qlearning) — `docs/configuration/algorithms/qlearning.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/qlearning
+- [Risk Aversion](#docs-configuration-algorithms-riskaversion) — `docs/configuration/algorithms/riskaversion.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/riskaversion
+- [Sentimental Equilibrium](#docs-configuration-algorithms-sentimentalequilibrium) — `docs/configuration/algorithms/sentimentalequilibrium.mdx` — https://developer.ecosystem.ai/docs/configuration/algorithms/sentimentalequilibrium
+- [API Management](#docs-configuration-api-index) — `docs/configuration/api/index.mdx` — https://developer.ecosystem.ai/docs/configuration/api
+- [CPR Feature Store](#docs-configuration-cpr-feature-store) — `docs/configuration/cpr_feature_store.mdx` — https://developer.ecosystem.ai/docs/configuration/cpr_feature_store
+- [Enrichment](#docs-configuration-data-enrichment) — `docs/configuration/data/enrichment.mdx` — https://developer.ecosystem.ai/docs/configuration/data/enrichment
+- [Feature Engineering](#docs-configuration-data-feature-engineering) — `docs/configuration/data/feature_engineering.mdx` — https://developer.ecosystem.ai/docs/configuration/data/feature_engineering
+- [Files](#docs-configuration-data-files) — `docs/configuration/data/files.mdx` — https://developer.ecosystem.ai/docs/configuration/data/files
+- [Data Management](#docs-configuration-data-index) — `docs/configuration/data/index.mdx` — https://developer.ecosystem.ai/docs/configuration/data
+- [Meta-Data](#docs-configuration-data-metadata) — `docs/configuration/data/metadata.mdx` — https://developer.ecosystem.ai/docs/configuration/data/metadata
+- [Presto](#docs-configuration-data-presto) — `docs/configuration/data/presto.mdx` — https://developer.ecosystem.ai/docs/configuration/data/presto
+- [SQL Server](#docs-configuration-data-sqlserver) — `docs/configuration/data/sqlserver.mdx` — https://developer.ecosystem.ai/docs/configuration/data/sqlserver
+- [Endpoints](#docs-configuration-deployment-endpoints) — `docs/configuration/deployment/endpoints.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment/endpoints
+- [Deployment Options](#docs-configuration-deployment-index) — `docs/configuration/deployment/index.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment
+- [Deployment Parameters](#docs-configuration-deployment-parameters) — `docs/configuration/deployment/parameters.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment/parameters
+- [Deployment Properties](#docs-configuration-deployment-properties) — `docs/configuration/deployment/properties.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment/properties
+- [Model Convergence](#docs-configuration-dynamic-convergence) — `docs/configuration/dynamic/convergence.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/convergence
+- [Custom Rewards](#docs-configuration-dynamic-customrewards) — `docs/configuration/dynamic/customrewards.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/customrewards
+- [Dynamic Interactions](#docs-configuration-dynamic-index) — `docs/configuration/dynamic/index.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic
+- [Dynamic Interactions Options Store](#docs-configuration-dynamic-options) — `docs/configuration/dynamic/options.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/options
+- [Dynamic Parameters](#docs-configuration-dynamic-parameters) — `docs/configuration/dynamic/parameters.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/parameters
+- [Dynamic Interaction Process](#docs-configuration-dynamic-process) — `docs/configuration/dynamic/process.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/process
+- [Dynamic Interactions Runtime Settings](#docs-configuration-dynamic-runtime) — `docs/configuration/dynamic/runtime.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/runtime
+- [Architecture](#docs-configuration-generative-architecture) — `docs/configuration/generative/architecture.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/architecture
+- [Chat Approaches](#docs-configuration-generative-chat) — `docs/configuration/generative/chat.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/chat
+- [Chat to SQL](#docs-configuration-generative-chat-sql) — `docs/configuration/generative/chat_sql.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/chat_sql
+- [Fact Injection](#docs-configuration-generative-facts) — `docs/configuration/generative/facts.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/facts
+- [Generative Fact-Injection Tools and Plugins](#docs-configuration-generative-index) — `docs/configuration/generative/index.mdx` — https://developer.ecosystem.ai/docs/configuration/generative
+- [Generative Models](#docs-configuration-generative-models) — `docs/configuration/generative/models.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/models
+- [Vector Stores](#docs-configuration-generative-vector-stores) — `docs/configuration/generative/vector_stores.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/vector_stores
+- [Intro](#docs-configuration-index) — `docs/configuration/index.mdx` — https://developer.ecosystem.ai/docs/configuration
+- [Project / Module](#docs-configuration-project) — `docs/configuration/project.mdx` — https://developer.ecosystem.ai/docs/configuration/project
+- [Project Review and Update](#docs-configuration-project-review) — `docs/configuration/project_review.mdx` — https://developer.ecosystem.ai/docs/configuration/project_review
+- [ecosystem-notebooks Python Package](#docs-configuration-pythonpackage) — `docs/configuration/pythonpackage.mdx` — https://developer.ecosystem.ai/docs/configuration/pythonpackage
+- [Simulations](#docs-configuration-simulations) — `docs/configuration/simulations.mdx` — https://developer.ecosystem.ai/docs/configuration/simulations
+- [Predictors](#docs-configuration-static-models-index) — `docs/configuration/static_models/index.mdx` — https://developer.ecosystem.ai/docs/configuration/static_models
+- [Model Types](#docs-configuration-static-models-model-types) — `docs/configuration/static_models/model_types.mdx` — https://developer.ecosystem.ai/docs/configuration/static_models/model_types
+- [Models](#docs-configuration-static-models-models) — `docs/configuration/static_models/models.mdx` — https://developer.ecosystem.ai/docs/configuration/static_models/models
+- [Predictor](#docs-configuration-static-models-predictor) — `docs/configuration/static_models/predictor.mdx` — https://developer.ecosystem.ai/docs/configuration/static_models/predictor
+- [Active Directory & SSO](#docs-configuration-workbench-apis-active-directory) — `docs/configuration/workbench_apis/active_directory.mdx` — https://developer.ecosystem.ai/docs/configuration/workbench_apis/active_directory
+- [Agents](#docs-configuration-workbench-apis-agents) — `docs/configuration/workbench_apis/agents.mdx` — https://developer.ecosystem.ai/docs/configuration/workbench_apis/agents
+- [Public APIs, Agents & MCP](#docs-configuration-workbench-apis-index) — `docs/configuration/workbench_apis/index.mdx` — https://developer.ecosystem.ai/docs/configuration/workbench_apis
+- [API Keys](#docs-configuration-workbench-apis-keys) — `docs/configuration/workbench_apis/keys.mdx` — https://developer.ecosystem.ai/docs/configuration/workbench_apis/keys
+- [MCP](#docs-configuration-workbench-apis-mcp) — `docs/configuration/workbench_apis/mcp.mdx` — https://developer.ecosystem.ai/docs/configuration/workbench_apis/mcp
+- [Private APIs](#docs-configuration-workbench-apis-private) — `docs/configuration/workbench_apis/private.mdx` — https://developer.ecosystem.ai/docs/configuration/workbench_apis/private
+- [Public APIs](#docs-configuration-workbench-apis-public) — `docs/configuration/workbench_apis/public.mdx` — https://developer.ecosystem.ai/docs/configuration/workbench_apis/public
+- [Intro](#docs-documentation-index) — `docs/documentation/index.mdx` — https://developer.ecosystem.ai/docs/documentation
+- [Index](#docs-frontend-angular-index) — `docs/frontend/angular/index.mdx` — https://developer.ecosystem.ai/docs/frontend/angular
+- [Index](#docs-frontend-index) — `docs/frontend/index.mdx` — https://developer.ecosystem.ai/docs/frontend
+- [Index](#docs-frontend-ios-index) — `docs/frontend/ios/index.mdx` — https://developer.ecosystem.ai/docs/frontend/ios
+- [Index](#docs-frontend-python-index) — `docs/frontend/python/index.mdx` — https://developer.ecosystem.ai/docs/frontend/python
+- [Get Started](#docs-index) — `docs/index.mdx` — https://developer.ecosystem.ai/docs
+- [Docker](#docs-local-docker) — `docs/local/docker.mdx` — https://developer.ecosystem.ai/docs/local/docker
+- [Intro](#docs-local-index) — `docs/local/index.mdx` — https://developer.ecosystem.ai/docs/local
+- [AWS Marketplace](#docs-marketplace-aws) — `docs/marketplace/aws.mdx` — https://developer.ecosystem.ai/docs/marketplace/aws
+- [Azure Marketplace](#docs-marketplace-azure) — `docs/marketplace/azure.mdx` — https://developer.ecosystem.ai/docs/marketplace/azure
+- [GCP Marketplace](#docs-marketplace-gcp) — `docs/marketplace/gcp.mdx` — https://developer.ecosystem.ai/docs/marketplace/gcp
+- [Intro](#docs-marketplace-index) — `docs/marketplace/index.mdx` — https://developer.ecosystem.ai/docs/marketplace
+- [Data Agents Analysis Views](#docs-modules-data-agents-analysis) — `docs/modules/data_agents/analysis.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/analysis
+- [Data Agents](#docs-modules-data-agents-index) — `docs/modules/data_agents/index.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents
+- [Interactions Analytic](#docs-modules-data-agents-interactions) — `docs/modules/data_agents/interactions.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/interactions
+- [Data Agents Process Jobs](#docs-modules-data-agents-process) — `docs/modules/data_agents/process.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/process
+- [Actuarial Analysis Report](#docs-modules-data-agents-reports-actuarial) — `docs/modules/data_agents/reports/actuarial.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/actuarial
+- [Categorical Analysis Report](#docs-modules-data-agents-reports-categorical) — `docs/modules/data_agents/reports/categorical.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/categorical
+- [Config Parameters](#docs-modules-data-agents-reports-config-parameters) — `docs/modules/data_agents/reports/config_parameters.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/config_parameters
+- [Consolidated Results](#docs-modules-data-agents-reports-consolidated-results) — `docs/modules/data_agents/reports/consolidated_results.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/consolidated_results
+- [Feature Engineering Report](#docs-modules-data-agents-reports-feature-engineering) — `docs/modules/data_agents/reports/feature_engineering.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/feature_engineering
+- [Financial Breakdowns](#docs-modules-data-agents-reports-financial-breakdowns) — `docs/modules/data_agents/reports/financial_breakdowns.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_breakdowns
+- [Financial Campaigns](#docs-modules-data-agents-reports-financial-campaigns) — `docs/modules/data_agents/reports/financial_campaigns.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_campaigns
+- [Financial Comparisons](#docs-modules-data-agents-reports-financial-comparisons) — `docs/modules/data_agents/reports/financial_comparisons.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_comparisons
+- [Financial Data Quality](#docs-modules-data-agents-reports-financial-data-quality) — `docs/modules/data_agents/reports/financial_data_quality.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_data_quality
+- [Financial Distributions](#docs-modules-data-agents-reports-financial-distributions) — `docs/modules/data_agents/reports/financial_distributions.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_distributions
+- [Financial Overview](#docs-modules-data-agents-reports-financial-general) — `docs/modules/data_agents/reports/financial_general.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_general
+- [Growth & Retention](#docs-modules-data-agents-reports-financial-growth) — `docs/modules/data_agents/reports/financial_growth.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_growth
+- [Financial Industry Pack](#docs-modules-data-agents-reports-financial-industry) — `docs/modules/data_agents/reports/financial_industry.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_industry
+- [Ledgers (AR/AP/GL)](#docs-modules-data-agents-reports-financial-ledgers) — `docs/modules/data_agents/reports/financial_ledgers.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_ledgers
+- [Profitability](#docs-modules-data-agents-reports-financial-profitability) — `docs/modules/data_agents/reports/financial_profitability.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_profitability
+- [Returns (ROI / CAC)](#docs-modules-data-agents-reports-financial-returns) — `docs/modules/data_agents/reports/financial_returns.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_returns
+- [Financial Time Analytics](#docs-modules-data-agents-reports-financial-time) — `docs/modules/data_agents/reports/financial_time.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_time
+- [Unit Economics (ARPU)](#docs-modules-data-agents-reports-financial-unit-economics) — `docs/modules/data_agents/reports/financial_unit_economics.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_unit_economics
+- [Customer Value (LTV)](#docs-modules-data-agents-reports-financial-value) — `docs/modules/data_agents/reports/financial_value.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_value
+- [Data Agents Reports](#docs-modules-data-agents-reports-index) — `docs/modules/data_agents/reports/index.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports
+- [Main Analysis Report](#docs-modules-data-agents-reports-main) — `docs/modules/data_agents/reports/main.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/main
+- [Machine Learning Report](#docs-modules-data-agents-reports-ml) — `docs/modules/data_agents/reports/ml.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/ml
+- [Calendar Personality Patterns](#docs-modules-data-agents-reports-personality-calendar) — `docs/modules/data_agents/reports/personality_calendar.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_calendar
+- [Personality Intelligent Campaigning](#docs-modules-data-agents-reports-personality-campaigns) — `docs/modules/data_agents/reports/personality_campaigns.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_campaigns
+- [Category Patterns](#docs-modules-data-agents-reports-personality-category-patterns) — `docs/modules/data_agents/reports/personality_category_patterns.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_category_patterns
+- [Customer Personality Change & Reasons](#docs-modules-data-agents-reports-personality-customer-change) — `docs/modules/data_agents/reports/personality_customer_change.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_customer_change
+- [Personality Drift](#docs-modules-data-agents-reports-personality-drift) — `docs/modules/data_agents/reports/personality_drift.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_drift
+- [Personality Overview](#docs-modules-data-agents-reports-personality-general) — `docs/modules/data_agents/reports/personality_general.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_general
+- [Money Personality Report](#docs-modules-data-agents-reports-personality-money) — `docs/modules/data_agents/reports/personality_money.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_money
+- [Personality Lifecycle Recommendations](#docs-modules-data-agents-reports-personality-recommendations) — `docs/modules/data_agents/reports/personality_recommendations.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_recommendations
+- [Spend Personality Report](#docs-modules-data-agents-reports-personality-spend) — `docs/modules/data_agents/reports/personality_spend.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_spend
+- [Personality Time Measures](#docs-modules-data-agents-reports-personality-time) — `docs/modules/data_agents/reports/personality_time.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_time
+- [Runnable Pipeline Notebook](#docs-modules-data-agents-reports-pipeline-notebook) — `docs/modules/data_agents/reports/pipeline_notebook.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/pipeline_notebook
+- [Customer Uptake & Channel](#docs-modules-data-agents-reports-recommender-customer) — `docs/modules/data_agents/reports/recommender_customer.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_customer
+- [Entity Clusters (Offers by Category)](#docs-modules-data-agents-reports-recommender-entity-clusters) — `docs/modules/data_agents/reports/recommender_entity_clusters.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_entity_clusters
+- [Campaign & Predictor Performance](#docs-modules-data-agents-reports-recommender-general) — `docs/modules/data_agents/reports/recommender_general.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_general
+- [Interaction Analysis Manifest](#docs-modules-data-agents-reports-recommender-manifest) — `docs/modules/data_agents/reports/recommender_manifest.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_manifest
+- [Market Intelligence](#docs-modules-data-agents-reports-recommender-market-intelligence) — `docs/modules/data_agents/reports/recommender_market_intelligence.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_market_intelligence
+- [Marketing Mix (Adstock & Saturation)](#docs-modules-data-agents-reports-recommender-marketing-mix) — `docs/modules/data_agents/reports/recommender_marketing_mix.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_marketing_mix
+- [Offer Effectiveness & Catalog](#docs-modules-data-agents-reports-recommender-offer) — `docs/modules/data_agents/reports/recommender_offer.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_offer
+- [Time Series Report](#docs-modules-data-agents-reports-time-series) — `docs/modules/data_agents/reports/time_series.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/time_series
+- [Data Agents Setup](#docs-modules-data-agents-setup) — `docs/modules/data_agents/setup.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/setup
+- [Modules](#docs-modules-index) — `docs/modules/index.mdx` — https://developer.ecosystem.ai/docs/modules
+- [LoRA Recommender](#docs-modules-lora) — `docs/modules/lora.mdx` — https://developer.ecosystem.ai/docs/modules/lora
+- [LoRA Recommender Module](#docs-modules-lora-index) — `docs/modules/lora/index.mdx` — https://developer.ecosystem.ai/docs/modules/lora
+- [LoRA Runtime](#docs-modules-lora-runtime) — `docs/modules/lora/runtime.mdx` — https://developer.ecosystem.ai/docs/modules/lora/runtime
+- [LoRA Training](#docs-modules-lora-training) — `docs/modules/lora/training.mdx` — https://developer.ecosystem.ai/docs/modules/lora/training
+- [MLRun Module — Access & Scoring](#docs-modules-mlrun-access) — `docs/modules/mlrun/access.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/access
+- [MLRun Module — Community Edition](#docs-modules-mlrun-community-edition) — `docs/modules/mlrun/community_edition.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/community_edition
+- [MLRun Module — Console Tour](#docs-modules-mlrun-console-tour) — `docs/modules/mlrun/console_tour.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/console_tour
+- [MLRun Module — Data Preparation](#docs-modules-mlrun-data) — `docs/modules/mlrun/data.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/data
+- [MLRun Module — Use-Case Definition](#docs-modules-mlrun-definition) — `docs/modules/mlrun/definition.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/definition
+- [MLRun Module — Kubernetes Deployment](#docs-modules-mlrun-deployment) — `docs/modules/mlrun/deployment.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/deployment
+- [MLRun Module — Python & AI Generator](#docs-modules-mlrun-generator) — `docs/modules/mlrun/generator.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/generator
+- [MLRun Module](#docs-modules-mlrun-index) — `docs/modules/mlrun/index.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun
+- [MLRun Module — Installation](#docs-modules-mlrun-install) — `docs/modules/mlrun/install.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/install
+- [MLRun Module — Model Training](#docs-modules-mlrun-training) — `docs/modules/mlrun/training.mdx` — https://developer.ecosystem.ai/docs/modules/mlrun/training
+- [Networks Social, Knowledge, and Time](#docs-modules-networks-advanced) — `docs/modules/networks/advanced.mdx` — https://developer.ecosystem.ai/docs/modules/networks/advanced
+- [Networks Analysis](#docs-modules-networks-analysis) — `docs/modules/networks/analysis.mdx` — https://developer.ecosystem.ai/docs/modules/networks/analysis
+- [Networks Jobs and API](#docs-modules-networks-api) — `docs/modules/networks/api.mdx` — https://developer.ecosystem.ai/docs/modules/networks/api
+- [Networks Data Sources](#docs-modules-networks-data) — `docs/modules/networks/data.mdx` — https://developer.ecosystem.ai/docs/modules/networks/data
+- [Networks](#docs-modules-networks-index) — `docs/modules/networks/index.mdx` — https://developer.ecosystem.ai/docs/modules/networks
+- [Networks Workspace](#docs-modules-networks-workspace) — `docs/modules/networks/workspace.mdx` — https://developer.ecosystem.ai/docs/modules/networks/workspace
+- [Spend Personality](#docs-modules-spend-personality-access) — `docs/modules/spend_personality/access.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/access
+- [Spend Personality](#docs-modules-spend-personality-chatgpt) — `docs/modules/spend_personality/chatgpt.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/chatgpt
+- [Spend Personality](#docs-modules-spend-personality-configuration) — `docs/modules/spend_personality/configuration.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/configuration
+- [Spend Personality](#docs-modules-spend-personality-data) — `docs/modules/spend_personality/data.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/data
+- [Spend Personality](#docs-modules-spend-personality-definition) — `docs/modules/spend_personality/definition.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/definition
+- [Spend Personality](#docs-modules-spend-personality-enrich) — `docs/modules/spend_personality/enrich.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/enrich
+- [Index](#docs-modules-spend-personality-index) — `docs/modules/spend_personality/index.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality
+- [AWS Spend Personality](#docs-modules-spend-personality-install-aws) — `docs/modules/spend_personality/install/aws.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/install/aws
+- [Azure Spend Personality](#docs-modules-spend-personality-install-azure) — `docs/modules/spend_personality/install/azure.mdx` — https://developer.ecosystem.ai/docs/modules/spend_personality/install/azure
+- [Two-Tower Module — Access & Operations](#docs-modules-two-tower-access) — `docs/modules/two_tower/access.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/access
+- [Two-Tower Module — API Reference](#docs-modules-two-tower-api) — `docs/modules/two_tower/api.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/api
+- [Two-Tower Module — Architecture & Theory](#docs-modules-two-tower-concepts) — `docs/modules/two_tower/concepts.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/concepts
+- [Two-Tower Module — Data Preparation](#docs-modules-two-tower-data) — `docs/modules/two_tower/data.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/data
+- [Two-Tower Module](#docs-modules-two-tower-index) — `docs/modules/two_tower/index.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower
+- [Two-Tower Module — PyTorch Serving](#docs-modules-two-tower-pytorch) — `docs/modules/two_tower/pytorch.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/pytorch
+- [Two-Tower Module — Real-Time Scoring](#docs-modules-two-tower-runtime) — `docs/modules/two_tower/runtime.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/runtime
+- [Two-Tower Module — Offline Scoring](#docs-modules-two-tower-scoring) — `docs/modules/two_tower/scoring.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/scoring
+- [Two-Tower Module — Model Training](#docs-modules-two-tower-training) — `docs/modules/two_tower/training.mdx` — https://developer.ecosystem.ai/docs/modules/two_tower/training
+- [Ontology for Agents](#docs-ontology-agents) — `docs/ontology/agents.mdx` — https://developer.ecosystem.ai/docs/ontology/agents
+- [Alignments](#docs-ontology-alignments) — `docs/ontology/alignments.mdx` — https://developer.ecosystem.ai/docs/ontology/alignments
+- [Concept Index](#docs-ontology-concept-index) — `docs/ontology/concept-index.mdx` — https://developer.ecosystem.ai/docs/ontology/concept-index
+- [Customer Feature Lookup (Open)](#docs-ontology-customer-features) — `docs/ontology/customer-features.mdx` — https://developer.ecosystem.ai/docs/ontology/customer-features
+- [Data and Ontology](#docs-ontology-data-and-ontology) — `docs/ontology/data-and-ontology.mdx` — https://developer.ecosystem.ai/docs/ontology/data-and-ontology
+- [Entities concept catalog](#docs-ontology-entities-catalog) — `docs/ontology/entities-catalog.mdx` — https://developer.ecosystem.ai/docs/ontology/entities-catalog
+- [Entities (Workbench Meta)](#docs-ontology-entities) — `docs/ontology/entities.mdx` — https://developer.ecosystem.ai/docs/ontology/entities
+- [Glossary](#docs-ontology-glossary) — `docs/ontology/glossary.mdx` — https://developer.ecosystem.ai/docs/ontology/glossary
+- [Ontology Overview](#docs-ontology-index) — `docs/ontology/index.mdx` — https://developer.ecosystem.ai/docs/ontology
+- [Link Types](#docs-ontology-link-types) — `docs/ontology/link-types.mdx` — https://developer.ecosystem.ai/docs/ontology/link-types
+- [Namespaces](#docs-ontology-namespaces) — `docs/ontology/namespaces.mdx` — https://developer.ecosystem.ai/docs/ontology/namespaces
+- [Object Types](#docs-ontology-object-types) — `docs/ontology/object-types.mdx` — https://developer.ecosystem.ai/docs/ontology/object-types
+- [Offer Matrix (Closed Schema)](#docs-ontology-offer-matrix) — `docs/ontology/offer-matrix.mdx` — https://developer.ecosystem.ai/docs/ontology/offer-matrix
+- [Platform Modules](#docs-ontology-platform) — `docs/ontology/platform.mdx` — https://developer.ecosystem.ai/docs/ontology/platform
+- [Runtime concept catalog](#docs-ontology-runtime-catalog) — `docs/ontology/runtime-catalog.mdx` — https://developer.ecosystem.ai/docs/ontology/runtime-catalog
+- [Runtime Closed Loop](#docs-ontology-runtime) — `docs/ontology/runtime.mdx` — https://developer.ecosystem.ai/docs/ontology/runtime
+- [Server concept catalog](#docs-ontology-server-catalog) — `docs/ontology/server-catalog.mdx` — https://developer.ecosystem.ai/docs/ontology/server-catalog
+- [Modeling Server Concepts](#docs-ontology-server) — `docs/ontology/server.mdx` — https://developer.ecosystem.ai/docs/ontology/server
+- [Why create an Ontology?](#docs-ontology-why) — `docs/ontology/why.mdx` — https://developer.ecosystem.ai/docs/ontology/why
+- [Workbench concept catalog](#docs-ontology-workbench-catalog) — `docs/ontology/workbench-catalog.mdx` — https://developer.ecosystem.ai/docs/ontology/workbench-catalog
+- [Workbench Application Concepts](#docs-ontology-workbench) — `docs/ontology/workbench.mdx` — https://developer.ecosystem.ai/docs/ontology/workbench
+- [Index](#docs-opensource-index) — `docs/opensource/index.mdx` — https://developer.ecosystem.ai/docs/opensource
+- [Superset](#docs-opensource-superset) — `docs/opensource/superset.mdx` — https://developer.ecosystem.ai/docs/opensource/superset
+- [Docker](#docs-quick-start-docker) — `docs/quick_start/docker.mdx` — https://developer.ecosystem.ai/docs/quick_start/docker
+- [Quick Start](#docs-quick-start-index) — `docs/quick_start/index.mdx` — https://developer.ecosystem.ai/docs/quick_start
+- [Kubernetes](#docs-quick-start-kubernetes) — `docs/quick_start/kubernetes.mdx` — https://developer.ecosystem.ai/docs/quick_start/kubernetes
+- [Local Setup](#docs-quick-start-local-setup) — `docs/quick_start/local_setup.mdx` — https://developer.ecosystem.ai/docs/quick_start/local_setup
+- [Marketplace](#docs-quick-start-marketplace) — `docs/quick_start/marketplace.mdx` — https://developer.ecosystem.ai/docs/quick_start/marketplace
+- [Openshift](#docs-quick-start-openshift) — `docs/quick_start/openshift.mdx` — https://developer.ecosystem.ai/docs/quick_start/openshift
+- [Post Install](#docs-quick-start-post-install) — `docs/quick_start/post_install.mdx` — https://developer.ecosystem.ai/docs/quick_start/post_install
+- [API Access](#docs-runtime-access) — `docs/runtime/access.mdx` — https://developer.ecosystem.ai/docs/runtime/access
+- [API Configuration Plugin](#docs-runtime-apiconfiguration-index) — `docs/runtime/apiconfiguration/index.mdx` — https://developer.ecosystem.ai/docs/runtime/apiconfiguration
+- [Product Master Plugin](#docs-runtime-apiconfiguration-productmaster) — `docs/runtime/apiconfiguration/productmaster.mdx` — https://developer.ecosystem.ai/docs/runtime/apiconfiguration/productmaster
+- [Configuration](#docs-runtime-configuration) — `docs/runtime/configuration.mdx` — https://developer.ecosystem.ai/docs/runtime/configuration
+- [Runtime Dashboard](#docs-runtime-dashboard) — `docs/runtime/dashboard.mdx` — https://developer.ecosystem.ai/docs/runtime/dashboard
+- [Push Your Deployment](#docs-runtime-deployment) — `docs/runtime/deployment.mdx` — https://developer.ecosystem.ai/docs/runtime/deployment
+- [Environment Variables](#docs-runtime-environment-variables) — `docs/runtime/environment_variables.mdx` — https://developer.ecosystem.ai/docs/runtime/environment_variables
+- [Calling External Runtimes](#docs-runtime-externalruntimecalls) — `docs/runtime/externalruntimecalls.mdx` — https://developer.ecosystem.ai/docs/runtime/externalruntimecalls
+- [Runtime](#docs-runtime-index) — `docs/runtime/index.mdx` — https://developer.ecosystem.ai/docs/runtime
+- [Logging](#docs-runtime-logging) — `docs/runtime/logging.mdx` — https://developer.ecosystem.ai/docs/runtime/logging
+- [MCP Support](#docs-runtime-mcp) — `docs/runtime/mcp.mdx` — https://developer.ecosystem.ai/docs/runtime/mcp
+- [MLFlow Integration](#docs-runtime-mlflowintegration) — `docs/runtime/mlflowintegration.mdx` — https://developer.ecosystem.ai/docs/runtime/mlflowintegration
+- [Model Convergence](#docs-runtime-model-convergence) — `docs/runtime/model_convergence.mdx` — https://developer.ecosystem.ai/docs/runtime/model_convergence
+- [Plugins](#docs-runtime-plugins-index) — `docs/runtime/plugins/index.mdx` — https://developer.ecosystem.ai/docs/runtime/plugins
+- [Post-Predict Plugins](#docs-runtime-plugins-postpredict) — `docs/runtime/plugins/postpredict.mdx` — https://developer.ecosystem.ai/docs/runtime/plugins/postpredict
+- [Pre-Predict Plugins](#docs-runtime-plugins-prepredict) — `docs/runtime/plugins/prepredict.mdx` — https://developer.ecosystem.ai/docs/runtime/plugins/prepredict
+- [Post-Predict Plugins](#docs-runtime-postpredict-index) — `docs/runtime/postpredict/index.mdx` — https://developer.ecosystem.ai/docs/runtime/postpredict
+- [Platform Dynamic Engagement Plugin](#docs-runtime-postpredict-platformdynamicengagement) — `docs/runtime/postpredict/platformdynamicengagement.mdx` — https://developer.ecosystem.ai/docs/runtime/postpredict/platformdynamicengagement
+- [Post-Score Basic Plugin](#docs-runtime-postpredict-postscorebasic) — `docs/runtime/postpredict/postscorebasic.mdx` — https://developer.ecosystem.ai/docs/runtime/postpredict/postscorebasic
+- [Post Score Network Plugin](#docs-runtime-postpredict-postscorenetwork) — `docs/runtime/postpredict/postscorenetwork.mdx` — https://developer.ecosystem.ai/docs/runtime/postpredict/postscorenetwork
+- [Post-Score Recommender Plugin](#docs-runtime-postpredict-postscorerecommenderoffers) — `docs/runtime/postpredict/postscorerecommenderoffers.mdx` — https://developer.ecosystem.ai/docs/runtime/postpredict/postscorerecommenderoffers
+- [Pre-Predict Plugins](#docs-runtime-prepredict-index) — `docs/runtime/prepredict/index.mdx` — https://developer.ecosystem.ai/docs/runtime/prepredict
+- [Pre-Predict Auto Date](#docs-runtime-prepredict-prepredictautodate) — `docs/runtime/prepredict/prepredictautodate.mdx` — https://developer.ecosystem.ai/docs/runtime/prepredict/prepredictautodate
+- [Pre-Score Basic Plugin](#docs-runtime-prepredict-prescorebasic) — `docs/runtime/prepredict/prescorebasic.mdx` — https://developer.ecosystem.ai/docs/runtime/prepredict/prescorebasic
+- [Pre-Score Dynamic Plugin](#docs-runtime-prepredict-prescoredynamic) — `docs/runtime/prepredict/prescoredynamic.mdx` — https://developer.ecosystem.ai/docs/runtime/prepredict/prescoredynamic
+- [Pre-Score Lookup Plugin](#docs-runtime-prepredict-prescorelookup) — `docs/runtime/prepredict/prescorelookup.mdx` — https://developer.ecosystem.ai/docs/runtime/prepredict/prescorelookup
+- [ecosystem.Ai runtime release notes](#docs-runtime-runtimeversion) — `docs/runtime/runtimeversion.mdx` — https://developer.ecosystem.ai/docs/runtime/runtimeversion
+- [Campaign Testing](#docs-runtime-testing) — `docs/runtime/testing.mdx` — https://developer.ecosystem.ai/docs/runtime/testing
+- [Deployment](#docs-user-guides-dynamic-deployment) — `docs/user_guides/dynamic/deployment.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/deployment
+- [Manage Files & Feature Engineering](#docs-user-guides-dynamic-files-features) — `docs/user_guides/dynamic/files_features.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/files_features
+- [How it Works](#docs-user-guides-dynamic-how-it-works) — `docs/user_guides/dynamic/how_it_works.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/how_it_works
+- [Introduction](#docs-user-guides-dynamic-index) — `docs/user_guides/dynamic/index.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic
+- [Get Started](#docs-user-guides-dynamic-intro) — `docs/user_guides/dynamic/intro.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/intro
+- [Monitoring](#docs-user-guides-dynamic-monitoring) — `docs/user_guides/dynamic/monitoring.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/monitoring
+- [Projects](#docs-user-guides-dynamic-projects) — `docs/user_guides/dynamic/projects.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/projects
+- [Dynamic Pulse Responder Configuration](#docs-user-guides-dynamic-pulse-responder) — `docs/user_guides/dynamic/pulse_responder.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/pulse_responder
+- [Testing](#docs-user-guides-dynamic-testing) — `docs/user_guides/dynamic/testing.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/testing
+- [Testing Dynamic Interaction Deployments](#docs-user-guides-dynamic-interaction-deployments) — `docs/user_guides/dynamic_interaction_deployments.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic_interaction_deployments
+- [Exploration using epsilon](#docs-user-guides-epsilon-exploration) — `docs/user_guides/epsilon_exploration.mdx` — https://developer.ecosystem.ai/docs/user_guides/epsilon_exploration
+- [Data From Another Runtime](#docs-user-guides-external-runtime-data) — `docs/user_guides/external_runtime_data.mdx` — https://developer.ecosystem.ai/docs/user_guides/external_runtime_data
+- [Intro](#docs-user-guides-index) — `docs/user_guides/index.mdx` — https://developer.ecosystem.ai/docs/user_guides
+- [Model Convergence](#docs-user-guides-model-convergence) — `docs/user_guides/model_convergence.mdx` — https://developer.ecosystem.ai/docs/user_guides/model_convergence
+- [Network Selector](#docs-user-guides-network) — `docs/user_guides/network.mdx` — https://developer.ecosystem.ai/docs/user_guides/network
+- [Deployment](#docs-user-guides-recommender-deployment) — `docs/user_guides/recommender/deployment.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/deployment
+- [Feature Stores](#docs-user-guides-recommender-feature-stores) — `docs/user_guides/recommender/feature_stores.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/feature_stores
+- [Files & Feature Engineering](#docs-user-guides-recommender-files-features) — `docs/user_guides/recommender/files_features.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/files_features
+- [How it Works](#docs-user-guides-recommender-how-it-works) — `docs/user_guides/recommender/how_it_works.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/how_it_works
+- [Introduction](#docs-user-guides-recommender-index) — `docs/user_guides/recommender/index.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender
+- [Get Started](#docs-user-guides-recommender-intro) — `docs/user_guides/recommender/intro.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/intro
+- [Monitoring](#docs-user-guides-recommender-monitoring) — `docs/user_guides/recommender/monitoring.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/monitoring
+- [Predictions](#docs-user-guides-recommender-predictions) — `docs/user_guides/recommender/predictions.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/predictions
+- [Projects](#docs-user-guides-recommender-projects) — `docs/user_guides/recommender/projects.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/projects
+- [Testing](#docs-user-guides-recommender-testing) — `docs/user_guides/recommender/testing.mdx` — https://developer.ecosystem.ai/docs/user_guides/recommender/testing
+- [Local Environment Setup](#docs-user-guides-runtime-plugin-development-environment-setup) — `docs/user_guides/runtime_plugin_development/environment_setup.mdx` — https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_setup
+- [Local Environment Update](#docs-user-guides-runtime-plugin-development-environment-update) — `docs/user_guides/runtime_plugin_development/environment_update.mdx` — https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_update
+- [Introduction](#docs-user-guides-runtime-plugin-development-index) — `docs/user_guides/runtime_plugin_development/index.mdx` — https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development
+- [Pre and Post Scoring Logic Structures](#docs-user-guides-runtime-plugin-development-pre-post-scoring-structures) — `docs/user_guides/runtime_plugin_development/pre_post_scoring_structures.mdx` — https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development/pre_post_scoring_structures
+- [Converting Static Model Cases to Dynamic Interactions](#docs-user-guides-static-to-dynamic) — `docs/user_guides/static_to_dynamic.mdx` — https://developer.ecosystem.ai/docs/user_guides/static_to_dynamic
+- [Virtual Variables](#docs-user-guides-virtual-variables) — `docs/user_guides/virtual_variables.mdx` — https://developer.ecosystem.ai/docs/user_guides/virtual_variables
+- [Claude Agent](#docs-workers-agent-framework-claude-agent) — `docs/workers/agent_framework/claude-agent.mdx` — https://developer.ecosystem.ai/docs/workers/agent_framework/claude-agent
+- [Agent Framework](#docs-workers-agent-framework-index) — `docs/workers/agent_framework/index.mdx` — https://developer.ecosystem.ai/docs/workers/agent_framework
+- [Journey Management](#docs-workers-agent-framework-journeys) — `docs/workers/agent_framework/journeys.mdx` — https://developer.ecosystem.ai/docs/workers/agent_framework/journeys
+- [Language Chat Models](#docs-workers-generative) — `docs/workers/generative.mdx` — https://developer.ecosystem.ai/docs/workers/generative
+- [Workers](#docs-workers-index) — `docs/workers/index.mdx` — https://developer.ecosystem.ai/docs/workers
+- [Python](#docs-workers-python) — `docs/workers/python.mdx` — https://developer.ecosystem.ai/docs/workers/python
+- [Worker Architecture](#docs-workers-worker-arch) — `docs/workers/worker_arch.mdx` — https://developer.ecosystem.ai/docs/workers/worker_arch
+- [Changelog](#changelog) — `changelog.mdx` — https://developer.ecosystem.ai/changelog
+- [⚙️ Config v0.6.304.04](#changelog-config-v0-6-304-04) — `changelog/config_v0.6.304.04.mdx` — https://developer.ecosystem.ai/changelog/config_v0.6.304.04
+- [ecosystem.Ai v0.6.304.04](#changelog-v0-6-304-04) — `changelog/v0.6.304.04.mdx` — https://developer.ecosystem.ai/changelog/v0.6.304.04
+- [ecosystem.Ai v0.6.401.00](#changelog-v0-6-401-00) — `changelog/v0.6.401.00.mdx` — https://developer.ecosystem.ai/changelog/v0.6.401.00
+- [ecosystem.Ai v0.6.500.01](#changelog-v0-6-500-01) — `changelog/v0.6.500.01.mdx` — https://developer.ecosystem.ai/changelog/v0.6.500.01
+- [ecosystem.Ai v0.6.601.00](#changelog-v0-6-601-00) — `changelog/v0.6.601.00.mdx` — https://developer.ecosystem.ai/changelog/v0.6.601.00
+- [ecosystem.Ai v0.7.900.00](#changelog-v0-7-900-00) — `changelog/v0.7.900.00.mdx` — https://developer.ecosystem.ai/changelog/v0.7.900.00
+- [Runtime v0.9.5.0](#changelog-v0-9-5-0) — `changelog/v0.9.5.0.mdx` — https://developer.ecosystem.ai/changelog/v0.9.5.0
+- [Runtime v0.9.6.0](#changelog-v0-9-6-0) — `changelog/v0.9.6.0.mdx` — https://developer.ecosystem.ai/changelog/v0.9.6.0
+- [Runtime v0.9.6.1.2](#changelog-v0-9-6-1-2) — `changelog/v0.9.6.1.2.mdx` — https://developer.ecosystem.ai/changelog/v0.9.6.1.2
+- [Runtime v0.9.6.1.3](#changelog-v0-9-6-1-3) — `changelog/v0.9.6.1.3.mdx` — https://developer.ecosystem.ai/changelog/v0.9.6.1.3
+- [Runtime v0.9.6.1.4](#changelog-v0-9-6-1-4) — `changelog/v0.9.6.1.4.mdx` — https://developer.ecosystem.ai/changelog/v0.9.6.1.4
+- [Runtime v0.9.6.1](#changelog-v0-9-6-1) — `changelog/v0.9.6.1.mdx` — https://developer.ecosystem.ai/changelog/v0.9.6.1
+- [Runtime v0.9.7.0](#changelog-v0-9-7-0) — `changelog/v0.9.7.0.mdx` — https://developer.ecosystem.ai/changelog/v0.9.7.0
+- [Workbench 2.0.3](#changelog-workbench-2-0-3) — `changelog/workbench-2.0.3.mdx` — https://developer.ecosystem.ai/changelog/workbench-2.0.3
+- [Workbench 2.0](#changelog-workbench-2-0) — `changelog/workbench-2.0.mdx` — https://developer.ecosystem.ai/changelog/workbench-2.0
+- [Three essential steps to detect customer happiness](#blog-2024-06-29-happiness) — `blog/2024-06-29_happiness.mdx` — https://developer.ecosystem.ai/blog/2024-06-29_happiness
+- [ecosystem.Ai 2024 Roadmap](#blog-2024-06-30-2024-roadmap) — `blog/2024-06-30_2024_roadmap.mdx` — https://developer.ecosystem.ai/blog/2024-06-30_2024_roadmap
+- [Unlocking Customer Insights, The Power of Spend Personality](#blog-2024-11-06-spend) — `blog/2024-11-06_spend.mdx` — https://developer.ecosystem.ai/blog/2024-11-06_spend
+- [Milliseconds Matter; What 'Real-Time' Means to Us](#blog-2025-04-02-millisecondsmatter) — `blog/2025-04-02_millisecondsmatter.mdx` — https://developer.ecosystem.ai/blog/2025-04-02_millisecondsmatter
+- [ecosystem.Ai 2026 Roadmap](#blog-2025-07-03-2026-roadmap) — `blog/2025-07-03_2026_roadmap.mdx` — https://developer.ecosystem.ai/blog/2025-07-03_2026_roadmap
+- [The Hardest Place to Deploy Conversational AI - and Why It Matters](#blog-2026-02-02-conversationalai) — `blog/2026-02-02_conversationalAI.mdx` — https://developer.ecosystem.ai/blog/2026-02-02_conversationalAI
+- [Behavioral Intelligence is an Architecture, not a Plugin](#blog-2026-02-17-behavioral-intelligence-architecture-not-plugin) — `blog/2026-02-17_behavioral-intelligence-architecture-not-plugin.mdx` — https://developer.ecosystem.ai/blog/2026-02-17_behavioral-intelligence-architecture-not-plugin
+- [Agentic capabilities when creating recommenders](#blog-2026-09-18-agentic-capabilities-recommenders) — `blog/2026-09-18_agentic-capabilities-recommenders.mdx` — https://developer.ecosystem.ai/blog/2026-09-18_agentic-capabilities-recommenders
 
 ---
 
@@ -283,7 +287,7 @@ Corpus: 269 documents. Regenerate with `python3.14 scripts/generate_developer_co
 ## Bayesian Probabilistic
 
 Source: `docs/configuration/algorithms/baysianprobabilistic.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/baysianprobabilistic
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/baysianprobabilistic
 Summary: Bayesian Probabilistic
 
 # Bayesian Probabilistic
@@ -388,7 +392,7 @@ deployment_step = dm.create_deployment(
 ## Coverage-Aware Thompson
 
 Source: `docs/configuration/algorithms/coveragethompson.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/coveragethompson
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/coveragethompson
 Summary: Coverage-Aware Thompson Sampling for dynamic interactions in ecosystem.Ai
 
 # Coverage-Aware Thompson
@@ -507,7 +511,7 @@ deployment_step = dm.create_deployment(
 ## Ecosystem Rewards
 
 Source: `docs/configuration/algorithms/ecosystemrewards.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/ecosystemrewards
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/ecosystemrewards
 Summary: Ecosystem Rewards
 
 # Ecosystem Rewards
@@ -989,7 +993,7 @@ Note that this approach assumes that only a single option can be accepted during
 ## Epsilon Greedy
 
 Source: `docs/configuration/algorithms/epsilongreedy.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/epsilongreedy
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/epsilongreedy
 Summary: Epsilon Greedy algorithm for dynamic interactions in ecosystem.Ai
 
 # Epsilon Greedy
@@ -1106,7 +1110,7 @@ deployment_step = dm.create_deployment(
 ## Generative Model
 
 Source: `docs/configuration/algorithms/generativemodel.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/generativemodel
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/generativemodel
 Summary: Generative Model (LLM-based) algorithm for dynamic interactions in ecosystem.Ai
 
 # Generative Model
@@ -1213,7 +1217,7 @@ deployment_step = dm.create_deployment(
 ## Algorithms Overview
 
 Source: `docs/configuration/algorithms/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms
 Summary: Overview of all dynamic interaction algorithms available in the ecosystem.Ai runtime, including comparison tables, cold-start behavior, and scenario guides.
 
 # Algorithms Overview
@@ -1631,7 +1635,7 @@ For custom formulas, see [Custom Reward Functions](/docs/configuration/dynamic/c
 ## Long-Tail Boost MF
 
 Source: `docs/configuration/algorithms/longtailmf.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/longtailmf
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/longtailmf
 Summary: Long-Tail Boost Matrix Factorization for dynamic interactions in ecosystem.Ai
 
 # Long-Tail Boost MF
@@ -1741,7 +1745,7 @@ deployment_step = dm.create_deployment(
 ## Loss Aversion
 
 Source: `docs/configuration/algorithms/lossaversion.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/lossaversion
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/lossaversion
 Summary: Loss Aversion algorithm for dynamic interactions in ecosystem.Ai
 
 # Loss Aversion
@@ -1863,7 +1867,7 @@ deployment_step = dm.create_deployment(
 ## Network Analysis
 
 Source: `docs/configuration/algorithms/networkanalysis.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/networkanalysis
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/networkanalysis
 Summary: Network Analysis (PageRank) algorithm for dynamic interactions in ecosystem.Ai
 
 # Network Analysis
@@ -1978,7 +1982,7 @@ deployment_step = dm.create_deployment(
 ## Prospect Theory
 
 Source: `docs/configuration/algorithms/prospecttheory.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/prospecttheory
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/prospecttheory
 Summary: Prospect Theory algorithm for dynamic interactions in ecosystem.Ai
 
 # Prospect Theory
@@ -2107,7 +2111,7 @@ deployment_step = dm.create_deployment(
 ## Q-Learning
 
 Source: `docs/configuration/algorithms/qlearning.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/qlearning
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/qlearning
 Summary: Q-Learning
 
 # Q-Learning
@@ -2307,7 +2311,7 @@ deployment_step = dm.create_deployment(
 ## Risk Aversion
 
 Source: `docs/configuration/algorithms/riskaversion.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/riskaversion
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/riskaversion
 Summary: Risk Aversion algorithm for dynamic interactions in ecosystem.Ai
 
 # Risk Aversion
@@ -2421,7 +2425,7 @@ deployment_step = dm.create_deployment(
 ## Sentimental Equilibrium
 
 Source: `docs/configuration/algorithms/sentimentalequilibrium.mdx`
-URL: https://ecosystem.ai/docs/configuration/algorithms/sentimentalequilibrium
+URL: https://developer.ecosystem.ai/docs/configuration/algorithms/sentimentalequilibrium
 Summary: Sentimental Equilibrium algorithm for dynamic interactions in ecosystem.Ai
 
 # Sentimental Equilibrium
@@ -2549,7 +2553,7 @@ deployment_step = dm.create_deployment(
 ## API Management
 
 Source: `docs/configuration/api/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/api
+URL: https://developer.ecosystem.ai/docs/configuration/api
 Summary: Configure API's to test your scoring.
 
 # Intro
@@ -2656,10 +2660,46 @@ API result is displayed with successful payload or error from server.
 
 ---
 
+## CPR Feature Store
+
+Source: `docs/configuration/cpr_feature_store.mdx`
+URL: https://developer.ecosystem.ai/docs/configuration/cpr_feature_store
+Summary: Administration → Server Utilities — Generate CPR Feature Store for Two-Tower and LoRA training
+
+# Generate CPR Feature Store
+
+**Administration → Server Utilities → Generate CPR Feature Store** builds flattened interaction features from runtime logging for downstream training jobs.
+
+Private API: `POST /api/v1/admin/generate-cpr-feature-store` (Workbench session JWT on `:8001`).
+
+## What it reads and writes
+
+| Source | Collections |
+| --- | --- |
+| Input | `ecosystemruntime`, `ecosystemruntime_response` |
+
+The job writes:
+
+- One **detail** row per presented offer, with `accepted` evaluated per offer against `offers_accepted`
+- Aggregate collections `{detail}_by_customer` and `{detail}_by_product` over the job window
+
+Default target collection: **`logging.ecosystemruntime_flatten`**.
+
+That flatten store feeds [Two-Tower](/docs/modules/two_tower) and [LoRA Recommender](/docs/modules/lora) training in Workbench.
+
+**Workbench only:** This utility runs on the Workbench Python backend. There is no equivalent Java Runtime endpoint.
+
+## Related
+
+- [Project Review and Update](/docs/configuration/project_review) — neighbouring Server Utilities
+- [Simulations](/docs/configuration/simulations) — closed-loop data that lands in the same logging collections
+
+---
+
 ## Enrichment
 
 Source: `docs/configuration/data/enrichment.mdx`
-URL: https://ecosystem.ai/docs/configuration/data/enrichment
+URL: https://developer.ecosystem.ai/docs/configuration/data/enrichment
 Summary: Enrichment Processes
 
 # Enrichment Capabilities
@@ -2729,7 +2769,7 @@ Enrich data with date related features for example day of week, month, year etc.
 ## Feature Engineering
 
 Source: `docs/configuration/data/feature_engineering.mdx`
-URL: https://ecosystem.ai/docs/configuration/data/feature_engineering
+URL: https://developer.ecosystem.ai/docs/configuration/data/feature_engineering
 Summary: Feature Engineering.
 
 # Feature Engineering
@@ -2753,7 +2793,7 @@ AVRO, SQL and other Data Formats
 ## Files
 
 Source: `docs/configuration/data/files.mdx`
-URL: https://ecosystem.ai/docs/configuration/data/files
+URL: https://developer.ecosystem.ai/docs/configuration/data/files
 Summary: File Management.
 
 # File Management
@@ -2774,7 +2814,7 @@ Download files
 ## Data Management
 
 Source: `docs/configuration/data/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/data
+URL: https://developer.ecosystem.ai/docs/configuration/data
 Summary: Data Management Capabilities.
 
 # Data Management Options:
@@ -2787,14 +2827,14 @@ ecosystem.Ai offers a variety of data management options:
 - [**File Management**](/docs/configuration/data/files): Upload and download files.
 - [**Enrichment**](/docs/configuration/data/enrichment): Enrich your data using a variety of configurable enrichment functions.
 
-The [**meta data**](/docs/configuration/data/meta) of all of the configurations in the ecosystem.Ai Server can also be viewed using the Data Management options.
+The [**meta data**](/docs/configuration/data/metadata) of all of the configurations in the ecosystem.Ai Server can also be viewed using the Data Management options.
 
 ---
 
 ## Meta-Data
 
 Source: `docs/configuration/data/metadata.mdx`
-URL: https://ecosystem.ai/docs/configuration/data/metadata
+URL: https://developer.ecosystem.ai/docs/configuration/data/metadata
 Summary: Meta-Data.
 
 # Meta-Data Management
@@ -3086,7 +3126,7 @@ All these values can be updated based on model results, business logic or data e
 ## Presto
 
 Source: `docs/configuration/data/presto.mdx`
-URL: https://ecosystem.ai/docs/configuration/data/presto
+URL: https://developer.ecosystem.ai/docs/configuration/data/presto
 Summary: Presto Management.
 
 # Presto Overview
@@ -3101,10 +3141,90 @@ Execute SQL Statements
 
 ---
 
+## SQL Server
+
+Source: `docs/configuration/data/sqlserver.mdx`
+URL: https://developer.ecosystem.ai/docs/configuration/data/sqlserver
+Summary: Runtime stored-procedure integration — SQLSERVER env vars and POST /callSqlServerProcedure (0.9.7.x)
+
+# SQL Server stored procedures
+
+Runtime **0.9.7.x** (Oct 2026) can call Microsoft SQL Server stored procedures through a single shared JDBC connection opened at startup.
+
+## Configuration
+
+| Setting | Source |
+| --- | --- |
+| JDBC URL | Env `SQLSERVER_URL`, or property `sqlserver.url` in `ecosystem.properties` |
+| User | Env `SQLSERVER_USER`, or `sqlserver.user` |
+| Password | Env `SQLSERVER_PASSWORD`, or `sqlserver.password` |
+| Query timeout (seconds) | Property `sqlserver.query.timeout` only (default **30**) |
+
+Environment variables **override** the matching `sqlserver.*` properties.
+
+If the connection fails at startup, the runtime logs `EcosystemMaster:E002` and continues without SQL Server.
+
+See also [Runtime environment variables](/docs/runtime/environment_variables).
+
+## API
+
+```http
+POST /callSqlServerProcedure
+Content-Type: application/json
+```
+
+Request body:
+
+```json
+{
+  "procedure": "dbo.usp_X",
+  "parameters": [
+    {
+      "name": "CustomerId",
+      "value": "00000000-0000-0000-0000-000000000001",
+      "type": "uniqueidentifier",
+      "direction": "in"
+    },
+    {
+      "name": "Points",
+      "type": "int",
+      "direction": "out"
+    }
+  ],
+  "type": "r"
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `procedure` | Stored procedure name (for example `dbo.usp_X`) |
+| `parameters` | Bindings with `name`, optional `value`, `type`, and `direction` (`in` or `out`) |
+| `type` | `r` — row objects (default); `c` — column arrays |
+
+Response shape:
+
+```json
+{
+  "data": [],
+  "outputs": {},
+  "updateCount": 0
+}
+```
+
+Supported parameter types: `varchar`, `nvarchar`, `int`, `bigint`, `bit`, `float`, `decimal`, `date`, `datetime`, `uniqueidentifier`.
+
+**Auth:** Confirm whether your deployment requires `MASTER_KEY` / `X-API-KEY` on this route the same way as other runtime admin endpoints. See [API Access](/docs/runtime/access).
+
+## Local sample database
+
+The runtime repo ships `Docker/sqlserver/docker-compose.yml` (SQL Server 2022, **amd64**, host port **1433**, applies `init/*.sql`). Change the sample SA password before use.
+
+---
+
 ## Endpoints
 
 Source: `docs/configuration/deployment/endpoints.mdx`
-URL: https://ecosystem.ai/docs/configuration/deployment/endpoints
+URL: https://developer.ecosystem.ai/docs/configuration/deployment/endpoints
 Summary: Endpoints
 
 # Endpoints
@@ -3184,7 +3304,7 @@ Question and answer approaches with deep learning models:
 ## Deployment Options
 
 Source: `docs/configuration/deployment/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/deployment
+URL: https://developer.ecosystem.ai/docs/configuration/deployment
 Summary: Deployment Options
 
 # Deployment
@@ -3215,7 +3335,7 @@ In order to ensure the ecosystem.Ai platform is fully operational, it is essenti
 ## Deployment Parameters
 
 Source: `docs/configuration/deployment/parameters.mdx`
-URL: https://ecosystem.ai/docs/configuration/deployment/parameters
+URL: https://developer.ecosystem.ai/docs/configuration/deployment/parameters
 Summary: Deployment Parameters
 
 # Deployment Parameters
@@ -3369,7 +3489,7 @@ If any of these three loads fails the corresponding item in `params` will be emp
 
 **Note:** Prior to version 0.9.6.0 an error message is displayed if `offerMatrixWithKey` is not loaded successfully, which will generally occur if the `static_offers` column does not exist. Howeverm `offerMatrixWithKey` and `offerMatrix` can still be used even if this error is displayed. From 0.9.6.0 a warning message is displayed instead.
 
-**Note:** The default functionality in some of the template post scoring logic structures assumes the following columns are present in the [Offer Matrix](/docs/configuration/data/meta) `cost, price, offer_id, offer_name, static_offers`.
+**Note:** The default functionality in some of the template post scoring logic structures assumes the following columns are present in the [Offer Matrix](/docs/configuration/data/metadata) `cost, price, offer_id, offer_name, static_offers`.
 
 The Offer Matrix details will be visible in the `properties` file with the following format:
 ```properties
@@ -3384,7 +3504,7 @@ predictor.offer.matrix={"database":"rest","url":"https://api.example.com/offers"
 The pre and post scoring logic, custom reward function for Dynamic Interactions and API structure java classes to use in the Deployment.
 
 ### API endpoint
-The API endpoint is used to configure the API structure to be used in the Deployment. To use the default API structure leave this section blank. See the [API configuration](/docs/runtime/api_configuration) for more information on how to configure the API structure.
+The API endpoint is used to configure the API structure to be used in the Deployment. To use the default API structure leave this section blank. See the [API configuration](/docs/runtime/apiconfiguration) for more information on how to configure the API structure.
 
 ### Pre Scoring logic
 The pre scoring logic is used to configure the pre scoring plugin to be used in the Deployment. The pre scoring plugin is used to perform any pre processing of the input data before it is passed to the model for scoring. For Dynamic Interaction configurations select PreScoreDynamic.java for a pre scoring template. For static model configurations PrePredictCustomer.java is the default template and is the pre scoring logic that will be used by default. If you wish to  customise your pre scoring logic see the [pre scoring logic](/docs/runtime/prepredict) documentation as well as the guide for setting up a [local development environment](/docs/user_guides/runtime_plugin_development).
@@ -3464,7 +3584,7 @@ predictor.corpora=[{"database":"mongodb","name":"rewards_business_logic","type":
 ## Deployment Properties
 
 Source: `docs/configuration/deployment/properties.mdx`
-URL: https://ecosystem.ai/docs/configuration/deployment/properties
+URL: https://developer.ecosystem.ai/docs/configuration/deployment/properties
 Summary: Deployment Properties
 
 # Properties
@@ -3550,7 +3670,7 @@ logging.detail=true
 ## Model Convergence
 
 Source: `docs/configuration/dynamic/convergence.mdx`
-URL: https://ecosystem.ai/docs/configuration/dynamic/convergence
+URL: https://developer.ecosystem.ai/docs/configuration/dynamic/convergence
 Summary: How dynamic recommender scores converge, what acts as a prior, and which levers to change
 
 # Model Convergence
@@ -3566,7 +3686,7 @@ Related: [Exploration Using Epsilon](/docs/user_guides/epsilon_exploration) · [
 ## Custom Rewards
 
 Source: `docs/configuration/dynamic/customrewards.mdx`
-URL: https://ecosystem.ai/docs/configuration/dynamic/customrewards
+URL: https://developer.ecosystem.ai/docs/configuration/dynamic/customrewards
 Summary: Customer Rewards for Dynamic Interaction algorithms
 
 # Introduction
@@ -3746,7 +3866,7 @@ public class DefaultReward extends RewardSuper {
 ## Dynamic Interactions
 
 Source: `docs/configuration/dynamic/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/dynamic
+URL: https://developer.ecosystem.ai/docs/configuration/dynamic
 Summary: Dynamic Interactions.
 
 # Intro
@@ -3769,7 +3889,7 @@ This section will explain some of the key criteria to consider when deciding on 
 ## Dynamic Interactions Options Store
 
 Source: `docs/configuration/dynamic/options.mdx`
-URL: https://ecosystem.ai/docs/configuration/dynamic/options
+URL: https://developer.ecosystem.ai/docs/configuration/dynamic/options
 Summary: Dynamic Interactions Options Store
 
 # Dynamic Interactions Options Store
@@ -3852,7 +3972,7 @@ ol.update_options_store(auth,deployment_id)
 ## Dynamic Parameters
 
 Source: `docs/configuration/dynamic/parameters.mdx`
-URL: https://ecosystem.ai/docs/configuration/dynamic/parameters
+URL: https://developer.ecosystem.ai/docs/configuration/dynamic/parameters
 Summary: Dynamic Parameters
 
 # Parameters
@@ -3966,7 +4086,7 @@ This is the option store display for Ecosystem Rewards Approach:
 ## Dynamic Interaction Process
 
 Source: `docs/configuration/dynamic/process.mdx`
-URL: https://ecosystem.ai/docs/configuration/dynamic/process
+URL: https://developer.ecosystem.ai/docs/configuration/dynamic/process
 Summary: Dynamic Interactions Process
 
 ## Dynamic Interactions Process
@@ -4047,7 +4167,7 @@ Also note that this process will create the needed indexes automatically to ensu
 ## Dynamic Interactions Runtime Settings
 
 Source: `docs/configuration/dynamic/runtime.mdx`
-URL: https://ecosystem.ai/docs/configuration/dynamic/runtime
+URL: https://developer.ecosystem.ai/docs/configuration/dynamic/runtime
 Summary: Dynamic Interactions Runtime Settings
 
 # Runtime Settings
@@ -4090,7 +4210,7 @@ The background process will interrogate the priors as recorded in the runtime lo
 ## Architecture
 
 Source: `docs/configuration/generative/architecture.mdx`
-URL: https://ecosystem.ai/docs/configuration/generative/architecture
+URL: https://developer.ecosystem.ai/docs/configuration/generative/architecture
 Summary: Generative Architecture
 
 # Generative Architecture
@@ -4102,7 +4222,7 @@ The generative architecture is a collection of components that work together to 
 ## Chat Approaches
 
 Source: `docs/configuration/generative/chat.mdx`
-URL: https://ecosystem.ai/docs/configuration/generative/chat
+URL: https://developer.ecosystem.ai/docs/configuration/generative/chat
 Summary: Chat Approaches
 
 # Chat Approaches
@@ -4114,7 +4234,7 @@ There are several approaches to building chatbots and virtual assistants. ecosys
 ## Chat to SQL
 
 Source: `docs/configuration/generative/chat_sql.mdx`
-URL: https://ecosystem.ai/docs/configuration/generative/chat_sql
+URL: https://developer.ecosystem.ai/docs/configuration/generative/chat_sql
 Summary: Chat to SQL
 
 # Chat to SQL
@@ -4126,7 +4246,7 @@ Chat to SQL is a feature that allows you to convert natural language queries int
 ## Fact Injection
 
 Source: `docs/configuration/generative/facts.mdx`
-URL: https://ecosystem.ai/docs/configuration/generative/facts
+URL: https://developer.ecosystem.ai/docs/configuration/generative/facts
 Summary: Fact Injection
 
 # Fact Injection
@@ -4162,7 +4282,7 @@ The result will be processed into a new collection as provided.
 ## Generative Fact-Injection Tools and Plugins
 
 Source: `docs/configuration/generative/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/generative
+URL: https://developer.ecosystem.ai/docs/configuration/generative
 Summary: Generative Fact-Injection Tools and Plugins
 
 # Generative Fact-Injection Tools and Plugins
@@ -4174,7 +4294,7 @@ Summary: Generative Fact-Injection Tools and Plugins
 ## Generative Models
 
 Source: `docs/configuration/generative/models.mdx`
-URL: https://ecosystem.ai/docs/configuration/generative/models
+URL: https://developer.ecosystem.ai/docs/configuration/generative/models
 Summary: Generative Models
 
 # Generative Models
@@ -4235,7 +4355,7 @@ Internal routing and secret fields are removed before the request is sent upstre
 ## Vector Stores
 
 Source: `docs/configuration/generative/vector_stores.mdx`
-URL: https://ecosystem.ai/docs/configuration/generative/vector_stores
+URL: https://developer.ecosystem.ai/docs/configuration/generative/vector_stores
 Summary: Vector Stores
 
 # Vector Stores
@@ -4247,7 +4367,7 @@ Vector stores are a type of data store that is optimized for storing and queryin
 ## Intro
 
 Source: `docs/configuration/index.mdx`
-URL: https://ecosystem.ai/docs/configuration
+URL: https://developer.ecosystem.ai/docs/configuration
 Summary: Consult our advanced configuration guides for ecosystem.Ai
 
 # Configuration
@@ -4269,7 +4389,7 @@ For detailed guides on creating configurations for a specific case, see the [Use
 ## Project / Module
 
 Source: `docs/configuration/project.mdx`
-URL: https://ecosystem.ai/docs/configuration/project
+URL: https://developer.ecosystem.ai/docs/configuration/project
 Summary: The project definition is at the core of describing and configuring your use-case for deployment. Deployment configurations and related properties are used to drive your pipelines and can be exported as assets for deployment to different environments.
 
 # Project Definition
@@ -5440,7 +5560,7 @@ Here's a snapshot of what a comprehensive project configuration might look like,
 ## Project Review and Update
 
 Source: `docs/configuration/project_review.mdx`
-URL: https://ecosystem.ai/docs/configuration/project_review
+URL: https://developer.ecosystem.ai/docs/configuration/project_review
 Summary: Administration → Server Utilities — analyze a target Mongo for project and deployment hygiene, dual runtime versions, and optional successor clone or export.
 
 # Project Review and Update
@@ -5494,7 +5614,7 @@ Jobs show Completed / Failed / Stalled in the utility panel.
 ## ecosystem-notebooks Python Package
 
 Source: `docs/configuration/pythonpackage.mdx`
-URL: https://ecosystem.ai/docs/configuration/pythonpackage
+URL: https://developer.ecosystem.ai/docs/configuration/pythonpackage
 Summary: Create your ecosystem.Ai configurations using python
 
 # ecosystem-notebooks Python Package
@@ -5614,7 +5734,7 @@ For further detail on the functionality available in the python package see the 
 ## Simulations
 
 Source: `docs/configuration/simulations.mdx`
-URL: https://ecosystem.ai/docs/configuration/simulations
+URL: https://developer.ecosystem.ai/docs/configuration/simulations
 Summary: Workbench 2 simulations — closed-loop /invocations and /response traffic against a Dynamic Interaction deployment, run in-process on the Workbench backend.
 
 # Simulations
@@ -5806,6 +5926,17 @@ Do **not** call `/responses` (plural). After the loop, inspect the options store
 
 For Beta plots from Mongo alpha/beta (Ecosystem Rewards), filter the options store by contextual variables and overlay `scipy.stats.beta.pdf` — same idea as the Workbench plot output.
 
+## Log replay and generated notebook
+
+A **log-replay** run can materialize a **Shared notebook** (`notebook_name` / `notebook_path`). The simulation form links the path as `/notebooks?path=…`.
+
+The generated notebook's **CONFIG** cell replays the same closed loop as Workbench simulations: `POST /invocations` then `POST /response` against the chosen deployment. Results land in:
+
+- `simulations.simulation_logs`
+- `simulations.simulation_param_outputs` (Hit@K, beyond-accuracy metrics)
+
+To execute the notebook **outside** Workbench, set `EXTERNAL_MONGO_URI` in the CONFIG cell (commented template in the export) so Mongo reads/writes target your runtime logging database.
+
 ## Related
 
 - [Deployments](/docs/configuration/deployment)
@@ -5820,7 +5951,7 @@ For Beta plots from Mongo alpha/beta (Ecosystem Rewards), filter the options sto
 ## Predictors
 
 Source: `docs/configuration/static_models/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/static_models
+URL: https://developer.ecosystem.ai/docs/configuration/static_models
 Summary: Predictor hyperparameter settings..
 
 # Intro
@@ -5841,7 +5972,7 @@ ecosystem.Ai uses a worker architecture to define and run predictions. The base 
 ## Model Types
 
 Source: `docs/configuration/static_models/model_types.mdx`
-URL: https://ecosystem.ai/docs/configuration/static_models/model_types
+URL: https://developer.ecosystem.ai/docs/configuration/static_models/model_types
 Summary: Supported Model Types.
 
 # Intro
@@ -5860,7 +5991,7 @@ ecosystem.Ai supports a variety of model types for predictions. The base configu
 ## Models
 
 Source: `docs/configuration/static_models/models.mdx`
-URL: https://ecosystem.ai/docs/configuration/static_models/models
+URL: https://developer.ecosystem.ai/docs/configuration/static_models/models
 Summary: Model Analytics
 
 # Intro
@@ -5878,7 +6009,7 @@ When did deployment button is clicked inside the predictor form the model is mov
 ## Predictor
 
 Source: `docs/configuration/static_models/predictor.mdx`
-URL: https://ecosystem.ai/docs/configuration/static_models/predictor
+URL: https://developer.ecosystem.ai/docs/configuration/static_models/predictor
 Summary: Predictors.
 
 # Intro
@@ -5908,10 +6039,248 @@ Test model using default settings.
 
 ---
 
+## Active Directory & SSO
+
+Source: `docs/configuration/workbench_apis/active_directory.mdx`
+URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis/active_directory
+Summary: Configure Microsoft Entra ID (Azure AD) OIDC v2.0, On-Premises Active Directory (LDAP/LDAPS), zero-click corporate network Auto-SSO, and AD group-to-role mapping across ecosystem-server, Workbench2, and Data Agents
+
+# Active Directory & Enterprise SSO
+
+`ecosystem-server` is the central identity authority and HS256 JWT issuer across **Ecosystem Workbench2** (`:5270` / `:8001`), **Data Agents** (`:8000`), and **Ecosystem Modeling**. Both SPAs delegate login and SSO discovery to `ecosystem-server`, receive the canonical `{ token: { access_token, refresh_token, expires_in } }` session payload, and verify the token signature and `role` claims in `JWTAuthMiddleware`.
+
+**Zero-impact default when AD is not configured:** When `ENTRA_ENABLED` and `AD_LDAP_ENABLED` are unset or `false`, `GET /api/v1/auth/providers` returns `enabled: false`, the login screens render only the standard email/password form with zero extra redirects, and `POST /api/auth/login` authenticates against `user_master` unchanged.
+
+## Architecture & Authentication Flow
+
+```mermaid
+flowchart TB
+  subgraph userLayer [Corporate User]
+    User["User Browser\n(Corp Network / Workstation)"]
+  end
+
+  subgraph clients [Frontend SPAs]
+    WB2_UI["Workbench2 SPA (:5270)"]
+    DA_UI["Data Agents SPA"]
+  end
+
+  subgraph proxies [Python FastAPI Backends]
+    WB2_BE["Workbench2 Backend (:8001)\n/api/v1/auth/* + JWTAuthMiddleware"]
+    DA_BE["Data Agents Backend (:8000)\n/api/v1/auth/* + JWTAuthMiddleware"]
+  end
+
+  subgraph server [Ecosystem Server - Central Identity Authority]
+    AuthCtrl["AuthController (/api/auth/login)\nLocal + LDAP/LDAPS Bind"]
+    OAuthCtrl["OAuth2Controller (/api/auth/oauth2/*)\nEntra ID OIDC + Google OAuth2"]
+    RoleSync["AdGroupRoleMapper\nAD Groups / App Roles to Role Claims"]
+    TokenSvc["TokenService\nMints HS256 JWT with role claims"]
+  end
+
+  subgraph directories [Active Directory Providers]
+    OnPremAD["On-Premises Active Directory\nLDAP / LDAPS (389 / 636)"]
+    Entra["Microsoft Entra ID (Azure AD)\nOIDC v2.0 + JWKS"]
+  end
+
+  User -->|"Opens app"| WB2_UI
+  User -->|"Opens app"| DA_UI
+
+  WB2_UI -->|"1a. Password / LDAP login"| WB2_BE
+  WB2_UI -->|"1b. SSO Redirect (return_to)"| WB2_BE
+  DA_UI -->|"1a. Password / LDAP login"| DA_BE
+  DA_UI -->|"1b. SSO Redirect (return_to)"| DA_BE
+
+  WB2_BE --> AuthCtrl
+  DA_BE --> AuthCtrl
+  AuthCtrl -->|"Bind + memberOf lookup"| OnPremAD
+
+  WB2_BE --> OAuthCtrl
+  DA_BE --> OAuthCtrl
+  OAuthCtrl -->|"Auth Code + PKCE"| Entra
+
+  AuthCtrl --> RoleSync
+  OAuthCtrl --> RoleSync
+  RoleSync --> TokenSvc
+```
+
+## Supported Active Directory Modes
+
+| Mode | Protocol | Entry Endpoint | When to Use |
+| --- | --- | --- | --- |
+| **Microsoft Entra ID (Azure AD)** | OIDC v2.0 Authorization Code + PKCE (`S256`) + RSA-SHA256 JWKS verification | `GET /api/v1/auth/oauth2/entra` → `GET /api/auth/oauth2/entra` | Cloud or hybrid Azure AD tenants with browser SSO and conditional access MFA |
+| **On-Premises Active Directory** | JNDI LDAP / LDAPS (`389` / `636`) bind + `memberOf` lookup | `POST /api/v1/auth/login` → `POST /api/auth/login` | Direct domain credential verification (`user@domain.com` or `sAMAccountName`) inside a corporate network |
+| **Corporate Network Auto-SSO** | Silent Entra OIDC (`prompt=none`) or Trusted Ingress Proxy (`X-Forwarded-User` / `X-Auth-Request-Email`) | Automatic on `/login` when `autoSso: true` | Zero-click sign-in when the user is already authenticated on their corporate workstation |
+
+## 1. Microsoft Entra ID (Azure AD) Setup
+
+### Step 1: Register or Configure the App in Azure Portal
+
+1. Open **Azure Portal → Microsoft Entra ID → App registrations**.
+2. Select your application (or click **+ New registration**).
+3. Copy from **Overview**:
+   - **Directory (tenant) ID** → `ENTRA_TENANT_ID`
+   - **Application (client) ID** → `ENTRA_CLIENT_ID`
+4. Open **Certificates & secrets → + New client secret**, create a secret, and copy the **Value** → `ENTRA_CLIENT_SECRET`.
+5. Open **Authentication → + Add a platform → Web** and register the `ecosystem-server` callback URI:
+   ```text
+   http://localhost:3002/api/auth/oauth2/entra/callback
+   ```
+   *(In production, use your deployed `ecosystem-server` URL, e.g. `https://server.bank.internal/api/auth/oauth2/entra/callback`.)*
+6. *(Optional — Group Sync)* Open **Token configuration → + Add groups claim** and select **Security groups** (or configure App Roles under **App roles**).
+
+Or configure the Redirect URI and group claims via Azure CLI:
+
+```bash
+az ad app update \
+  --id "$ENTRA_CLIENT_ID" \
+  --web-redirect-uris "http://localhost:3002/api/auth/oauth2/entra/callback" \
+  --set groupMembershipClaims="SecurityGroup"
+```
+
+### Step 2: Set Environment Variables on `ecosystem-server`
+
+```bash
+```
+
+## 2. On-Premises Active Directory (LDAP / LDAPS) Setup
+
+When `AD_LDAP_ENABLED=true` and `AD_LDAP_URL` is set, `POST /api/auth/login` authenticates the user's domain credentials via LDAP/LDAPS bind, extracts `mail`, `displayName`, and `memberOf` group DNs, JIT-provisions the user in `user_master` if not yet present, and mints the internal JWT.
+
+```bash
+# Optional service account for searching user DN + memberOf prior to user bind:
+# Allow break-glass local accounts in user_master when user is not in AD:
+```
+
+## 3. Silent / Zero-Click Corporate Network Sign-In (Auto-SSO)
+
+When an operator is on the corporate network and already signed into their Windows / macOS domain session or Microsoft 365:
+
+- **Entra Seamless Auto-SSO (`ENTRA_AUTO_SSO=true`):**
+  When an unauthenticated user opens Workbench2 or Data Agents, `LoginPage` queries `GET /api/v1/auth/providers`. When `autoSso: true` is returned, the browser automatically redirects through `/api/v1/auth/oauth2/entra?silent=true` (`prompt=none`), exchanges the corporate session for an Ecosystem JWT, and lands the user directly in the workspace without clicking a button.
+  - Clicking **Sign Out** sets `sessionStorage['ecosystem_sso_logged_out'] = '1'` and navigates to `/login?nosso=1` so the user is never trapped in a redirect loop and can switch accounts.
+- **Trusted Corporate Ingress Proxy (`AD_TRUSTED_HEADER_ENABLED=true`):**
+  When fronted by an enterprise ingress proxy (Azure AD Application Proxy, `oauth2-proxy`, Keycloak, or Kerberos SPNEGO proxy) that sends `X-Ecosystem-Proxy-Secret` along with `X-Auth-Request-Email` / `X-Forwarded-User` and `X-Forwarded-Groups`, `GET /api/auth/oauth2/trusted` mints the JWT and redirects to `/oauth-callback#access_token=…`.
+
+## 4. AD Group & App Role Mapping to Workbench RBAC
+
+`AdGroupRoleMapper` maps Active Directory `memberOf` CNs, Entra Security Group IDs/names, and Entra App Roles into the JWT `role` array:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `AD_ADMIN_GROUPS` | `admin,ADMIN,Ecosystem-Admins,capricorn.admin,ecosystem.admin,Domain Admins` | Comma-separated AD group CNs, group Object IDs, or App Roles that grant `ADMIN` + `USER` |
+| `AD_ROLE_MAP` | *(empty)* | Explicit mapping of AD groups to Workbench2 custom roles in `ecosystem_meta.roles` (e.g. `WB-Analysts=analyst,Marketing-Team=campaign_manager` or JSON `{"WB-Analysts":"analyst"}`) |
+| `AD_PASSTHROUGH_ROLES` | `true` | Passes Entra App Role slugs through into JWT `role` claims so matching roles in **Administration → Roles** resolve automatically |
+
+When the user lands in Workbench2 (`:5270`) or Data Agents (`:8000`), `AuthContext` normalizes the JWT `role` claims and `PermissionContext` resolves effective permissions via `POST /api/v1/roles/resolve`.
+
+## 5. Complete `ecosystem-server` Environment Variables Reference
+
+Add these environment variables to **`ecosystem-server`** (`docker-compose.yml`, Kubernetes `Secret` / `ConfigMap`, or `run_local.sh`). Workbench2 (`:8001`) and Data Agents (`:8000`) do **not** require separate Entra or LDAP credentials—they only need `ECOSYSTEM_SERVER` pointing to `ecosystem-server` (and `JWT_ACCESS_TOKEN_SECRET_KEY` when signature verification is enforced).
+
+### Microsoft Entra ID (Azure AD) OIDC Variables
+
+| Environment Variable | Spring Property | Default | Required for Entra? | Description |
+| --- | --- | --- | --- | --- |
+| `OAUTH2_ENABLED` | `oauth2.enabled` | `false` | Recommended (`true`) | Master OAuth2 switch (also auto-enabled when `ENTRA_ENABLED=true` and Entra credentials are set). |
+| `ENTRA_ENABLED` | `oauth2.entra.enabled` | `false` | **Yes** (`true`) | Enables the `/api/auth/oauth2/entra` and `/api/auth/oauth2/entra/callback` OIDC endpoints and exposes `"entra"` in `/api/auth/oauth2/status`. |
+| `ENTRA_TENANT_ID` | `oauth2.entra.tenant-id` | *(empty)* | **Yes** | Microsoft Entra **Directory (tenant) ID** UUID from the App Registration Overview blade. |
+| `ENTRA_CLIENT_ID` | `oauth2.entra.client-id` | *(empty)* | **Yes** | Microsoft Entra **Application (client) ID** UUID from the App Registration Overview blade. |
+| `ENTRA_CLIENT_SECRET` | `oauth2.entra.client-secret` | *(empty)* | **Yes** | Client secret **Value** (not the Secret ID) created under **Certificates & secrets**. |
+| `ENTRA_BACKEND_CALLBACK` | `oauth2.entra.backend-callback-url` | `http://localhost:3002/api/auth/oauth2/entra/callback` | **Yes** (in prod) | Exact Web Redirect URI registered on the Entra App Registration. Must match the public URL of `ecosystem-server`. |
+| `ENTRA_ALLOWED_RETURN_ORIGINS` | `oauth2.entra.allowed-return-origins` | `http://localhost:5270,http://127.0.0.1:5270,http://localhost:5173,http://localhost:5174,http://localhost:8000,http://localhost:3000` | **Yes** (in prod) | Comma-separated allowlist of frontend origins (`Workbench2`, `Data Agents`, `Modeling`) permitted in the `return_to` parameter. Prevents open-redirect attacks. |
+| `ENTRA_AUTO_SSO` | `oauth2.entra.auto-sso` | `false` | Optional | When `true`, unauthenticated users opening Workbench2 or Data Agents on the corporate network are automatically redirected through silent Entra SSO (`prompt=none`). |
+| `OAUTH2_FRONTEND_CALLBACK` | `oauth2.frontend-callback-url` | `http://localhost:5174/oauth-callback` | Optional | Fallback frontend callback URL used when a caller does not pass `return_to`. |
+
+### On-Premises Active Directory (LDAP / LDAPS) Variables
+
+| Environment Variable | Spring Property | Default | Required for LDAP? | Description |
+| --- | --- | --- | --- | --- |
+| `AD_LDAP_ENABLED` | `ad.ldap.enabled` | `false` | **Yes** (`true`) | Enables Active Directory LDAP/LDAPS bind inside `POST /api/auth/login` and exposes `"ldap"` in `/api/auth/oauth2/status`. |
+| `AD_LDAP_URL` | `ad.ldap.url` | *(empty)* | **Yes** | LDAP or LDAPS server URL (e.g. `ldaps://dc01.corp.example.com:636` or `ldap://dc01.corp.example.com:389`). |
+| `AD_LDAP_BASE_DN` | `ad.ldap.base-dn` | *(empty)* | **Yes** | Base Distinguished Name for user searches (e.g. `DC=corp,DC=example,DC=com`). |
+| `AD_LDAP_USER_SEARCH_FILTER` | `ad.ldap.user-search-filter` | `(|(userPrincipalName={0})(mail={0})(sAMAccountName={0}))` | Optional | LDAP filter used to match the login input against `userPrincipalName`, `mail`, or `sAMAccountName`. |
+| `AD_LDAP_BIND_DN` | `ad.ldap.bind-dn` | *(empty)* | Optional | Service account DN used to search for the user's entry and `memberOf` groups before binding as the user. If empty, direct user bind is used. |
+| `AD_LDAP_BIND_PASSWORD` | `ad.ldap.bind-password` | *(empty)* | Optional | Password for `AD_LDAP_BIND_DN`. |
+| `AD_LDAP_DEFAULT_DOMAIN` | `ad.ldap.default-domain` | *(empty)* | Optional | Default domain appended when a user signs in with a short `sAMAccountName` (e.g. `jdoe` → `jdoe@corp.example.com`). |
+| `AD_LDAP_FALLBACK_LOCAL` | `ad.ldap.fallback-local` | `true` | Optional | When `true`, if a user is not found in Active Directory, `ecosystem-server` falls back to local `user_master` authentication (allowing break-glass admin accounts such as `admin@ecosystem.ai`). Set to `false` to enforce strict AD-only login. |
+| `AD_LDAP_CONNECT_TIMEOUT_MS` | `ad.ldap.connect-timeout-ms` | `5000` | Optional | LDAP socket connection timeout in milliseconds. |
+| `AD_LDAP_READ_TIMEOUT_MS` | `ad.ldap.read-timeout-ms` | `5000` | Optional | LDAP search/read timeout in milliseconds. |
+
+### Group-to-Role Mapping & Trusted Corporate Proxy Variables
+
+| Environment Variable | Spring Property | Default | Description |
+| --- | --- | --- | --- |
+| `AD_ADMIN_GROUPS` | `ad.roles.admin-groups` | `admin,ADMIN,Ecosystem-Admins,capricorn.admin,ecosystem.admin,Domain Admins` | Comma-separated AD group CNs, Entra Group Object IDs, or Entra App Roles that grant `ADMIN` + `USER` in the issued JWT. |
+| `AD_ROLE_MAP` | `ad.roles.map` | *(empty)* | Comma/semicolon-separated `ADGroup=workbenchRole` pairs or JSON object mapping AD groups to Workbench2 roles in `ecosystem_meta.roles`. |
+| `AD_PASSTHROUGH_ROLES` | `ad.roles.passthrough` | `true` | Automatically includes Entra App Role values in the JWT `role` array. |
+| `AD_TRUSTED_HEADER_ENABLED` | `ad.trusted-header.enabled` | `false` | Enables `GET /api/auth/oauth2/trusted` for corporate ingress proxies (Azure AD App Proxy, `oauth2-proxy`, Keycloak, Kerberos SPNEGO). |
+| `AD_TRUSTED_PROXY_SECRET` | `ad.trusted-header.proxy-secret` | *(empty)* | Shared secret verified against the `X-Ecosystem-Proxy-Secret` request header before trusting `X-Auth-Request-Email` / `X-Forwarded-User`. |
+
+### Downstream Service Variables (`ecosystem-workbench2` & `ecosystem-data-agents`)
+
+| Environment Variable | Service | Purpose |
+| --- | --- | --- |
+| `ECOSYSTEM_SERVER` | Workbench2 (`:8001`) & Data Agents (`:8000`) | Base URL of `ecosystem-server` (e.g. `http://localhost:3002` or `http://ecosystem-server:3001`) used by `/api/v1/auth/providers`, `/api/v1/auth/oauth2/{provider}`, and `/api/v1/auth/login`. |
+| `JWT_ACCESS_TOKEN_SECRET_KEY` | Workbench2 (`:8001`) & Data Agents (`:8000`) | Raw secret matching `jwt.accessTokenSecretKey` on `ecosystem-server` for HS256 JWT signature verification. |
+| `BANK_DEPLOY_PROFILE` | Workbench2 (`:8001`) | When `true`, enforces mandatory HS256 JWT signature verification, `CHANNEL_ENCRYPTION_KEY`, and strict CORS origin allowlisting. |
+
+### Ready-to-Use `.env` / Docker Compose Snippet for `ecosystem-server`
+
+```dotenv
+# --- Microsoft Entra ID (Azure AD) OIDC ---
+OAUTH2_ENABLED=true
+ENTRA_ENABLED=true
+ENTRA_TENANT_ID=bee76bcd-c24a-4367-9feb-0b35199d8104
+ENTRA_CLIENT_ID=7208ec8d-fd46-4900-ad36-dc8d54955e3e
+ENTRA_CLIENT_SECRET=<your-entra-client-secret-value>
+ENTRA_BACKEND_CALLBACK=http://localhost:3002/api/auth/oauth2/entra/callback
+ENTRA_ALLOWED_RETURN_ORIGINS=http://localhost:5270,http://127.0.0.1:5270,http://localhost:8000,http://localhost:5173
+ENTRA_AUTO_SSO=false
+
+# --- On-Premises Active Directory (LDAP / LDAPS) (Optional) ---
+AD_LDAP_ENABLED=false
+AD_LDAP_URL=ldaps://ad.corp.example.com:636
+AD_LDAP_BASE_DN=DC=corp,DC=example,DC=com
+AD_LDAP_BIND_DN=
+AD_LDAP_BIND_PASSWORD=
+AD_LDAP_FALLBACK_LOCAL=true
+
+# --- AD Group -> Ecosystem Role Mapping ---
+AD_ADMIN_GROUPS="admin,ADMIN,Ecosystem-Admins,capricorn.admin,ecosystem.admin,Domain Admins"
+AD_ROLE_MAP="WB-Analysts=analyst,Marketing-Team=campaign_manager"
+```
+
+## Verification Endpoints
+
+Check active provider configuration from either backend or directly against `ecosystem-server`:
+
+```bash
+# Via Workbench2 or Data Agents backend proxy:
+curl http://localhost:8001/api/v1/auth/providers
+
+# Directly on ecosystem-server:
+curl http://localhost:3002/api/auth/oauth2/status
+```
+
+Response when Entra ID is enabled:
+
+```json
+{
+  "enabled": true,
+  "configured": true,
+  "providers": ["entra", "google"],
+  "entraEnabled": true,
+  "ldapEnabled": false,
+  "autoSso": false,
+  "autoSsoProvider": ""
+}
+```
+
+---
+
 ## Agents
 
 Source: `docs/configuration/workbench_apis/agents.mdx`
-URL: https://ecosystem.ai/docs/configuration/workbench_apis/agents
+URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis/agents
 Summary: Workbench Administration → Agents — product catalog, Ecosystem Agent, and how agents reach public and private APIs
 
 # Agents
@@ -5948,7 +6317,7 @@ The operator chat is **Claude Agent** branding (not “Claude Code Agent”). Mo
 | --- | --- | --- |
 | Workbench `/assistant` | Ready Agent SDK + default LLM + in-process MCP | Public API key |
 | Campaign Management | Private `/claude-agent/*` with `tool_profile: campaign_management` | Workbench mutating tools (denied on that profile) |
-| External Claude Code / Agent SDK | `ANTHROPIC_BASE_URL` → Workbench `:8001`; optional dual-auth `POST /mcp` | Bundled `_bundled/claude` in the Workbench image |
+| External Claude Code / Agent SDK | `ANTHROPIC_BASE_URL` → Workbench `:8001`; optional `POST /mcp` with public key or JWT | Bundled `_bundled/claude` in the Workbench image |
 
 Readiness: `GET /api/v1/claude-agent/status` → `ready: true` when enabled + default LLM + SDK + resolved CLI.
 
@@ -6015,7 +6384,7 @@ Related: [Claude Agent packaging](/docs/workers/agent_framework/claude-agent), [
 ## Public APIs, Agents & MCP
 
 Source: `docs/configuration/workbench_apis/index.mdx`
-URL: https://ecosystem.ai/docs/configuration/workbench_apis
+URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis
 Summary: Workbench public gateway, private FastAPI, API Keys, product agents, and MCP — how they differ and how to access them
 
 # Public APIs, Agents & MCP
@@ -6031,8 +6400,8 @@ Open **Administration → API Keys** (admin role). Switch **Public API Access** 
 | Surface | Default local URL | Who uses it | Auth |
 | --- | --- | --- | --- |
 | **Private Workbench API** | `http://localhost:8001/api/v1` | Workbench SPA, Campaign Management, internal services | Workbench session JWT (`Authorization: Bearer`) |
-| **Public API gateway** | `http://localhost:8004/public/v1` | Notebooks, partners, MCP harness, external apps | Dual: `X-API-Key: ewb_public_…` **and** a user JWT |
-| **Workbench MCP** | `POST http://localhost:8001/mcp` | Ecosystem Agent, Cursor, Claude Code | In-process for `/assistant`; dual-auth for HTTP MCP |
+| **Public API gateway** | `http://localhost:8004/public/v1` | Notebooks, partners, MCP harness, external apps | One credential: public key **or** Workbench JWT |
+| **Workbench MCP** | `POST http://localhost:8001/mcp` | Ecosystem Agent, Cursor, Claude Code | In-process for `/assistant`; public key or JWT for HTTP MCP |
 | **LLM proxy** | `POST http://localhost:8001/v1/messages` | Agent SDK / Claude Code | Workbench JWT; no Anthropic key in the image |
 | **Runtime scoring** | `http://localhost:8091/invocations` | Production apps, Runtime Dashboard | Runtime config; closed loop uses `/response` (singular) |
 | **Runtime MCP** | `POST http://localhost:8091/mcp` | Agents that score campaigns | Separate from Workbench MCP |
@@ -6053,13 +6422,14 @@ Create public credentials with an owner (user, service account, organization, or
 ## Typical access paths
 
 1. **Browser operator** — sign in to Workbench. The SPA uses the private API with your session JWT. No public key.
-2. **External integration** — mint a public credential, obtain a user JWT (`POST /public/v1/auth/login` or Workbench login), call `:8004/public/v1/…` with both headers.
+2. **External integration** — mint a public credential, link an internal API key on that credential, call `:8004/public/v1/…` with `X-API-Key` (or Bearer public key). JWT login is optional when you use a public key alone.
 3. **Ecosystem Agent** — **Administration → Agents** or `/assistant`. In-process MCP; no public key.
-4. **Cursor / Claude Code** — dual-auth `POST /mcp` plus `ANTHROPIC_BASE_URL` pointing at Workbench `:8001` for `POST /v1/messages`.
+4. **Cursor / Claude Code** — `POST /mcp` with a public key or JWT, plus `ANTHROPIC_BASE_URL` pointing at Workbench `:8001` for `POST /v1/messages`.
 5. **Campaign scoring** — Runtime `POST /invocations` then `POST /response`. Workbench MCP `score_customer` / `send_feedback` wrap a **deployment**; they are not Runtime `POST /mcp`.
 
 ## Pages in this section
 
+- [Active Directory & SSO](/docs/configuration/workbench_apis/active_directory) — Microsoft Entra ID (Azure AD) OIDC, On-Premises AD (LDAP/LDAPS), corporate Auto-SSO, and group-to-role mapping
 - [API Keys](/docs/configuration/workbench_apis/keys) — issue, rotate, revoke
 - [Public APIs](/docs/configuration/workbench_apis/public) — gateway routes and scopes
 - [Private APIs](/docs/configuration/workbench_apis/private) — `:8001/api/v1` routers
@@ -6073,7 +6443,7 @@ Related: [API Management](/docs/configuration/api) (test Runtime scoring from Wo
 ## API Keys
 
 Source: `docs/configuration/workbench_apis/keys.mdx`
-URL: https://ecosystem.ai/docs/configuration/workbench_apis/keys
+URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis/keys
 Summary: Issue Workbench public API credentials and private ecosystem JWTs from Administration → API Keys
 
 # API Keys
@@ -6108,6 +6478,7 @@ Use this tab for notebooks, partner apps, Campaign Management, and MCP clients t
 | Owner ID / name / email | Who owns the key. `created_by` stays the acting admin |
 | Expires on | Optional. Empty means no expiry |
 | Scopes | Checkboxes. Only grant what the integration needs |
+| Linked internal key | Optional. When callers use **only** a public key on `:8004` or HTTP `/mcp`, private backend calls use this linked **internal API key** (Administration → API Keys → Public API Access → edit credential). Only the key id is stored server-side |
 
 The raw secret is shown **once** on create or rotate. Prefix is `ewb_public_`. If the owner loses it, **rotate** — do not expect reveal after the one-time display unless the admin uses the reveal endpoint while the hashed secret is still recoverable.
 
@@ -6117,16 +6488,20 @@ Status:
 - **revoked** — admin revoked; calls fail
 - **expired** — past `expires_on`
 
-### Dual auth after minting
+### Calling the gateway after minting
 
-Every public gateway call needs both:
+Send **one** credential:
 
-```http
-X-API-Key: ewb_public_…
-Authorization: Bearer <workbench-jwt>
-```
+- a **public key** — `X-API-Key: ewb_public_…` or `Authorization: Bearer ewb_public_…`, or
+- a **Workbench user JWT** — `Authorization: Bearer <jwt>`
 
-If `Authorization` is reserved, send the JWT as `X-User-Token`. Login without a public key:
+With a **public key**, that credential's scopes and resource bindings apply; private calls use the **internal API key linked on the credential** (Public API Access → edit credential → Linked internal key). Only the key id is stored. With a **JWT**, the user's Workbench roles apply and public scopes are ignored.
+
+Sending **both** still works: scopes apply and the JWT is forwarded. When `Authorization` already holds the public key, carry a JWT as `X-User-Token`.
+
+`PUBLIC_API_INTERNAL_SERVICE_TOKEN` is a deployment fallback for automated jobs only — not for interactive users.
+
+Login without a public key:
 
 ```http
 POST /public/v1/auth/login
@@ -6204,8 +6579,8 @@ Env for the public client:
 ## MCP
 
 Source: `docs/configuration/workbench_apis/mcp.mdx`
-URL: https://ecosystem.ai/docs/configuration/workbench_apis/mcp
-Summary: Workbench MCP versus Runtime builtin MCP — tools, dual auth, Cursor config, and the stdio harness
+URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis/mcp
+Summary: Workbench MCP versus Runtime builtin MCP — tools, auth, Cursor config, and the stdio harness
 
 # MCP
 
@@ -6226,14 +6601,18 @@ Protocol: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specifi
 | Mode | Who | Auth |
 | --- | --- | --- |
 | **In-process** | Ecosystem Agent `/assistant` (`tool_profile: operator`) | Session JWT inside Workbench. No public API key |
-| **HTTP `POST /mcp`** | Cursor, Claude Code, Agent SDK | Dual: `Authorization: Bearer` **and** `X-API-Key: ewb_public_…` |
+| **HTTP `POST /mcp`** | Cursor, Claude Code, Agent SDK | One credential: JWT **or** public key (`X-API-Key` or Bearer `ewb_public_…`) |
 | **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Harness mints JWT; `EWB_PUBLIC_API_KEY` in env or `~/.herm/mcp/ecosystem-public.env` |
 
 Vite `:5270` does **not** proxy `/mcp`. Clients must hit the backend port (or nginx). `MCP_PUBLIC_BASE_URL` default `http://localhost:8001`.
 
-REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints. Legacy SSE `GET /mcp/sse/` is deprecated.
+REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints.
+
+Legacy SSE (`GET /mcp/sse/`, `POST /mcp/messages/`) **was removed on 26 Oct 2026**. Use Streamable HTTP **`POST /mcp`** only (protocol 2026-07-28).
 
 ### Cursor (Streamable HTTP)
+
+Public key only:
 
 ```json
 {
@@ -6241,13 +6620,14 @@ REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints. Legacy S
     "ecosystem-workbench": {
       "url": "http://localhost:8001/mcp",
       "headers": {
-        "Authorization": "Bearer <user-jwt>",
         "X-API-Key": "ewb_public_..."
       }
     }
   }
 }
 ```
+
+Alternatively use `"Authorization": "Bearer <user-jwt>"` instead of `X-API-Key`.
 
 Mint the key under **Administration → API Keys → Public API Access**. For Claude Code, set `ANTHROPIC_BASE_URL` to the Workbench host root so `POST /v1/messages` uses the Workbench default LLM.
 
@@ -6278,6 +6658,7 @@ Same implementations as in-process MCP. Mutating tools require `confirm=true`.
 | `date_enrich` / `mcc_enrich` | Queue enrichment jobs |
 | `personality_drift` | Queue personality drift |
 | `get_enrichment_job` | Poll enrich / drift jobs |
+| Outreach | `list_outreach_templates`, `inspect_outreach_campaign`, `build_outreach_campaign`, `configure_outreach_campaign`, `run_outreach_campaign` (supports `sample_run`, `test_target_email`) |
 | Ontology family | `list_ontologies`, `describe_ontology`, create/update/delete (confirm), mappings, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology` |
 | Runtime Testing | `list_runtime_testing_suites`, `get_runtime_testing_suite`, `analyze_runtime_testing`, `plan_runtime_testing` (confirm), `start_runtime_testing_run` (confirm), `list_runtime_testing_runs`, `get_runtime_testing_run`, `cancel_runtime_testing_run` / `close_runtime_testing_run` (confirm), `compare_runtime_testing_runs`, `get_runtime_testing_artifact`, `delete_runtime_testing_suite` (confirm) |
 | Simulations | `start_simulation_run` / `cancel_simulation_run` (confirm), `get_simulation_run_status`, `get_simulation_logs`, `get_simulation_results`, `explain_simulation_result` |
@@ -6302,6 +6683,14 @@ backend/venv/bin/python -m ecosystem_workbench_mcp catalog
 ```
 
 Networks job tools are documented with the [Networks API](/docs/modules/networks/api).
+
+### Admin-published tools
+
+**Administration → MCP Tools** publishes operator-defined tools backed by an entity collection, a saved Custom Pipeline, or a saved Python enrichment script. Definitions are stored in `mcp_tools` (`:McpTool` in the platform ontology). **MCP Prompts** exposes saved prompt templates alongside built-in tools.
+
+### Audit
+
+Every HTTP `/mcp` call appends an immutable row to `mcp_access_log` (timestamp, category, tool or method, actor, outcome, redacted detail). This log is operator-only and is not exposed through the public API gateway.
 
 ## Runtime builtin MCP (do not confuse)
 
@@ -6331,7 +6720,7 @@ Related: [Agents](/docs/configuration/workbench_apis/agents), [Public APIs](/doc
 ## Private APIs
 
 Source: `docs/configuration/workbench_apis/private.mdx`
-URL: https://ecosystem.ai/docs/configuration/workbench_apis/private
+URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis/private
 Summary: Workbench private FastAPI on port 8001 — session JWT, router map, and how it differs from the public gateway
 
 # Private APIs
@@ -6345,11 +6734,11 @@ Authorization: Bearer <workbench-jwt>
 
 Local health (no JWT): `GET http://localhost:8001/health`. Root: `GET http://localhost:8001/` returns API name and version.
 
-**Do not expose :8001 to partners:** Bind the private API to the cluster network. External notebooks and vendors should use **:8004** with a public credential. MCP HTTP still uses `:8001/mcp` but requires the same dual auth as the gateway.
+**Do not expose :8001 to partners:** Bind the private API to the cluster network. External notebooks and vendors should use **:8004** with a public credential. MCP HTTP still uses `:8001/mcp` with the same **one-credential** rule as the gateway (public key or JWT).
 
 ## How the SPA authenticates
 
-1. User signs in (Workbench login).
+1. User signs in via Workbench login (local password, On-Premises Active Directory LDAP/LDAPS bind, or Microsoft Entra ID OIDC SSO — see [Active Directory & SSO](/docs/configuration/workbench_apis/active_directory)).
 2. JWT is stored as the session (`ecosystem_auth`).
 3. Frontend calls `/api/v1/…` (Vite proxies to `:8001` in local `frontend/run.sh`).
 4. `JWTAuthMiddleware` rejects missing/invalid tokens on protected routes.
@@ -6494,8 +6883,8 @@ Related: [Public APIs](/docs/configuration/workbench_apis/public), [API Keys](/d
 ## Public APIs
 
 Source: `docs/configuration/workbench_apis/public.mdx`
-URL: https://ecosystem.ai/docs/configuration/workbench_apis/public
-Summary: Workbench public gateway on port 8004 — dual auth, scopes, and every /public/v1 route
+URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis/public
+Summary: Workbench public gateway on port 8004 — one-credential auth, scopes, and every /public/v1 route
 
 # Public APIs
 
@@ -6509,16 +6898,18 @@ Local OpenAPI: `http://localhost:8004/docs` (disable with `PUBLIC_API_DOCS_ENABL
 
 ## Auth
 
+Send **one** credential on protected routes: a public key (`X-API-Key: ewb_public_…` or `Authorization: Bearer ewb_public_…`) **or** a Workbench user JWT (`Authorization: Bearer <jwt>`).
+
+With a public key only, scopes and resource bindings on that credential apply; the gateway uses the **linked internal API key** for private backend calls. With a JWT only, Workbench roles apply. Sending both still works.
+
 ```http
 GET http://localhost:8004/public/v1/health
 X-API-Key: ewb_public_…
-Authorization: Bearer <workbench-jwt>
 ```
 
-- **Public API key** — which gateway routes are allowed
-- **User JWT** — that user's Workbench roles on the private backend
+Health and login do not require a public key. Every other `/public/v1` route requires one of the credentials above.
 
-Login (no public key):
+Login (no public key required for this call):
 
 ```bash
 curl -s -X POST http://localhost:8004/public/v1/auth/login \
@@ -6526,20 +6917,17 @@ curl -s -X POST http://localhost:8004/public/v1/auth/login \
   -d '{"email":"you@example.com","password":"your-password"}'
 ```
 
-Then:
+Example with a public key only:
 
 ```python
 
 BASE = "http://localhost:8004/public/v1"
-headers = {
-    "X-API-Key": os.environ["EWB_PUBLIC_API_KEY"],
-    "Authorization": f"Bearer {os.environ['EWB_USER_JWT']}",
-}
+headers = {"X-API-Key": os.environ["EWB_PUBLIC_API_KEY"]}
 projects = requests.get(f"{BASE}/entities/projects", headers=headers, params={"limit": 20})
 print(projects.json())
 ```
 
-Health and login do not require a public key. Every other `/public/v1` route does.
+The Python SDK's `login()` is **optional** when you call with a scoped public key that has a linked internal key.
 
 ## Grantable scopes
 
@@ -6741,7 +7129,7 @@ Related: [Private APIs](/docs/configuration/workbench_apis/private), [API Keys](
 ## Intro
 
 Source: `docs/documentation/index.mdx`
-URL: https://ecosystem.ai/docs/documentation
+URL: https://developer.ecosystem.ai/docs/documentation
 Summary: Comprehensive guide on how to contribute to our documentation
 
 # Contributing to the Documentation
@@ -6862,7 +7250,7 @@ Before submitting a PR for your blog post, **always** test to ensure everything 
 ## Index
 
 Source: `docs/frontend/angular/index.mdx`
-URL: https://ecosystem.ai/docs/frontend/angular
+URL: https://developer.ecosystem.ai/docs/frontend/angular
 
 # Angular UI Framework
 
@@ -6886,7 +7274,7 @@ git clone https://github.com/ecogenetic/message-app-angular.git
 ## Index
 
 Source: `docs/frontend/index.mdx`
-URL: https://ecosystem.ai/docs/frontend
+URL: https://developer.ecosystem.ai/docs/frontend
 
 # Modules
 
@@ -6903,7 +7291,7 @@ These frontend frameworks can be used to access the ecosystem.Ai platform. They 
 ## Index
 
 Source: `docs/frontend/ios/index.mdx`
-URL: https://ecosystem.ai/docs/frontend/ios
+URL: https://developer.ecosystem.ai/docs/frontend/ios
 
 # iOS App Framework
 
@@ -6927,7 +7315,7 @@ git clone https://github.com/ecogenetic/message-app-ios.git
 ## Index
 
 Source: `docs/frontend/python/index.mdx`
-URL: https://ecosystem.ai/docs/frontend/python
+URL: https://developer.ecosystem.ai/docs/frontend/python
 
 # Python App Framework
 
@@ -6949,7 +7337,7 @@ git clone https://github.com/ecogenetic/message-app-python.git
 ## Get Started
 
 Source: `docs/index.mdx`
-URL: https://ecosystem.ai/docs
+URL: https://developer.ecosystem.ai/docs
 
 BookOpen,
   Boxes,
@@ -7015,7 +7403,7 @@ BookOpen,
 ## Docker
 
 Source: `docs/local/docker.mdx`
-URL: https://ecosystem.ai/docs/local/docker
+URL: https://developer.ecosystem.ai/docs/local/docker
 Summary: How to install ecosystem.Ai locally with Docker
 
 # Local Installation of ecosystem.Ai with Docker
@@ -7144,7 +7532,7 @@ This will enable you to customize your ecosystem.Ai experience with optional fea
 ## Intro
 
 Source: `docs/local/index.mdx`
-URL: https://ecosystem.ai/docs/local
+URL: https://developer.ecosystem.ai/docs/local
 Summary: How to install ecosystem.Ai locally
 
 # Install ecosystem.Ai Locally
@@ -7162,7 +7550,7 @@ Summary: How to install ecosystem.Ai locally
 ## AWS Marketplace
 
 Source: `docs/marketplace/aws.mdx`
-URL: https://ecosystem.ai/docs/marketplace/aws
+URL: https://developer.ecosystem.ai/docs/marketplace/aws
 Summary: Setup ecosystem.Ai Platform in AWS
 
 # Guide to Setting up ecosystem.Ai Platform in AWS
@@ -7219,7 +7607,7 @@ These options focus entirely on the cloud implementation. We also have other clo
 ## Azure Marketplace
 
 Source: `docs/marketplace/azure.mdx`
-URL: https://ecosystem.ai/docs/marketplace/azure
+URL: https://developer.ecosystem.ai/docs/marketplace/azure
 Summary: Setup ecosystem.Ai Platform in Azure
 
 # Guide to Setting up ecosystem.Ai Platform in Azure
@@ -7275,7 +7663,7 @@ These options focus entirely on the cloud implementation. We also have other clo
 ## GCP Marketplace
 
 Source: `docs/marketplace/gcp.mdx`
-URL: https://ecosystem.ai/docs/marketplace/gcp
+URL: https://developer.ecosystem.ai/docs/marketplace/gcp
 Summary: Setup ecosystem.Ai Platform in GCP
 
 # Guide to Setting up ecosystem.Ai Platform in GCP
@@ -7287,7 +7675,7 @@ Coming Soon
 ## Intro
 
 Source: `docs/marketplace/index.mdx`
-URL: https://ecosystem.ai/docs/marketplace
+URL: https://developer.ecosystem.ai/docs/marketplace
 Summary: Introduction to deploying ecosystem.Ai in a Cloud Environment
 
 # Deployment Introduction
@@ -7311,7 +7699,7 @@ The minimum requirements for running ecosystem.Ai for testing purposes:
 ## Data Agents Analysis Views
 
 Source: `docs/modules/data_agents/analysis.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/analysis
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/analysis
 Summary: Interactive dashboards after a job — Analytics ops, Time Series, Interactions, Personality, Financial, and LLM Agents.
 
 # Analysis Views
@@ -7325,6 +7713,8 @@ From Jobs → open a completed job. Interactive panels (distributions, correlati
 ## Analytics (`/analytics`)
 
 Operations only: job volume, completed/failed, success rate, config usage, 1–90 day window. Not Financial ARPU.
+
+**Built-in dashboard templates:** `personality_drift` and `campaign_measurement`. Workbench **Generate** selects a template when the prompt matches and creates a board via `POST /api/v1/analytics/dashboards` with `template_id` and `source_bindings`. Other prompts compile a new dashboard from scratch.
 
 ## Time Series (`/time-series`)
 
@@ -7379,7 +7769,7 @@ Python **3.14**. Set `MONGO_CONNECT`. Docker compose publishes **54325** (nginx 
 ## Data Agents
 
 Source: `docs/modules/data_agents/index.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents
+URL: https://developer.ecosystem.ai/docs/modules/data_agents
 Summary: Agentic Data Analytics — configure Analytic, Interactions, Personality, or Financial jobs, process Mongo or Trino data, and open markdown, notebook, and graph reports.
 
 # Data Agents
@@ -7457,7 +7847,7 @@ Running and recent completed jobs sit in the left rail (as in the screenshot).
 ## Interactions Analytic
 
 Source: `docs/modules/data_agents/interactions.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/interactions
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/interactions
 Summary: Data Agents Interactions — analyze Runtime call and response logs, campaigns, ranked offers, customers, and catalog without treating acceptance as purchase.
 
 # Interactions Analytic
@@ -7555,7 +7945,7 @@ Dashboard tabs: General, Offers / Catalog, Customers, Market intelligence, Chann
 ## Data Agents Process Jobs
 
 Source: `docs/modules/data_agents/process.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/process
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/process
 Summary: Run a configuration — LangGraph extract, prepare, and analysis steps — then open logs and the analysis dashboard.
 
 # Process Jobs
@@ -7625,7 +8015,7 @@ Artifacts land under `backend/reports/<YYYY-MM-DD_HHMMSS>/` including `config_pa
 ## Actuarial Analysis Report
 
 Source: `docs/modules/data_agents/reports/actuarial.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/actuarial
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/actuarial
 Summary: Actuarial Analysis Report (actuarial_markdown) for Data Agents Analytic jobs.
 
 # Actuarial Analysis Report
@@ -7674,7 +8064,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Categorical Analysis Report
 
 Source: `docs/modules/data_agents/reports/categorical.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/categorical
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/categorical
 Summary: Categorical Analysis Report (categorical_markdown) for Data Agents Analytic jobs.
 
 # Categorical Analysis Report
@@ -7723,7 +8113,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Config Parameters
 
 Source: `docs/modules/data_agents/reports/config_parameters.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/config_parameters
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/config_parameters
 Summary: Config Parameters (config_parameters) for Data Agents jobs.
 
 # Config Parameters
@@ -7769,7 +8159,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Consolidated Results
 
 Source: `docs/modules/data_agents/reports/consolidated_results.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/consolidated_results
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/consolidated_results
 Summary: Consolidated Results (consolidated_results) for Data Agents jobs.
 
 # Consolidated Results
@@ -7815,7 +8205,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Feature Engineering Report
 
 Source: `docs/modules/data_agents/reports/feature_engineering.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/feature_engineering
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/feature_engineering
 Summary: Feature Engineering Report (feature_engineering_markdown) for Data Agents Analytic jobs.
 
 # Feature Engineering Report
@@ -7863,7 +8253,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Breakdowns
 
 Source: `docs/modules/data_agents/reports/financial_breakdowns.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_breakdowns
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_breakdowns
 Summary: Financial Breakdowns (financial_breakdowns_markdown) for Data Agents Financial jobs.
 
 # Financial Breakdowns
@@ -7910,7 +8300,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Campaigns
 
 Source: `docs/modules/data_agents/reports/financial_campaigns.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_campaigns
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_campaigns
 Summary: Financial Campaigns (financial_campaigns_markdown) for Data Agents Financial jobs.
 
 # Financial Campaigns
@@ -7957,7 +8347,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Comparisons
 
 Source: `docs/modules/data_agents/reports/financial_comparisons.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_comparisons
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_comparisons
 Summary: Financial Comparisons (financial_comparisons_markdown) for Data Agents Financial jobs.
 
 # Financial Comparisons
@@ -8004,7 +8394,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Data Quality
 
 Source: `docs/modules/data_agents/reports/financial_data_quality.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_data_quality
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_data_quality
 Summary: Financial Data Quality (financial_data_quality_markdown) for Data Agents Financial jobs.
 
 # Financial Data Quality
@@ -8051,7 +8441,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Distributions
 
 Source: `docs/modules/data_agents/reports/financial_distributions.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_distributions
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_distributions
 Summary: Financial Distributions (financial_distributions_markdown) for Data Agents Financial jobs.
 
 # Financial Distributions
@@ -8098,7 +8488,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Overview
 
 Source: `docs/modules/data_agents/reports/financial_general.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_general
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_general
 Summary: Financial Overview (financial_general_markdown) for Data Agents Financial jobs.
 
 # Financial Overview
@@ -8147,7 +8537,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Growth & Retention
 
 Source: `docs/modules/data_agents/reports/financial_growth.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_growth
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_growth
 Summary: Growth & Retention (financial_growth_markdown) for Data Agents Financial jobs.
 
 # Growth & Retention
@@ -8194,7 +8584,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Industry Pack
 
 Source: `docs/modules/data_agents/reports/financial_industry.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_industry
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_industry
 Summary: Financial Industry Pack (financial_industry_markdown) for Data Agents Financial jobs.
 
 # Financial Industry Pack
@@ -8241,7 +8631,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Ledgers (AR/AP/GL)
 
 Source: `docs/modules/data_agents/reports/financial_ledgers.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_ledgers
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_ledgers
 Summary: Ledgers (AR/AP/GL) (financial_ledgers_markdown) for Data Agents Financial jobs.
 
 # Ledgers (AR/AP/GL)
@@ -8288,7 +8678,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Profitability
 
 Source: `docs/modules/data_agents/reports/financial_profitability.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_profitability
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_profitability
 Summary: Profitability (financial_profitability_markdown) for Data Agents Financial jobs.
 
 # Profitability
@@ -8335,7 +8725,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Returns (ROI / CAC)
 
 Source: `docs/modules/data_agents/reports/financial_returns.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_returns
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_returns
 Summary: Returns (ROI / CAC) (financial_returns_markdown) for Data Agents Financial jobs.
 
 # Returns (ROI / CAC)
@@ -8382,7 +8772,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Financial Time Analytics
 
 Source: `docs/modules/data_agents/reports/financial_time.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_time
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_time
 Summary: Financial Time Analytics (financial_time_markdown) for Data Agents Financial jobs.
 
 # Financial Time Analytics
@@ -8429,7 +8819,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Unit Economics (ARPU)
 
 Source: `docs/modules/data_agents/reports/financial_unit_economics.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_unit_economics
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_unit_economics
 Summary: Unit Economics (ARPU) (financial_unit_economics_markdown) for Data Agents Financial jobs.
 
 # Unit Economics (ARPU)
@@ -8476,7 +8866,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Customer Value (LTV)
 
 Source: `docs/modules/data_agents/reports/financial_value.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/financial_value
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/financial_value
 Summary: Customer Value (LTV) (financial_value_markdown) for Data Agents Financial jobs.
 
 # Customer Value (LTV)
@@ -8523,7 +8913,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Data Agents Reports
 
 Source: `docs/modules/data_agents/reports/index.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports
 Summary: How to open Data Agents reports, plus a page for every report type.
 
 # Reports
@@ -8608,7 +8998,7 @@ How the type works (sources, predictors, attribution, privacy): [Interactions An
 ## Main Analysis Report
 
 Source: `docs/modules/data_agents/reports/main.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/main
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/main
 Summary: Main Analysis Report (main_markdown) for Data Agents Analytic jobs.
 
 # Main Analysis Report
@@ -8656,7 +9046,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Machine Learning Report
 
 Source: `docs/modules/data_agents/reports/ml.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/ml
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/ml
 Summary: Machine Learning Report (ml_markdown) for Data Agents Analytic jobs.
 
 # Machine Learning Report
@@ -8702,7 +9092,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Calendar Personality Patterns
 
 Source: `docs/modules/data_agents/reports/personality_calendar.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_calendar
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_calendar
 Summary: Calendar Personality Patterns (personality_calendar_markdown) for Data Agents Personality jobs.
 
 # Calendar Personality Patterns
@@ -8749,7 +9139,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Personality Intelligent Campaigning
 
 Source: `docs/modules/data_agents/reports/personality_campaigns.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_campaigns
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_campaigns
 Summary: Personality Intelligent Campaigning (personality_campaigns_markdown) for Data Agents Personality jobs.
 
 # Personality Intelligent Campaigning
@@ -8796,7 +9186,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Category Patterns
 
 Source: `docs/modules/data_agents/reports/personality_category_patterns.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_category_patterns
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_category_patterns
 Summary: Category Patterns (personality_category_patterns_markdown) for Data Agents Personality jobs.
 
 # Category Patterns
@@ -8843,7 +9233,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Customer Personality Change & Reasons
 
 Source: `docs/modules/data_agents/reports/personality_customer_change.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_customer_change
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_customer_change
 Summary: Customer Personality Change & Reasons (personality_customer_change_markdown) for Data Agents Personality jobs.
 
 # Customer Personality Change & Reasons
@@ -8890,7 +9280,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Personality Drift
 
 Source: `docs/modules/data_agents/reports/personality_drift.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_drift
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_drift
 Summary: Personality Drift (personality_drift_markdown) for Data Agents Personality jobs.
 
 # Personality Drift
@@ -8937,7 +9327,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Personality Overview
 
 Source: `docs/modules/data_agents/reports/personality_general.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_general
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_general
 Summary: Personality Overview (personality_general_markdown) for Data Agents Personality jobs.
 
 # Personality Overview
@@ -8986,7 +9376,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Money Personality Report
 
 Source: `docs/modules/data_agents/reports/personality_money.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_money
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_money
 Summary: Money Personality Report (personality_money_markdown) for Data Agents Personality jobs.
 
 # Money Personality Report
@@ -9033,7 +9423,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Personality Lifecycle Recommendations
 
 Source: `docs/modules/data_agents/reports/personality_recommendations.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_recommendations
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_recommendations
 Summary: Personality Lifecycle Recommendations (personality_recommendations_markdown) for Data Agents Personality jobs.
 
 # Personality Lifecycle Recommendations
@@ -9080,7 +9470,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Spend Personality Report
 
 Source: `docs/modules/data_agents/reports/personality_spend.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_spend
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_spend
 Summary: Spend Personality Report (personality_spend_markdown) for Data Agents Personality jobs.
 
 # Spend Personality Report
@@ -9127,7 +9517,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Personality Time Measures
 
 Source: `docs/modules/data_agents/reports/personality_time.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/personality_time
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/personality_time
 Summary: Personality Time Measures (personality_time_markdown) for Data Agents Personality jobs.
 
 # Personality Time Measures
@@ -9174,7 +9564,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Runnable Pipeline Notebook
 
 Source: `docs/modules/data_agents/reports/pipeline_notebook.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/pipeline_notebook
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/pipeline_notebook
 Summary: Runnable Pipeline Notebook (pipeline_notebook) for Data Agents Analytic jobs.
 
 # Runnable Pipeline Notebook
@@ -9220,7 +9610,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Customer Uptake & Channel
 
 Source: `docs/modules/data_agents/reports/recommender_customer.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_customer
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_customer
 Summary: Customer Uptake & Channel (recommender_customer_markdown) for Data Agents Interactions jobs.
 
 # Customer Uptake & Channel
@@ -9280,7 +9670,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Entity Clusters (Offers by Category)
 
 Source: `docs/modules/data_agents/reports/recommender_entity_clusters.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_entity_clusters
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_entity_clusters
 Summary: Entity Clusters (Offers by Category) (recommender_entity_clusters_markdown) for Data Agents Interactions jobs.
 
 # Entity Clusters (Offers by Category)
@@ -9332,7 +9722,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Campaign & Predictor Performance
 
 Source: `docs/modules/data_agents/reports/recommender_general.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_general
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_general
 Summary: Campaign & Predictor Performance (recommender_general_markdown) for Data Agents Interactions jobs.
 
 # Campaign & Predictor Performance
@@ -9398,7 +9788,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Interaction Analysis Manifest
 
 Source: `docs/modules/data_agents/reports/recommender_manifest.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_manifest
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_manifest
 Summary: Interaction Analysis Manifest (recommender_manifest) for Data Agents Interactions jobs.
 
 # Interaction Analysis Manifest
@@ -9447,7 +9837,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Market Intelligence
 
 Source: `docs/modules/data_agents/reports/recommender_market_intelligence.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_market_intelligence
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_market_intelligence
 Summary: Market Intelligence (recommender_market_intelligence_markdown) for Data Agents Interactions jobs.
 
 # Market Intelligence
@@ -9502,7 +9892,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Marketing Mix (Adstock & Saturation)
 
 Source: `docs/modules/data_agents/reports/recommender_marketing_mix.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_marketing_mix
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_marketing_mix
 Summary: Marketing Mix (Adstock & Saturation) (recommender_marketing_mix_markdown) for Data Agents Interactions jobs.
 
 # Marketing Mix (Adstock & Saturation)
@@ -9557,7 +9947,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Offer Effectiveness & Catalog
 
 Source: `docs/modules/data_agents/reports/recommender_offer.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/recommender_offer
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/recommender_offer
 Summary: Offer Effectiveness & Catalog (recommender_offer_markdown) for Data Agents Interactions jobs.
 
 # Offer Effectiveness & Catalog
@@ -9622,7 +10012,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Time Series Report
 
 Source: `docs/modules/data_agents/reports/time_series.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/reports/time_series
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/reports/time_series
 Summary: Time Series Report (time_series_markdown) for Data Agents Analytic jobs.
 
 # Time Series Report
@@ -9675,7 +10065,7 @@ Markdown, notebook, and graphs for the same family usually land together. JSON f
 ## Data Agents Setup
 
 Source: `docs/modules/data_agents/setup.mdx`
-URL: https://ecosystem.ai/docs/modules/data_agents/setup
+URL: https://developer.ecosystem.ai/docs/modules/data_agents/setup
 Summary: Create Analytic, Interactions, Personality, or Financial configurations — Mongo or Trino, analysis families, and LLM interpretation.
 
 # Setup
@@ -9793,8 +10183,8 @@ After a job completes, each family has its own report page under [Reports](/docs
 ## Modules
 
 Source: `docs/modules/index.mdx`
-URL: https://ecosystem.ai/docs/modules
-Summary: Workbench and Runtime product modules — Data Agents, Networks, Spend Personality, Two-Tower, and MLRun.
+URL: https://developer.ecosystem.ai/docs/modules
+Summary: Workbench and Runtime product modules — Data Agents, Networks, Spend Personality, Two-Tower, LoRA, and MLRun.
 
 # Modules
 
@@ -9810,15 +10200,77 @@ Modules are operator products that sit on Workbench and compose with the Runtime
   />
   }
   />
+  }
+  />
 
 **Data Agents** is Agentic Data Analytics (`ecosystem-data-agents`) — batch reports, not live scoring. **Networks** (Workbench2 **Solutions → Network Analysis**) is the graph lab. Neither is the [Network Selector](/docs/user_guides/network) or Dynamic Engagement `approach: Network`.
+
+---
+
+## LoRA Recommender
+
+Source: `docs/modules/lora.mdx`
+URL: https://developer.ecosystem.ai/docs/modules/lora
+Summary: Low-rank residual recommender on frozen nomic-embed-text — train in Workbench, score through Runtime plugins
+
+# LoRA Recommender
+
+The **LoRA Recommender** is a **retrieval module**, not a generative LLM feature. It trains a low-rank residual on top of frozen **`nomic-embed-text`** embeddings, then scores offers in the Runtime closed loop like other recommenders.
+
+Operator entry: **Solutions → LoRA Recommender** (`/lora`).
+
+## Training data
+
+Feature rows typically come from **`logging.ecosystemruntime_flatten`**, produced by [Generate CPR Feature Store](/docs/configuration/cpr_feature_store). Align date windows with your Two-Tower jobs when both modules share the same deployment.
+
+Embeddings and run metadata live in:
+
+- `logging.lora_user_embeddings`
+- `logging.lora_item_embeddings`
+
+## Operator flow
+
+1. Configure a LoRA job (rank, corpora, train/validation split).
+2. **Train** — fits the residual on frozen encoder outputs (`rank=0` disables the residual for baseline comparisons).
+3. **Concept test** — offline checks before export.
+4. **Export** — artifacts for deployment binding.
+5. **Bind on deployment** — set runtime properties (below) and **Push** to the target runtime.
+
+Public HTTP routes also exist under Workbench `public_api/routers/lora.py` for scoped integrations.
+
+## Runtime scoring
+
+Set on the deployment / `ecosystem.properties`:
+
+```properties
+predictor.model.type=lora
+predictor.lora.rank=8
+predictor.lora.user_embedding_collection=logging.lora_user_embeddings
+predictor.lora.item_embedding_collection=logging.lora_item_embeddings
+plugin.prescore=…PrePredictLoRA
+plugin.postscore=…PostScoreLoRA
+```
+
+Exact property keys follow your project template; see Workbench deployment export for the bound class names.
+
+Closed loop unchanged: `POST /invocations` then `POST /response` with `params` as a JSON **string**.
+
+## Project Generate
+
+Project **Generate** can emit LoRA-related keywords and deployment snippets when the prompt describes embedding-based retrieval — use it after the flatten store and training corpora exist.
+
+## Related
+
+- [Two-Tower Module](/docs/modules/two_tower) — dual-encoder retrieval in the same embedding space family
+- [CPR Feature Store](/docs/configuration/cpr_feature_store) — flatten source for training
+- [Runtime plugins](/docs/runtime/plugins) — Pre-Predict and Post-Score binding
 
 ---
 
 ## LoRA Recommender Module
 
 Source: `docs/modules/lora/index.mdx`
-URL: https://ecosystem.ai/docs/modules/lora
+URL: https://developer.ecosystem.ai/docs/modules/lora
 Summary: Low-rank adaptation on frozen nomic embeddings for offer ranking — train in Workbench, export vectors, score with PrePredictLoRA and PostScoreLoRA.
 
 # LoRA Recommender Module
@@ -9861,7 +10313,7 @@ with that row’s `uuid` + `offer_name`. `params` is a JSON string.
 ## LoRA Runtime
 
 Source: `docs/modules/lora/runtime.mdx`
-URL: https://ecosystem.ai/docs/modules/lora/runtime
+URL: https://developer.ecosystem.ai/docs/modules/lora/runtime
 Summary: Score exported LoRA embeddings with PrePredictLoRA and PostScoreLoRA.
 
 # LoRA Runtime
@@ -9903,7 +10355,7 @@ Closed loop: `POST /invocations` then `POST /response` with `uuid` +
 ## LoRA Training
 
 Source: `docs/modules/lora/training.mdx`
-URL: https://ecosystem.ai/docs/modules/lora/training
+URL: https://developer.ecosystem.ai/docs/modules/lora/training
 Summary: Train a LoRA residual on flatten accept/reject pairs and export embeddings for runtime.
 
 # LoRA Training
@@ -9939,7 +10391,7 @@ With frozen encoder vector `z`:
 ## MLRun Module — Access & Scoring
 
 Source: `docs/modules/mlrun/access.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/access
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/access
 Summary: How to invoke trained MLRun models — directly through the trainer sidecar, through the deployed model server, or through the Java ecosystem-runtime — and how to clean up MLRun configurations.
 
 # Access & Scoring
@@ -10132,7 +10584,7 @@ user that requested the delete.
 ## MLRun Module — Community Edition
 
 Source: `docs/modules/mlrun/community_edition.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/community_edition
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/community_edition
 Summary: Install MLRun Community Edition on Docker Desktop Kubernetes alongside the Workbench2 trainer sidecar; understand the coexistence model adopted in ADR 0006 §Phase 5.
 
 # MLRun Community Edition
@@ -10241,7 +10693,7 @@ want a clean slate.
 ## MLRun Module — Console Tour
 
 Source: `docs/modules/mlrun/console_tour.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/console_tour
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/console_tour
 Summary: Visual walkthrough of every tab in the Workbench2 MLRun console — Configurations list, Overview, Project, Data Source, Features, H2O Frame, Training, Models, Training Runs, Adapters, Python, Runs, Deployments, and Generate.
 
 # Console Tour
@@ -10492,7 +10944,7 @@ The end-to-end automation tab. Two paths:
 ## MLRun Module — Data Preparation
 
 Source: `docs/modules/mlrun/data.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/data
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/data
 Summary: How the MLRun module derives engineered feature collections from MongoDB, including the natural-language pipeline generator and the on-the-fly target derivation used by the two reference use-cases.
 
 # Data Preparation
@@ -10655,7 +11107,7 @@ spurious `SEED_MLRUN_USE_CASE` activity row.
 ## MLRun Module — Use-Case Definition
 
 Source: `docs/modules/mlrun/definition.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/definition
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/definition
 Summary: How an MLRun configuration is structured in the Workbench2 console and how the two reference use-cases (Spend Risk + Customer Personality) bind to MongoDB.
 
 # Use-Case Definition
@@ -10751,7 +11203,7 @@ the [Console Tour](/docs/modules/mlrun/console_tour).
 ## MLRun Module — Kubernetes Deployment
 
 Source: `docs/modules/mlrun/deployment.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/deployment
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/deployment
 Summary: Deploy trained models alongside the Java ecosystem-runtime onto Docker Desktop Kubernetes using the K8s router and the Deployments tab.
 
 # Kubernetes Deployment
@@ -10839,7 +11291,7 @@ row (see [Access](/docs/modules/mlrun/access)).
 ## MLRun Module — Python & AI Generator
 
 Source: `docs/modules/mlrun/generator.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/generator
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/generator
 Summary: Reproduce the entire MLRun lifecycle (feature engineering, training, scoring, ecosystem-runtime adapter logging, and Kubernetes deployment) as a runnable Python project — either from the AI pipeline assistant on the Generate tab or from the manual Python tab.
 
 # Python & AI Generator
@@ -10976,7 +11428,7 @@ also produced from a natural-language prompt:
 ## MLRun Module
 
 Source: `docs/modules/mlrun/index.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun
+URL: https://developer.ecosystem.ai/docs/modules/mlrun
 Summary: End-to-end ML lifecycle (feature engineering → training → deployment) for the Ecosystem.Ai Workbench powered by an MLRun-compatible trainer sidecar and Docker Desktop Kubernetes.
 
 # MLRun Module
@@ -11121,7 +11573,7 @@ lightgbm / pytorch) per use-case. With both use-cases enabled you get:
 ## MLRun Module — Installation
 
 Source: `docs/modules/mlrun/install.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/install
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/install
 Summary: Stand up the MLRun trainer sidecar, optional Docker Desktop Kubernetes integration, and seed both reference use-cases.
 
 # Installation
@@ -11252,7 +11704,7 @@ successful runs per use-case.
 ## MLRun Module — Model Training
 
 Source: `docs/modules/mlrun/training.mdx`
-URL: https://ecosystem.ai/docs/modules/mlrun/training
+URL: https://developer.ecosystem.ai/docs/modules/mlrun/training
 Summary: Train sklearn / xgboost / lightgbm / pytorch (tabular) models from the Workbench2 MLRun console or from generated Python code, against the bundled mlrun-trainer sidecar.
 
 # Model Training
@@ -11373,7 +11825,7 @@ label.
 ## Networks Social, Knowledge, and Time
 
 Source: `docs/modules/networks/advanced.mdx`
-URL: https://ecosystem.ai/docs/modules/networks/advanced
+URL: https://developer.ecosystem.ai/docs/modules/networks/advanced
 Summary: Social SNA, knowledge-graph ontology, timeline filters, temporal algorithms, geo charts, and metric writeback.
 
 # Social, Knowledge, and Time
@@ -11449,7 +11901,7 @@ After analysis:
 ## Networks Analysis
 
 Source: `docs/modules/networks/analysis.mdx`
-URL: https://ecosystem.ai/docs/modules/networks/analysis
+URL: https://developer.ecosystem.ai/docs/modules/networks/analysis
 Summary: Server-side centrality, community detection, and shortest path in the Workbench2 Networks workspace.
 
 # Analysis
@@ -11515,7 +11967,7 @@ Dynamic Engagement **Network Analysis** (`approach` in campaign properties) rank
 ## Networks Jobs and API
 
 Source: `docs/modules/networks/api.mdx`
-URL: https://ecosystem.ai/docs/modules/networks/api
+URL: https://developer.ecosystem.ai/docs/modules/networks/api
 Summary: Async graph jobs on Workbench2 — graphtheory routes and the public Networks API.
 
 # Jobs and API
@@ -11605,7 +12057,7 @@ Do not send Runtime scoring `params` here — that contract is `POST /invocation
 ## Networks Data Sources
 
 Source: `docs/modules/networks/data.mdx`
-URL: https://ecosystem.ai/docs/modules/networks/data
+URL: https://developer.ecosystem.ai/docs/modules/networks/data
 Summary: MongoDB, generic REST, and Spotify sources for Workbench2 Networks — pipelines, display samples, and field mappings.
 
 # Data Sources
@@ -11676,7 +12128,7 @@ Saved analytics settings can later **write metrics** onto source documents (`_ne
 ## Networks
 
 Source: `docs/modules/networks/index.mdx`
-URL: https://ecosystem.ai/docs/modules/networks
+URL: https://developer.ecosystem.ai/docs/modules/networks
 Summary: Workbench2 graph analysis — build networks from Mongo or APIs, run centrality and community detection on the server, and inspect a canvas-safe sample in the browser.
 
 # Networks
@@ -11753,7 +12205,7 @@ Graph type can be **directed**, **undirected**, **bipartite**, or **weighted**. 
 ## Networks Workspace
 
 Source: `docs/modules/networks/workspace.mdx`
-URL: https://ecosystem.ai/docs/modules/networks/workspace
+URL: https://developer.ecosystem.ai/docs/modules/networks/workspace
 Summary: Layout of the Workbench2 Networks SPA — left data panel, graph canvas, and analysis sidebar.
 
 # Workspace
@@ -11830,7 +12282,7 @@ The landing list loads configs from `GET /api/graphtheory/configs`. Import uses 
 ## Spend Personality
 
 Source: `docs/modules/spend_personality/access.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/access
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/access
 Summary: Spend Personality
 
 # Spend Personality
@@ -11915,7 +12367,7 @@ Question and answer approaches with deep learning models:
 ## Spend Personality
 
 Source: `docs/modules/spend_personality/chatgpt.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/chatgpt
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/chatgpt
 Summary: Spend Personality
 
 # Spend Personality
@@ -12072,7 +12524,7 @@ Use the following OpenAI CustomGPT API to access the spend personality scores:
 ## Spend Personality
 
 Source: `docs/modules/spend_personality/configuration.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/configuration
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/configuration
 Summary: Spend Personality
 
 # Spend Personality
@@ -12096,7 +12548,7 @@ Models can be tested by using the "Test Model" functionality where default param
 ## Spend Personality
 
 Source: `docs/modules/spend_personality/data.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/data
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/data
 Summary: Spend Personality
 
 # Spend Personality
@@ -12120,7 +12572,7 @@ After importing data you can run the algorithm to generate scores.
 ## Spend Personality
 
 Source: `docs/modules/spend_personality/definition.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/definition
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/definition
 Summary: Spend Personality
 
 # Spend Personality
@@ -12145,7 +12597,7 @@ All module assets are pre-defined and can be used as examples to achieve your ow
 ## Spend Personality
 
 Source: `docs/modules/spend_personality/enrich.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/enrich
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/enrich
 Summary: Spend Personality
 
 # Spend Personality
@@ -12169,7 +12621,7 @@ Review generated scores and add to other data sets if needed.
 ## Index
 
 Source: `docs/modules/spend_personality/index.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality
 
 # Spend Personality Module
 
@@ -12205,7 +12657,7 @@ Population mix, drift, and campaign overlays on already-scored or raw transactio
 ## AWS Spend Personality
 
 Source: `docs/modules/spend_personality/install/aws.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/install/aws
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/install/aws
 Summary: AWS Spend Personality
 
 # Guide to Installing Spend Personality: AWS
@@ -12262,7 +12714,7 @@ Review Spend Personality assets.
 ## Azure Spend Personality
 
 Source: `docs/modules/spend_personality/install/azure.mdx`
-URL: https://ecosystem.ai/docs/modules/spend_personality/install/azure
+URL: https://developer.ecosystem.ai/docs/modules/spend_personality/install/azure
 Summary: Azure Spend Personality
 
 # Guide to Installing Spend Personality: Azure
@@ -12327,7 +12779,7 @@ Review Spend Personality assets.
 ## Two-Tower Module — Access & Operations
 
 Source: `docs/modules/two_tower/access.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/access
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/access
 Summary: Operating the Two-Tower module — RBAC, the Solutions hub route, deployment configuration, the embedding/sidecar prerequisites, and a deployment checklist.
 
 # Access & Operations
@@ -12403,7 +12855,7 @@ Related pages: [Real-Time Scoring](/docs/modules/two_tower/runtime),
 ## Two-Tower Module — API Reference
 
 Source: `docs/modules/two_tower/api.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/api
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/api
 Summary: Complete request and response JSON for two-tower training and scoring across the stack — workbench2 algorithm endpoints, the ecosystem-notebooks PyTorch sidecar, and the ecosystem-runtime invocations contract.
 
 # API Reference
@@ -12607,7 +13059,7 @@ Response:
 
 ## Public gateway (`/public/v1/two-tower`)
 
-Dual-auth (`X-API-Key` + user JWT). Scopes: `two-tower:configs`, `two-tower:train`, plus `jobs:read` to poll async jobs.
+One credential on the gateway: `X-API-Key` (link an internal API key on the public credential) or a user JWT. Generated clients typically send `X-API-Key` only. Scopes: `two-tower:configs`, `two-tower:train`, plus `jobs:read` to poll async jobs.
 
 | Method | Path | Scope |
 | --- | --- | --- |
@@ -12789,7 +13241,7 @@ Response (trimmed):
 ## Two-Tower Module — Architecture & Theory
 
 Source: `docs/modules/two_tower/concepts.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/concepts
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/concepts
 Summary: How dual-encoder recommenders work — the user and item towers, the shared embedding space, L2-normalized dot product / cosine similarity, and retrieval versus ranking.
 
 # Architecture & Theory
@@ -12972,7 +13424,7 @@ product. See [Model Training](/docs/modules/two_tower/training) and
 ## Two-Tower Module — Data Preparation
 
 Source: `docs/modules/two_tower/data.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/data
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/data
 Summary: The interaction data behind two-tower training — the ecosystemruntime_flatten collection, predictor and date selection, and the MongoDB-to-H2O feature frame pipeline.
 
 # Data Preparation
@@ -13127,7 +13579,7 @@ Next: [Model Training](/docs/modules/two_tower/training).
 ## Two-Tower Module
 
 Source: `docs/modules/two_tower/index.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower
+URL: https://developer.ecosystem.ai/docs/modules/two_tower
 Summary: Dual-encoder (two-tower) recommendation for ecosystem.Ai — train a user tower and an item tower into a shared embedding space, export embeddings, and score in real time through the runtime using cosine / dot-product similarity.
 
 # Two-Tower Module
@@ -13293,12 +13745,14 @@ H2O/dynamic model scoring. `PrePredictTwoTower` loads the configured vectors and
 - **Runtime integration** — a dedicated `similarity` model type bypasses H2O and
   dynamic scoring and routes to the reusable `SimilarityScorer`.
 
+For low-rank residual retrieval on frozen text embeddings, see [LoRA Recommender](/docs/modules/lora). Both modules can train from `logging.ecosystemruntime_flatten` ([CPR Feature Store](/docs/configuration/cpr_feature_store)).
+
 ---
 
 ## Two-Tower Module — PyTorch Serving
 
 Source: `docs/modules/two_tower/pytorch.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/pytorch
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/pytorch
 Summary: Running PyTorch models for two-tower and general scoring in the runtime — the engine options (api HTTP serving, DJL TorchScript, ONNX), the implemented api:pytorch paths, and the ecosystem-notebooks /pytorch train + invocations sidecar.
 
 # PyTorch Serving
@@ -13506,7 +13960,7 @@ See the full request/response samples in the
 ## Two-Tower Module — Real-Time Scoring
 
 Source: `docs/modules/two_tower/runtime.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/runtime
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/runtime
 Summary: Serving two-tower recommendations from ecosystem-runtime — the similarity model type, the predictor.model.type=similarity deployment flag, the reusable SimilarityScorer, the PrePredictTwoTower / PostScoreTwoTower plugins, the MongoDB embedding contract, and the api:pytorch online embedding path.
 
 # Real-Time Scoring
@@ -13882,7 +14336,7 @@ embedding path.
 ## Two-Tower Module — Offline Scoring
 
 Source: `docs/modules/two_tower/scoring.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/scoring
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/scoring
 Summary: Validating and using a trained two-tower run offline — the concept test math, batch scoring to MongoDB, and the output shapes.
 
 # Offline Scoring
@@ -14088,7 +14542,7 @@ through the `additionalOfferChecks` hook in `PostScoreTwoTower` — see
 ## Two-Tower Module — Model Training
 
 Source: `docs/modules/two_tower/training.mdx`
-URL: https://ecosystem.ai/docs/modules/two_tower/training
+URL: https://developer.ecosystem.ai/docs/modules/two_tower/training
 Summary: Training the dual towers — H2O Deep Learning estimators, hyperparameters, deepfeatures embeddings, MOJO export, and the two_tower_runs metadata document. PyTorch training is also supported via the notebooks sidecar.
 
 # Model Training
@@ -14398,7 +14852,7 @@ Next: [Offline Scoring](/docs/modules/two_tower/scoring).
 ## Ontology for Agents
 
 Source: `docs/ontology/agents.mdx`
-URL: https://ecosystem.ai/docs/ontology/agents
+URL: https://developer.ecosystem.ai/docs/ontology/agents
 Summary: Use the Runtime ontology REST catalog and MCP tools to ground AI agents on the closed loop
 
 # Ontology for Agents
@@ -14482,7 +14936,7 @@ Spend Personality and Money Personality are lookup-only (`scoringMode=lookup`). 
 ## Alignments
 
 Source: `docs/ontology/alignments.mdx`
-URL: https://ecosystem.ai/docs/ontology/alignments
+URL: https://developer.ecosystem.ai/docs/ontology/alignments
 Summary: Cross-module bridges between entities, workbench, server, and runtime
 
 # Alignments
@@ -14512,7 +14966,7 @@ This page is the concept map across the modules. The site does not serve a combi
 ## Concept Index
 
 Source: `docs/ontology/concept-index.mdx`
-URL: https://ecosystem.ai/docs/ontology/concept-index
+URL: https://developer.ecosystem.ai/docs/ontology/concept-index
 Summary: A–Z index of all platform ontology classes and properties
 
 # Concept Index
@@ -14729,7 +15183,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 ## Customer Feature Lookup (Open)
 
 Source: `docs/ontology/customer-features.mdx`
-URL: https://ecosystem.ai/docs/ontology/customer-features
+URL: https://developer.ecosystem.ai/docs/ontology/customer-features
 Summary: Open-schema customer and feature documents for runtime param lookup
 
 # Customer Feature Lookup
@@ -14762,7 +15216,7 @@ Represented in logs as nested `scoring_data` / feature-store payloads. The platf
 ## Data and Ontology
 
 Source: `docs/ontology/data-and-ontology.mdx`
-URL: https://ecosystem.ai/docs/ontology/data-and-ontology
+URL: https://developer.ecosystem.ai/docs/ontology/data-and-ontology
 Summary: How Turtle ontologies relate to Mongo documents — synthetic forward and indicative reverse
 
 # Data and Ontology
@@ -14808,7 +15262,7 @@ For ecosystem-runtime campaigns:
 ## Entities concept catalog
 
 Source: `docs/ontology/entities-catalog.mdx`
-URL: https://ecosystem.ai/docs/ontology/entities-catalog
+URL: https://developer.ecosystem.ai/docs/ontology/entities-catalog
 Summary: Complete class and property catalog for Workbench meta concepts
 
 # Entities concept catalog
@@ -14917,7 +15371,7 @@ Namespace: `https://ecosystem.ai/ontology/entities#`
 ## Entities (Workbench Meta)
 
 Source: `docs/ontology/entities.mdx`
-URL: https://ecosystem.ai/docs/ontology/entities
+URL: https://developer.ecosystem.ai/docs/ontology/entities
 Summary: Complete catalog of Workbench2 ecosystem_meta entity concepts in the platform ontology
 
 # Entities (Workbench Meta)
@@ -15041,7 +15495,7 @@ Full tables (every class and property): [Entities Catalog](/docs/ontology/entiti
 ## Glossary
 
 Source: `docs/ontology/glossary.mdx`
-URL: https://ecosystem.ai/docs/ontology/glossary
+URL: https://developer.ecosystem.ai/docs/ontology/glossary
 Summary: Definitions for platform ontology terms used across Ecosystem.Ai
 
 # Glossary
@@ -15078,7 +15532,7 @@ For class-level catalogs see [Entities](/docs/ontology/entities), [Runtime](/doc
 ## Ontology Overview
 
 Source: `docs/ontology/index.mdx`
-URL: https://ecosystem.ai/docs/ontology
+URL: https://developer.ecosystem.ai/docs/ontology
 Summary: Semantic layer for ecosystem.Ai — Workbench entities, modeling server, and runtime decisioning concepts
 
 # Ontology
@@ -15132,7 +15586,7 @@ These pages are the published vocabulary. The site does not serve Turtle or SHAC
 ## Link Types
 
 Source: `docs/ontology/link-types.mdx`
-URL: https://ecosystem.ai/docs/ontology/link-types
+URL: https://developer.ecosystem.ai/docs/ontology/link-types
 Summary: Object properties that connect platform ontology concepts across modules
 
 # Link Types
@@ -15203,7 +15657,7 @@ See [Alignments](/docs/ontology/alignments) for `plat:` bridges (e.g. Deployment
 ## Namespaces
 
 Source: `docs/ontology/namespaces.mdx`
-URL: https://ecosystem.ai/docs/ontology/namespaces
+URL: https://developer.ecosystem.ai/docs/ontology/namespaces
 Summary: IRI prefixes for the ecosystem.Ai platform ontology modules
 
 # Namespaces
@@ -15230,7 +15684,7 @@ Indicative ontologies inferred from Mongo use:
 ## Object Types
 
 Source: `docs/ontology/object-types.mdx`
-URL: https://ecosystem.ai/docs/ontology/object-types
+URL: https://developer.ecosystem.ai/docs/ontology/object-types
 Summary: Redirect — Workbench entity classes live under Entities
 
 # Object Types
@@ -15247,7 +15701,7 @@ This page moved.
 ## Offer Matrix (Closed Schema)
 
 Source: `docs/ontology/offer-matrix.mdx`
-URL: https://ecosystem.ai/docs/ontology/offer-matrix
+URL: https://developer.ecosystem.ai/docs/ontology/offer-matrix
 Summary: Canonical six-field OfferMatrixEntry used by runtime scoring
 
 # Offer Matrix
@@ -15295,7 +15749,7 @@ Offer matrix rows stay on the six fields above, at design time and at scoring ti
 ## Platform Modules
 
 Source: `docs/ontology/platform.mdx`
-URL: https://ecosystem.ai/docs/ontology/platform
+URL: https://developer.ecosystem.ai/docs/ontology/platform
 Summary: Umbrella platform ontology and how modules compose
 
 # Platform Modules
@@ -15326,7 +15780,7 @@ Full A–Z: [Concept Index](/docs/ontology/concept-index).
 ## Runtime concept catalog
 
 Source: `docs/ontology/runtime-catalog.mdx`
-URL: https://ecosystem.ai/docs/ontology/runtime-catalog
+URL: https://developer.ecosystem.ai/docs/ontology/runtime-catalog
 Summary: Complete class and property catalog for the runtime closed loop
 
 # Runtime concept catalog
@@ -15439,7 +15893,7 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 ## Runtime Closed Loop
 
 Source: `docs/ontology/runtime.mdx`
-URL: https://ecosystem.ai/docs/ontology/runtime
+URL: https://developer.ecosystem.ai/docs/ontology/runtime
 Summary: Invocations, response, ContactLog, ResponseLog, plugins, and campaign context concepts
 
 # Runtime Closed Loop
@@ -15546,7 +16000,7 @@ Full tables: [Runtime Catalog](/docs/ontology/runtime-catalog) · [Concept Index
 ## Server concept catalog
 
 Source: `docs/ontology/server-catalog.mdx`
-URL: https://ecosystem.ai/docs/ontology/server-catalog
+URL: https://developer.ecosystem.ai/docs/ontology/server-catalog
 Summary: Complete class and property catalog for modeling server concepts
 
 # Server concept catalog
@@ -15594,7 +16048,7 @@ Namespace: `https://ecosystem.ai/ontology/server#`
 ## Modeling Server Concepts
 
 Source: `docs/ontology/server.mdx`
-URL: https://ecosystem.ai/docs/ontology/server
+URL: https://developer.ecosystem.ai/docs/ontology/server
 Summary: ecosystem-server modeling project, diagram, ontology context, and generation job concepts
 
 # Modeling Server
@@ -15642,7 +16096,7 @@ Full tables: [Server Catalog](/docs/ontology/server-catalog)
 ## Why create an Ontology?
 
 Source: `docs/ontology/why.mdx`
-URL: https://ecosystem.ai/docs/ontology/why
+URL: https://developer.ecosystem.ai/docs/ontology/why
 Summary: Why ecosystem.Ai publishes a shared concept vocabulary for Workbench, modeling, and runtime
 
 # Why create an Ontology?
@@ -15667,7 +16121,7 @@ Industry business domains (CRM, banking, …) remain in the separate domain cata
 ## Workbench concept catalog
 
 Source: `docs/ontology/workbench-catalog.mdx`
-URL: https://ecosystem.ai/docs/ontology/workbench-catalog
+URL: https://developer.ecosystem.ai/docs/ontology/workbench-catalog
 Summary: Complete class and property catalog for Workbench application concepts
 
 # Workbench concept catalog
@@ -15715,7 +16169,7 @@ Namespace: `https://ecosystem.ai/ontology/workbench#`
 ## Workbench Application Concepts
 
 Source: `docs/ontology/workbench.mdx`
-URL: https://ecosystem.ai/docs/ontology/workbench
+URL: https://developer.ecosystem.ai/docs/ontology/workbench
 Summary: Workbench2 solution cases, jobs, synthetic data, and console concepts
 
 # Workbench Application
@@ -15766,7 +16220,7 @@ Full tables: [Workbench Catalog](/docs/ontology/workbench-catalog)
 ## Index
 
 Source: `docs/opensource/index.mdx`
-URL: https://ecosystem.ai/docs/opensource
+URL: https://developer.ecosystem.ai/docs/opensource
 
 # Open Source Technologies
 
@@ -15876,7 +16330,7 @@ We use a number of key open source technologies to build our platform. These tec
 ## Superset
 
 Source: `docs/opensource/superset.mdx`
-URL: https://ecosystem.ai/docs/opensource/superset
+URL: https://developer.ecosystem.ai/docs/opensource/superset
 
 # Superset
 
@@ -15918,7 +16372,7 @@ Superset supports a wide range of data sources, including SQL databases, NoSQL d
 ## Docker
 
 Source: `docs/quick_start/docker.mdx`
-URL: https://ecosystem.ai/docs/quick_start/docker
+URL: https://developer.ecosystem.ai/docs/quick_start/docker
 
 # Docker Compose
 
@@ -16150,7 +16604,7 @@ networks:
 ## Quick Start
 
 Source: `docs/quick_start/index.mdx`
-URL: https://ecosystem.ai/docs/quick_start
+URL: https://developer.ecosystem.ai/docs/quick_start
 Summary: Install the stack, score a campaign, and close the learning loop
 
 Boxes,
@@ -16317,7 +16771,7 @@ Release notes: [Runtime 0.9.7.0](/docs/runtime/runtimeversion), [Workbench 2.0.3
 ## Kubernetes
 
 Source: `docs/quick_start/kubernetes.mdx`
-URL: https://ecosystem.ai/docs/quick_start/kubernetes
+URL: https://developer.ecosystem.ai/docs/quick_start/kubernetes
 
 # Kubernetes
 
@@ -16857,7 +17311,7 @@ spec:
 ## Local Setup
 
 Source: `docs/quick_start/local_setup.mdx`
-URL: https://ecosystem.ai/docs/quick_start/local_setup
+URL: https://developer.ecosystem.ai/docs/quick_start/local_setup
 
 # Local Setup Guide
 
@@ -16968,7 +17422,7 @@ Hosted demo if you are not running locally: [https://medemo.ecosystem.ai](https:
 ## Marketplace
 
 Source: `docs/quick_start/marketplace.mdx`
-URL: https://ecosystem.ai/docs/quick_start/marketplace
+URL: https://developer.ecosystem.ai/docs/quick_start/marketplace
 
 # Marketplace Apps
 
@@ -17033,7 +17487,7 @@ Follow the [Post Install Setup Guide](/docs/quick_start/post_install), then scor
 ## Openshift
 
 Source: `docs/quick_start/openshift.mdx`
-URL: https://ecosystem.ai/docs/quick_start/openshift
+URL: https://developer.ecosystem.ai/docs/quick_start/openshift
 
 # OpenShift
 
@@ -17719,7 +18173,7 @@ oc expose svc workbench2 --port=5270
 ## Post Install
 
 Source: `docs/quick_start/post_install.mdx`
-URL: https://ecosystem.ai/docs/quick_start/post_install
+URL: https://developer.ecosystem.ai/docs/quick_start/post_install
 
 # Post Install Setup Guide
 
@@ -17791,7 +18245,7 @@ The default username and password is `admin@ecosystem.ai` and `password`. Please
 ## API Access
 
 Source: `docs/runtime/access.mdx`
-URL: https://ecosystem.ai/docs/runtime/access
+URL: https://developer.ecosystem.ai/docs/runtime/access
 Summary: API Access
 
 # Introduction
@@ -17802,6 +18256,7 @@ The ecosystem.Ai runtime exposes APIs that can be used to access and manage your
 - The `/refreshWithOptions` endpoint is used to regenerate the [Options Store](/docs/configuration/dynamic/options) and then refresh the runtime.
 - The `/learning` endpoint is used to manually trigger the learning process for a Dynamic Interaction deployment. This process is normally triggered based on the [MONITORING_DELAY environment variable](/docs/runtime/environment_variables). Manually triggering the learning is useful for testing and simulation purposes
 - The `/updateCassandraConfig` endpoint is used to update the contents of the `conf` file that is use the detail the Cassandra connection information, if required. 
+- The `/callSqlServerProcedure` endpoint executes a Microsoft SQL Server stored procedure when SQL Server is configured. See [SQL Server](/docs/configuration/data/sqlserver).
 
 [Custom APIs](/docs/runtime/apiconfiguration/index) can also be exposed.
 
@@ -18426,6 +18881,25 @@ curl -X 'GET' \
   -H 'accept: */*'
 ```
 
+## `/callSqlServerProcedure`
+
+Executes a configured SQL Server stored procedure. Requires SQL Server env vars or `sqlserver.*` properties (Runtime 0.9.7.x).
+
+```bash
+curl -X POST 'http://localhost:8091/callSqlServerProcedure' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "procedure": "dbo.usp_X",
+    "parameters": [
+      {"name": "CustomerId", "value": "00000000-0000-0000-0000-000000000001", "type": "uniqueidentifier", "direction": "in"},
+      {"name": "Points", "type": "int", "direction": "out"}
+    ],
+    "type": "r"
+  }'
+```
+
+Response: `{ "data", "outputs", "updateCount" }`. Full parameter types and `type` `r` vs `c` are documented on [SQL Server](/docs/configuration/data/sqlserver).
+
 ## `/updateCassandraConfig`
 The `/updateCassandraConfig` API update the contents of the `conf` file which contains the details of the Cassandra connection to be used by the runtime. The `/refresh` API should be called in order for the new connection details to take effect.
 ```bash
@@ -18459,7 +18933,7 @@ datastax-java-driver {
 ## API Configuration Plugin
 
 Source: `docs/runtime/apiconfiguration/index.mdx`
-URL: https://ecosystem.ai/docs/runtime/apiconfiguration
+URL: https://developer.ecosystem.ai/docs/runtime/apiconfiguration
 Summary: API Configuration Plugin
 
 # API Configuration Plugin
@@ -18708,7 +19182,7 @@ It is also possible to send the entire response payload to the response API. Onl
 ## Product Master Plugin
 
 Source: `docs/runtime/apiconfiguration/productmaster.mdx`
-URL: https://ecosystem.ai/docs/runtime/apiconfiguration/productmaster
+URL: https://developer.ecosystem.ai/docs/runtime/apiconfiguration/productmaster
 Summary: PProduct Master Plugin
 
 # Product Master Plugin
@@ -18997,7 +19471,7 @@ public class ProductMaster extends ProductMasterSuper {
 ## Configuration
 
 Source: `docs/runtime/configuration.mdx`
-URL: https://ecosystem.ai/docs/runtime/configuration
+URL: https://developer.ecosystem.ai/docs/runtime/configuration
 Summary: Configuration
 
 # Configuration
@@ -19021,7 +19495,7 @@ As project settings are toggled, accordians will appear at the bottom of the scr
 ## Runtime Dashboard
 
 Source: `docs/runtime/dashboard.mdx`
-URL: https://ecosystem.ai/docs/runtime/dashboard
+URL: https://developer.ecosystem.ai/docs/runtime/dashboard
 Summary: Tester UI for campaigns, closed-loop scoring, MCP, ontology, and campaign BDD
 
 # Runtime Dashboard
@@ -19083,7 +19557,7 @@ Turn **Debug** on (Workbench Test defaults it on) so `/invocations` returns `deb
 ## Push Your Deployment
 
 Source: `docs/runtime/deployment.mdx`
-URL: https://ecosystem.ai/docs/runtime/deployment
+URL: https://developer.ecosystem.ai/docs/runtime/deployment
 Summary: Pushing a configured deployment to the production environment
 
 # Push Your Deployment
@@ -19912,7 +20386,7 @@ spec:
 ## Environment Variables
 
 Source: `docs/runtime/environment_variables.mdx`
-URL: https://ecosystem.ai/docs/runtime/environment_variables
+URL: https://developer.ecosystem.ai/docs/runtime/environment_variables
 Summary: Environment Variables
 
 # Environment Variables
@@ -19933,6 +20407,11 @@ The possible environment variables are:
 - **CLI_SETTINGS**: Command line options to be added to the runtime at startup.
 - **ECOSYSTEM_XMX**: The amount of memory allocated to the runtime. This translated into the -Xmx option for the JVM.
 - **MONGO_CONNECT**: The connection string for the MongoDB instance to be used the runtime.
+- **SQLSERVER_URL**: JDBC URL for Microsoft SQL Server stored-procedure integration (Runtime 0.9.7.x). Overrides `sqlserver.url` in `ecosystem.properties`.
+- **SQLSERVER_USER**: SQL Server login. Overrides `sqlserver.user`.
+- **SQLSERVER_PASSWORD**: SQL Server password. Overrides `sqlserver.password`.
+
+Query timeout uses property `sqlserver.query.timeout` (seconds, default 30) only — not an environment variable. See [SQL Server data](/docs/configuration/data/sqlserver).
 
 To be supported in the future:
 - **FEATURE_DELAY**: The time period in seconds between updates of the real time features.
@@ -19990,7 +20469,7 @@ On restart of the runtime access is only allowed by the username and password se
 ## Calling External Runtimes
 
 Source: `docs/runtime/externalruntimecalls.mdx`
-URL: https://ecosystem.ai/docs/runtime/externalruntimecalls
+URL: https://developer.ecosystem.ai/docs/runtime/externalruntimecalls
 Summary: Calling one runtime from another runtime
 
 # Calling External Runtimes
@@ -20020,7 +20499,7 @@ To use the `callExternalRuntimeSync` method your post scoring logic must import 
 ## Runtime
 
 Source: `docs/runtime/index.mdx`
-URL: https://ecosystem.ai/docs/runtime
+URL: https://developer.ecosystem.ai/docs/runtime
 Summary: Runtime
 
 # Runtime Overview: Client Pulse Responder
@@ -20054,7 +20533,7 @@ Default HTTP port is **8091**. Local `run_local.sh` often uses **8099**. Hosted 
 ## Logging
 
 Source: `docs/runtime/logging.mdx`
-URL: https://ecosystem.ai/docs/runtime/logging
+URL: https://developer.ecosystem.ai/docs/runtime/logging
 Summary: Logging
 
 # Logging
@@ -20395,7 +20874,7 @@ On accepted return action this message will be logged in the system:
 ## MCP Support
 
 Source: `docs/runtime/mcp.mdx`
-URL: https://ecosystem.ai/docs/runtime/mcp
+URL: https://developer.ecosystem.ai/docs/runtime/mcp
 Summary: Model Context Protocol surfaces for the Ecosystem Runtime and Workbench
 
 # Model Context Protocol (MCP)
@@ -20405,7 +20884,7 @@ Ecosystem exposes **three different MCP-related surfaces**. They share the path 
 | Surface | Where | Transport | Primary use |
 | --- | --- | --- | --- |
 | **Runtime builtin MCP** | Java `ecosystem-runtime` | `POST /mcp` (JSON-RPC, dual-era) | Score campaigns, feedback loop, campaign admin from AI agents |
-| **Workbench MCP server** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` (+ legacy SSE) | Deployments, enrichment jobs, scoring via Workbench |
+| **Workbench MCP server** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` | Deployments, enrichment jobs, scoring via Workbench |
 | **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` image | FastAPI `/mcp` + custom Python routers | MLFlow model refresh, custom FastAPI APIs |
 
 Protocol reference: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
@@ -20552,17 +21031,17 @@ Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `
 
 ## Workbench MCP server
 
-Operator-facing guide (credentials, dual auth, full tool list, public vs private APIs): [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
+Operator-facing guide (credentials, auth, full tool list, public vs private APIs): [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
 
 The Workbench backend exposes deployments, enrichment, catalog escape-hatch (`call_endpoint`), and related tools. See also [Claude Agent](/docs/workers/agent_framework/claude-agent) for Operator vs Campaign Management vs external attach.
 
 | Setting | Default | Notes |
 | --- | --- | --- |
 | Streamable HTTP | `POST http://localhost:8001/mcp` | **Preferred** for Cursor, Claude Desktop, MCP Inspector |
-| Legacy SSE (deprecated) | `GET http://localhost:8001/mcp/sse/` | Still mounted; use only for older clients |
+| Legacy SSE | `GET /mcp/sse/`, `/mcp/messages/` | **Removed** (Workbench, Oct 2026) — use Streamable HTTP only |
 | REST info | `GET /api/v1/mcp/` | Tool list and connection hints (requires JWT) |
 
-**Dual auth (required for HTTP `/mcp`):** `Authorization: Bearer <user-jwt>` and `X-API-Key: ewb_public_...` (same as the public API gateway).
+**HTTP `/mcp` auth:** one credential — JWT **or** `X-API-Key: ewb_public_...` (same rule as the public API gateway). See [Workbench MCP](/docs/configuration/workbench_apis/mcp).
 
 Configure the public base URL with `MCP_PUBLIC_BASE_URL` (default `http://localhost:8001`). The Vite UI port (`5270`) does **not** proxy `/mcp` in local dev — point clients at the backend port or nginx.
 
@@ -20571,7 +21050,7 @@ Configure the public base URL with `MCP_PUBLIC_BASE_URL` (default `http://localh
 | Mode | Who | Notes |
 | --- | --- | --- |
 | **In-process** | In-app Claude Operator (`tool_profile: operator`) | Same tool implementations as HTTP; no public API key required |
-| **HTTP `POST /mcp`** | External Claude Code / Agent SDK | Dual-auth JWT + `X-API-Key` |
+| **HTTP `POST /mcp`** | External Claude Code / Agent SDK | JWT or `X-API-Key` |
 | **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Typed tools; optional alongside HTTP |
 
 External attach does **not** require Workbench’s in-image Agent SDK bundled CLI — the client brings its own. In-app Operator readiness (`GET /api/v1/claude-agent/status`) does require the bundled binary (Debian slim image).
@@ -20584,7 +21063,6 @@ External attach does **not** require Workbench’s in-image Agent SDK bundled CL
     "ecosystem-workbench": {
       "url": "http://localhost:8001/mcp",
       "headers": {
-        "Authorization": "Bearer <user-jwt>",
         "X-API-Key": "ewb_public_..."
       }
     }
@@ -20675,13 +21153,13 @@ See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via 
 
 ## Client compatibility
 
-| Client | Runtime builtin `POST /mcp` | Workbench Streamable HTTP | Workbench legacy SSE | Sidecar |
-| --- | --- | --- | --- | --- |
-| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes | Deprecated | No |
-| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes | Deprecated | No |
-| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes | Legacy only | No |
-| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` | — | Custom FastAPI only |
-| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK | — | No |
+| Client | Runtime builtin `POST /mcp` | Workbench Streamable HTTP | Sidecar |
+| --- | --- | --- | --- |
+| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes | No |
+| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes | No |
+| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes | No |
+| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` | Custom FastAPI only |
+| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK | No |
 
 **stdio harness:** the `ecosystem_workbench_mcp` Python package exposes Workbench public APIs over stdio for local agent hosts (Hermes, Cursor `command` config). That is separate from the HTTP `/mcp` servers above.
 
@@ -20700,7 +21178,7 @@ See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via 
 ## MLFlow Integration
 
 Source: `docs/runtime/mlflowintegration.mdx`
-URL: https://ecosystem.ai/docs/runtime/mlflowintegration
+URL: https://developer.ecosystem.ai/docs/runtime/mlflowintegration
 Summary: Import models from the MLFlow model registry
 
 # MLFlow Integration
@@ -20799,7 +21277,7 @@ with mlflow.start_run():
 ## Model Convergence
 
 Source: `docs/runtime/model_convergence.mdx`
-URL: https://ecosystem.ai/docs/runtime/model_convergence
+URL: https://developer.ecosystem.ai/docs/runtime/model_convergence
 Summary: Runtime cross-link for how dynamic recommender scores converge and how priors influence ranking
 
 # Model Convergence
@@ -20820,7 +21298,7 @@ Runtime sources:
 ## Plugins
 
 Source: `docs/runtime/plugins/index.mdx`
-URL: https://ecosystem.ai/docs/runtime/plugins
+URL: https://developer.ecosystem.ai/docs/runtime/plugins
 Summary: Plugins
 
 # Plugins
@@ -20849,7 +21327,7 @@ You can develop plugins in a number of different ways:
 ## Post-Predict Plugins
 
 Source: `docs/runtime/plugins/postpredict.mdx`
-URL: https://ecosystem.ai/docs/runtime/plugins/postpredict
+URL: https://developer.ecosystem.ai/docs/runtime/plugins/postpredict
 Summary: Post-Predict Plugins
 
 # Post-Predict
@@ -20865,7 +21343,7 @@ Post-predict plugins are used to postprocess the output of the predictor before 
 ## Pre-Predict Plugins
 
 Source: `docs/runtime/plugins/prepredict.mdx`
-URL: https://ecosystem.ai/docs/runtime/plugins/prepredict
+URL: https://developer.ecosystem.ai/docs/runtime/plugins/prepredict
 Summary: Pre-Predict Plugins
 
 # Pre-Predict Plugins
@@ -20881,7 +21359,7 @@ Pre-predict plugins are used to preprocess input data before it is passed to the
 ## Post-Predict Plugins
 
 Source: `docs/runtime/postpredict/index.mdx`
-URL: https://ecosystem.ai/docs/runtime/postpredict
+URL: https://developer.ecosystem.ai/docs/runtime/postpredict
 Summary: Post-Predict Plugins
 
 # Post-Predict Plugins
@@ -20899,7 +21377,7 @@ The following default post-predict plugins are available in the ecosystem.Ai pla
 ## Platform Dynamic Engagement Plugin
 
 Source: `docs/runtime/postpredict/platformdynamicengagement.mdx`
-URL: https://ecosystem.ai/docs/runtime/postpredict/platformdynamicengagement
+URL: https://developer.ecosystem.ai/docs/runtime/postpredict/platformdynamicengagement
 Summary: Platform Dynamic Engagement Plugin
 
 # Platform Dynamic Engagement Plugin
@@ -21200,7 +21678,7 @@ public class PlatformDynamicEngagement extends PostScoreSuper {
 ## Post-Score Basic Plugin
 
 Source: `docs/runtime/postpredict/postscorebasic.mdx`
-URL: https://ecosystem.ai/docs/runtime/postpredict/postscorebasic
+URL: https://developer.ecosystem.ai/docs/runtime/postpredict/postscorebasic
 Summary: Post-Score Basic Plugin
 
 # Post-Score Basic Plugin
@@ -21459,7 +21937,7 @@ public class PostScoreBasic extends PostScoreSuper {
 ## Post Score Network Plugin
 
 Source: `docs/runtime/postpredict/postscorenetwork.mdx`
-URL: https://ecosystem.ai/docs/runtime/postpredict/postscorenetwork
+URL: https://developer.ecosystem.ai/docs/runtime/postpredict/postscorenetwork
 Summary: Post Score Network Plugin
 
 # Post Score Network Plugin
@@ -21572,7 +22050,7 @@ public class PostScoreNetwork extends PostScoreNetworkSuper {
 ## Post-Score Recommender Plugin
 
 Source: `docs/runtime/postpredict/postscorerecommenderoffers.mdx`
-URL: https://ecosystem.ai/docs/runtime/postpredict/postscorerecommenderoffers
+URL: https://developer.ecosystem.ai/docs/runtime/postpredict/postscorerecommenderoffers
 Summary: Post-Score Recommender Plugin
 
 # Post-Score Recommender Offers Plugin
@@ -21581,7 +22059,7 @@ The Post Score Recommender plugin is used to customize the output of a predictor
 
 ## How does it work?
 
-The Post Score Recommender Offer plugin loops over the eligible offers as per the offer matrix associated with the project. Note that this Plugin requires an Offer Matrix to be configured with a [specific data format](/docs/configuration/data/meta).
+The Post Score Recommender Offer plugin loops over the eligible offers as per the offer matrix associated with the project. Note that this Plugin requires an Offer Matrix to be configured with a [specific data format](/docs/configuration/data/metadata).
 
 ## Java Code
 
@@ -21752,7 +22230,7 @@ public class PostScoreRecommenderOffers extends PostScoreSuper {
 ## Pre-Predict Plugins
 
 Source: `docs/runtime/prepredict/index.mdx`
-URL: https://ecosystem.ai/docs/runtime/prepredict
+URL: https://developer.ecosystem.ai/docs/runtime/prepredict
 Summary: Pre-Predict Plugins
 
 # Pre-Predict Plugins
@@ -21770,7 +22248,7 @@ The following default pre-predict plugins are available in the ecosystem.Ai plat
 ## Pre-Predict Auto Date
 
 Source: `docs/runtime/prepredict/prepredictautodate.mdx`
-URL: https://ecosystem.ai/docs/runtime/prepredict/prepredictautodate
+URL: https://developer.ecosystem.ai/docs/runtime/prepredict/prepredictautodate
 Summary: Pre-Predict Auto Date Plugin
 
 # Pre-predict Auto Date Plugin
@@ -21869,7 +22347,7 @@ public class PrePredictAutoDate {
 ## Pre-Score Basic Plugin
 
 Source: `docs/runtime/prepredict/prescorebasic.mdx`
-URL: https://ecosystem.ai/docs/runtime/prepredict/prescorebasic
+URL: https://developer.ecosystem.ai/docs/runtime/prepredict/prescorebasic
 Summary: Pre-Score Basic Plugin
 
 # Pre-Score Basic Plugin
@@ -21934,7 +22412,7 @@ public class PrePredictCustomer {
 ## Pre-Score Dynamic Plugin
 
 Source: `docs/runtime/prepredict/prescoredynamic.mdx`
-URL: https://ecosystem.ai/docs/runtime/prepredict/prescoredynamic
+URL: https://developer.ecosystem.ai/docs/runtime/prepredict/prescoredynamic
 Summary: Pre-Score Dynamic Plugin
 
 # Pre-Score Dynamic Plugin
@@ -22020,7 +22498,7 @@ Older plugins called `getVirtualVariables(params)` after `getDynamicSettings`. T
 ## Pre-Score Lookup Plugin
 
 Source: `docs/runtime/prepredict/prescorelookup.mdx`
-URL: https://ecosystem.ai/docs/runtime/prepredict/prescorelookup
+URL: https://developer.ecosystem.ai/docs/runtime/prepredict/prescorelookup
 Summary: Pre-Score Lookup Plugin
 
 # Pre-Score Lookup Plugin
@@ -22100,10 +22578,18 @@ public class PreScoreLookup extends PreScoreSuper {
 ## ecosystem.Ai runtime release notes
 
 Source: `docs/runtime/runtimeversion.mdx`
-URL: https://ecosystem.ai/docs/runtime/runtimeversion
+URL: https://developer.ecosystem.ai/docs/runtime/runtimeversion
 Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 
 # ecosystem.Ai runtime release history
+
+## 0.9.7.x (Oct 2026)
+
+Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed 24 Oct 2026).
+
+### New functionality
+- **SQL Server stored procedures** — `SqlServerWorker`, `POST /callSqlServerProcedure`, env `SQLSERVER_URL`, `SQLSERVER_USER`, `SQLSERVER_PASSWORD`, properties `sqlserver.*`, `mssql-jdbc` **13.6.0**. See [SQL Server](/docs/configuration/data/sqlserver).
+- Sample SQL Server compose under `Docker/sqlserver/` in the runtime repo.
 
 ## 0.9.7.0
 
@@ -22360,7 +22846,7 @@ Current Runtime pin (`pom.xml` / Workbench `platform/versions.json`). Version op
 ## Campaign Testing
 
 Source: `docs/runtime/testing.mdx`
-URL: https://ecosystem.ai/docs/runtime/testing
+URL: https://developer.ecosystem.ai/docs/runtime/testing
 Summary: Built-in Cucumber BDD tests driven by campaign properties files
 
 # Campaign Testing
@@ -22447,7 +22933,7 @@ Do not change `/test/campaign*` contracts or plugin signatures to support that W
 ## Deployment
 
 Source: `docs/user_guides/dynamic/deployment.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/deployment
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/deployment
 Summary: Deployment is where you deploy machine learning models into production environments, ensuring they are operational, scalable, and integrated seamlessly with existing systems to deliver real-time insights and actions.
 
 # Introduction
@@ -22506,7 +22992,7 @@ There are a range of different Prediction Activators that can be selected to enh
 
 ### Offer matrix
     - loaded in memory and accessed in the plugins. For the purpose of default pricing, category and other forms of lookup.
-    - the offer matrix has a [specific data format](/docs/configuration/data/meta) if default functionality is to be used.
+    - the offer matrix has a [specific data format](/docs/configuration/data/metadata) if default functionality is to be used.
 ### Plugins
     - supports three primary areas: API definition, pre-score logic and post-score logic. There are a number of post-score templates.
 ### Budget Tracker
@@ -22531,7 +23017,7 @@ The **Generate** and **Build** buttons are not needed for now, they are designed
 ## Manage Files & Feature Engineering
 
 Source: `docs/user_guides/dynamic/files_features.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/files_features
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/files_features
 Summary: Files and Feature Engineering is where you import, manage, and transform raw data into valuable features to enhance machine learning models, enabling efficient data preparation and preprocessing.
 
 # Introduction 
@@ -22616,7 +23102,7 @@ You will see the file name appear above the *Ingest: input field*. Either copy t
 ## How it Works
 
 Source: `docs/user_guides/dynamic/how_it_works.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/how_it_works
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/how_it_works
 Summary: The ecosystem.Ai Dynamic recommenders use real-time feedback to learn how to more effectively rank offers.
 
 # ecosystem.Ai Dynamic Recommenders
@@ -22656,7 +23142,7 @@ Dynamic recommenders incorporates a range of functionality, allowing human chang
 ## Introduction
 
 Source: `docs/user_guides/dynamic/index.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic
 Summary: This lesson outlines the steps you will take to build the configurations needed for your dynamic recommender.
 
 # Introduction
@@ -22692,7 +23178,7 @@ The system continuously learns from new data and user interactions, improving th
 ## Get Started
 
 Source: `docs/user_guides/dynamic/intro.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/intro
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/intro
 Summary: Building out and configuring your dynamic recommender project in the ecosystem.Ai Prediction Platform
 
 # Introduction
@@ -22713,7 +23199,7 @@ Two main interfaces can be used to access the ecosystem.Ai functionality:
 ## Monitoring
 
 Source: `docs/user_guides/dynamic/monitoring.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/monitoring
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/monitoring
 Summary: For monitoring, the ecosystem.Ai Prediction Platform has Grafana and Superset integrations.
 
 # Introduction
@@ -22776,7 +23262,7 @@ The superset dashboards allow you to view and analyze the results of the whole r
 ## Projects
 
 Source: `docs/user_guides/dynamic/projects.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/projects
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/projects
 Summary: Projects are where you will make, manage and keep track of all of the work linked to the completion of any particular deployment project.
 
 # Introduction 
@@ -22815,7 +23301,7 @@ Adding Files, Feature Stores, Predictors, Deployments and Analysis files here wi
 ## Dynamic Pulse Responder Configuration
 
 Source: `docs/user_guides/dynamic/pulse_responder.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/pulse_responder
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/pulse_responder
 Summary: The Experiments section of the workbench is where you build, test, and optimize dynamic recommenders, allowing you to experiment with different strategies and algorithms to enhance personalization and improve model performance.
 
 # Introduction
@@ -22929,7 +23415,7 @@ img
 ## Testing
 
 Source: `docs/user_guides/dynamic/testing.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic/testing
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic/testing
 Summary: Test a pushed Dynamic Interaction deployment — Manage APIs for single calls, Simulations for closed-loop traffic, Runtime Testing for isolated business evidence.
 
 # Introduction 
@@ -22982,7 +23468,7 @@ See **[Simulations](/docs/configuration/simulations)** for the current process (
 ## Testing Dynamic Interaction Deployments
 
 Source: `docs/user_guides/dynamic_interaction_deployments.mdx`
-URL: https://ecosystem.ai/docs/user_guides/dynamic_interaction_deployments
+URL: https://developer.ecosystem.ai/docs/user_guides/dynamic_interaction_deployments
 Summary: This lesson outlines how to run a dynamic deployment in parallel in production.
 
 # Introduction
@@ -23129,7 +23615,7 @@ Thanks to the calls to the `/invocations` and `/response` APIs, you should now h
 ## Exploration using epsilon
 
 Source: `docs/user_guides/epsilon_exploration.mdx`
-URL: https://ecosystem.ai/docs/user_guides/epsilon_exploration
+URL: https://developer.ecosystem.ai/docs/user_guides/epsilon_exploration
 Summary: This lesson outlines the different ways to explore using an epsilon based approach.
 
 # Introduction
@@ -23267,7 +23753,7 @@ The $\epsilon$-greedy Dynamic Interactions algorithm uses $\epsilon$ exploration
 ## Data From Another Runtime
 
 Source: `docs/user_guides/external_runtime_data.mdx`
-URL: https://ecosystem.ai/docs/user_guides/external_runtime_data
+URL: https://developer.ecosystem.ai/docs/user_guides/external_runtime_data
 Summary: This lesson outlines how to get data from an external runtime.
 
 # Introduction
@@ -23415,7 +23901,7 @@ predictor.corpora=[{"database":"runtime","name":"location_details","type":"dynam
 ## Intro
 
 Source: `docs/user_guides/index.mdx`
-URL: https://ecosystem.ai/docs/user_guides
+URL: https://developer.ecosystem.ai/docs/user_guides
 Summary: Collection of "user guides" providing an overview of various features offered by ecosystem.Ai
 
 # User Guides
@@ -23437,7 +23923,7 @@ Whether you're a new user or looking to explore more advanced features, this com
 ## Model Convergence
 
 Source: `docs/user_guides/model_convergence.mdx`
-URL: https://ecosystem.ai/docs/user_guides/model_convergence
+URL: https://developer.ecosystem.ai/docs/user_guides/model_convergence
 Summary: How dynamic recommender scores converge, what acts as a prior, and which levers change the score over time
 
 # Model Convergence
@@ -23566,7 +24052,7 @@ Public algorithm catalog: [Dynamic Interaction Algorithms](/docs/configuration/a
 ## Network Selector
 
 Source: `docs/user_guides/network.mdx`
-URL: https://ecosystem.ai/docs/user_guides/network
+URL: https://developer.ecosystem.ai/docs/user_guides/network
 Summary: The Network Selector enables routing of calls to the ecosystem.Ai runtime to different logic configurations.
 
 # Network Selector
@@ -23744,7 +24230,7 @@ Named shared configs live in Workbench under **Project → Projects → Network 
 ## Deployment
 
 Source: `docs/user_guides/recommender/deployment.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/deployment
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/deployment
 Summary: Deployment is where you deploy machine learning models into production environments, ensuring they are operational, scalable, and integrated seamlessly with existing systems to deliver real-time insights and actions.
 
 # Put your predictions into production
@@ -23803,7 +24289,7 @@ There are a range of different Serving Engine Settings that can be selected to e
 ![Prediction activators](/images/recommender/6_Deployment/6_deployments_ses.png)
 
 ### Offer matrix
-Loaded in memory and accessed in the plugins. For the purpose of default pricing, category and other forms of lookup. To use default functionality you need to review the [specific data format](/docs/configuration/data/meta).
+Loaded in memory and accessed in the plugins. For the purpose of default pricing, category and other forms of lookup. To use default functionality you need to review the [specific data format](/docs/configuration/data/metadata).
 ### Plugins
 Supports three primary areas: API definition, pre-score logic and post-score logic. There are a number of post-score templates.
 ### Budget Tracker
@@ -23829,7 +24315,7 @@ The **Generate** and **Build** buttons are not needed for now, they are designed
 ## Feature Stores
 
 Source: `docs/user_guides/recommender/feature_stores.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/feature_stores
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/feature_stores
 Summary: Feature Stores is where you store, manage, and retrieve precomputed features, ensuring consistency and reusability across various machine learning models and applications.
 
 # Build Feature Stores for Predictions
@@ -23870,7 +24356,7 @@ To trigger the creation of your feature store with all these details, click **Pa
 ## Files & Feature Engineering
 
 Source: `docs/user_guides/recommender/files_features.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/files_features
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/files_features
 Summary: Files and Feature Engineering is where you import, manage, and transform raw data into valuable features to enhance machine learning models, enabling efficient data preparation and preprocessing.
 
 # Manage your Data and do Feature Engineering 
@@ -23960,13 +24446,13 @@ Most of the settings in this tab can remain default. If you are unsure of how mu
 ## How it Works
 
 Source: `docs/user_guides/recommender/how_it_works.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/how_it_works
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/how_it_works
 Summary: The ecosystem.Ai recommender capability uses sophisticated tools that enable you to build more effective offers (recommendations).
 
 # ecosystem.Ai Recommenders
 The ecosystem.Ai recommender capability uses sophisticated tools that enable you to build more effective offers (recommendations).
 
-Worker architecture allows for use of the latest modeling packages. Architected from the ground up for durability and performance, it returns results in real-time and is highly resilient. You also have easy deployment to production at the push of a button. If you want to use default functionality note that there is a [specific data format](/docs/configuration/data/meta) that will facilitate ease of use.
+Worker architecture allows for use of the latest modeling packages. Architected from the ground up for durability and performance, it returns results in real-time and is highly resilient. You also have easy deployment to production at the push of a button. If you want to use default functionality note that there is a [specific data format](/docs/configuration/data/metadata) that will facilitate ease of use.
 
 There are many ways to structure your recommenders:
 - Multinomial models
@@ -24018,7 +24504,7 @@ Models the recommendations as a series of sequential decisions, the uses reinfor
 ## Introduction
 
 Source: `docs/user_guides/recommender/index.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender
 Summary: This lesson outlines the steps you will take to build the configurations needed for your recommender.
 
 # Introduction
@@ -24058,7 +24544,7 @@ Using reinforcement learning and multi-armed bandit algorithms to balance explor
 ## Get Started
 
 Source: `docs/user_guides/recommender/intro.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/intro
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/intro
 Summary: Building out and configuring your recommender project in the ecosystem.Ai Prediction Platform
 
 # Introduction
@@ -24077,7 +24563,7 @@ In order to begin building out and configuring your recommender project in the P
 ## Monitoring
 
 Source: `docs/user_guides/recommender/monitoring.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/monitoring
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/monitoring
 Summary: For monitoring, the ecosystem.Ai Prediction Platform has Grafana and Superset integrations.
 
 # Configure your Dashboards
@@ -24145,7 +24631,7 @@ Access the Superset Dashboard to view further illustrations of your recommender 
 ## Predictions
 
 Source: `docs/user_guides/recommender/predictions.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/predictions
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/predictions
 Summary: Predictions is where you deploy, manage, and monitor machine learning models to generate real-time predictions, providing actionable insights and driving data-driven decisions.
 
 # Create and Test Predictions 
@@ -24224,7 +24710,7 @@ You can view all deployed models in the window below your trained models list.
 ## Projects
 
 Source: `docs/user_guides/recommender/projects.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/projects
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/projects
 Summary: Projects are where you will make, manage and keep track of all of the work linked to the completion of any particular deployment project.
 
 # Projects in the Workbench
@@ -24252,7 +24738,7 @@ The following projects are pre-configured first examples of various recommenders
   - show how customer engagement messages can be personalized using a recommendation engine.
 - Many more examples are added over time.
 
-Note that the default Recommender functionality will require a [specific data format](/docs/configuration/data/meta) for the Offer Matrix.
+Note that the default Recommender functionality will require a [specific data format](/docs/configuration/data/metadata) for the Offer Matrix.
 
 ## Add/Edit Projects
 In <u>Projects</u>, you can either edit one of the existing projects or add a new one.
@@ -24279,7 +24765,7 @@ Adding Files, Feature Stores, Predictors, Deployments and Analysis files here. Y
 ## Testing
 
 Source: `docs/user_guides/recommender/testing.mdx`
-URL: https://ecosystem.ai/docs/user_guides/recommender/testing
+URL: https://developer.ecosystem.ai/docs/user_guides/recommender/testing
 Summary: Manage APIs is where you create, test, and manage APIs, ensuring they are robust and ready for integration with other systems.  Simulations is where you run and analyze simulations to validate the accuracy and performance of machine learning models before deployment.
 
 # Introduction 
@@ -24334,7 +24820,7 @@ The Jupyter notebook worker is no longer the primary simulation UI.
 ## Local Environment Setup
 
 Source: `docs/user_guides/runtime_plugin_development/environment_setup.mdx`
-URL: https://ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_setup
+URL: https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_setup
 Summary: Configure your local environment to develop your own pre and post scoring logic plugins for the runtime.
 
 # Set up your development environment
@@ -24396,7 +24882,7 @@ Now go to the Run menu and select Edit Configurations.
 Add a new configuration and select Application. Then change the three settings highlighted in the image below.
 ![Run configuration settings](/images/local_dev_setup/11_edit-configurations.png)
 
-Now select Environment variables create the MASTER_KEY environment variable. MASTER_KEY should be the license key your license key for the ecosystem.Ai environment. There are a number of additional [environment variables](/docs/runtime/environment_variables.mdx) which can be set.
+Now select Environment variables create the MASTER_KEY environment variable. MASTER_KEY should be the license key your license key for the ecosystem.Ai environment. There are a number of additional [environment variables](/docs/runtime/environment_variables) which can be set.
 ![Environment variables](/images/local_dev_setup/12_environment-variables.png)
 
 Open the maven menu in IntelliJ and reload the project.
@@ -24421,7 +24907,7 @@ You can now use this environment to develop and debug your pre and post scoring 
 ## Local Environment Update
 
 Source: `docs/user_guides/runtime_plugin_development/environment_update.mdx`
-URL: https://ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_update
+URL: https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development/environment_update
 Summary: Updating your local environment
 
 # Update your development environment
@@ -24450,7 +24936,7 @@ You can now test your configuration as you normally would in order to confirm th
 ## Introduction
 
 Source: `docs/user_guides/runtime_plugin_development/index.mdx`
-URL: https://ecosystem.ai/docs/user_guides/runtime_plugin_development
+URL: https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development
 Summary: This lesson outlines the steps you will take to develop your own pre and post scoring logic plugins for the runtime.
 
 # Introduction
@@ -24467,7 +24953,7 @@ This lesson outlines the steps you will take to develop your own pre and post sc
 ## Pre and Post Scoring Logic Structures
 
 Source: `docs/user_guides/runtime_plugin_development/pre_post_scoring_structures.mdx`
-URL: https://ecosystem.ai/docs/user_guides/runtime_plugin_development/pre_post_scoring_structures
+URL: https://developer.ecosystem.ai/docs/user_guides/runtime_plugin_development/pre_post_scoring_structures
 Summary: The structure of the pre and post scoring logic plugins for the runtime.
 
 # Pre and Post Scoring Logic Structures
@@ -24882,7 +25368,7 @@ The following data structures and functions are available to you when developing
 ## Converting Static Model Cases to Dynamic Interactions
 
 Source: `docs/user_guides/static_to_dynamic.mdx`
-URL: https://ecosystem.ai/docs/user_guides/static_to_dynamic
+URL: https://developer.ecosystem.ai/docs/user_guides/static_to_dynamic
 Summary: This lesson outlines how to convert a static model configuration to a Dynamic Interaction.
 
 # Introduction
@@ -25484,7 +25970,7 @@ for con_var_one in contextual_variable_values[list(contextual_variable_values.ke
 ## Virtual Variables
 
 Source: `docs/user_guides/virtual_variables.mdx`
-URL: https://ecosystem.ai/docs/user_guides/virtual_variables
+URL: https://developer.ecosystem.ai/docs/user_guides/virtual_variables
 Summary: This lesson outlines the configuration and usage of the Virtual Variable functionality.
 
 # Introduction
@@ -25761,7 +26247,7 @@ When configuring [multiple customer lookups](/docs/configuration/deployment/para
 ## Claude Agent
 
 Source: `docs/workers/agent_framework/claude-agent.mdx`
-URL: https://ecosystem.ai/docs/workers/agent_framework/claude-agent
+URL: https://developer.ecosystem.ai/docs/workers/agent_framework/claude-agent
 Summary: Workbench Claude Agent SDK packaging, Operator MCP, Campaign Management access, and external attach
 
 # Claude Agent on Workbench
@@ -25796,7 +26282,7 @@ flowchart TB
     MCP -->|"call_endpoint"| Api["/api/v1/*"]
   end
   Bridge -->|JWT| CA
-  SDK -->|"JWT + X-API-Key"| CmMcp
+  SDK -->|"JWT or X-API-Key"| CmMcp
   Gen -->|JWT| Api
   Ops -->|JWT| Api
   Asst["/assistant operator"] -->|JWT| CA
@@ -25806,7 +26292,7 @@ flowchart TB
 | --- | --- | --- |
 | **Campaign Management** | Private `/claude-agent/*` with `tool_profile: campaign_management` (CM MCP tool pack + read-only Workbench subset); `/campaigns/_generate/*`; campaigns CRUD/trigger; JWT | Workbench mutating tools (hard-denied on this profile); Claude CLI in the CM image |
 | **Workbench `/assistant`** | Ready Agent SDK + default LLM + in-process MCP | CM |
-| **External Claude Code / Agent SDK** | `ANTHROPIC_BASE_URL` → Workbench host `:8001` (`POST /v1/messages`); optional dual-auth `POST /mcp` | Workbench in-image `_bundled/claude` (client supplies its own SDK/CLI) |
+| **External Claude Code / Agent SDK** | `ANTHROPIC_BASE_URL` → Workbench host `:8001` (`POST /v1/messages`); optional `POST /mcp` with public key or JWT | Workbench in-image `_bundled/claude` (client supplies its own SDK/CLI) |
 
 ## Packaging
 
@@ -25884,7 +26370,7 @@ Related: [MCP Support](/docs/runtime/mcp) (Operator in-process vs HTTP `/mcp` vs
 ## Agent Framework
 
 Source: `docs/workers/agent_framework/index.mdx`
-URL: https://ecosystem.ai/docs/workers/agent_framework
+URL: https://developer.ecosystem.ai/docs/workers/agent_framework
 
 # Agent Framework
 
@@ -25916,7 +26402,7 @@ URL: `<your_workbench_domain>/pages/ecosystem-agents/nodes`
 ## Journey Management
 
 Source: `docs/workers/agent_framework/journeys.mdx`
-URL: https://ecosystem.ai/docs/workers/agent_framework/journeys
+URL: https://developer.ecosystem.ai/docs/workers/agent_framework/journeys
 
 # Journeys
 
@@ -25956,7 +26442,7 @@ The URL for the workbench journey management system page is:
 ## Language Chat Models
 
 Source: `docs/workers/generative.mdx`
-URL: https://ecosystem.ai/docs/workers/generative
+URL: https://developer.ecosystem.ai/docs/workers/generative
 
 # Generative Models
 
@@ -25975,7 +26461,7 @@ Generative serving is optional around the Runtime. Dynamic Engagement `sub_appro
 ## Workers
 
 Source: `docs/workers/index.mdx`
-URL: https://ecosystem.ai/docs/workers
+URL: https://developer.ecosystem.ai/docs/workers
 
 # Workers
 
@@ -25999,7 +26485,7 @@ Workers are integration and processing components around the Runtime and Server:
 ## Python
 
 Source: `docs/workers/python.mdx`
-URL: https://ecosystem.ai/docs/workers/python
+URL: https://developer.ecosystem.ai/docs/workers/python
 
 # Python
 
@@ -26017,7 +26503,7 @@ Use Python to configure deployments, push properties, and call the Runtime from 
 ## Worker Architecture
 
 Source: `docs/workers/worker_arch.mdx`
-URL: https://ecosystem.ai/docs/workers/worker_arch
+URL: https://developer.ecosystem.ai/docs/workers/worker_arch
 
 # Worker Architecture
 
@@ -26037,7 +26523,7 @@ Workers sit at the **adapter** edge: they talk to files, model servers, and chan
 ## Changelog
 
 Source: `changelog.mdx`
-URL: https://ecosystem.ai/changelog
+URL: https://developer.ecosystem.ai/changelog
 Summary: The latest release updates from ecosystem.Ai.
 
 Latest release updates</>}
@@ -26064,7 +26550,7 @@ Latest release updates</>}
 ## ⚙️ Config v0.6.304.04
 
 Source: `changelog/config_v0.6.304.04.mdx`
-URL: https://ecosystem.ai/changelog/config_v0.6.304.04
+URL: https://developer.ecosystem.ai/changelog/config_v0.6.304.04
 Date: 2024/06/29
 
 ---
@@ -26091,7 +26577,7 @@ Date: 2024/06/29
 ## ecosystem.Ai v0.6.304.04
 
 Source: `changelog/v0.6.304.04.mdx`
-URL: https://ecosystem.ai/changelog/v0.6.304.04
+URL: https://developer.ecosystem.ai/changelog/v0.6.304.04
 Summary: The v0.6.304.04 release of ecosystem.Ai
 Date: 2024/06/29
 
@@ -26119,7 +26605,7 @@ Date: 2024/06/29
 ## ecosystem.Ai v0.6.401.00
 
 Source: `changelog/v0.6.401.00.mdx`
-URL: https://ecosystem.ai/changelog/v0.6.401.00
+URL: https://developer.ecosystem.ai/changelog/v0.6.401.00
 Summary: The v0.6.401.00 release of ecosystem.Ai
 Date: 2024/07/15
 
@@ -26147,7 +26633,7 @@ Date: 2024/07/15
 ## ecosystem.Ai v0.6.500.01
 
 Source: `changelog/v0.6.500.01.mdx`
-URL: https://ecosystem.ai/changelog/v0.6.500.01
+URL: https://developer.ecosystem.ai/changelog/v0.6.500.01
 Summary: The v0.6.500.01 release of ecosystem.Ai
 Date: 2024/08/29
 
@@ -26175,7 +26661,7 @@ Date: 2024/08/29
 ## ecosystem.Ai v0.6.601.00
 
 Source: `changelog/v0.6.601.00.mdx`
-URL: https://ecosystem.ai/changelog/v0.6.601.00
+URL: https://developer.ecosystem.ai/changelog/v0.6.601.00
 Summary: The v0.6.601.00 release of ecosystem.Ai
 Date: 2024/09/25
 
@@ -26203,7 +26689,7 @@ Date: 2024/09/25
 ## ecosystem.Ai v0.7.900.00
 
 Source: `changelog/v0.7.900.00.mdx`
-URL: https://ecosystem.ai/changelog/v0.7.900.00
+URL: https://developer.ecosystem.ai/changelog/v0.7.900.00
 Summary: The v0.7.900.00 release of ecosystem.Ai
 Date: 2024/12/16
 
@@ -26232,7 +26718,7 @@ Date: 2024/12/16
 ## Runtime v0.9.5.0
 
 Source: `changelog/v0.9.5.0.mdx`
-URL: https://ecosystem.ai/changelog/v0.9.5.0
+URL: https://developer.ecosystem.ai/changelog/v0.9.5.0
 Summary: OpenAPI, /config, Virtual Variable refresh, Java 17 / Spring Boot 3.4.
 Date: 2025/03/25
 
@@ -26269,7 +26755,7 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion). Closed loop
 ## Runtime v0.9.6.0
 
 Source: `changelog/v0.9.6.0.mdx`
-URL: https://ecosystem.ai/changelog/v0.9.6.0
+URL: https://developer.ecosystem.ai/changelog/v0.9.6.0
 Summary: JIT pre/post-score, custom rewards, parallel Dynamic Interaction calls.
 Date: 2025/05/17
 
@@ -26306,7 +26792,7 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion).
 ## Runtime v0.9.6.1.2
 
 Source: `changelog/v0.9.6.1.2.mdx`
-URL: https://ecosystem.ai/changelog/v0.9.6.1.2
+URL: https://developer.ecosystem.ai/changelog/v0.9.6.1.2
 Summary: H2O CVE-2025-6544, multi-offer Dynamic Recommender learning, Spring Boot 3.5.6.
 Date: 2025/10/21
 
@@ -26338,7 +26824,7 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion).
 ## Runtime v0.9.6.1.3
 
 Source: `changelog/v0.9.6.1.3.mdx`
-URL: https://ecosystem.ai/changelog/v0.9.6.1.3
+URL: https://developer.ecosystem.ai/changelog/v0.9.6.1.3
 Summary: Param-lookup default JSON fix; overlapping Ecosystem Rewards learning stopped.
 Date: 2025/11/12
 
@@ -26358,7 +26844,7 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion).
 ## Runtime v0.9.6.1.4
 
 Source: `changelog/v0.9.6.1.4.mdx`
-URL: https://ecosystem.ai/changelog/v0.9.6.1.4
+URL: https://developer.ecosystem.ai/changelog/v0.9.6.1.4
 Summary: Overlapping Ecosystem Rewards learning stopped; /refresh reloads every config.
 Date: 2025/12/13
 
@@ -26389,7 +26875,7 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion).
 ## Runtime v0.9.6.1
 
 Source: `changelog/v0.9.6.1.mdx`
-URL: https://ecosystem.ai/changelog/v0.9.6.1
+URL: https://developer.ecosystem.ai/changelog/v0.9.6.1
 Summary: Behavioural algorithms, /learning, virtual variables everywhere, MCP sidecar.
 Date: 2025/08/21
 
@@ -26431,7 +26917,7 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion).
 ## Runtime v0.9.7.0
 
 Source: `changelog/v0.9.7.0.mdx`
-URL: https://ecosystem.ai/changelog/v0.9.7.0
+URL: https://developer.ecosystem.ai/changelog/v0.9.7.0
 Summary: Builtin MCP, multi-campaign JVM, Java 25, dashboard and campaign BDD. Current Runtime pin.
 Date: 2026/05/06
 
@@ -26467,15 +26953,29 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion) · [MCP](/do
 ## Workbench 2.0.3
 
 Source: `changelog/workbench-2.0.3.mdx`
-URL: https://ecosystem.ai/changelog/workbench-2.0.3
-Summary: Campaigns, ontology, operator agents, convergence. Pins Runtime 0.9.7.0.
-Date: 2026/09/18
+URL: https://developer.ecosystem.ai/changelog/workbench-2.0.3
+Summary: Build 3153 — campaigns, LoRA, MCP, single-credential API. Pins Runtime 0.9.7.0.
+Date: 2026/10/31
 
 ---
 
-Current platform train as of **2026-09-18**: Workbench **`2.0.3`** (build `2072`) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`3153`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
 
-## What's Changed
+## October 2026
+
+- **Custom Forms**, **Data Management & Campaign**, **Time Process Campaign**, **Table Views**, **Project Utilities**
+- **Explanations** and **Sentimental Equilibrium** operator updates
+- **Simulation transformations** and **log replay** (Shared notebook export; results in `simulations.simulation_logs` / `simulation_param_outputs`)
+- **Export / Import** pipeline updates
+- **[LoRA Recommender](/docs/modules/lora)** module (embedding residual recommender)
+- **[CPR Feature Store](/docs/configuration/cpr_feature_store)** (Runtime flatten for Two-Tower / LoRA)
+- **Personality Drift** analytics and built-in dashboard templates (`personality_drift`, `campaign_measurement`)
+- **Single-credential** public API and HTTP MCP auth (public key **or** JWT)
+- **Streamable-HTTP-only** Workbench MCP (legacy SSE removed); admin-published MCP tools, prompts, and `mcp_access_log` audit
+- **Campaign Outreach Agent** and outreach MCP tools
+- **Ontology** catalog updates
+
+## What's Changed (earlier 2.0.3 train)
 
 ### Workbench
 - Campaign manager + Campaign / Claude operator agents; form and dashboard iteration on Dynamic Interaction configs.
@@ -26488,7 +26988,7 @@ Current platform train as of **2026-09-18**: Workbench **`2.0.3`** (build `2072`
 - MCP tools for the **algorithm catalog**.
 - Spend / Money Personality **drift**.
 - Post-score and data-connection fixes for new corpora.
-- Cursor/Cloud agent briefing so Runtime `/response` (singular) stays documented correctly.
+- SQL Server stored procedures (`097-latest` / `097-arm64` images, Oct 2026).
 
 ### What to pin
 ```json
@@ -26509,7 +27009,7 @@ Recompile customer plugins against Runtime `0.9.7.0`. Feedback endpoint is **`PO
 ## Workbench 2.0
 
 Source: `changelog/workbench-2.0.mdx`
-URL: https://ecosystem.ai/changelog/workbench-2.0
+URL: https://developer.ecosystem.ai/changelog/workbench-2.0
 Summary: Operator UI 2.0.x line. Pins Runtime 0.9.7.0 — does not replace it.
 Date: 2026/07/30
 
@@ -26546,7 +27046,7 @@ Workbench **2.0** is a new product version line (`platform/versions.json`: `work
 ## Three essential steps to detect customer happiness
 
 Source: `blog/2024-06-29_happiness.mdx`
-URL: https://ecosystem.ai/blog/2024-06-29_happiness
+URL: https://developer.ecosystem.ai/blog/2024-06-29_happiness
 Summary: In this blog post, we'll explore the cause of this problem and provide a step-by-step guide to fix it.
 Date: 2024/06/29
 Tags: happiness, customer
@@ -26586,7 +27086,7 @@ Click here to learn more about dynamic experimentation and how ecosystem.Ai’s 
 ## ecosystem.Ai 2024 Roadmap
 
 Source: `blog/2024-06-30_2024_roadmap.mdx`
-URL: https://ecosystem.ai/blog/2024-06-30_2024_roadmap
+URL: https://developer.ecosystem.ai/blog/2024-06-30_2024_roadmap
 Summary: In this blog post, we'll explore our roadmap for the ecosystem.Ai platform in 2024-2025.
 Date: 2024/06/30
 Tags: roadmap, deployment
@@ -26615,7 +27115,7 @@ We are also exploring the use of generative models to create new content and gen
 ## Unlocking Customer Insights, The Power of Spend Personality
 
 Source: `blog/2024-11-06_spend.mdx`
-URL: https://ecosystem.ai/blog/2024-11-06_spend
+URL: https://developer.ecosystem.ai/blog/2024-11-06_spend
 Summary: Unlocking Customer Insights, The Power of Spend Personality
 Date: 2024/11/06
 Tags: spend personality, customer
@@ -26657,7 +27157,7 @@ So, the next time you enjoy that perfectly curated shopping experience, remember
 ## Milliseconds Matter; What 'Real-Time' Means to Us
 
 Source: `blog/2025-04-02_millisecondsmatter.mdx`
-URL: https://ecosystem.ai/blog/2025-04-02_millisecondsmatter
+URL: https://developer.ecosystem.ai/blog/2025-04-02_millisecondsmatter
 Summary: By Nicola Amon
 Date: 2025/04/02
 Tags: real-time, ecosystem of technologies
@@ -26690,7 +27190,7 @@ With ecosystem.Ai’s cutting-edge architecture, businesses can unlock instantan
 ## ecosystem.Ai 2026 Roadmap
 
 Source: `blog/2025-07-03_2026_roadmap.mdx`
-URL: https://ecosystem.ai/blog/2025-07-03_2026_roadmap
+URL: https://developer.ecosystem.ai/blog/2025-07-03_2026_roadmap
 Summary: The 2025–2026 platform roadmap, updated with the innovations that shipped — Runtime 0.9.7, Workbench 2, behavioral algorithms, Two-Tower, and MCP.
 Date: 2025/07/03
 Tags: roadmap, deployment
@@ -26840,7 +27340,7 @@ If you are upgrading: compile pre/post-score plugins against **Runtime `0.9.7.0`
 ## The Hardest Place to Deploy Conversational AI - and Why It Matters
 
 Source: `blog/2026-02-02_conversationalAI.mdx`
-URL: https://ecosystem.ai/blog/2026-02-02_conversationalAI
+URL: https://developer.ecosystem.ai/blog/2026-02-02_conversationalAI
 Summary: In this blog post, we'll explore how banking will be the defining moment for agentic AI.
 Date: 2026/02/02
 Tags: banking, customer, conversational AI
@@ -26875,7 +27375,7 @@ Conversational banking will make or break agentic AI’s ability to perform task
 ## Behavioral Intelligence is an Architecture, not a Plugin
 
 Source: `blog/2026-02-17_behavioral-intelligence-architecture-not-plugin.mdx`
-URL: https://ecosystem.ai/blog/2026-02-17_behavioral-intelligence-architecture-not-plugin
+URL: https://developer.ecosystem.ai/blog/2026-02-17_behavioral-intelligence-architecture-not-plugin
 Summary: Behavioral Intelligence requires an architecture, not a software wrapper.
 Date: 2026/02/17
 Tags: behavioral intelligence, machine learning
@@ -26946,7 +27446,7 @@ When orienting systems to deal with individual human behavior, there needs to be
 ## Agentic capabilities when creating recommenders
 
 Source: `blog/2026-09-18_agentic-capabilities-recommenders.mdx`
-URL: https://ecosystem.ai/blog/2026-09-18_agentic-capabilities-recommenders
+URL: https://developer.ecosystem.ai/blog/2026-09-18_agentic-capabilities-recommenders
 Summary: How Workbench2’s Ecosystem Agent was built — and the capabilities that speed up recommender project creation, scoring, and day-two maintenance.
 Date: 2026/09/18
 Tags: agentic, recommender, workbench, MCP

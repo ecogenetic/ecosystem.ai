@@ -1,0 +1,36 @@
+---
+title: CPR Feature Store
+description: Administration → Server Utilities — Generate CPR Feature Store for Two-Tower and LoRA training
+---
+
+import { Callout } from 'nextra/components'
+
+# Generate CPR Feature Store
+
+**Administration → Server Utilities → Generate CPR Feature Store** builds flattened interaction features from runtime logging for downstream training jobs.
+
+Private API: `POST /api/v1/admin/generate-cpr-feature-store` (Workbench session JWT on `:8001`).
+
+## What it reads and writes
+
+| Source | Collections |
+| --- | --- |
+| Input | `ecosystemruntime`, `ecosystemruntime_response` |
+
+The job writes:
+
+- One **detail** row per presented offer, with `accepted` evaluated per offer against `offers_accepted`
+- Aggregate collections `{detail}_by_customer` and `{detail}_by_product` over the job window
+
+Default target collection: **`logging.ecosystemruntime_flatten`**.
+
+That flatten store feeds [Two-Tower](/docs/modules/two_tower) and [LoRA Recommender](/docs/modules/lora) training in Workbench.
+
+<Callout type="info" title="Workbench only">
+This utility runs on the Workbench Python backend. There is no equivalent Java Runtime endpoint.
+</Callout>
+
+## Related
+
+- [Project Review and Update](/docs/configuration/project_review) — neighbouring Server Utilities
+- [Simulations](/docs/configuration/simulations) — closed-loop data that lands in the same logging collections

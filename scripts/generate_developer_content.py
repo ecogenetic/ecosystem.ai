@@ -263,7 +263,7 @@ def path_to_url(rel: str) -> str:
     p = rel[:-4] if rel.endswith(".mdx") else rel
     if p.endswith("/index"):
         p = p[: -len("/index")]
-    return f"https://ecosystem.ai/{p}"
+    return f"https://developer.ecosystem.ai/{p}"
 
 
 def section_key(rel: str) -> str:
@@ -313,7 +313,7 @@ def main() -> None:
         "",
         "This file consolidates the ecosystem.Ai developer documentation for search indexing, "
         "LLM RAG, and offline reference. Content is derived from the published docs at "
-        "https://ecosystem.ai. MDX frontmatter, imports, and presentation components have been "
+        "https://developer.ecosystem.ai. MDX frontmatter, imports, and presentation components have been "
         "removed; technical prose, code, tables, and structure are preserved.",
         "",
         f"Corpus: {len(articles)} documents. Regenerate with "

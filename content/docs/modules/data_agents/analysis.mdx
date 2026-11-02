@@ -15,6 +15,8 @@ From Jobs → open a completed job. Interactive panels (distributions, correlati
 
 Operations only: job volume, completed/failed, success rate, config usage, 1–90 day window. Not Financial ARPU.
 
+**Built-in dashboard templates:** `personality_drift` and `campaign_measurement`. Workbench **Generate** selects a template when the prompt matches and creates a board via `POST /api/v1/analytics/dashboards` with `template_id` and `source_bindings`. Other prompts compile a new dashboard from scratch.
+
 ## Time Series (`/time-series`)
 
 For **Analytic** configs with time series enabled:

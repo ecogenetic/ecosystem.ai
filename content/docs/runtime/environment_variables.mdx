@@ -24,6 +24,11 @@ The possible environment variables are:
 - **CLI_SETTINGS**: Command line options to be added to the runtime at startup.
 - **ECOSYSTEM_XMX**: The amount of memory allocated to the runtime. This translated into the -Xmx option for the JVM.
 - **MONGO_CONNECT**: The connection string for the MongoDB instance to be used the runtime.
+- **SQLSERVER_URL**: JDBC URL for Microsoft SQL Server stored-procedure integration (Runtime 0.9.7.x). Overrides `sqlserver.url` in `ecosystem.properties`.
+- **SQLSERVER_USER**: SQL Server login. Overrides `sqlserver.user`.
+- **SQLSERVER_PASSWORD**: SQL Server password. Overrides `sqlserver.password`.
+
+Query timeout uses property `sqlserver.query.timeout` (seconds, default 30) only — not an environment variable. See [SQL Server data](/docs/configuration/data/sqlserver).
 
 To be supported in the future:
 - **FEATURE_DELAY**: The time period in seconds between updates of the real time features.

@@ -41,7 +41,7 @@ The operator chat is **Claude Agent** branding (not “Claude Code Agent”). Mo
 | --- | --- | --- |
 | Workbench `/assistant` | Ready Agent SDK + default LLM + in-process MCP | Public API key |
 | Campaign Management | Private `/claude-agent/*` with `tool_profile: campaign_management` | Workbench mutating tools (denied on that profile) |
-| External Claude Code / Agent SDK | `ANTHROPIC_BASE_URL` → Workbench `:8001`; optional dual-auth `POST /mcp` | Bundled `_bundled/claude` in the Workbench image |
+| External Claude Code / Agent SDK | `ANTHROPIC_BASE_URL` → Workbench `:8001`; optional `POST /mcp` with public key or JWT | Bundled `_bundled/claude` in the Workbench image |
 
 Readiness: `GET /api/v1/claude-agent/status` → `ready: true` when enabled + default LLM + SDK + resolved CLI.
 

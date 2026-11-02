@@ -35,7 +35,7 @@ flowchart TB
     MCP -->|"call_endpoint"| Api["/api/v1/*"]
   end
   Bridge -->|JWT| CA
-  SDK -->|"JWT + X-API-Key"| CmMcp
+  SDK -->|"JWT or X-API-Key"| CmMcp
   Gen -->|JWT| Api
   Ops -->|JWT| Api
   Asst["/assistant operator"] -->|JWT| CA
@@ -45,7 +45,7 @@ flowchart TB
 | --- | --- | --- |
 | **Campaign Management** | Private `/claude-agent/*` with `tool_profile: campaign_management` (CM MCP tool pack + read-only Workbench subset); `/campaigns/_generate/*`; campaigns CRUD/trigger; JWT | Workbench mutating tools (hard-denied on this profile); Claude CLI in the CM image |
 | **Workbench `/assistant`** | Ready Agent SDK + default LLM + in-process MCP | CM |
-| **External Claude Code / Agent SDK** | `ANTHROPIC_BASE_URL` → Workbench host `:8001` (`POST /v1/messages`); optional dual-auth `POST /mcp` | Workbench in-image `_bundled/claude` (client supplies its own SDK/CLI) |
+| **External Claude Code / Agent SDK** | `ANTHROPIC_BASE_URL` → Workbench host `:8001` (`POST /v1/messages`); optional `POST /mcp` with public key or JWT | Workbench in-image `_bundled/claude` (client supplies its own SDK/CLI) |
 
 ## Packaging
 

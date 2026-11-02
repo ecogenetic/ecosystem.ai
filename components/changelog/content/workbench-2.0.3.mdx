@@ -1,6 +1,20 @@
-Current platform train as of **2026-09-18**: Workbench **`2.0.3`** (build `2072`) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`3153`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
 
-## What's Changed
+## October 2026
+
+- **Custom Forms**, **Data Management & Campaign**, **Time Process Campaign**, **Table Views**, **Project Utilities**
+- **Explanations** and **Sentimental Equilibrium** operator updates
+- **Simulation transformations** and **log replay** (Shared notebook export; results in `simulations.simulation_logs` / `simulation_param_outputs`)
+- **Export / Import** pipeline updates
+- **[LoRA Recommender](/docs/modules/lora)** module (embedding residual recommender)
+- **[CPR Feature Store](/docs/configuration/cpr_feature_store)** (Runtime flatten for Two-Tower / LoRA)
+- **Personality Drift** analytics and built-in dashboard templates (`personality_drift`, `campaign_measurement`)
+- **Single-credential** public API and HTTP MCP auth (public key **or** JWT)
+- **Streamable-HTTP-only** Workbench MCP (legacy SSE removed); admin-published MCP tools, prompts, and `mcp_access_log` audit
+- **Campaign Outreach Agent** and outreach MCP tools
+- **Ontology** catalog updates
+
+## What's Changed (earlier 2.0.3 train)
 
 ### Workbench
 - Campaign manager + Campaign / Claude operator agents; form and dashboard iteration on Dynamic Interaction configs.
@@ -13,7 +27,7 @@ Current platform train as of **2026-09-18**: Workbench **`2.0.3`** (build `2072`
 - MCP tools for the **algorithm catalog**.
 - Spend / Money Personality **drift**.
 - Post-score and data-connection fixes for new corpora.
-- Cursor/Cloud agent briefing so Runtime `/response` (singular) stays documented correctly.
+- SQL Server stored procedures (`097-latest` / `097-arm64` images, Oct 2026).
 
 ### What to pin
 ```json

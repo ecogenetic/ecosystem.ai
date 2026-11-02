@@ -1,6 +1,6 @@
 ---
 title: MCP
-description: Workbench MCP versus Runtime builtin MCP — tools, dual auth, Cursor config, and the stdio harness
+description: Workbench MCP versus Runtime builtin MCP — tools, auth, Cursor config, and the stdio harness
 ---
 
 import { Callout } from 'nextra/components'
@@ -26,14 +26,18 @@ Pointing Cursor at Runtime `:8091/mcp` will not list Workbench `list_api_catalog
 | Mode | Who | Auth |
 | --- | --- | --- |
 | **In-process** | Ecosystem Agent `/assistant` (`tool_profile: operator`) | Session JWT inside Workbench. No public API key |
-| **HTTP `POST /mcp`** | Cursor, Claude Code, Agent SDK | Dual: `Authorization: Bearer` **and** `X-API-Key: ewb_public_…` |
+| **HTTP `POST /mcp`** | Cursor, Claude Code, Agent SDK | One credential: JWT **or** public key (`X-API-Key` or Bearer `ewb_public_…`) |
 | **stdio `ecosystem_workbench_mcp`** | Hermes / desktop | Harness mints JWT; `EWB_PUBLIC_API_KEY` in env or `~/.herm/mcp/ecosystem-public.env` |
 
 Vite `:5270` does **not** proxy `/mcp`. Clients must hit the backend port (or nginx). `MCP_PUBLIC_BASE_URL` default `http://localhost:8001`.
 
-REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints. Legacy SSE `GET /mcp/sse/` is deprecated.
+REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints.
+
+Legacy SSE (`GET /mcp/sse/`, `POST /mcp/messages/`) **was removed on 26 Oct 2026**. Use Streamable HTTP **`POST /mcp`** only (protocol 2026-07-28).
 
 ### Cursor (Streamable HTTP)
+
+Public key only:
 
 ```json
 {
@@ -41,13 +45,14 @@ REST info (JWT): `GET /api/v1/mcp/` — tool list and connection hints. Legacy S
     "ecosystem-workbench": {
       "url": "http://localhost:8001/mcp",
       "headers": {
-        "Authorization": "Bearer <user-jwt>",
         "X-API-Key": "ewb_public_..."
       }
     }
   }
 }
 ```
+
+Alternatively use `"Authorization": "Bearer <user-jwt>"` instead of `X-API-Key`.
 
 Mint the key under **Administration → API Keys → Public API Access**. For Claude Code, set `ANTHROPIC_BASE_URL` to the Workbench host root so `POST /v1/messages` uses the Workbench default LLM.
 
@@ -78,6 +83,7 @@ Same implementations as in-process MCP. Mutating tools require `confirm=true`.
 | `date_enrich` / `mcc_enrich` | Queue enrichment jobs |
 | `personality_drift` | Queue personality drift |
 | `get_enrichment_job` | Poll enrich / drift jobs |
+| Outreach | `list_outreach_templates`, `inspect_outreach_campaign`, `build_outreach_campaign`, `configure_outreach_campaign`, `run_outreach_campaign` (supports `sample_run`, `test_target_email`) |
 | Ontology family | `list_ontologies`, `describe_ontology`, create/update/delete (confirm), mappings, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology` |
 | Runtime Testing | `list_runtime_testing_suites`, `get_runtime_testing_suite`, `analyze_runtime_testing`, `plan_runtime_testing` (confirm), `start_runtime_testing_run` (confirm), `list_runtime_testing_runs`, `get_runtime_testing_run`, `cancel_runtime_testing_run` / `close_runtime_testing_run` (confirm), `compare_runtime_testing_runs`, `get_runtime_testing_artifact`, `delete_runtime_testing_suite` (confirm) |
 | Simulations | `start_simulation_run` / `cancel_simulation_run` (confirm), `get_simulation_run_status`, `get_simulation_logs`, `get_simulation_results`, `explain_simulation_result` |
@@ -102,6 +108,14 @@ backend/venv/bin/python -m ecosystem_workbench_mcp catalog
 ```
 
 Networks job tools are documented with the [Networks API](/docs/modules/networks/api).
+
+### Admin-published tools
+
+**Administration → MCP Tools** publishes operator-defined tools backed by an entity collection, a saved Custom Pipeline, or a saved Python enrichment script. Definitions are stored in `mcp_tools` (`:McpTool` in the platform ontology). **MCP Prompts** exposes saved prompt templates alongside built-in tools.
+
+### Audit
+
+Every HTTP `/mcp` call appends an immutable row to `mcp_access_log` (timestamp, category, tool or method, actor, outcome, redacted detail). This log is operator-only and is not exposed through the public API gateway.
 
 ## Runtime builtin MCP (do not confuse)
 

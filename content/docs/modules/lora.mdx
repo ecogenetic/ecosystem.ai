@@ -1,0 +1,58 @@
+---
+title: LoRA Recommender
+description: Low-rank residual recommender on frozen nomic-embed-text — train in Workbench, score through Runtime plugins
+---
+
+import { Callout } from 'nextra/components'
+
+# LoRA Recommender
+
+The **LoRA Recommender** is a **retrieval module**, not a generative LLM feature. It trains a low-rank residual on top of frozen **`nomic-embed-text`** embeddings, then scores offers in the Runtime closed loop like other recommenders.
+
+Operator entry: **Solutions → LoRA Recommender** (`/lora`).
+
+## Training data
+
+Feature rows typically come from **`logging.ecosystemruntime_flatten`**, produced by [Generate CPR Feature Store](/docs/configuration/cpr_feature_store). Align date windows with your Two-Tower jobs when both modules share the same deployment.
+
+Embeddings and run metadata live in:
+
+- `logging.lora_user_embeddings`
+- `logging.lora_item_embeddings`
+
+## Operator flow
+
+1. Configure a LoRA job (rank, corpora, train/validation split).
+2. **Train** — fits the residual on frozen encoder outputs (`rank=0` disables the residual for baseline comparisons).
+3. **Concept test** — offline checks before export.
+4. **Export** — artifacts for deployment binding.
+5. **Bind on deployment** — set runtime properties (below) and **Push** to the target runtime.
+
+Public HTTP routes also exist under Workbench `public_api/routers/lora.py` for scoped integrations.
+
+## Runtime scoring
+
+Set on the deployment / `ecosystem.properties`:
+
+```properties
+predictor.model.type=lora
+predictor.lora.rank=8
+predictor.lora.user_embedding_collection=logging.lora_user_embeddings
+predictor.lora.item_embedding_collection=logging.lora_item_embeddings
+plugin.prescore=…PrePredictLoRA
+plugin.postscore=…PostScoreLoRA
+```
+
+Exact property keys follow your project template; see Workbench deployment export for the bound class names.
+
+Closed loop unchanged: `POST /invocations` then `POST /response` with `params` as a JSON **string**.
+
+## Project Generate
+
+Project **Generate** can emit LoRA-related keywords and deployment snippets when the prompt describes embedding-based retrieval — use it after the flatten store and training corpora exist.
+
+## Related
+
+- [Two-Tower Module](/docs/modules/two_tower) — dual-encoder retrieval in the same embedding space family
+- [CPR Feature Store](/docs/configuration/cpr_feature_store) — flatten source for training
+- [Runtime plugins](/docs/runtime/plugins) — Pre-Predict and Post-Score binding
