@@ -25,7 +25,7 @@ These classes map to Mongo collections (and embedded deployment config) managed 
 |-----------------|----------------------|------------------|-----|
 | `outreach_message_recommender` | `dynamic` | dynamic | Dynamic engagement links, no predictors, no feature-store frames. The label agrees. |
 | `dynamic_recommender_convergence` | `recommender` | dynamic | Six dynamic engagements and no static models. The label does not agree. |
-| `banking_credit_v2` | `solution_template` | hybrid | Static steps and predictors together with dynamic engagement steps. |
+| `sample_credit_hybrid` | `solution_template` | hybrid | Static steps and predictors together with dynamic engagement steps. |
 
 Spend Personality and Money Personality are **lookup-only**. They are not Dynamic Engagement approaches and they are not `learningAlgorithm` values. `PostScoreSpendingPersonality` (including generated `PostScoreSpendingPersonality_*` copies) and `PostScoreMoneyPersonality` copy precomputed scores from whatever database and collection the deployment lookup points at. Any store is valid when the document has the fields that post-score reads.
 

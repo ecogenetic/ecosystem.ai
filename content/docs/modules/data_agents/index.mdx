@@ -17,6 +17,10 @@ It is **not** the Runtime scorer, [Spend Personality](/docs/modules/spend_person
 The SPA stores `ecosystem_auth` and sends `Authorization: Bearer`. Login proxies to Ecosystem Server. Set `AUTH_ENABLED=false` only for offline local work.
 </Callout>
 
+<Callout type="info" title="Enterprise SSO">
+Microsoft Entra ID, on-premises LDAP, and corporate auto-SSO are configured on **ecosystem-server** and shared with Workbench. See [Active Directory & SSO](/docs/configuration/workbench_apis/active_directory) for provider setup, group-to-role mapping, and verification endpoints (Data Agents API `:54324` exposes the same `/api/v1/auth/providers` proxy as Workbench).
+</Callout>
+
 ## Where it fits
 
 | Stage | What |

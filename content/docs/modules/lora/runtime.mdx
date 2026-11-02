@@ -7,32 +7,32 @@ description: Score exported LoRA embeddings with PrePredictLoRA and PostScoreLoR
 
 ## Properties
 
+Set on the deployment / `ecosystem.properties`:
+
 ```properties
 predictor.model.type=lora
 predictor.lora.run.id=<run_id>
 predictor.lora.embedding.db=logging
 predictor.lora.user.collection=lora_user_embeddings
 predictor.lora.item.collection=lora_item_embeddings
-predictor.lora.customer.key=customer_id
-predictor.lora.offer.key=offer
+predictor.lora.customer.key=<customer_field>
+predictor.lora.offer.key=<offer_field>
 predictor.lora.metric=cosine
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictLoRA
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreLoRA
 ```
 
-`model.type=lora` skips H2O MOJO and Dynamic Engagement, the same way
-`similarity` does. Ranking uses `SimilarityScorer` (cosine or dot).
+Replace `<run_id>`, `<customer_field>`, and `<offer_field>` with values from your project and flatten schema. Bind **PrePredictLoRA** and **PostScoreLoRA** on the deployment step (or set `plugin.prescore` / `plugin.postscore` to the class names your project export emits).
+
+`model.type=lora` skips H2O MOJO and Dynamic Engagement, the same way `similarity` does. Ranking uses cosine or dot product per `predictor.lora.metric`.
 
 ## Plugins
 
 | Plugin | Role |
-|--------|------|
-| `PrePredictLoRA` | Load the customer vector and offer-matrix item cache for the run |
-| `PostScoreLoRA` | Rank candidates, apply offer-matrix eligibility / whitelist |
+| --- | --- |
+| PrePredictLoRA | Load the customer vector and offer-matrix item cache for the run |
+| PostScoreLoRA | Rank candidates; apply offer-matrix eligibility / whitelist |
 
 Push fails if the bound `run_id` has no embedding documents in those collections.
 
 ## Feedback
 
-Closed loop: `POST /invocations` then `POST /response` with `uuid` +
-`offer_name`. Endpoint is singular `/response`.
+Closed loop: `POST /invocations` then `POST /response` with `uuid` and `offer_name`. Endpoint is singular `/response`.

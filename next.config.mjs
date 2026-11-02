@@ -6,6 +6,7 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 })
 
 const nonPermanentRedirects = [
+  ['/docs/changelog', '/changelog'],
   ['/discord', 'https://discord.com/channels/1465898795949756458/1468558966513598526'],
   ['/demo', 'https://medemo.ecosystem.ai'],
   ['/issue', 'https://github.com/ecogenetic/developer/issues/new/choose'],

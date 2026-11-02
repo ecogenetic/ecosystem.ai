@@ -7,7 +7,7 @@ import { Callout } from 'nextra/components'
 
 # Public APIs
 
-The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates a public credential, forwards the **caller's JWT** to private Workbench `:8001/api/v1`, and writes audit events. It never uses a shared operator token for interactive user requests.
+The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates either a Workbench JWT or a public key. With a key alone, private calls use the [linked internal API key](/docs/configuration/workbench_apis/keys) on that credential (Administration → API Keys → Public API Access). When a JWT is present, it is forwarded to private Workbench `:8001/api/v1`. The gateway writes audit events and never uses a shared operator token for interactive user requests.
 
 `PUBLIC_API_INTERNAL_SERVICE_TOKEN` is an optional server-only fallback for automated jobs, not for people.
 
@@ -68,6 +68,9 @@ The Python SDK's `login()` is **optional** when you call with a scoped public ke
 | `money-personality:runs` | Money Personality process |
 | `sentimental-equilibrium:runs` | Sentimental equilibrium process |
 | `two-tower:configs` / `two-tower:train` | Two-Tower configs, train, export, batch-score |
+| `lora:configs` / `lora:train` | LoRA Recommender configs, train, export, batch-score |
+| `data-management:read` / `data-management:write` | Mongo Data Management (optional credential bindings `database_names`, `collection_refs` as `db.collection`) |
+| `simulation:read` / `simulation:runs` | Simulation status, logs, results; start and cancel runs |
 | `ontology:read` / `ontology:write` | Ontology documents and mappings |
 
 Grant the minimum set. Polling async work also needs `jobs:read`.
@@ -162,6 +165,59 @@ The ecosystem-server munge option `sentiment` is retired. Callers that still hit
 | `POST` | `/public/v1/two-tower/batch-score` | `two-tower:train` | Top-K offers to a collection |
 | `POST` | `/public/v1/two-tower/generate-python` | `two-tower:train` | Runnable Python + explanation |
 
+## LoRA Recommender
+
+Same shape as Two-Tower on the public gateway. Operator UI: [LoRA Recommender](/docs/modules/lora).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/lora/configs` | `lora:configs` | List or upsert |
+| `GET` / `PUT` | `/public/v1/lora/configs/{config_id}` | `lora:configs` | Read / update |
+| `GET` | `/public/v1/lora/predictors` | `lora:configs` | Distinct predictors in flatten |
+| `GET` | `/public/v1/lora/predictor-date-bounds` | `lora:configs` | Date range and row count |
+| `GET` | `/public/v1/lora/runs` | `lora:configs` | Recent training runs |
+| `POST` | `/public/v1/lora/train` | `lora:train` | Start training |
+| `POST` | `/public/v1/lora/concept-test` | `lora:train` | Sync concept rank for one customer |
+| `POST` | `/public/v1/lora/export-embeddings` | `lora:train` | Export user/item embeddings |
+| `POST` | `/public/v1/lora/batch-score` | `lora:train` | Top-K offers to a collection |
+| `POST` | `/public/v1/lora/generate-python` | `lora:train` | Runnable Python + explanation |
+
+## Simulations
+
+Workbench in-process simulation engine. UI and field semantics: [Simulations](/docs/configuration/simulations).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/simulations/status` | `simulation:read` | Mongo / engine health |
+| `POST` | `/public/v1/simulations/validate-connections` | `simulation:read` | Database and pulse-responder checks |
+| `POST` | `/public/v1/simulations/from-deployment` | `simulation:runs` | Materialize simulation from a deployment |
+| `POST` | `/public/v1/simulations/run` | `simulation:runs` | Start a run |
+| `POST` | `/public/v1/simulations/cancel` | `simulation:runs` | Cooperative cancel |
+| `GET` / `DELETE` | `/public/v1/simulations/logs` | `simulation:read` / `simulation:runs` | Read or clear run logs |
+| `GET` | `/public/v1/simulations/results/parameters` | `simulation:read` | Options-store parameter snapshots |
+| `GET` | `/public/v1/simulations/results/plot` | `simulation:read` | Plot series |
+| `GET` | `/public/v1/simulations/results/options` | `simulation:read` | Options-store snapshots |
+
+## Data Management
+
+Scoped Mongo inspection and document CRUD (not entity collections). Optional credential bindings: `database_names`, `collection_refs` (`db.collection`).
+
+<Callout type="warning" title="Hard-blocked and private-only">
+The gateway rejects `admin`, `local`, and `config`, any `system.*` collection, and the public credential / audit collections. **Drop**, **rename**, **deleteMany**, **aggregate**, and **export** stay on the private API only.
+</Callout>
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/data-management/databases` | read / write | List or create databases |
+| `GET` / `POST` | `/public/v1/data-management/databases/{database}/collections` | read / write | List or create collections |
+| `GET` | `/public/v1/data-management/databases/{database}/collections/{collection}/fields` | `data-management:read` | Field sample / schema |
+| `GET` | `/public/v1/data-management/databases/{database}/collections/{collection}/indexes` | `data-management:read` | Index list |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents/query` | `data-management:read` | Query documents |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents` | `data-management:write` | Insert documents |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents/update` | `data-management:write` | Update documents (**POST**, not PUT) |
+| — | (single-document delete — path in live catalog) | `data-management:write` | Delete one document |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/import` | `data-management:write` | Import documents |
+
 ## Ontology
 
 Updates use **POST**, not PUT/PATCH. Same contract as private `/api/v1/ontology/*`.
@@ -244,5 +300,8 @@ Public collections include: projects, agent configs / nodes / channels, custom c
 | `PUBLIC_API_INTERNAL_BASE_URL` | `http://localhost:8001/api/v1` | Private proxy target |
 | `PUBLIC_API_INTERNAL_SERVICE_TOKEN` | — | Job fallback only |
 | `PUBLIC_API_AUDIT_TTL_DAYS` | `0` = keep | Audit TTL |
+| `PUBLIC_API_DOCS_ENABLED` | — (see Workbench `public-api-gateway` runbook) | Enable OpenAPI at `/docs` on `:8004` |
+| `PUBLIC_API_DEFAULT_RATE_LIMIT_PER_MINUTE` | — (see runbook) | Default per-credential rate limit |
+| `PUBLIC_API_EXTERNAL_BASE_URL` | — | Public base URL for open-tracking and unsubscribe links (must be reachable from mail clients) |
 
 Related: [Private APIs](/docs/configuration/workbench_apis/private), [API Keys](/docs/configuration/workbench_apis/keys), [MCP](/docs/configuration/workbench_apis/mcp).
