@@ -5,7 +5,7 @@ description: Invocations, response, ContactLog, ResponseLog, plugins, and campai
 
 # Runtime Closed Loop
 
-Namespace: [`https://ecosystem.ai/ontology/runtime#`](/ontology/runtime.ttl)
+Namespace: `https://ecosystem.ai/ontology/runtime#`
 
 Concepts for **ecosystem-runtime**: score offers, log contacts, accept feedback, and learn.
 
@@ -31,7 +31,7 @@ Same **`uuid`** ties invocation, contact log, and response.
 | `InvocationDebugExplanation` | One `debug.explanations[]` row: `code`, `severity`, `title`, `message`, optional `hint` |
 | `FinalResultEntry` | Ranked row: `rank` + slim `OfferResult` + `result_full` |
 | `OfferResult` | Slim offer: `uuid`, `offerName`, scores, cost/price |
-| `PersonalityOfferResult` | Trait-oriented `result_full` (Spend Personality) |
+| `PersonalityOfferResult` | Lookup-only `result_full` from Spend or Money Personality. Copies precomputed fields. Does not update the options store |
 | `ProductOfferResult` | Product + bandit `result_full` (recommenders) |
 | `ResponseFeedback` | `/response` body: `uuid` + `offers_accepted` |
 | `AcceptedOffer` | Accepted slim offer row |
@@ -56,7 +56,7 @@ Same **`uuid`** ties invocation, contact log, and response.
 | `CampaignContext` | Isolated runtime unit (campaign / predictor name) |
 | `GlobalSettings` | Properties: plugins, logging, offer matrix, param lookup, corpora |
 | `FeatureLookupConfig` | Open customer/feature DB lookup |
-| `DynamicEngagementConfig` | Algorithm + contextual variables corpora |
+| `DynamicEngagementConfig` | Algorithm corpora. Approaches: `epsilonGreedy`, `binaryThompson`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`. Behavioral type only for `behaviorAlgos` |
 | `Option` | Options-store arm; `optionKey` joins OfferMatrixEntry |
 | `ScoringParams` | Internal pipeline bag for plugins |
 
@@ -70,6 +70,8 @@ Same **`uuid`** ties invocation, contact log, and response.
 | `PostPredictPlugin` | `plugin.postscore` |
 | `RewardPlugin` | `plugin.reward` |
 
+`PostPredictPlugin` is how a deployment is scored. `PlatformDynamicEngagement` is dynamic engagement. `PostScoreBasic` is a static model. `PostScoreSpendingPersonality` (including generated copies) and `PostScoreMoneyPersonality` are lookup-only. `PostScoreNetwork` is a network step. The multi-armed-bandit flag does not turn a personality plugin into dynamic engagement.
+
 ## Related
 
 - [Offer Matrix](/docs/ontology/offer-matrix)
@@ -77,7 +79,6 @@ Same **`uuid`** ties invocation, contact log, and response.
 - [Runtime & Deployment docs](/docs/runtime)
 - [Runtime MCP — ontology tools & agent flow](/docs/runtime/mcp#recommended-agent-flow-closed-loop)
 - [Ontology for agents](/docs/ontology/agents) — Explorer UI and REST catalog
-- Examples TTL: [`/ontology/runtime-examples.ttl`](/ontology/runtime-examples.ttl)
 
 ## MCP & agent grounding
 
@@ -101,5 +102,3 @@ REST mirror: `GET /ontology/runtime/*` and `POST /ontology/runtime/validate/*` o
 
 
 Full tables: [Runtime Catalog](/docs/ontology/runtime-catalog) · [Concept Index](/docs/ontology/concept-index)
-
-Download: [`/ontology/runtime.ttl`](/ontology/runtime.ttl) · shapes: [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl)

@@ -22,7 +22,7 @@ Try the hosted runtime at [https://medemo.ecosystem.ai](https://medemo.ecosystem
 | Payload drift vs plugins | `validateInvokeRequest` / `validateResponseRequest` before scoring |
 | Which MCP tool to call | Each concept lists related tools (`invoke`, `listCampaigns`, …) |
 
-The Turtle sources are also downloadable (`runtime.ttl`, shapes, examples) for RAG or graph stores. See [Runtime Closed Loop](/docs/ontology/runtime).
+Look up concepts through the runtime catalog below. The documentation site does not serve Turtle files. See [Runtime Closed Loop](/docs/ontology/runtime).
 
 ## REST catalog
 
@@ -36,7 +36,6 @@ Same content as MCP resources. Prefix `{RUNTIME}` (for example `http://localhost
 | `GET` | `/ontology/runtime/recipes/closed-loop` | Closed-loop recipe JSON |
 | `POST` | `/ontology/runtime/validate/invoke` | Pre-flight invoke body |
 | `POST` | `/ontology/runtime/validate/response` | Pre-flight response body |
-| `GET` | `/ontology/runtime/downloads/runtime.ttl` | Bundled Turtle |
 
 ```bash
 curl "http://localhost:8091/ontology/runtime/concepts?q=invocation&limit=20"
@@ -64,6 +63,14 @@ Recommended flow:
 4. `validateResponseRequest` → `response`
 
 Protocol detail: [MCP Support](/docs/runtime/mcp). Workbench Operator agents use a **different** MCP server (`POST` Workbench `:8001/mcp`) for deployments and enrichment — do not mix the two `/mcp` surfaces.
+
+## Workbench project kind
+
+The entities ontology tells a Workbench agent whether a project is dynamic, static, or hybrid. Derive `engagementKind` from `hasDynamicEngagement`, `hasPredictor`, `hasFeatureStoreFrame`, and deployment `scoringMode`. Do not classify from the stored `projectType` string.
+
+`learningAlgorithm` is only the Dynamic Engagement dropdown: `epsilonGreedy`, `binaryThompson`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`. When the approach is `behaviorAlgos`, `behavioralType` is one of `lossAversion`, `riskAversion`, `prospectTheory`, `sentimentalEquilibrium`, `coverageAwareThompson`, `longTailBoostMF`, `generative`.
+
+Spend Personality and Money Personality are lookup-only (`scoringMode=lookup`). Any installation lookup is valid when the document has the fields the post-score plugin copies. A personality plugin stays lookup even if `is_multi_armed_bandit` is set. On `spend_personality`, `spend_personality` and `money_personality` are lookup deployments and `dynamic_recommender_behavior` is dynamic engagement.
 
 ## Related
 

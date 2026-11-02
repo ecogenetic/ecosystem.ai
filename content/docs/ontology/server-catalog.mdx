@@ -1,11 +1,11 @@
 ---
 title: Server concept catalog
-description: Complete class and property catalog from server.ttl
+description: Complete class and property catalog for modeling server concepts
 ---
 
 # Server concept catalog
 
-Generated from the published Turtle. Download [`/ontology/server.ttl`](/ontology/server.ttl) for machine-readable definitions.
+Class and property reference for modeling server concepts. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/server#`
 
@@ -17,7 +17,7 @@ Namespace: `https://ecosystem.ai/ontology/server#`
 | `Diagram` | Diagram | Saved UML diagram (class, sequence, etc.) belonging to a modeling project. |
 | `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
 | `GenerationStrategy` | Generation Strategy | Selectable strategy or plugin binding for app/UML generation. |
-| `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. engagementKind belongs to the Workbench Project, not to this class. |
 | `OntologyContext` | Ontology Context | Structured ontologyContext on a modeling project: domain ids, structuredModel, promptContext, roles, and related generation metadata. |
 | `OntologySynthesisRun` | Ontology Synthesis Run | Enhance/export run that merges diagrams, DB import, and roles into ontologyContext and Turtle export. |
 | `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |

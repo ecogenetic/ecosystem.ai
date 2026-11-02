@@ -17,6 +17,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [server](/docs/ontology/server-catalog) | Class | `AppGenerationJob` | App Generation Job | Async job that generates application code from diagrams and ontology context. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `armReward` | arm reward |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `behavioralType` | behavioral type | randomisation.sub_approach. Required only for behaviorAlgos: lossAversion, riskAversion, prospectTheory, sentimentalEquilibrium, coverageAwareThompson, longTailBoostMF, generative. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `belongsToCatalog` | belongs to catalog |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `beta` | beta |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cache` | cache |  |
@@ -38,7 +39,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `cost` | cost |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cost` | cost |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `customer` | customer |  |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed. A spend or money personality lookup is valid when the document has the fields the post-score plugin copies. This is not an H2O feature-store frame and not a closed schema. |
 | [entities](/docs/ontology/entities-catalog) | Class | `Dashboard` | Dashboard | Analytics dashboard definition. |
 | [entities](/docs/ontology/entities-catalog) | Class | `DataConnection` | Data Connection | External data connection such as Trino/Presto (collection: data_connections). |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `dateLog` | date log |  |
@@ -51,8 +52,9 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [server](/docs/ontology/server-catalog) | Class | `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
 | [server](/docs/ontology/server-catalog) | Datatype property | `domainId` | domain id |  |
 | [entities](/docs/ontology/entities-catalog) | Class | `DynamicEngagement` | Dynamic Engagement | Online learning / bandit engagement configuration (collection: dynamic_engagement) with algorithm, contextual variables, and store bindings. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for a dynamic engagement. The approach is epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, or Network. A behavioral type is required only for behaviorAlgos. Spend Personality and Money Personality are not approaches. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `embedsContactLog` | embeds contact log | response_log field. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `engagementKind` | engagement kind | dynamic, static, or hybrid. Derived from links and scoringMode. projectType is not the classifier. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `engagementName` | name |  |
 | [entities](/docs/ontology/entities-catalog) | Class | `EnrichmentPipeline` | Enrichment Pipeline | Saved data enrichment pipeline configuration. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `explore` | explore |  |
@@ -69,12 +71,13 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasAcceptedOffer` | has accepted offer |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasAgent` | has agent | project_agents asset link. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasCalendar` | has calendar |  |
-| [entities](/docs/ontology/entities-catalog) | Object property | `hasCampaign` | has campaign |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasCampaign` | has campaign | project_campaigns asset link. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasDataConnection` | has data connection |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebug` | has debug |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugConfig` | has debug config |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugDatabase` | has debug database |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugError` | has debug error |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugExplanation` | has debug explanation |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugParams` | has debug params |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasDeploymentStep` | has deployment step | deployment_step array on the project document. |
 | [server](/docs/ontology/server-catalog) | Object property | `hasDiagram` | has diagram |  |
@@ -84,6 +87,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasFactInjectionConfig` | has fact injection config |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFeatureLookup` | has feature lookup | Open-schema binding; target documents are CustomerFeatureDocument instances of any shape. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasFeatureStore` | has feature store |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFeatureStoreFrame` | has feature store frame | feature_stores array. Static H2O frames. Leave empty for dynamic projects. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFinalResult` | has final result |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasFrame` | has frame | project_models asset link. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasOfferEntry` | has offer entry |  |
@@ -101,10 +105,11 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasSlimResult` | has slim result |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasStats` | has stats |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: explanations, errors, config, database, params snapshots. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugExplanation` | Invocation Debug Explanation | Operator-facing explanation in debug.explanations: code, severity, title, message, optional hint. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
@@ -112,15 +117,20 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobId` | job id |  |
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobLifecycleState` | lifecycle state | Queued \\| Running \\| Succeeded \\| Failed \\| Cancelled. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `joinsOffer` | joins offer | optionKey equals matrix offer_id. |
-| [entities](/docs/ontology/entities-catalog) | Datatype property | `learningAlgorithm` | learning algorithm | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `learningAlgorithm` | learning algorithm | randomisation.approach: epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, Network. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `linkedToProject` | linked to project | project_ids on contacts catalog / records. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `lookupKey` | lookup key |  |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixStatus` | status | draft \\| active \\| archived. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixVersion` | version |  |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `modelId` | model id |  |
-| [server](/docs/ontology/server-catalog) | Class | `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| [server](/docs/ontology/server-catalog) | Class | `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. engagementKind belongs to the Workbench Project, not to this class. |
 | [server](/docs/ontology/server-catalog) | Datatype property | `modelingProjectId` | project id |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `modifiedOfferScore` | modified offer score |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `MoneyPersonalityCase` | Money Personality Case | Lookup-only money personality scoring. Any lookup store is valid when documents carry the PostScoreMoneyPersonality fields. The runtime result is PersonalityOfferResult. |
+| [entities](/docs/ontology/entities-catalog) | Class | `MoneyPersonalityLookup` | Money Personality Lookup | Lookup-only money personality score copied by PostScoreMoneyPersonality. Any database and collection is valid when the document has the score fields. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `moneyPersonality` | money personality | money_personality, or personality when that is the stored label. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `moneyPersonalityScore` | money personality score | money_personality_score, or personality_score. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `moneyTrait` | money trait |  |
 | [workbench](/docs/ontology/workbench-catalog) | Object property | `monitorsCampaign` | monitors campaign deployment |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
@@ -142,9 +152,11 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `optionKey` | option key |  |
 | [entities](/docs/ontology/entities-catalog) | Class | `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `paramsJson` | params | Must be a JSON string on the wire, not a nested object. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `personality` | personality | Spend personality label copied to offer, offer_id, and offer_name. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `personalityScore` | personality score | personality_score on the looked-up document. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PersonalityOfferResult` | Personality Offer Result | Lookup-only result_full from PostScoreSpendingPersonality, including generated copies, or PostScoreMoneyPersonality. Those plugins copy precomputed fields. They do not score an H2O model and do not update the options store. |
 | [server](/docs/ontology/server-catalog) | Class | `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result. PlatformDynamicEngagement is dynamic engagement. PostScoreBasic is static model scoring. PostScoreSpendingPersonality, including generated copies, and PostScoreMoneyPersonality are lookup-only. PostScoreNetwork is a network step. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `predictId` | predict id | Prediction case identifier (predict_id / prediction_case_id). |
 | [entities](/docs/ontology/entities-catalog) | Class | `Predictor` | Predictor | Static or AutoML prediction case configuration (collection: predictions). Links to a training frame and model parameters. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `predictor` | predictor |  |
@@ -157,7 +169,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `projectDescription` | project description |  |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `projectId` | project id | Primary business identifier for the project (project_id). |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `projectOwner` | project owner |  |
-| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectType` | project type |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectType` | project type | Free label. Not the classifier. Review may set dynamic_recommender. |
 | [entities](/docs/ontology/entities-catalog) | Class | `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `purpose` | purpose |  |
@@ -170,19 +182,24 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Class | `RewardPlugin` | Reward Plugin | plugin.reward class that updates learning state after /response. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `score` | score |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `scoringMode` | scoring mode | dynamic, static, or lookup. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `scoringData` | scoring data | Open feature bag logged when logging.detail is true; may also echo options-store state. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
 | [entities](/docs/ontology/entities-catalog) | Class | `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
-| [workbench](/docs/ontology/workbench-catalog) | Class | `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SpendPersonalityCase` | Spend Personality Case | Lookup-only spend personality scoring. Any lookup store is valid when documents carry the PostScoreSpendingPersonality fields. The runtime result is PersonalityOfferResult. |
+| [entities](/docs/ontology/entities-catalog) | Class | `SpendPersonalityLookup` | Spend Personality Lookup | Lookup-only spend personality score copied by PostScoreSpendingPersonality, including generated copies. Any database and collection is valid when the document has the score fields. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `staticOffers` | static offers | Static priority slate when greater than 0. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `staticOffers` | static offers |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `stepType` | step type | deployment_step.step_type. Does not override scoringMode. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `subcampaign` | subcampaign |  |
 | [server](/docs/ontology/server-catalog) | Class | `SyntheticDataPackageJob` | Synthetic Data Package Job | Modeling synthetic-data job that produces ZIP packages (JSON/CSV/SQL/DDL) from class diagrams — distinct from Workbench2 Mongo synthetic. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetCollection` | target collection |  |
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetDatabase` | target database |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `trait` | trait |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `traitScore` | trait score | trait_score when present. |
 | [server](/docs/ontology/server-catalog) | Object property | `triggeredByProject` | triggered by project |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
 | [server](/docs/ontology/server-catalog) | Class | `UmlGenerationJob` | UML Generation Job | Async job that generates or analyzes UML diagrams for a modeling project. |

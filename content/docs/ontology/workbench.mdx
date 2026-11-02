@@ -5,7 +5,7 @@ description: Workbench2 solution cases, jobs, synthetic data, and console concep
 
 # Workbench Application
 
-Namespace: [`https://ecosystem.ai/ontology/workbench#`](/ontology/workbench.ttl)
+Namespace: `https://ecosystem.ai/ontology/workbench#`
 
 Concepts beyond raw `ecosystem_meta` collections — productized solutions and Workbench application surfaces.
 
@@ -14,7 +14,8 @@ Concepts beyond raw `ecosystem_meta` collections — productized solutions and W
 | Class | Definition |
 |-------|------------|
 | `SolutionCase` | Productized solution configuration |
-| `SpendPersonalityCase` | Spend / money personality scoring and messaging |
+| `SpendPersonalityCase` | Lookup-only spend personality scoring |
+| `MoneyPersonalityCase` | Lookup-only money personality scoring |
 | `TwoTowerCase` | Two-tower recommender training and deployment |
 
 **Link:** `usesSolutionCase` (Project → SolutionCase)
@@ -44,5 +45,3 @@ Concepts beyond raw `ecosystem_meta` collections — productized solutions and W
 Forward path: ontology guides synthetic generation. Reverse path: collection export produces indicative TTL. See [Data and Ontology](/docs/ontology/data-and-ontology).
 
 Full tables: [Workbench Catalog](/docs/ontology/workbench-catalog)
-
-Download: [`/ontology/workbench.ttl`](/ontology/workbench.ttl)

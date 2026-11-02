@@ -2,7 +2,7 @@
 
 This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
 
-Corpus: 265 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
+Corpus: 269 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
 
 ## Document index
 
@@ -46,6 +46,7 @@ Corpus: 265 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Vector Stores](#docs-configuration-generative-vector-stores) — `docs/configuration/generative/vector_stores.mdx` — https://ecosystem.ai/docs/configuration/generative/vector_stores
 - [Intro](#docs-configuration-index) — `docs/configuration/index.mdx` — https://ecosystem.ai/docs/configuration
 - [Project / Module](#docs-configuration-project) — `docs/configuration/project.mdx` — https://ecosystem.ai/docs/configuration/project
+- [Project Review and Update](#docs-configuration-project-review) — `docs/configuration/project_review.mdx` — https://ecosystem.ai/docs/configuration/project_review
 - [ecosystem-notebooks Python Package](#docs-configuration-pythonpackage) — `docs/configuration/pythonpackage.mdx` — https://ecosystem.ai/docs/configuration/pythonpackage
 - [Simulations](#docs-configuration-simulations) — `docs/configuration/simulations.mdx` — https://ecosystem.ai/docs/configuration/simulations
 - [Predictors](#docs-configuration-static-models-index) — `docs/configuration/static_models/index.mdx` — https://ecosystem.ai/docs/configuration/static_models
@@ -117,6 +118,9 @@ Corpus: 265 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Time Series Report](#docs-modules-data-agents-reports-time-series) — `docs/modules/data_agents/reports/time_series.mdx` — https://ecosystem.ai/docs/modules/data_agents/reports/time_series
 - [Data Agents Setup](#docs-modules-data-agents-setup) — `docs/modules/data_agents/setup.mdx` — https://ecosystem.ai/docs/modules/data_agents/setup
 - [Modules](#docs-modules-index) — `docs/modules/index.mdx` — https://ecosystem.ai/docs/modules
+- [LoRA Recommender Module](#docs-modules-lora-index) — `docs/modules/lora/index.mdx` — https://ecosystem.ai/docs/modules/lora
+- [LoRA Runtime](#docs-modules-lora-runtime) — `docs/modules/lora/runtime.mdx` — https://ecosystem.ai/docs/modules/lora/runtime
+- [LoRA Training](#docs-modules-lora-training) — `docs/modules/lora/training.mdx` — https://ecosystem.ai/docs/modules/lora/training
 - [MLRun Module — Access & Scoring](#docs-modules-mlrun-access) — `docs/modules/mlrun/access.mdx` — https://ecosystem.ai/docs/modules/mlrun/access
 - [MLRun Module — Community Edition](#docs-modules-mlrun-community-edition) — `docs/modules/mlrun/community_edition.mdx` — https://ecosystem.ai/docs/modules/mlrun/community_edition
 - [MLRun Module — Console Tour](#docs-modules-mlrun-console-tour) — `docs/modules/mlrun/console_tour.mdx` — https://ecosystem.ai/docs/modules/mlrun/console_tour
@@ -156,7 +160,6 @@ Corpus: 265 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Concept Index](#docs-ontology-concept-index) — `docs/ontology/concept-index.mdx` — https://ecosystem.ai/docs/ontology/concept-index
 - [Customer Feature Lookup (Open)](#docs-ontology-customer-features) — `docs/ontology/customer-features.mdx` — https://ecosystem.ai/docs/ontology/customer-features
 - [Data and Ontology](#docs-ontology-data-and-ontology) — `docs/ontology/data-and-ontology.mdx` — https://ecosystem.ai/docs/ontology/data-and-ontology
-- [Downloads](#docs-ontology-downloads) — `docs/ontology/downloads.mdx` — https://ecosystem.ai/docs/ontology/downloads
 - [Entities concept catalog](#docs-ontology-entities-catalog) — `docs/ontology/entities-catalog.mdx` — https://ecosystem.ai/docs/ontology/entities-catalog
 - [Entities (Workbench Meta)](#docs-ontology-entities) — `docs/ontology/entities.mdx` — https://ecosystem.ai/docs/ontology/entities
 - [Glossary](#docs-ontology-glossary) — `docs/ontology/glossary.mdx` — https://ecosystem.ai/docs/ontology/glossary
@@ -271,6 +274,7 @@ Corpus: 265 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [ecosystem.Ai 2026 Roadmap](#blog-2025-07-03-2026-roadmap) — `blog/2025-07-03_2026_roadmap.mdx` — https://ecosystem.ai/blog/2025-07-03_2026_roadmap
 - [The Hardest Place to Deploy Conversational AI - and Why It Matters](#blog-2026-02-02-conversationalai) — `blog/2026-02-02_conversationalAI.mdx` — https://ecosystem.ai/blog/2026-02-02_conversationalAI
 - [Behavioral Intelligence is an Architecture, not a Plugin](#blog-2026-02-17-behavioral-intelligence-architecture-not-plugin) — `blog/2026-02-17_behavioral-intelligence-architecture-not-plugin.mdx` — https://ecosystem.ai/blog/2026-02-17_behavioral-intelligence-architecture-not-plugin
+- [Agentic capabilities when creating recommenders](#blog-2026-09-18-agentic-capabilities-recommenders) — `blog/2026-09-18_agentic-capabilities-recommenders.mdx` — https://ecosystem.ai/blog/2026-09-18_agentic-capabilities-recommenders
 
 ---
 
@@ -1316,7 +1320,7 @@ In addition, some algorithms have their own **built-in exploration** that operat
 | **Loss Aversion** | Yes | UCB exploration term boosts under-sampled offers |
 | **Risk Aversion** | Yes | None -- relies on deployment epsilon for exploration |
 | **Prospect Theory** | Yes | Adaptive drift + built-in epsilon-greedy mixing |
-| **Sentimental Equilibrium** | Yes | N/A (aggregate equilibrium, not per-offer) |
+| **Sentimental Equilibrium** | Yes | UCB mix on the offer rank. The equilibrium solve is not the rank. |
 | **Coverage-Aware Thompson** | Yes | Thompson sampling + inverse-popularity boost + optional epsilon mixing |
 | **Long-Tail Boost MF** | Yes | Inverse-popularity reweighting (diversity, not explicit exploration) |
 | **Network Analysis (PageRank)** | Yes | None -- relies on deployment epsilon for exploration |
@@ -1333,7 +1337,7 @@ In addition, some algorithms have their own **built-in exploration** that operat
 | **Loss Aversion** | Medium-Fast | Low | No | Yes | High-cost-of-rejection scenarios |
 | **Risk Aversion** | Fast | Very Low | No | No | Consistency-valued domains |
 | **Prospect Theory** | Medium | Low | Partial | No | Marketing with psychological modeling |
-| **Sentimental Equilibrium** | Single-shot | Low | No | No | Engagement intensity optimization |
+| **Sentimental Equilibrium** | Rebuilt each cycle | Low | No | Optional context keys | Offer rank from response-rate utility |
 | **Coverage-Aware Thompson** | Slow | Medium | Yes | Yes | Fairness / catalog coverage |
 | **Long-Tail Boost MF** | Medium | High (ALS) | No | Yes | Collaborative filtering with diversity |
 | **Network Analysis (PageRank)** | Fast | Medium | No | No | Inter-offer relationships |
@@ -1362,7 +1366,7 @@ The post-score class then controls the final offer selection, eligibility filter
 | **Loss Aversion** | New offers get smoothing alpha = 1.5. UCB gives under-sampled offers a boost. | Smoothing alpha = 1.5 + UCB exploration term. | **Moderate.** UCB helps under-sampled offers surface. |
 | **Risk Aversion** | Does not score offers without history. Platform random fallback applies. | None. Relies on platform-level random scoring. | **Random until data accumulates.** Algorithm begins influencing after sufficient history. |
 | **Prospect Theory** | Seeds all known offers with `baseDriftRate` (default 0.05). Adaptive drift + epsilon-greedy mixing. | `baseDriftRate` seed + drift + epsilon. | **Good.** Seeding gives all offers non-zero scores from day one. |
-| **Sentimental Equilibrium** | Computes aggregate engagement equilibrium, not per-offer scores. | Model parameters serve as the "prior". | **N/A.** Does not rank individual offers. |
+| **Sentimental Equilibrium** | Ranks offers from the response rate when history exists. Empty history uses the platform random fallback. | Defaults $r$, $a$, $\rho$. Not passed from the deployment document. | **Offer ranks, not an engagement rate.** |
 | **Coverage-Aware Thompson** | Beta(1,1) + `exposure=0` gives maximum inverse-popularity boost for unseen offers. | Beta(1,1) prior + max coverage boost. | **Excellent.** Best cold-start of all behavioral algorithms. |
 | **Long-Tail Boost MF** | Random latent vectors (~0.01 Gaussian noise) for unseen users/items. Near-zero scores. | Random Gaussian initialization. | **Random until data accumulates.** Needs substantial interaction volume. |
 | **Network Analysis (PageRank)** | Cannot build a graph without co-occurrence data. Platform random fallback applies. | Personalization based on acceptance weight (once data exists). | **Random until data accumulates.** Needs co-occurrence data. |
@@ -1562,11 +1566,11 @@ For more detail on the options store structure, see [Options Store](/docs/config
 }
 ```
 
-### Scenario 8: Engagement Fatigue Analysis
+### Scenario 8: Offer rank under engagement pressure
 
-**Problem:** Determine optimal frequency and intensity of customer engagement.
+**Problem:** Rank offers from response-rate utility when the person–app relationship matters, while keeping contact frequency as a separate Workbench batch.
 
-**Recommended:** `behaviorAlgos` with `sentimentalEquilibrium`
+**Recommended:** `behaviorAlgos` with `sentimentalEquilibrium` for live Dynamic Engagement ranking (`arm_reward` is an offer rank, not the contact rate). Run the Workbench Sentimental Equilibrium Process job when you need `recommended_engagement_rate` / `rate_adjustment`.
 
 ```json
 {
@@ -1576,6 +1580,8 @@ For more detail on the options store structure, see [Options Store](/docs/config
   "decay_gamma": 1.0
 }
 ```
+
+See [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium).
 
 ---
 
@@ -2420,9 +2426,11 @@ Summary: Sentimental Equilibrium algorithm for dynamic interactions in ecosystem
 
 # Sentimental Equilibrium
 
-Models the equilibrium between customer engagement utility and the effort or cost of engagement. The algorithm uses a dynamic system where a stock of engagement capital accumulates through effort and decays over time, then finds the steady-state equilibrium where marginal utility of engagement equals marginal cost, using Newton–Raphson optimization.
+Models one person–app relationship. Feeling fades unless outbound effort is supplied (`dx/dt = -r x + a c`). The sustaining rate solves `x* = (a/r) c*` and `a U'(x*) = (r + ρ) D'(c*)`.
 
-The formulation is inspired by economic models of habit formation and sentimental capital accumulation.
+Live Dynamic Engagement scoring does not return that rate. `score()` ranks offers from the response rate: feeling is the take-up, implied effort is `(r/a) x`, and the rank is `U(x) - D(c)/(r+ρ)` mixed with a UCB bonus. `RollingBehavior` writes that map to `arm_reward`. `computeEquilibrium()` solves the steady state and `score()` does not read it.
+
+How often to contact a person is the Workbench batch at `/sentimental-equilibrium`. A field map turns outbound events into effort and response events into feeling, then writes `recommended_engagement_rate` and `rate_adjustment`.
 
 ## Algorithm
 
@@ -2448,7 +2456,7 @@ Here $\rho$ is the discount rate (time preference). The equilibrium $(x^*, c^*)$
 
 **Disutility of effort** (configurable via `disutilityType`):
 
-- `quadratic`: $D(c) = \frac{1}{2} c^2$
+- `quadratic`: $D(c) = \frac{1}{2}(c - c_\star)^2$. Default $c_\star = 0$, which is $\frac{1}{2} c^2$.
 - `linear`: $D(c) = c$
 
 ## Parameters
@@ -2463,22 +2471,21 @@ Here $\rho$ is the discount rate (time preference). The equilibrium $(x^*, c^*)$
 
 ## Cold Start
 
-**Recommendations are always returned.** However, Sentimental Equilibrium operates differently from other behavioral algorithms:
+**Recommendations are always returned.** With no history, `RollingBehavior` assigns platform random scores. With history, Sentimental Equilibrium ranks each offer from its response rate.
 
-- It computes an **aggregate engagement equilibrium** ($x^*$, $c^*$), not per-offer scores. The output is derived from configured model parameters, not interaction history.
-- The `RollingBehavior` layer still produces a scored options array for the post-score class. When Sentimental Equilibrium is the sub-approach, the equilibrium values inform the overall engagement strategy rather than providing per-arm rankings.
-- The dynamic post-score class controls the final offer selection and response formatting.
+- `score()` does not return $x^*$ and $c^*$. Those values come from `computeEquilibrium()` and are not written to `arm_reward`.
+- A live run uses the default $r$, $a$, and $\rho$. `RollingBehavior` does not copy `decayRate`, `effortEfficiency`, or `discountRate` from the dynamic-engagement document onto the history row.
+- Live dynamic ranking: `PostScoreSentimentalEquilibrium` copies options-store `arm_reward`. It does not recompute the equilibrium.
+- Workbench Process job on the feature store: use **Sentimental Equilibrium PreScored** (`PostScoreSentimentalEquilibriumPreScored`) — a static extract of `engagementScore` / `sentimental_equilibrium` / … (same approach as spend personality). Do not use the dynamic post-score for that path.
 
 ## When To Use
 
-- Optimizing **engagement intensity** or relationship-level engagement vs. cost
-- Modeling **long-term customer relationship** dynamics and fatigue
-- **Research and analytics** on customer lifecycle and equilibrium engagement levels
+- Ranking offers by a utility of the response rate
+- Prescribing how often to contact someone, via the Workbench sentimental equilibrium job
 
 ## When NOT To Use
 
-- When you need **per-offer rankings** (this path returns aggregate equilibrium values, not arm-level scores)
-- When you need **real-time scoring of individual offers** in a multi-armed bandit sense
+- When `arm_reward` is expected to be the engagement rate. That rate is the Workbench batch, not this rank.
 
 ## Example
 
@@ -2535,7 +2542,7 @@ deployment_step = dm.create_deployment(
 
 **Deployment pattern:** `algorithm="ecosystem_rewards"` on `create_online_learning` is the SDK document type. Scoring uses `randomisation`: `"approach": "behaviorAlgos"`, `"sub_approach": "sentimentalEquilibrium"`.
 
-**Training data:** Sentimental Equilibrium parameters (for example `decayRate`, `effortEfficiency`, `discountRate`, `utilityType`, and `disutilityType`) are supplied through the **training data** pipeline so the rolling learner can read them consistently with your feature and options stores. Align field names with your ingestion job and runtime configuration.
+**Training data:** `setData` can read `decayRate`, `effortEfficiency`, `discountRate`, `utilityType`, and `disutilityType` from the first history row. A normal Dynamic Engagement call does not put those keys there, so scoring uses the defaults. The Workbench batch stores its own model settings on the sentimental-equilibrium config.
 
 ---
 
@@ -3285,14 +3292,17 @@ predictor.selector.model={'key_value_a':[1],'key_value_b':[2]}
 
 ## Parameter From Data Source
 The configuration for the customer data lookup to be used by the runtime.
-- **Data Source**: The type of data source to be used for the lookup.
-- **Database**: The database to be used for the lookup.
-- **Table**: The table to be used for the lookup.
+- **Data Source**: Driver written to `predictor.param.lookup.database`. Workbench supports **MongoDB**, **Cassandra** (`keyspace.table`), **Trino** (persisted as `trino`; Presto remains a saved synonym), **API** (persisted as `rest`), and **Runtime**. The runtime treats `trino` as the existing Presto JDBC worker (`presto.url` / `presto.connection`). There is no silent Mongo fallback.
+- **Database**: Mongo database name. Optional for Cassandra/Trino.
+- **Table**: Mongo collection, Cassandra `keyspace.table`, or Trino `catalog.schema.table`. Hidden when the driver is Runtime.
+- **Runtime URL**: Required when Data Source is Runtime. Emitted as `url` on `predictor.param.lookup`. Lookup scoring calls `POST {url}/invocations` and reads `featuresObj`.
+- **API definition**: When Data Source is API, the REST URL, method, and `response.result` mapping are emitted as `url` / `apiSource` / `result`, plus `predictor.api.sources`.
 - **Key Field**: The name of the customer lookup field in the customer feature store.
 - **Key Type and Default**: You can specify a default customer key to use if the lookup fails. This field is also used to specify the type of the the customer lookup field. If the value entered is a string it denotes that the customer lookup field is a string. If the value entered is a number it denotes that the customer lookup field is a number. If you do not want to specify a default value you can use 123 or '123' to sepcify the type.
-- **Lookup Field List**: The fields to be looked up from the customer feature store.
-- **Lookup Defaults**: Default values to be used for the fields if they are missing from the customer feature store when the lookup is performed.
-- **URL**: The URL to be used for the lookup. This is only required if the Data Source is Runtime.
+- **Lookup Field List**: Fields discovered with **Validate** (or typed). Virtual variables, dynamic training fields, and Lookup Defaults pickers all use this list, for every driver.
+- **Verify**: **View** samples and **Validate** field discovery against the live source (Mongo aggregate, Cassandra `/getCassandra`, Trino `/getPrestoSQL`, REST URL, or Runtime `/invocations`).
+- **Lookup Defaults**: Default values when the lookup misses. **Assign** finds a row on the same driver and maps scalars onto the Field List. Cassandra Assign requires a Find value (partition key).
+- **Generate**: Writes synthetic Mongo documents only.
 - **Create Virtual Variables**: Checkbox to indicate whether Virtual Variables should be created based on the lookup from the customer feature store. The User Guide for [Virtual Variables](/docs/user_guides/virtual_variables) contains more information on how to use Virtual Variables.
 
 The details will be visible in the `properties` file with the following format:
@@ -3301,6 +3311,14 @@ The details will be visible in the `properties` file with the following format:
 predictor.param.lookup={predictor:'dynamic-recommender',mojo:1,database:'mongodb',db:'recommender_demos',table:'feature_store',lookup:{"value":123,"key":"msisdn"},result:{parm1:'field1', parm2:'field2'}}
 predictor.param.lookup.features=customer,age,location,
 predictor.param.lookup.default=customer,age
+```
+
+Cassandra, Trino, API, and Runtime emit the same object with a different `database` driver, for example:
+```properties
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"cassandra","db":"","table":"ecosystem.bank_customer","lookup":{"key":"customer","value":123},"virtual_variables":[],"result":{"parm1":"field1","parm2":"field2"}}
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"trino","table":"hive.default.customers","lookup":{"key":"customer","value":123}}
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"rest","url":"https://api.example.com/customer/{value}","apiSource":"customer_lookup_api","lookup":{"key":"customer","value":123},"result":{"age":"$.customer.age"}}
+predictor.param.lookup={"predictor":"dynamic-recommender","mojo":1,"database":"runtime","url":"http://ecosystem-runtime:8091","lookup":{"key":"customer","value":123}}
 ```
 
 You can configure lookups to multiple customer data sources using the `Add Lookup` button. If multiple lookups are configured that will be combined into the single `featuresObj` object in the runtime. The field names looked up from the multiple sources should therefore be unique. Up to 10 Parameter Access lookups can be configured. When multiple lookups are configured, the format in the `properties` file will be changed to an array.
@@ -3336,10 +3354,12 @@ If the Concatenate type is selected, the `Add Field` button will be available to
 
 ## Offer Matrix
 The Offer Matrix contains information about the items to be recommended by the Deployment. The Offer Matrix can be used in the post scoring logic when applying eligibility rules.
-- **Data Source**: The type of data source to be used for the lookup.
-- **Database**: The database to be used for the lookup.
-- **Table**: The table to be used for the lookup.
-- **Offer Lookup ID** The name of the field in the Offer Matrix that uniquely identifies the offer.
+- **Data Source**: **MongoDB**, **Cassandra**, **Trino** (`trino`, Presto synonym), or **API** (`rest`). Runtime is not an Offer Matrix source. After push, `CampaignContext` / `PreLoadCorpora` load the matrix from that driver (Presto JDBC for Trino). There is no silent Mongo fallback.
+- **Database**: Mongo database name. Optional for Cassandra/Trino.
+- **Table**: Mongo collection, Cassandra `keyspace.table`, or Trino `catalog.schema.table`.
+- **Offer Lookup ID** The name of the field in the Offer Matrix that uniquely identifies the offer. Emitted as `predictor.offer.matrix.key`. Use **Validate** on the live source to confirm the field exists.
+- **Verify**: **View** samples and **Validate** the Offer Lookup ID for all four drivers. **Generate** writes synthetic Mongo documents only.
+- **API definition**: REST URL / `apiSource` / `result` when Data Source is API.
 
 The Offer Matrix stored in the `params` JSONObject accessible in the post scoring logic. The runtime will attempt to load the Offer Matrix in three different forms:
  - `offerMatrix`: Loaded as a JSONArray with one element for each row in the Offer Matrix. The rows themselves will be loaded as JSONObjects with the column names as the keys. This structure can be used to efficiently loop through the Offer Matrix.
@@ -3355,6 +3375,9 @@ The Offer Matrix details will be visible in the `properties` file with the follo
 ```properties
 ### Offer Matrix (Offer Matrix) ###
 predictor.offer.matrix={database:'mongodb',db:'recommender_demos', table:'offer_matrix', key:'offer_name'}
+predictor.offer.matrix={"database":"cassandra","table":"ecosystem.offer_matrix","key":"offer_id"}
+predictor.offer.matrix={"database":"trino","table":"hive.default.offers","key":"offer_id"}
+predictor.offer.matrix={"database":"rest","url":"https://api.example.com/offers","apiSource":"offer_matrix_api","result":"$.offers","key":"offer_id"}
 ```
 
 ## Plugins
@@ -3378,7 +3401,8 @@ The post scoring logic is used to configure the post scoring plugin to be used i
 - **PostScoreRecommenderMulti**: Recommender scoring using a multi model approach and asynchronous scoring. 
 - **PostScoreSpendingPersonality**: The post score for [spend personality](/docs/modules/spend_personality) scoring.
 - **PostScoreMoneyPersonality**: The post score for [money personality](/docs/modules/spend_personality) scoring.
-- **PostScoreSentimentalEquilibrium**: The post score for sentimental equilibrium scoring.
+- **PostScoreSentimentalEquilibrium**: Dynamic only — formats live `sentimentalEquilibrium` `arm_reward` from the options store (`behaviorAlgos`).
+- **Sentimental Equilibrium PreScored** (`PostScoreSentimentalEquilibriumPreScored`): Static feature-store path — reads Workbench SE Process job fields (`engagementScore`, `sentimental_equilibrium`, `equilibriumViable`, `requiredEffort`, …), same pattern as spend personality. Not the dynamic options-store plugin.
 If you wish to  customise your post scoring logic see the [post scoring logic](/docs/runtime/postpredict) documentation as well as the guide for setting up a [local development environment](/docs/user_guides/runtime_plugin_development).
 
 If using custom post scoring logic, use the Compile button (JIT `/generateClass` from Runtime 0.9.6.0) to make the post scoring class available to the runtime. Use a build pipeline when the plugin is more than a single generated class.
@@ -3912,7 +3936,7 @@ Select this Dynamic Algorithm when you want a behavioral type below. **You must 
 | `lossAversion` | [Loss Aversion](/docs/configuration/algorithms/lossaversion) — penalize ignored offers; UCB exploration (default type) |
 | `riskAversion` | [Risk Aversion](/docs/configuration/algorithms/riskaversion) — mean-variance; steady predictable uptake |
 | `prospectTheory` | [Prospect Theory](/docs/configuration/algorithms/prospecttheory) — Kahneman–Tversky value weighting |
-| `sentimentalEquilibrium` | [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium) — engagement equilibrium (not per-offer ranking) |
+| `sentimentalEquilibrium` | [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium) — offer rank from response-rate utility. The contact rate is the Workbench batch, not this rank. |
 | `coverageAwareThompson` | [Coverage-Aware Thompson](/docs/configuration/algorithms/coveragethompson) — long-tail / fairness |
 | `longTailBoostMF` | [Long-Tail Boost MF](/docs/configuration/algorithms/longtailmf) — WRMF + inverse exposure |
 | `generative` | [Generative Model](/docs/configuration/algorithms/generativemodel) — LLM prompt scoring |
@@ -5413,6 +5437,60 @@ Here's a snapshot of what a comprehensive project configuration might look like,
 
 ---
 
+## Project Review and Update
+
+Source: `docs/configuration/project_review.mdx`
+URL: https://ecosystem.ai/docs/configuration/project_review
+Summary: Administration → Server Utilities — analyze a target Mongo for project and deployment hygiene, dual runtime versions, and optional successor clone or export.
+
+# Project Review and Update
+
+**Administration → Server Utilities → Project Review and Update** (`project-review-and-update`) is an operator migration utility. It analyzes projects on a target MongoDB, recommends fixes, and applies the ones you accept as an async job. It is not a public API contract change.
+
+**Session-only Mongo URI:** The target Mongo URI stays on the Workbench server for the session. The password field stays masked until you click to edit or reveal. If Details has no Mongo URI, Analyze and Apply use the local Workbench Mongo.
+
+## Setup
+
+| Field | Purpose |
+| --- | --- |
+| Mongo URI + database | Target store to analyze |
+| **Runtime main** | Default `http://ecosystem-runtime:8091` — main deployment runtime path |
+| **Runtime local** | Default `http://localhost:8099` — used for `version=local` steps |
+| Target API URL + API key (optional) | Enables a remote full ZIP (CSV/MOJO) through that Workbench’s export API |
+| Use built-in successor project map | Optional clone into a mapped successor project id |
+
+**Test** pings Mongo. **Analyze** lists projects (include/exclude projects and individual deployments). Expand a row for successor id, runtime hosts, findings, and recommended actions.
+
+A session-only **Processing defaults log** (passwords masked) refills the form; it is not persisted.
+
+## Recommended actions
+
+Actions are checked by default except where noted. **Accept & run (N)** applies the selection; **Dry run** queues the same plan without writing.
+
+| Kind | What you accept |
+| --- | --- |
+| `dedupe_deployment_steps` | Drop duplicate `deployment_step` rows |
+| `add_version_local_step` | Add `version=local` pointing at Runtime local |
+| `normalize_runtime_main` | Point the main runtime path at Runtime main (test slot = Runtime local) |
+| `link_missing_de` | Dynamic engagement name is linked but missing (**critical**, off by default; not auto-applied — create the DE manually) |
+| `normalize_dynamic_config` | Set `project_type` to `dynamic_recommender` and/or link `dynamic_engagement_id` / `step_type=dynamic` |
+| `create_successor_project` | Clone into the mapped successor with dual runtime versions |
+| `archive_project` | Archive after successor (off by default) |
+| `export_default_zip` | ZIP export (off by default; full files only if API URL + key) |
+
+Per-row **Export** packages one project. Before packaging, lookup database/collection, offer matrix, Dynamic options store, whitelist, model selector, and budget tables are auto-attached. MOJO/CSV on this host are omitted unless the target API path is used.
+
+Jobs show Completed / Failed / Stalled in the utility panel.
+
+## Related
+
+- [Project](/docs/configuration/project) — project document shape
+- [Deployments](/docs/configuration/deployment) — deployment steps and runtime paths
+- [Simulations](/docs/configuration/simulations) — closed-loop traffic after runtime paths are correct
+- [Campaign Testing](/docs/runtime/testing) — Workbench Runtime Testing for one deployment
+
+---
+
 ## ecosystem-notebooks Python Package
 
 Source: `docs/configuration/pythonpackage.mdx`
@@ -5537,7 +5615,7 @@ For further detail on the functionality available in the python package see the 
 
 Source: `docs/configuration/simulations.mdx`
 URL: https://ecosystem.ai/docs/configuration/simulations
-Summary: Workbench 2 simulations — closed-loop /invocations and /response traffic against a Dynamic Interaction deployment.
+Summary: Workbench 2 simulations — closed-loop /invocations and /response traffic against a Dynamic Interaction deployment, run in-process on the Workbench backend.
 
 # Simulations
 
@@ -5553,12 +5631,14 @@ Two ways to run that loop:
 
 | Approach | Where | Best for |
 | --- | --- | --- |
-| **Workbench 2** | `/entities/simulation` | Operator setup, scenario describe, logs, Beta plots, options-store snapshots |
+| **Workbench 2** | `/entities/simulation` | Operator setup, scenario describe, logs, Beta plots, options-store snapshots, result Explain |
 | **Python** | [Python package](/docs/configuration/pythonpackage) or a custom script | Fully custom take-up, traffic, or batch logic |
 
-Workbench is easier. Python is more flexible. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
+Workbench runs the loop **in-process** on the Workbench FastAPI backend (Motor Mongo + async Runtime HTTP). Python is more flexible for custom scripts. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
 
 **Not Data Agents:** A simulation **writes** Runtime logs. To **analyze** those logs (funnel, rank uptake, catalog), run an [Interactions Analytic](/docs/modules/data_agents/interactions) job on the same `ecosystemruntime` / `ecosystemruntime_response` collections.
+
+**Notebooks simulation deprecated:** The ecosystem-notebooks `process_simulation` routes return **410**. Configure and run simulations in Workbench 2 only.
 
 ## Workbench 2
 
@@ -5574,9 +5654,7 @@ Each simulation document has a **name**, **project**, **deployment**, and **depl
 
 - Simulation name
 - Project, deployment, and version
-- ecosystem-server username and password
-- MongoDB available
-- ecosystem-notebooks available
+- MongoDB available (Workbench database)
 
 The learning **algorithm** is not chosen on the simulation form. It is resolved from the Dynamic Engagement linked to the deployment. If none is linked, the Runtime scores naively.
 
@@ -5597,10 +5675,9 @@ Default new-run values (override per run):
 | Iterations per second | 100 |
 | Output every N iterations | 100 |
 | Plot + parameter output | on |
-| Server URL | `http://ecosystem-server:3001/api` |
-| Notebooks URL | `http://ecosystem-notebooks:8010/process_simulation` |
 | Pulse responder | `http://ecosystem-runtime:8091` |
-| Server credentials | `admin@ecosystem.ai` / `password` |
+
+Server URL, Notebooks URL, and ecosystem-server credentials are **not** required (legacy fields on old documents are ignored).
 
 ### Run configuration
 
@@ -5622,18 +5699,16 @@ Default new-run values (override per run):
 
 ### Connections
 
-Open the **Connections** accordion (not buried in Advanced). Simulations authenticate to **ecosystem-server with these credentials**, not the Workbench UI login.
+Open the **Connections** accordion. Simulations call the **Client pulse responder** (Runtime) from the Workbench backend.
 
 Click **Validate** (`POST /simulations/validate-connections`). The Workbench backend checks:
 
 | Check | What it proves |
 | --- | --- |
-| Database | Mongo ping |
-| ecosystem-notebooks | Process URL reachable (including localhost fallbacks when Docker DNS names fail) |
-| ecosystem-server | `POST` login on `server_url` (must end in `/api`) with the run username/password |
-| Pulse responder | Runtime `/invocations` host is reachable from notebooks |
+| Database | Mongo ping (Workbench Motor) |
+| Pulse responder | Runtime host is reachable from the Workbench backend |
 
-Typical local notebooks port is **8011** if the container maps that way. If Validate says notebooks is down, start `ecosystem-notebooks` or change **Notebooks URL**. If the pulse responder cannot resolve `ecosystem-runtime`, use a host the notebook server can reach (for example `http://localhost:8099` or `http://localhost:8091`).
+If the pulse responder cannot resolve `ecosystem-runtime`, use a host the Workbench API can reach (for example `http://localhost:8099` or `http://localhost:8091`).
 
 ### Describe scenario (optional)
 
@@ -5672,26 +5747,29 @@ If the lookup key does not match the collection, Run fails with a hint to fix Pa
 | Selection over time | `drift_lower_sequence` |
 | Traffic profile | Virtual-time intensity windows |
 
-### Run, logs, results
+### Run, logs, results, Explain
 
 1. Save the simulation (drafts are allowed).
 2. Validate connections.
-3. **Run Simulation** — Workbench FastAPI proxies to notebooks `POST .../process_simulation`. Progress shows in the run banner.
-4. **Logs** — `GET /simulations/logs?run_uuid=...` (Mongo `simulations.simulation_logs`; legacy `ecosystem_meta.threads` is still read). Cancel hits notebooks `/cancel_simulation`.
-5. **Results** — options-store parameter snapshots (`simulation_param_outputs`) and Beta / plot series (`simulation_plot_outputs`) when those outputs are enabled. Use plots to inspect Ecosystem Rewards (and similar) arm distributions after the run.
+3. **Run Simulation** — Workbench starts an in-process asyncio engine. Progress shows in the run banner. Cancel cooperatively stops the loop.
+4. **Logs** — `GET /simulations/logs?run_uuid=...` (Mongo `simulations.simulation_logs`). Success versus failed invocations is charted when those counters appear.
+5. **Results** — options-store parameter snapshots (`simulation_param_outputs`) and Beta / plot series (`simulation_plot_outputs`) when those outputs are enabled.
+6. **Explain** — on the Results panel, Explain produces a read-only overview (purpose, process, interpreted results) via the Workbench LLM. Versions are stored on the simulation document (max **10**). The **Explanations** table at the bottom of the editor opens a saved version without a new model call.
 
-Failures return a message **and a hint** (unreachable Runtime, empty customer collection, missing server password, notebooks down, bad customer pipeline).
+Failures return a message **and a hint** (unreachable Runtime, empty customer collection, bad customer pipeline, unsaved run uuid).
 
 ### Workbench APIs (operator)
 
 Thin UI; processing stays on the backend:
 
-- `GET /simulations/status` — Mongo + notebooks health
+- `GET /simulations/status` — Mongo health (engine is in-process)
 - `POST /simulations/validate-connections`
 - `POST /simulations/run` / cancel
 - `GET /simulations/logs`, `DELETE /simulations/logs`
 - `GET /simulations/results/parameters`, `/results/options`, `/results/plot`
+- Explain jobs: `kind=simulation_result` on the agents explain API
 - Scenario analyze/apply via the agents router (optional)
+- MCP: `start_simulation_run` / `cancel_simulation_run` (confirm), status, logs, results, `explain_simulation_result`
 
 ## Python simulations
 
@@ -5856,7 +5934,8 @@ Rows come from the Workbench agent catalog registry. Coverage is `wired`, `parti
 | `intelligent-sales` | Intelligent Sales Agent | Campaigns | List/trigger campaigns |
 | `real-time-recommender` | Real-Time Recommender Agent | Scoring | Workbench `score_customer` / `send_feedback` on a deployment |
 | `dynamic-experimentation` | Dynamic Experimentation Agent | Dynamic | Dynamic Engagement entities; `explain_algorithms`, `explain_convergence` |
-| `claude-operator` | Ecosystem Agent | Platform | In-process MCP; `/assistant`; HTTP MCP attach |
+| `runtime-testing` | Runtime Testing Agent | Runtime | Isolated business suites; `start_runtime_testing_run` (confirm), `list_runtime_testing_runs`, `get_runtime_testing_run` |
+| `claude-operator` | Ecosystem Agent | Platform | In-process MCP; `/assistant`; HTTP MCP attach; also Simulations tools (`start_simulation_run` / `cancel_simulation_run` confirm, status, logs, results, `explain_simulation_result`) |
 | `ecogentic` | EcoGentic | Platform | Customer journeys |
 
 Open a row for capabilities, MCP tool names, skills, and a Workbench deep link (`workbench_href`).
@@ -6200,6 +6279,8 @@ Same implementations as in-process MCP. Mutating tools require `confirm=true`.
 | `personality_drift` | Queue personality drift |
 | `get_enrichment_job` | Poll enrich / drift jobs |
 | Ontology family | `list_ontologies`, `describe_ontology`, create/update/delete (confirm), mappings, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology` |
+| Runtime Testing | `list_runtime_testing_suites`, `get_runtime_testing_suite`, `analyze_runtime_testing`, `plan_runtime_testing` (confirm), `start_runtime_testing_run` (confirm), `list_runtime_testing_runs`, `get_runtime_testing_run`, `cancel_runtime_testing_run` / `close_runtime_testing_run` (confirm), `compare_runtime_testing_runs`, `get_runtime_testing_artifact`, `delete_runtime_testing_suite` (confirm) |
+| Simulations | `start_simulation_run` / `cancel_simulation_run` (confirm), `get_simulation_run_status`, `get_simulation_logs`, `get_simulation_results`, `explain_simulation_result` |
 
 Resources: `ecosystem://deployments`, `ecosystem://deployment/{name}`. Per-deployment snippets: `GET /api/v1/deployments/{name}/mcp`.
 
@@ -6357,7 +6438,7 @@ Workbench **API Management** (`/docs/configuration/api`) stores named Runtime te
 | Money Personality | `/algorithms/money-personality` | `POST …/process` |
 | Sentimental equilibrium | `/algorithms/sentimental-equilibrium` | `POST …/process` |
 | Two-Tower | `/algorithms/two-tower` | Train, export, generate Python |
-| Simulations | `/simulations` | Save/run/validate connections ([Simulations](/docs/configuration/simulations)) |
+| Simulations | `/simulations` | In-process closed-loop engine: save, validate connections, run/cancel, logs, results, Explain ([Simulations](/docs/configuration/simulations)) |
 | Network Selector | `/network-selector` | Diagnostics for the selector (not `/networks/` SPA) |
 
 MCP `call_endpoint` remaps `/money-personality/process` → `/algorithms/money-personality/process` (same for sentimental equilibrium).
@@ -6549,7 +6630,9 @@ Needs `spend-personality:configs`, `spend-personality:runs`, and `jobs:read` (pl
 
 | Method | Path | Scope | Purpose |
 | --- | --- | --- | --- |
-| `POST` | `/public/v1/sentimental-equilibrium/process` | `sentimental-equilibrium:runs` | Start analysis from prediction logs; poll jobs |
+| `POST` | `/public/v1/sentimental-equilibrium/process` | `sentimental-equilibrium:runs` | Start the Workbench contact-rate batch from prediction logs (or a field map / Mongo pipeline); poll jobs. Writes `recommended_engagement_rate` and `rate_adjustment`. Live Dynamic Engagement `arm_reward` for `sentimentalEquilibrium` is a separate offer-rank number — see [Sentimental Equilibrium](/docs/configuration/algorithms/sentimentalequilibrium). |
+
+The ecosystem-server munge option `sentiment` is retired. Callers that still hit that path receive an error pointing at Workbench `POST /api/v1/algorithms/sentimental-equilibrium/process` (public gateway path above).
 
 ## Two-Tower
 
@@ -9729,6 +9812,127 @@ Modules are operator products that sit on Workbench and compose with the Runtime
   />
 
 **Data Agents** is Agentic Data Analytics (`ecosystem-data-agents`) — batch reports, not live scoring. **Networks** (Workbench2 **Solutions → Network Analysis**) is the graph lab. Neither is the [Network Selector](/docs/user_guides/network) or Dynamic Engagement `approach: Network`.
+
+---
+
+## LoRA Recommender Module
+
+Source: `docs/modules/lora/index.mdx`
+URL: https://ecosystem.ai/docs/modules/lora
+Summary: Low-rank adaptation on frozen nomic embeddings for offer ranking — train in Workbench, export vectors, score with PrePredictLoRA and PostScoreLoRA.
+
+# LoRA Recommender Module
+
+## Overview
+
+The **LoRA Recommender** adapts frozen text embeddings (default
+`nomic-embed-text`) with a small low-rank residual, then ranks offers by
+cosine or dot-product similarity — the same live scoring shape as Two-Tower.
+
+```mermaid
+flowchart LR
+  text["Customer and offer text"] --> nomic["nomic-embed-text"]
+  nomic --> residual["LoRA residual"]
+  residual --> mongo["Mongo embeddings"]
+  mongo --> score["PrePredictLoRA + PostScoreLoRA"]
+```
+
+It is a **sibling** of [Two-Tower](/docs/modules/two_tower). Two-Tower
+(`predictor.model.type=similarity`) is unchanged.
+
+## Where it fits
+
+| Stage | Component |
+|-------|-----------|
+| Train / export | Workbench **Solutions → LoRA Recommender** (`/lora`) + notebooks PyTorch sidecar |
+| Live score | ecosystem-runtime `predictor.model.type=lora` |
+| Plugins | `PrePredictLoRA`, `PostScoreLoRA` |
+
+## Closed loop
+
+When collecting feedback: `POST /invocations`, then `POST /response` (singular)
+with that row’s `uuid` + `offer_name`. `params` is a JSON string.
+
+**info:** Chat models such as qwen3.8 are not used for ranking. The embeddings path
+  stays on `nomic-embed-text` (or your configured `EMBEDDING_SERVER_MODEL`).
+
+---
+
+## LoRA Runtime
+
+Source: `docs/modules/lora/runtime.mdx`
+URL: https://ecosystem.ai/docs/modules/lora/runtime
+Summary: Score exported LoRA embeddings with PrePredictLoRA and PostScoreLoRA.
+
+# LoRA Runtime
+
+## Properties
+
+```properties
+predictor.model.type=lora
+predictor.lora.run.id=<run_id>
+predictor.lora.embedding.db=logging
+predictor.lora.user.collection=lora_user_embeddings
+predictor.lora.item.collection=lora_item_embeddings
+predictor.lora.customer.key=customer_id
+predictor.lora.offer.key=offer
+predictor.lora.metric=cosine
+plugin.prescore=com.ecosystem.plugin.customer.PrePredictLoRA
+plugin.postscore=com.ecosystem.plugin.customer.PostScoreLoRA
+```
+
+`model.type=lora` skips H2O MOJO and Dynamic Engagement, the same way
+`similarity` does. Ranking uses `SimilarityScorer` (cosine or dot).
+
+## Plugins
+
+| Plugin | Role |
+|--------|------|
+| `PrePredictLoRA` | Load the customer vector and offer-matrix item cache for the run |
+| `PostScoreLoRA` | Rank candidates, apply offer-matrix eligibility / whitelist |
+
+Push fails if the bound `run_id` has no embedding documents in those collections.
+
+## Feedback
+
+Closed loop: `POST /invocations` then `POST /response` with `uuid` +
+`offer_name`. Endpoint is singular `/response`.
+
+---
+
+## LoRA Training
+
+Source: `docs/modules/lora/training.mdx`
+URL: https://ecosystem.ai/docs/modules/lora/training
+Summary: Train a LoRA residual on flatten accept/reject pairs and export embeddings for runtime.
+
+# LoRA Training
+
+## Data
+
+1. **Flatten log** (`ecosystemruntime_flatten`): offers that were shown, with
+   `accepted` as the label. That log is the common behavior signal.
+2. **Offer matrix**: every offer that may be presented gets an item vector at
+3. **Templates**: user and item text templates filled from selected columns
+   (customer, channel, segment, offer attributes).
+
+## Steps in Workbench
+
+1. Create a config on **LoRA Recommender**.
+2. Set encoder `nomic-embed-text`, rank (default 8), alpha (default 16), and
+   templates. `rank=0` exports raw nomic vectors.
+3. **Train** — notebooks `POST /pytorch/train` with `model_type=lora`.
+4. **Concept test** — rank offers for one customer.
+5. **Export embeddings** — write `logging.lora_user_embeddings` and
+   `logging.lora_item_embeddings` for the `run_id`.
+
+## Residual
+
+With frozen encoder vector `z`:
+
+`z' = normalize(z + (alpha / r) * B A z)`
+
+`B` starts at zero so step 0 matches the encoder. Only `A` and `B` train.
 
 ---
 
@@ -14216,7 +14420,7 @@ Try the hosted runtime at [https://medemo.ecosystem.ai](https://medemo.ecosystem
 | Payload drift vs plugins | `validateInvokeRequest` / `validateResponseRequest` before scoring |
 | Which MCP tool to call | Each concept lists related tools (`invoke`, `listCampaigns`, …) |
 
-The Turtle sources are also downloadable (`runtime.ttl`, shapes, examples) for RAG or graph stores. See [Runtime Closed Loop](/docs/ontology/runtime).
+Look up concepts through the runtime catalog below. The documentation site does not serve Turtle files. See [Runtime Closed Loop](/docs/ontology/runtime).
 
 ## REST catalog
 
@@ -14230,7 +14434,6 @@ Same content as MCP resources. Prefix `{RUNTIME}` (for example `http://localhost
 | `GET` | `/ontology/runtime/recipes/closed-loop` | Closed-loop recipe JSON |
 | `POST` | `/ontology/runtime/validate/invoke` | Pre-flight invoke body |
 | `POST` | `/ontology/runtime/validate/response` | Pre-flight response body |
-| `GET` | `/ontology/runtime/downloads/runtime.ttl` | Bundled Turtle |
 
 ```bash
 curl "http://localhost:8091/ontology/runtime/concepts?q=invocation&limit=20"
@@ -14259,6 +14462,14 @@ Recommended flow:
 
 Protocol detail: [MCP Support](/docs/runtime/mcp). Workbench Operator agents use a **different** MCP server (`POST` Workbench `:8001/mcp`) for deployments and enrichment — do not mix the two `/mcp` surfaces.
 
+## Workbench project kind
+
+The entities ontology tells a Workbench agent whether a project is dynamic, static, or hybrid. Derive `engagementKind` from `hasDynamicEngagement`, `hasPredictor`, `hasFeatureStoreFrame`, and deployment `scoringMode`. Do not classify from the stored `projectType` string.
+
+`learningAlgorithm` is only the Dynamic Engagement dropdown: `epsilonGreedy`, `binaryThompson`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`. When the approach is `behaviorAlgos`, `behavioralType` is one of `lossAversion`, `riskAversion`, `prospectTheory`, `sentimentalEquilibrium`, `coverageAwareThompson`, `longTailBoostMF`, `generative`.
+
+Spend Personality and Money Personality are lookup-only (`scoringMode=lookup`). Any installation lookup is valid when the document has the fields the post-score plugin copies. A personality plugin stays lookup even if `is_multi_armed_bandit` is set. On `spend_personality`, `spend_personality` and `money_personality` are lookup deployments and `dynamic_recommender_behavior` is dynamic engagement.
+
 ## Related
 
 - [Runtime Closed Loop concepts](/docs/ontology/runtime)
@@ -14276,7 +14487,6 @@ Summary: Cross-module bridges between entities, workbench, server, and runtime
 
 # Alignments
 
-File: [`/ontology/alignments.ttl`](/ontology/alignments.ttl)  
 Namespace: `https://ecosystem.ai/ontology/platform#`
 
 Alignments relate concepts that live in different modules without merging their identity.
@@ -14288,15 +14498,14 @@ Alignments relate concepts that live in different modules without merging their 
 | Deployed campaign | `ent:DeploymentStep` / project campaign | `rt:CampaignContext` | What Workbench pushes becomes the runtime unit |
 | Offer catalog | `ent:OfferMatrix` / `OfferMatrixEntry` | `rt:hasOfferMatrix` | Same closed rows at design and score time |
 | Feature store | `ent:FeatureStoreRef` | `rt:FeatureLookupConfig` | Design-time pointer → runtime lookup |
-| Dynamic engagement | `ent:DynamicEngagement` | `rt:DynamicEngagementConfig` | Bandit / learning config on both sides |
-| Modeling ↔ Workbench | `srv:ModelingProject` | `ent:Project` | Optional shared identity when products share a project |
-| Solution case | `wb:SolutionCase` | Project + runtime campaign | Product pack binds meta + runtime |
+| Static feature-store frames | `ent:hasFeatureStoreFrame` | `ent:Frame` | H2O frames on the project. Not the open customer lookup |
+| Dynamic engagement | `ent:DynamicEngagement` | `rt:DynamicEngagementConfig` | Same six approaches. `behaviorAlgos` needs a behavioral type |
+| Scoring mode | `ent:scoringMode` | `rt:PostPredictPlugin` | The post-score class decides dynamic, static, lookup, or network |
+| Personality lookup | `ent:SpendPersonalityLookup`, `ent:MoneyPersonalityLookup` | `rt:PersonalityOfferResult` | Lookup-only copy. Not a learning approach |
+| Solution case | `wb:SpendPersonalityCase`, `wb:MoneyPersonalityCase` | those lookup classes | Workbench case for the same lookup scoring |
+| Modeling ↔ Workbench | `srv:ModelingProject` | `ent:Project` | Optional shared identity. `engagementKind` is only on the Workbench project |
 
-Exact property IRIs and OWL axioms are in the Turtle; treat this page as the **concept map**, the TTL as the **machine-readable source**.
-
-## Umbrella import
-
-[`/ontology/platform.ttl`](/ontology/platform.ttl) imports entities, workbench, server, runtime, and alignments so a single graph load covers the suite.
+This page is the concept map across the modules. The site does not serve a combined Turtle graph.
 
 ---
 
@@ -14320,6 +14529,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [server](/docs/ontology/server-catalog) | Class | `AppGenerationJob` | App Generation Job | Async job that generates application code from diagrams and ontology context. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `armReward` | arm reward |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `behavioralType` | behavioral type | randomisation.sub_approach. Required only for behaviorAlgos: lossAversion, riskAversion, prospectTheory, sentimentalEquilibrium, coverageAwareThompson, longTailBoostMF, generative. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `belongsToCatalog` | belongs to catalog |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `beta` | beta |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cache` | cache |  |
@@ -14341,7 +14551,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `cost` | cost |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `cost` | cost |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `customer` | customer |  |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed. A spend or money personality lookup is valid when the document has the fields the post-score plugin copies. This is not an H2O feature-store frame and not a closed schema. |
 | [entities](/docs/ontology/entities-catalog) | Class | `Dashboard` | Dashboard | Analytics dashboard definition. |
 | [entities](/docs/ontology/entities-catalog) | Class | `DataConnection` | Data Connection | External data connection such as Trino/Presto (collection: data_connections). |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `dateLog` | date log |  |
@@ -14354,8 +14564,9 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [server](/docs/ontology/server-catalog) | Class | `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
 | [server](/docs/ontology/server-catalog) | Datatype property | `domainId` | domain id |  |
 | [entities](/docs/ontology/entities-catalog) | Class | `DynamicEngagement` | Dynamic Engagement | Online learning / bandit engagement configuration (collection: dynamic_engagement) with algorithm, contextual variables, and store bindings. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for a dynamic engagement. The approach is epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, or Network. A behavioral type is required only for behaviorAlgos. Spend Personality and Money Personality are not approaches. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `embedsContactLog` | embeds contact log | response_log field. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `engagementKind` | engagement kind | dynamic, static, or hybrid. Derived from links and scoringMode. projectType is not the classifier. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `engagementName` | name |  |
 | [entities](/docs/ontology/entities-catalog) | Class | `EnrichmentPipeline` | Enrichment Pipeline | Saved data enrichment pipeline configuration. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `explore` | explore |  |
@@ -14372,12 +14583,13 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasAcceptedOffer` | has accepted offer |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasAgent` | has agent | project_agents asset link. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasCalendar` | has calendar |  |
-| [entities](/docs/ontology/entities-catalog) | Object property | `hasCampaign` | has campaign |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasCampaign` | has campaign | project_campaigns asset link. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasDataConnection` | has data connection |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebug` | has debug |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugConfig` | has debug config |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugDatabase` | has debug database |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugError` | has debug error |  |
+| [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugExplanation` | has debug explanation |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasDebugParams` | has debug params |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasDeploymentStep` | has deployment step | deployment_step array on the project document. |
 | [server](/docs/ontology/server-catalog) | Object property | `hasDiagram` | has diagram |  |
@@ -14387,6 +14599,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasFactInjectionConfig` | has fact injection config |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFeatureLookup` | has feature lookup | Open-schema binding; target documents are CustomerFeatureDocument instances of any shape. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasFeatureStore` | has feature store |  |
+| [entities](/docs/ontology/entities-catalog) | Object property | `hasFeatureStoreFrame` | has feature store frame | feature_stores array. Static H2O frames. Leave empty for dynamic projects. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasFinalResult` | has final result |  |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasFrame` | has frame | project_models asset link. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `hasOfferEntry` | has offer entry |  |
@@ -14404,10 +14617,11 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasSlimResult` | has slim result |  |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `hasStats` | has stats |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: explanations, errors, config, database, params snapshots. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugExplanation` | Invocation Debug Explanation | Operator-facing explanation in debug.explanations: code, severity, title, message, optional hint. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
@@ -14415,15 +14629,20 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobId` | job id |  |
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobLifecycleState` | lifecycle state | Queued \\| Running \\| Succeeded \\| Failed \\| Cancelled. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `joinsOffer` | joins offer | optionKey equals matrix offer_id. |
-| [entities](/docs/ontology/entities-catalog) | Datatype property | `learningAlgorithm` | learning algorithm | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `learningAlgorithm` | learning algorithm | randomisation.approach: epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, Network. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `linkedToProject` | linked to project | project_ids on contacts catalog / records. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `lookupKey` | lookup key |  |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixStatus` | status | draft \\| active \\| archived. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixVersion` | version |  |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `modelId` | model id |  |
-| [server](/docs/ontology/server-catalog) | Class | `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| [server](/docs/ontology/server-catalog) | Class | `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. engagementKind belongs to the Workbench Project, not to this class. |
 | [server](/docs/ontology/server-catalog) | Datatype property | `modelingProjectId` | project id |  |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `modifiedOfferScore` | modified offer score |  |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `MoneyPersonalityCase` | Money Personality Case | Lookup-only money personality scoring. Any lookup store is valid when documents carry the PostScoreMoneyPersonality fields. The runtime result is PersonalityOfferResult. |
+| [entities](/docs/ontology/entities-catalog) | Class | `MoneyPersonalityLookup` | Money Personality Lookup | Lookup-only money personality score copied by PostScoreMoneyPersonality. Any database and collection is valid when the document has the score fields. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `moneyPersonality` | money personality | money_personality, or personality when that is the stored label. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `moneyPersonalityScore` | money personality score | money_personality_score, or personality_score. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `moneyTrait` | money trait |  |
 | [workbench](/docs/ontology/workbench-catalog) | Object property | `monitorsCampaign` | monitors campaign deployment |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
@@ -14445,9 +14664,11 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `optionKey` | option key |  |
 | [entities](/docs/ontology/entities-catalog) | Class | `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `paramsJson` | params | Must be a JSON string on the wire, not a nested object. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `personality` | personality | Spend personality label copied to offer, offer_id, and offer_name. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `personalityScore` | personality score | personality_score on the looked-up document. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PersonalityOfferResult` | Personality Offer Result | Lookup-only result_full from PostScoreSpendingPersonality, including generated copies, or PostScoreMoneyPersonality. Those plugins copy precomputed fields. They do not score an H2O model and do not update the options store. |
 | [server](/docs/ontology/server-catalog) | Class | `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |
-| [runtime](/docs/ontology/runtime-catalog) | Class | `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| [runtime](/docs/ontology/runtime-catalog) | Class | `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result. PlatformDynamicEngagement is dynamic engagement. PostScoreBasic is static model scoring. PostScoreSpendingPersonality, including generated copies, and PostScoreMoneyPersonality are lookup-only. PostScoreNetwork is a network step. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `predictId` | predict id | Prediction case identifier (predict_id / prediction_case_id). |
 | [entities](/docs/ontology/entities-catalog) | Class | `Predictor` | Predictor | Static or AutoML prediction case configuration (collection: predictions). Links to a training frame and model parameters. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `predictor` | predictor |  |
@@ -14460,7 +14681,7 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `projectDescription` | project description |  |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `projectId` | project id | Primary business identifier for the project (project_id). |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `projectOwner` | project owner |  |
-| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectType` | project type |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `projectType` | project type | Free label. Not the classifier. Review may set dynamic_recommender. |
 | [entities](/docs/ontology/entities-catalog) | Class | `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `purpose` | purpose |  |
@@ -14473,19 +14694,24 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Class | `RewardPlugin` | Reward Plugin | plugin.reward class that updates learning state after /response. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `score` | score |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `scoringMode` | scoring mode | dynamic, static, or lookup. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `scoringData` | scoring data | Open feature bag logged when logging.detail is true; may also echo options-store state. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
 | [entities](/docs/ontology/entities-catalog) | Class | `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
-| [workbench](/docs/ontology/workbench-catalog) | Class | `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| [workbench](/docs/ontology/workbench-catalog) | Class | `SpendPersonalityCase` | Spend Personality Case | Lookup-only spend personality scoring. Any lookup store is valid when documents carry the PostScoreSpendingPersonality fields. The runtime result is PersonalityOfferResult. |
+| [entities](/docs/ontology/entities-catalog) | Class | `SpendPersonalityLookup` | Spend Personality Lookup | Lookup-only spend personality score copied by PostScoreSpendingPersonality, including generated copies. Any database and collection is valid when the document has the score fields. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `staticOffers` | static offers | Static priority slate when greater than 0. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `staticOffers` | static offers |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `stepType` | step type | deployment_step.step_type. Does not override scoringMode. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `subcampaign` | subcampaign |  |
 | [server](/docs/ontology/server-catalog) | Class | `SyntheticDataPackageJob` | Synthetic Data Package Job | Modeling synthetic-data job that produces ZIP packages (JSON/CSV/SQL/DDL) from class diagrams — distinct from Workbench2 Mongo synthetic. |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetCollection` | target collection |  |
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `targetDatabase` | target database |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `trait` | trait |  |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `traitScore` | trait score | trait_score when present. |
 | [server](/docs/ontology/server-catalog) | Object property | `triggeredByProject` | triggered by project |  |
 | [workbench](/docs/ontology/workbench-catalog) | Class | `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
 | [server](/docs/ontology/server-catalog) | Class | `UmlGenerationJob` | UML Generation Job | Async job that generates or analyzes UML diagrams for a modeling project. |
@@ -14529,9 +14755,7 @@ Represented in logs as nested `scoring_data` / feature-store payloads. The platf
 
 1. Keep **offer rows** fixed (six fields).
 2. Put **customer context** in open feature docs.
-3. Optionally describe that open schema in Turtle for synthetic generation or documentation — without locking the platform ontology to one vertical.
-
-Download: [`/ontology/runtime.ttl`](/ontology/runtime.ttl)
+3. Optionally describe that open schema for synthetic generation or documentation — without locking the platform ontology to one vertical.
 
 ---
 
@@ -14581,49 +14805,19 @@ For ecosystem-runtime campaigns:
 
 ---
 
-## Downloads
-
-Source: `docs/ontology/downloads.mdx`
-URL: https://ecosystem.ai/docs/ontology/downloads
-Summary: Turtle ontology and SHACL shape downloads for the ecosystem.Ai platform
-
-# Downloads
-
-Turtle ontologies and SHACL shapes are served from `/ontology/`:
-
-| Artifact | URL |
-|----------|-----|
-| Entities | [/ontology/entities.ttl](/ontology/entities.ttl) |
-| Entities shapes | [/ontology/entities-shapes.ttl](/ontology/entities-shapes.ttl) |
-| Workbench | [/ontology/workbench.ttl](/ontology/workbench.ttl) |
-| Workbench shapes | [/ontology/workbench-shapes.ttl](/ontology/workbench-shapes.ttl) |
-| Server | [/ontology/server.ttl](/ontology/server.ttl) |
-| Server shapes | [/ontology/server-shapes.ttl](/ontology/server-shapes.ttl) |
-| Runtime | [/ontology/runtime.ttl](/ontology/runtime.ttl) |
-| Runtime shapes | [/ontology/runtime-shapes.ttl](/ontology/runtime-shapes.ttl) |
-| Runtime examples | [/ontology/runtime-examples.ttl](/ontology/runtime-examples.ttl) |
-| Platform umbrella | [/ontology/platform.ttl](/ontology/platform.ttl) |
-| Alignments | [/ontology/alignments.ttl](/ontology/alignments.ttl) |
-
-Human-readable concept tables: [Concept Index](/docs/ontology/concept-index).
-
-Source of truth for authoring also lives in the Workbench2 repo under `presentations/ontology/`.
-
----
-
 ## Entities concept catalog
 
 Source: `docs/ontology/entities-catalog.mdx`
 URL: https://ecosystem.ai/docs/ontology/entities-catalog
-Summary: Complete class and property catalog from entities.ttl
+Summary: Complete class and property catalog for Workbench meta concepts
 
 # Entities concept catalog
 
-Generated from the published Turtle. Download [`/ontology/entities.ttl`](/ontology/entities.ttl) for machine-readable definitions.
+Class and property reference for Workbench meta concepts. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/entities#`
 
-## Classes (22)
+## Classes (24)
 
 | Local name | Pref label | Definition |
 |------------|------------|------------|
@@ -14641,6 +14835,7 @@ Namespace: `https://ecosystem.ai/ontology/entities#`
 | `FactInjectionConfig` | Fact Injection Config | Fact injection / chat configuration (collection: chat_config). |
 | `FeatureStoreRef` | Feature Store Reference | Pointer to a feature-store database and collection used for customer or context lookup. |
 | `Frame` | Frame | Training or reference data frame used by static model predictors (collection: frames). |
+| `MoneyPersonalityLookup` | Money Personality Lookup | Lookup-only money personality score copied by PostScoreMoneyPersonality. Any database and collection is valid when the document has the score fields. |
 | `OfferMatrix` | Offer Matrix | First-class offer catalog entity (collection: offer_matrix) with spec, version, status, and rows or linked rows collection. |
 | `OfferMatrixEntry` | Offer Matrix Entry | A single offer row in a matrix. Canonical runtime scoring fields: offer_id, offer_name, cost, price, category, static_offers. |
 | `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
@@ -14649,20 +14844,22 @@ Namespace: `https://ecosystem.ai/ontology/entities#`
 | `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
 | `ResponderConfig` | Responder API Config | Responder / API configuration for serving predictions (collection: responder_config). |
 | `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
+| `SpendPersonalityLookup` | Spend Personality Lookup | Lookup-only spend personality score copied by PostScoreSpendingPersonality, including generated PostScoreSpendingPersonality_* copies. Any database and collection is valid when the document has the score fields. |
 
-## Object properties (20)
+## Object properties (21)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
 | `belongsToCatalog` | belongs to catalog | `entities:ContactRecord` | `entities:ContactCatalog` |  |
 | `hasAgent` | has agent | `entities:Project` | `entities:AgentConfig` | project_agents asset link. |
 | `hasCalendar` | has calendar | `entities:Project` | `entities:Calendar` |  |
-| `hasCampaign` | has campaign | `entities:Project` | `entities:Campaign` |  |
+| `hasCampaign` | has campaign | `entities:Project` | `entities:Campaign` | project_campaigns asset link. |
 | `hasDataConnection` | has data connection | `entities:Project` | `entities:DataConnection` |  |
 | `hasDeploymentStep` | has deployment step | `entities:Project` | `entities:DeploymentStep` | deployment_step array on the project document. |
 | `hasDynamicEngagement` | has dynamic engagement | `entities:Project` | `entities:DynamicEngagement` | project_dynamic_interactions asset link. |
 | `hasFactInjectionConfig` | has fact injection config | `entities:Project` | `entities:FactInjectionConfig` |  |
 | `hasFeatureStore` | has feature store | `entities:DynamicEngagement` | `entities:FeatureStoreRef` |  |
+| `hasFeatureStoreFrame` | has feature store frame | `entities:Project` | `entities:Frame` | feature_stores array. Static H2O frames. Leave empty for dynamic projects. |
 | `hasFrame` | has frame | `entities:Project` | `entities:Frame` | project_models asset link. |
 | `hasOfferEntry` | has offer entry | `entities:OfferMatrix` | `entities:OfferMatrixEntry` |  |
 | `hasOfferMatrix` | has offer matrix | `entities:Project` | `entities:OfferMatrix` | project_offer_matrices asset link. |
@@ -14675,34 +14872,45 @@ Namespace: `https://ecosystem.ai/ontology/entities#`
 | `usesFrame` | uses frame | `entities:Predictor` | `entities:Frame` | Training frame referenced by model_parms.training_frame. |
 | `usesOfferMatrix` | uses offer matrix | `entities:Campaign` | `entities:OfferMatrix` |  |
 
-## Datatype properties (24)
+## Datatype properties (35)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
 | `agentName` | agent name | `entities:AgentConfig` | `xsd:string` |  |
+| `behavioralType` | behavioral type | `entities:DynamicEngagement` | `xsd:string` | randomisation.sub_approach. Required only for behaviorAlgos: lossAversion, riskAversion, prospectTheory, sentimentalEquilibrium, coverageAwareThompson, longTailBoostMF, generative. |
 | `campaignId` | campaign id | `entities:Campaign` | `xsd:string` |  |
 | `catalogId` | catalog id | `entities:ContactCatalog` | `xsd:string` |  |
 | `category` | category | `entities:OfferMatrixEntry` | `xsd:string` |  |
 | `contactId` | contact id | `entities:ContactRecord` | `xsd:string` |  |
 | `cost` | cost | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
 | `deploymentName` | deployment name | `entities:DeploymentStep` | `xsd:string` |  |
+| `engagementKind` | engagement kind | `entities:Project` | `xsd:string` | dynamic, static, or hybrid. Derived from links and scoringMode. projectType is not the classifier. |
 | `engagementName` | name | `entities:DynamicEngagement` | `xsd:string` |  |
 | `frameId` | frame id | `entities:Frame` | `xsd:string` |  |
-| `learningAlgorithm` | learning algorithm | `entities:DynamicEngagement` | `xsd:string` | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| `learningAlgorithm` | learning algorithm | `entities:DynamicEngagement` | `xsd:string` | randomisation.approach: epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, Network. |
 | `matrixStatus` | status | `entities:OfferMatrix` | `xsd:string` | draft \| active \| archived. |
 | `matrixVersion` | version | `entities:OfferMatrix` | `xsd:integer` |  |
 | `modelId` | model id | `entities:Predictor` | `xsd:string` |  |
+| `moneyPersonality` | money personality | `entities:MoneyPersonalityLookup` | `xsd:string` | money_personality, or personality when that is the stored label. |
+| `moneyPersonalityScore` | money personality score | `entities:MoneyPersonalityLookup` | `xsd:decimal` | money_personality_score, or personality_score. |
+| `moneyTrait` | money trait | `entities:MoneyPersonalityLookup` | `xsd:string` |  |
 | `offerId` | offer id | `entities:OfferMatrixEntry` | `xsd:string` | Join key for options store and matrix lookup. |
 | `offerMatrixId` | offer matrix id | `entities:OfferMatrix` | `xsd:string` |  |
 | `offerName` | offer name | `entities:OfferMatrixEntry` | `xsd:string` | Display name; primary /response match key. |
+| `personality` | personality | `entities:SpendPersonalityLookup` | `xsd:string` | Spend personality label copied to offer, offer_id, and offer_name. |
+| `personalityScore` | personality score | `entities:SpendPersonalityLookup` | `xsd:decimal` | personality_score on the looked-up document. |
 | `predictId` | predict id | `entities:Predictor` | `xsd:string` | Prediction case identifier (predict_id / prediction_case_id). |
 | `price` | price | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
 | `projectDescription` | project description | `entities:Project` | `xsd:string` |  |
 | `projectId` | project id | `entities:Project` | `xsd:string` | Primary business identifier for the project (project_id). |
 | `projectOwner` | project owner | `entities:Project` | `xsd:string` |  |
-| `projectType` | project type | `entities:Project` | `xsd:string` |  |
+| `projectType` | project type | `entities:Project` | `xsd:string` | Free label. Not the classifier. Review may set dynamic_recommender. |
 | `purpose` | purpose | `entities:Project` | `xsd:string` |  |
+| `scoringMode` | scoring mode | `entities:DeploymentStep` | `xsd:string` | dynamic, static, or lookup. |
 | `staticOffers` | static offers | `entities:OfferMatrixEntry` | `xsd:decimal` | Static priority slate when greater than 0. |
+| `stepType` | step type | `entities:DeploymentStep` | `xsd:string` | deployment_step.step_type. Does not override scoringMode. |
+| `trait` | trait | `entities:SpendPersonalityLookup` | `xsd:string` |  |
+| `traitScore` | trait score | `entities:SpendPersonalityLookup` | `xsd:decimal` | trait_score when present. |
 
 ---
 
@@ -14714,7 +14922,7 @@ Summary: Complete catalog of Workbench2 ecosystem_meta entity concepts in the pl
 
 # Entities (Workbench Meta)
 
-Namespace: [`https://ecosystem.ai/ontology/entities#`](/ontology/entities.ttl)
+Namespace: `https://ecosystem.ai/ontology/entities#`
 
 These classes map to Mongo collections (and embedded deployment config) managed in Workbench2. The **Project** is the hub; other entities attach via asset arrays and foreign keys.
 
@@ -14724,7 +14932,25 @@ These classes map to Mongo collections (and embedded deployment config) managed 
 |-------|------------|------------|
 | `Project` | Project | Hub that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps |
 
-**Key properties:** `projectId`, `projectDescription`, `purpose`, `projectType`, `projectOwner`
+**Key properties:** `projectId`, `projectDescription`, `purpose`, `projectType` (a label, not the classifier), `projectOwner`, `engagementKind` (`dynamic` | `static` | `hybrid`)
+
+`engagementKind` is derived from `hasDynamicEngagement`, `hasPredictor`, `hasFeatureStoreFrame`, and each deployment step’s `scoringMode`. A stored `projectType` such as `recommender` or `algorithm` does not decide the kind. `dynamic_recommender` is the review canonical label for a dynamic project. It is still not the classifier.
+
+## Dynamic, static, and hybrid
+
+| Example project | Stored `projectType` | `engagementKind` | Why |
+|-----------------|----------------------|------------------|-----|
+| `outreach_message_recommender` | `dynamic` | dynamic | Dynamic engagement links, no predictors, no feature-store frames. The label agrees. |
+| `dynamic_recommender_convergence` | `recommender` | dynamic | Six dynamic engagements and no static models. The label does not agree. |
+| `banking_credit_v2` | `solution_template` | hybrid | Static steps and predictors together with dynamic engagement steps. |
+
+Spend Personality and Money Personality are **lookup-only**. They are not Dynamic Engagement approaches and they are not `learningAlgorithm` values. `PostScoreSpendingPersonality` (including generated `PostScoreSpendingPersonality_*` copies) and `PostScoreMoneyPersonality` copy precomputed scores from whatever database and collection the deployment lookup points at. Any store is valid when the document has the fields that post-score reads.
+
+On `spend_personality`, the `spend_personality` and `money_personality` deployments are lookup-only, while `dynamic_recommender_behavior` is dynamic engagement. `options.is_multi_armed_bandit` does not turn a personality plugin into a dynamic step. The collection names on one installation are examples, not required names.
+
+Spend lookup fields: `personality`, `personality_score`, and when present `trait` and `trait_score`. Optional dimensions include `Experiential`, `Extrovert`, `Enthusiastic`, `Industrious`, `Intentional`, and `Introvert`.
+
+Money lookup fields: `money_personality` or `personality`, `money_trait` or `trait`, a matching score (`money_personality_score` or `personality_score`), and dimension fields such as `conservative`, `carefree`, `adventurous`, `borrower`, `cautious`, `indulger`, `prudent`, and `adventurer`.
 
 ## Static models
 
@@ -14743,7 +14969,11 @@ These classes map to Mongo collections (and embedded deployment config) managed 
 | `FeatureStoreRef` | DB + collection for customer/context lookup |
 | `OptionsStoreRef` | Options / arms store (alpha, beta, rewards) |
 
-**Key properties:** `engagementName`, `learningAlgorithm` (e.g. `binaryThompson`, `epsilonGreedy`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`; when `behaviorAlgos`, also set behavioral type via `sub_approach`)
+**Key properties:** `engagementName`, `learningAlgorithm`, `behavioralType`
+
+`learningAlgorithm` is `randomisation.approach` and must be one of the Dynamic Engagement dropdown values: `epsilonGreedy`, `binaryThompson`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`.
+
+`behavioralType` is `randomisation.sub_approach`. Set it only when `learningAlgorithm` is `behaviorAlgos`: `lossAversion`, `riskAversion`, `prospectTheory`, `sentimentalEquilibrium`, `coverageAwareThompson`, `longTailBoostMF`, `generative`. `generative` is a behavioral type, not a top-level approach.
 
 **Links:** `hasFeatureStore`, `hasOptionsStore`
 
@@ -14778,7 +15008,9 @@ See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
 | `ResponderConfig` | `responder_config` |
 | `Dashboard` | analytics dashboards |
 | `EnrichmentPipeline` | enrichment pipelines |
-| `DeploymentStep` | Embedded on Project — pushed to runtime |
+| `DeploymentStep` | Embedded on Project — pushed to runtime. `scoringMode` is `dynamic`, `static`, or `lookup`. `stepType` is the stored label and does not override `scoringMode`. |
+| `SpendPersonalityLookup` | Lookup document copied by `PostScoreSpendingPersonality`. Collection is per installation. |
+| `MoneyPersonalityLookup` | Lookup document copied by `PostScoreMoneyPersonality`. Collection is per installation. |
 
 ## Project asset links (object properties)
 
@@ -14786,9 +15018,10 @@ See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
 |----------|-----------|-----------------|
 | `hasPredictor` | Project → Predictor | `project_predictors` |
 | `hasFrame` | Project → Frame | `project_models` |
+| `hasFeatureStoreFrame` | Project → Frame | `feature_stores` (static H2O frames; leave empty on a dynamic project) |
 | `hasDynamicEngagement` | Project → DynamicEngagement | `project_dynamic_interactions` |
 | `hasOfferMatrix` | Project → OfferMatrix | `project_offer_matrices` |
-| `hasCampaign` | Project → Campaign | campaigns |
+| `hasCampaign` | Project → Campaign | `project_campaigns` |
 | `hasAgent` | Project → AgentConfig | `project_agents` |
 | `hasDeploymentStep` | Project → DeploymentStep | `deployment_step` |
 | `hasPrompt` | Project → Prompt | `project_prompts` |
@@ -14802,8 +15035,6 @@ See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
 | `belongsToCatalog` | ContactRecord → ContactCatalog | — |
 
 Full tables (every class and property): [Entities Catalog](/docs/ontology/entities-catalog) · [Concept Index](/docs/ontology/concept-index)
-
-Download: [`/ontology/entities.ttl`](/ontology/entities.ttl) · shapes: [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl)
 
 ---
 
@@ -14873,7 +15104,6 @@ Like an operational ontology elsewhere, it connects digital assets (Mongo collec
 | Modeling server concepts | [Server](/docs/ontology/server) · [full catalog](/docs/ontology/server-catalog) |
 | Fixed offer catalog shape | [Offer Matrix](/docs/ontology/offer-matrix) |
 | Open customer / feature docs | [Customer Feature Lookup](/docs/ontology/customer-features) |
-| Machine-readable downloads | [Downloads](/docs/ontology/downloads) |
 | Term lookup | [Glossary](/docs/ontology/glossary) |
 
 ## Modules at a glance
@@ -14893,9 +15123,9 @@ Full IRIs use the base `https://ecosystem.ai/ontology/`. See [Namespaces](/docs/
 1. **Offer Matrix rows are closed** — `offer_id`, `offer_name`, `cost`, `price`, `category`, `static_offers`
 2. **Customer / feature lookup is open** — any document shape keyed by customer (or configured lookup key)
 
-## Formal artifacts
+## Published form
 
-Turtle (OWL 2 + RDFS + SKOS) and SHACL shapes are published under [`/ontology/*.ttl`](/docs/ontology/downloads). Use them in tooling, synthetic data grounding, or as the contract for integrations.
+These pages are the published vocabulary. The site does not serve Turtle or SHACL files. Customers still describe their own open lookup documents, and Workbench can export an indicative ontology from a collection they own.
 
 ---
 
@@ -14915,9 +15145,10 @@ Object properties (edges) in the platform ontology. Prefixed by module: `ent:` e
 |----------|----------------|
 | `ent:hasPredictor` | Project → Predictor |
 | `ent:hasFrame` | Project → Frame |
+| `ent:hasFeatureStoreFrame` | Project → Frame (`feature_stores`) |
 | `ent:hasDynamicEngagement` | Project → DynamicEngagement |
 | `ent:hasOfferMatrix` | Project → OfferMatrix |
-| `ent:hasCampaign` | Project → Campaign |
+| `ent:hasCampaign` | Project → Campaign (`project_campaigns`) |
 | `ent:hasAgent` | Project → AgentConfig |
 | `ent:hasDeploymentStep` | Project → DeploymentStep |
 | `ent:hasPrompt` | Project → Prompt |
@@ -14988,7 +15219,7 @@ Summary: IRI prefixes for the ecosystem.Ai platform ontology modules
 
 Example term: `https://ecosystem.ai/ontology/entities#Project`
 
-Standard vocabularies used in the Turtle files: `owl`, `rdfs`, `xsd`, `skos`, `sh` (SHACL).
+The concept model uses `owl`, `rdfs`, `xsd`, `skos`, and `sh` (SHACL). Those files are not served from this site.
 
 Indicative ontologies inferred from Mongo use:
 
@@ -15055,9 +15286,9 @@ The offer catalog is **closed** at scoring time. Every linked row used by the ru
 
 Pre/post scoring plugins and bandit arms join on `offer_name` / option keys. Open-ended extra fields on matrix rows break matching and learning. Put customer context in the **open** feature lookup instead — see [Customer Feature Lookup](/docs/ontology/customer-features).
 
-## SHACL
+## Constraint
 
-Shapes live in [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl) and [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl).
+Offer matrix rows stay on the six fields above, at design time and at scoring time.
 
 ---
 
@@ -15071,14 +15302,13 @@ Summary: Umbrella platform ontology and how modules compose
 
 The platform umbrella (`https://ecosystem.ai/ontology/platform#`) imports four modules and cross-links them in alignments.
 
-| Module | Docs | Turtle |
-|--------|------|--------|
-| Entities | [Overview](/docs/ontology/entities) · [Catalog](/docs/ontology/entities-catalog) | [`entities.ttl`](/ontology/entities.ttl) |
-| Workbench | [Overview](/docs/ontology/workbench) · [Catalog](/docs/ontology/workbench-catalog) | [`workbench.ttl`](/ontology/workbench.ttl) |
-| Server | [Overview](/docs/ontology/server) · [Catalog](/docs/ontology/server-catalog) | [`server.ttl`](/ontology/server.ttl) |
-| Runtime | [Overview](/docs/ontology/runtime) · [Catalog](/docs/ontology/runtime-catalog) | [`runtime.ttl`](/ontology/runtime.ttl) |
-| Alignments | [Alignments](/docs/ontology/alignments) | [`alignments.ttl`](/ontology/alignments.ttl) |
-| Umbrella | — | [`platform.ttl`](/ontology/platform.ttl) |
+| Module | Docs |
+|--------|------|
+| Entities | [Overview](/docs/ontology/entities) · [Catalog](/docs/ontology/entities-catalog) |
+| Workbench | [Overview](/docs/ontology/workbench) · [Catalog](/docs/ontology/workbench-catalog) |
+| Server | [Overview](/docs/ontology/server) · [Catalog](/docs/ontology/server-catalog) |
+| Runtime | [Overview](/docs/ontology/runtime) · [Catalog](/docs/ontology/runtime-catalog) |
+| Alignments | [Alignments](/docs/ontology/alignments) |
 
 Server module **does not** copy industry domain catalogs (`crm`, `fin`, …). Those remain under `https://ecosystemcode.com/ontology/{id}`.
 
@@ -15097,30 +15327,31 @@ Full A–Z: [Concept Index](/docs/ontology/concept-index).
 
 Source: `docs/ontology/runtime-catalog.mdx`
 URL: https://ecosystem.ai/docs/ontology/runtime-catalog
-Summary: Complete class and property catalog from runtime.ttl
+Summary: Complete class and property catalog for the runtime closed loop
 
 # Runtime concept catalog
 
-Generated from the published Turtle. Download [`/ontology/runtime.ttl`](/ontology/runtime.ttl) for machine-readable definitions.
+Class and property reference for the runtime closed loop. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/runtime#`
 
-## Classes (29)
+## Classes (30)
 
 | Local name | Pref label | Definition |
 |------------|------------|------------|
 | `AcceptedOffer` | Accepted Offer | Element of offers_accepted; typically mirrors slim OfferResult fields. |
 | `CampaignContext` | Campaign Context | Isolated runtime unit keyed by campaign/predictor name: models, corpora, plugins, logging collections, feature lookup, and optional linked offer matrix. |
 | `ContactLog` | Contact Log | Mongo logging document for an invocation (logging.ecosystemruntime): uuid, predictor, api_params, params lookup, final_result, stats, scoring_data, date indexes. |
-| `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
-| `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed. A spend or money personality lookup is valid when the document has the fields the post-score plugin copies. This is not an H2O feature-store frame and not a closed schema. |
+| `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for a dynamic engagement. The approach is epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, or Network. A behavioral type is required only for behaviorAlgos: lossAversion, riskAversion, prospectTheory, sentimentalEquilibrium, coverageAwareThompson, longTailBoostMF, generative. Spend Personality and Money Personality are not approaches. |
 | `FeatureLookupConfig` | Feature Lookup Config | Configuration for customer/feature DB lookup (database, collection, key, typically customer). |
 | `FinalResultEntry` | Final Result Entry | One ranked row in final_result with rank, slim result, and result_full. |
 | `GlobalSettings` | Global Settings | Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora). |
-| `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: explanations, errors, config, database, params snapshots. |
 | `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
 | `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
 | `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| `InvocationDebugExplanation` | Invocation Debug Explanation | Operator-facing explanation in debug.explanations: code, severity, title, message, optional hint. |
 | `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
 | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
 | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
@@ -15129,8 +15360,8 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `OfferMatrixEntry` | Offer Matrix Entry | Canonical offer row: offer_id, offer_name, cost, price, category, static_offers. |
 | `OfferResult` | Offer Result | Slim scored offer: uuid, offer, offer_name, score, final_score, cost, price, offer_value, arm_reward, modified_offer_score. |
 | `Option` | Option | Dynamic engagement options row: optionKey joins OfferMatrixEntry.offer_id; alpha, beta, arm_reward, propensity. |
-| `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
-| `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| `PersonalityOfferResult` | Personality Offer Result | Lookup-only result_full from PostScoreSpendingPersonality, including generated copies, or PostScoreMoneyPersonality. Those plugins copy precomputed fields. They do not score an H2O model and do not update the options store. |
+| `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result. PlatformDynamicEngagement is dynamic engagement. PostScoreBasic is static model scoring. PostScoreSpendingPersonality, including generated copies, and PostScoreMoneyPersonality are lookup-only. PostScoreNetwork is a network step. |
 | `PrePredictPlugin` | Pre-Predict Plugin | plugin.prescore class that mutates params before scoring. |
 | `ProductOfferResult` | Product Offer Result | Recommender result_full with nested product catalog fields and bandit stats (alpha, beta, propensity). |
 | `ResponseFeedback` | Response Feedback | POST /response body: uuid required; offers_accepted with offer_name (preferred match key). |
@@ -15139,7 +15370,7 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
 | `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
 
-## Object properties (24)
+## Object properties (25)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
@@ -15150,6 +15381,7 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `hasDebugConfig` | has debug config | `runtime:InvocationDebug` | `runtime:InvocationDebugConfig` |  |
 | `hasDebugDatabase` | has debug database | `runtime:InvocationDebug` | `runtime:InvocationDebugDatabase` |  |
 | `hasDebugError` | has debug error | `runtime:InvocationDebug` | `runtime:InvocationDebugError` |  |
+| `hasDebugExplanation` | has debug explanation | `runtime:InvocationDebug` | `runtime:InvocationDebugExplanation` |  |
 | `hasDebugParams` | has debug params | `runtime:InvocationDebug` | `runtime:InvocationDebugParams` |  |
 | `hasDynamicEngagement` | has dynamic engagement | `runtime:CampaignContext` | `runtime:DynamicEngagementConfig` |  |
 | `hasEntry` | has entry | `runtime:OfferMatrix` | `runtime:OfferMatrixEntry` |  |
@@ -15212,7 +15444,7 @@ Summary: Invocations, response, ContactLog, ResponseLog, plugins, and campaign c
 
 # Runtime Closed Loop
 
-Namespace: [`https://ecosystem.ai/ontology/runtime#`](/ontology/runtime.ttl)
+Namespace: `https://ecosystem.ai/ontology/runtime#`
 
 Concepts for **ecosystem-runtime**: score offers, log contacts, accept feedback, and learn.
 
@@ -15238,7 +15470,7 @@ Same **`uuid`** ties invocation, contact log, and response.
 | `InvocationDebugExplanation` | One `debug.explanations[]` row: `code`, `severity`, `title`, `message`, optional `hint` |
 | `FinalResultEntry` | Ranked row: `rank` + slim `OfferResult` + `result_full` |
 | `OfferResult` | Slim offer: `uuid`, `offerName`, scores, cost/price |
-| `PersonalityOfferResult` | Trait-oriented `result_full` (Spend Personality) |
+| `PersonalityOfferResult` | Lookup-only `result_full` from Spend or Money Personality. Copies precomputed fields. Does not update the options store |
 | `ProductOfferResult` | Product + bandit `result_full` (recommenders) |
 | `ResponseFeedback` | `/response` body: `uuid` + `offers_accepted` |
 | `AcceptedOffer` | Accepted slim offer row |
@@ -15263,7 +15495,7 @@ Same **`uuid`** ties invocation, contact log, and response.
 | `CampaignContext` | Isolated runtime unit (campaign / predictor name) |
 | `GlobalSettings` | Properties: plugins, logging, offer matrix, param lookup, corpora |
 | `FeatureLookupConfig` | Open customer/feature DB lookup |
-| `DynamicEngagementConfig` | Algorithm + contextual variables corpora |
+| `DynamicEngagementConfig` | Algorithm corpora. Approaches: `epsilonGreedy`, `binaryThompson`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`. Behavioral type only for `behaviorAlgos` |
 | `Option` | Options-store arm; `optionKey` joins OfferMatrixEntry |
 | `ScoringParams` | Internal pipeline bag for plugins |
 
@@ -15277,6 +15509,8 @@ Same **`uuid`** ties invocation, contact log, and response.
 | `PostPredictPlugin` | `plugin.postscore` |
 | `RewardPlugin` | `plugin.reward` |
 
+`PostPredictPlugin` is how a deployment is scored. `PlatformDynamicEngagement` is dynamic engagement. `PostScoreBasic` is a static model. `PostScoreSpendingPersonality` (including generated copies) and `PostScoreMoneyPersonality` are lookup-only. `PostScoreNetwork` is a network step. The multi-armed-bandit flag does not turn a personality plugin into dynamic engagement.
+
 ## Related
 
 - [Offer Matrix](/docs/ontology/offer-matrix)
@@ -15284,7 +15518,6 @@ Same **`uuid`** ties invocation, contact log, and response.
 - [Runtime & Deployment docs](/docs/runtime)
 - [Runtime MCP — ontology tools & agent flow](/docs/runtime/mcp#recommended-agent-flow-closed-loop)
 - [Ontology for agents](/docs/ontology/agents) — Explorer UI and REST catalog
-- Examples TTL: [`/ontology/runtime-examples.ttl`](/ontology/runtime-examples.ttl)
 
 ## MCP & agent grounding
 
@@ -15308,19 +15541,17 @@ REST mirror: `GET /ontology/runtime/*` and `POST /ontology/runtime/validate/*` o
 
 Full tables: [Runtime Catalog](/docs/ontology/runtime-catalog) · [Concept Index](/docs/ontology/concept-index)
 
-Download: [`/ontology/runtime.ttl`](/ontology/runtime.ttl) · shapes: [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl)
-
 ---
 
 ## Server concept catalog
 
 Source: `docs/ontology/server-catalog.mdx`
 URL: https://ecosystem.ai/docs/ontology/server-catalog
-Summary: Complete class and property catalog from server.ttl
+Summary: Complete class and property catalog for modeling server concepts
 
 # Server concept catalog
 
-Generated from the published Turtle. Download [`/ontology/server.ttl`](/ontology/server.ttl) for machine-readable definitions.
+Class and property reference for modeling server concepts. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/server#`
 
@@ -15332,7 +15563,7 @@ Namespace: `https://ecosystem.ai/ontology/server#`
 | `Diagram` | Diagram | Saved UML diagram (class, sequence, etc.) belonging to a modeling project. |
 | `DomainCatalogEntry` | Domain Catalog Entry | Hosted business-domain seed from the domain catalog (ontology.ttl + shapes.ttl) loaded by DomainCatalogService. Industry domains live under https://ecosystemcode.com/ontology/{id}. |
 | `GenerationStrategy` | Generation Strategy | Selectable strategy or plugin binding for app/UML generation. |
-| `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. |
+| `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. engagementKind belongs to the Workbench Project, not to this class. |
 | `OntologyContext` | Ontology Context | Structured ontologyContext on a modeling project: domain ids, structuredModel, promptContext, roles, and related generation metadata. |
 | `OntologySynthesisRun` | Ontology Synthesis Run | Enhance/export run that merges diagrams, DB import, and roles into ontologyContext and Turtle export. |
 | `PlantUmlArtifact` | PlantUML Artifact | PlantUML text or SVG produced from diagram JSON via server-side conversion. |
@@ -15368,7 +15599,7 @@ Summary: ecosystem-server modeling project, diagram, ontology context, and gener
 
 # Modeling Server
 
-Namespace: [`https://ecosystem.ai/ontology/server#`](/ontology/server.ttl)
+Namespace: `https://ecosystem.ai/ontology/server#`
 
 Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code generation. This module does **not** duplicate industry domain catalogs (CRM, banking, …); those live under `https://ecosystemcode.com/ontology/{domainId}`.
 
@@ -15376,7 +15607,7 @@ Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code
 
 | Class | Definition |
 |-------|------------|
-| `ModelingProject` | UML / modeling project with description and optional `OntologyContext` |
+| `ModelingProject` | UML / modeling project with description and optional `OntologyContext`. `engagementKind` is not a field on this class |
 | `Diagram` | Saved UML diagram (class, sequence, …) |
 | `OntologyContext` | Structured ontology on the project: domain ids, structuredModel, promptContext, roles |
 | `DomainCatalogEntry` | Hosted business-domain seed (`ontology.ttl` + `shapes.ttl`) via DomainCatalogService |
@@ -15402,11 +15633,9 @@ Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code
 | `triggeredByProject` | UmlGenerationJob → ModelingProject |
 | `producesArtifact` | AppGenerationJob → PlantUmlArtifact |
 
-`ModelingProject` is related to Workbench `Project` only when intentionally shared — see [Alignments](/docs/ontology/alignments).
+`ModelingProject` is related to Workbench `Project` only when intentionally shared — see [Alignments](/docs/ontology/alignments). `engagementKind` is a Workbench project property. It does not apply to a modeling project.
 
 Full tables: [Server Catalog](/docs/ontology/server-catalog)
-
-Download: [`/ontology/server.ttl`](/ontology/server.ttl)
 
 ---
 
@@ -15423,7 +15652,7 @@ Without a shared vocabulary, each product invents field names, guesses `/invocat
 ## What it gives users
 
 1. **A concept catalog** — start at [Concept Index](/docs/ontology/concept-index) for every class and property; module overviews + generated catalogs under Ontology in the docs nav
-2. **Stable contracts** — Turtle downloads for integrations, validation, and AI grounding
+2. **Stable contracts** — the concept pages are the shared names for integrations, validation, and agent grounding
 3. **Clear open vs closed data** — flexible customer features; fixed offer rows
 4. **Round trip with Mongo** — export indicative ontology from a collection on `/data`, or ground synthetic generation with any uploaded TTL
 
@@ -15439,27 +15668,28 @@ Industry business domains (CRM, banking, …) remain in the separate domain cata
 
 Source: `docs/ontology/workbench-catalog.mdx`
 URL: https://ecosystem.ai/docs/ontology/workbench-catalog
-Summary: Complete class and property catalog from workbench.ttl
+Summary: Complete class and property catalog for Workbench application concepts
 
 # Workbench concept catalog
 
-Generated from the published Turtle. Download [`/ontology/workbench.ttl`](/ontology/workbench.ttl) for machine-readable definitions.
+Class and property reference for Workbench application concepts. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/workbench#`
 
-## Classes (11)
+## Classes (12)
 
 | Local name | Pref label | Definition |
 |------------|------------|------------|
 | `AnalyticsDashboard` | Analytics Dashboard | Workbench analytics studio dashboard with charts and filters over Mongo collections. |
 | `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
 | `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
+| `MoneyPersonalityCase` | Money Personality Case | Lookup-only money personality scoring. Any lookup store is valid when documents carry the PostScoreMoneyPersonality fields. The runtime result is PersonalityOfferResult. |
 | `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
 | `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
 | `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
 | `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
 | `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
-| `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| `SpendPersonalityCase` | Spend Personality Case | Lookup-only spend personality scoring. Any lookup store is valid when documents carry the PostScoreSpendingPersonality fields. The runtime result is PersonalityOfferResult. |
 | `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
 | `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
 
@@ -15490,7 +15720,7 @@ Summary: Workbench2 solution cases, jobs, synthetic data, and console concepts
 
 # Workbench Application
 
-Namespace: [`https://ecosystem.ai/ontology/workbench#`](/ontology/workbench.ttl)
+Namespace: `https://ecosystem.ai/ontology/workbench#`
 
 Concepts beyond raw `ecosystem_meta` collections — productized solutions and Workbench application surfaces.
 
@@ -15499,7 +15729,8 @@ Concepts beyond raw `ecosystem_meta` collections — productized solutions and W
 | Class | Definition |
 |-------|------------|
 | `SolutionCase` | Productized solution configuration |
-| `SpendPersonalityCase` | Spend / money personality scoring and messaging |
+| `SpendPersonalityCase` | Lookup-only spend personality scoring |
+| `MoneyPersonalityCase` | Lookup-only money personality scoring |
 | `TwoTowerCase` | Two-tower recommender training and deployment |
 
 **Link:** `usesSolutionCase` (Project → SolutionCase)
@@ -15529,8 +15760,6 @@ Concepts beyond raw `ecosystem_meta` collections — productized solutions and W
 Forward path: ontology guides synthetic generation. Reverse path: collection export produces indicative TTL. See [Data and Ontology](/docs/ontology/data-and-ontology).
 
 Full tables: [Workbench Catalog](/docs/ontology/workbench-catalog)
-
-Download: [`/ontology/workbench.ttl`](/ontology/workbench.ttl)
 
 ---
 
@@ -20253,7 +20482,6 @@ Headless catalog (same content as MCP resources/tools):
 | `GET /ontology/runtime/recipes/closed-loop` | Closed-loop recipe JSON |
 | `POST /ontology/runtime/validate/invoke` | Validate invoke body |
 | `POST /ontology/runtime/validate/response` | Validate response body |
-| `GET /ontology/runtime/downloads/runtime.ttl` | Bundled Turtle |
 
 ```bash
 curl -X POST "$RUNTIME/mcp" \
@@ -21715,7 +21943,9 @@ The Pre-Score Dynamic plugin is a plugin that is used to format the input to the
 
 ## How does it work?
 
-The Pre-Score Dynamic plugin loads the Dynamic Interaction configurations. It then uses these configurations to set any Virtual Variables that have been configured and then adds the values of the contextual variables to the params object that is carried through the runtime process.
+The Pre-Score Dynamic plugin loads the Dynamic Interaction configurations and pre-populates contextual variables on the params object that is carried through the runtime process.
+
+Lookup **virtual variables** are derived into `featuresObj` by **StageParamsDB** after customer lookup and **before** this plugin runs. Current `PreScoreDynamic` does **not** call `getVirtualVariables`. See [Virtual Variables](/docs/user_guides/virtual_variables).
 
 ## Java Code
 
@@ -21725,11 +21955,11 @@ Then, there is a static method named `getPrePredict(MongoClient mongoClient, JSO
 
 The function first checks if `lookupDatabase` is null, if it is then it returns the input `params` as is.
 
-If `lookupDatabase` isn't null, then the function uses `getDynamicSettings` to get the Dynamic Interaction configuration from the MongoDB database using the locations for the configurations contained in `params`. It uses the configuration to populate the Virtual variables using `getVirtualVariables` and populate the contextual variables using `getPrepopulateContextualVariables`.
+If `lookupDatabase` isn't null, then the function uses `getDynamicSettings` to get the Dynamic Interaction configuration from the MongoDB database using the locations for the configurations contained in `params`, then populates contextual variables using `getPrepopulateContextualVariables`. Virtual-variable derivation for `predictor.param.lookup` already happened in StageParamsDB.
 
 If any exception occurs during the execution of the function, it logs the error message (`LOGGER.error()`) including the UUID from the params and specifics of the failed dynamic parameters, also prints the stack trace of the exception (`e.printStackTrace();`). The function then returns the params object.
 
-The following is an example of the Post Score Basic plugin implemented in Java:
+The following is the current `PreScoreDynamic` pattern (no `getVirtualVariables` call):
 
 ```java
 package com.ecosystem.plugin.customer;
@@ -21764,11 +21994,10 @@ public class PreScoreDynamic extends PreScoreSuper {
 
         try {
 
-            /** Get dynamic properties and add virtual variables to the feature store. */
+            /** Load dynamic settings. Virtual variables were already derived by StageParamsDB. */
             params = getDynamicSettings(mongoClient, params);
-            params = getVirtualVariables(params);
 
-            /** Pupulate contextual variables by default based on settings. */
+            /** Populate contextual variables by default based on settings. */
             params = getPrepopulateContextualVariables(params);
 
         } catch (Exception e) {
@@ -21781,6 +22010,10 @@ public class PreScoreDynamic extends PreScoreSuper {
 
 }
 ```
+
+### Legacy (before 0.9.4.3)
+
+Older plugins called `getVirtualVariables(params)` after `getDynamicSettings`. That path is obsolete when StageParamsDB already writes lookup virtuals into `featuresObj`. Keep the call only if you maintain a custom pre-score that must re-derive virtuals for an older runtime.
 
 ---
 
@@ -22198,6 +22431,16 @@ Campaign-specific Gherkin can live under `src/main/resources/features/`. Prefer 
 - Concurrent API runs keep the properties path in a `ThreadLocal` that is cleared in `finally`.
 
 Source of truth in the Runtime repo: `TESTING.md`.
+
+## Workbench Runtime Testing (business evidence)
+
+Workbench2 **Runtime Testing** (`/runtime-testing`) is a **separate** product for automated business testing of **one** project, deployment, and version. It checks whether that deployment — including pre-score and post-score processing of invocations params — behaves as configured. It scores an **isolated** runtime with the normal closed loop (`POST /invocations` then `POST /response`), the same helpers as Runtime Console. It is **not** the in-process Simulations product (`/entities/simulation`). It may call `/test/campaign` as technical preflight and attach the unmodified report. A passing Cucumber run does **not** mean the business suite passed.
+
+Analyze extracts one-factor-at-a-time param values from pre/post score (plus operator-supplied values). Live runs evaluate assertions on the response and present case results, score/latency summaries, explanations, coverage, economics, drift, and convergence.
+
+Operators start suites and read results from the **Ecosystem Agent** or HTTP `POST /mcp`: `analyze_runtime_testing` → `plan_runtime_testing` (`confirm=true`) → `start_runtime_testing_run` (`confirm=true`) → `list_runtime_testing_runs` / `get_runtime_testing_run`. Live execution is isolated-only.
+
+Do not change `/test/campaign*` contracts or plugin signatures to support that Workbench product.
 
 ---
 
@@ -22687,12 +22930,14 @@ img
 
 Source: `docs/user_guides/dynamic/testing.mdx`
 URL: https://ecosystem.ai/docs/user_guides/dynamic/testing
-Summary: Manage APIs is where you create, test, and manage APIs, ensuring they are robust and ready for integration with other systems.  Simulations is where you run and analyze simulations to validate the accuracy and performance of machine learning models before deployment.
+Summary: Test a pushed Dynamic Interaction deployment — Manage APIs for single calls, Simulations for closed-loop traffic, Runtime Testing for isolated business evidence.
 
 # Introduction 
-The Manage APIs section is where you create, test, and manage APIs, ensuring they are robust and ready for integration with other systems. The Simulations section is where you run and analyze simulations to validate the accuracy and performance of machine learning models before deployment.
+Once you have pushed your deployment configuration you should do some testing to see if the results align with your expectations.
 
-Once you have pushed your deployment configuration you should do some testing to see if the results align with your expectations. There are two ways to test your deployment:
+Configure and run closed-loop traffic at **Simulation** (`/entities/simulation`) — the loop runs **in-process** on the Workbench backend ([Simulations](/docs/configuration/simulations)). For automated business evidence on **one** project, deployment, and version, use **Runtime Testing** (`/runtime-testing`) ([Campaign Testing](/docs/runtime/testing)).
+
+There are two ways to test your deployment from the Laboratory walkthrough below:
 
 ## 1. Test your API
 
@@ -22728,11 +22973,9 @@ Click **Execute** to bring back the API results and ensure your deployment is fu
 
 ## 2. Build a simulation
 
-Drive closed-loop traffic against the pushed deployment from Workbench 2 **Simulation** (`/entities/simulation`): iterations, take-up, connections, logs, and Beta / options-store results.
+Drive closed-loop traffic against the pushed deployment from Workbench 2 **Simulation** (`/entities/simulation`): iterations, take-up, connections, logs, Beta / options-store results, and result Explain. The engine runs in-process on the Workbench backend (notebooks `process_simulation` returns **410**).
 
-See **[Simulations](/docs/configuration/simulations)** for the current process (Validate connections, nested runs, optional scenario describe). Single-call tests belong on the [Runtime Dashboard](/docs/runtime/dashboard). To analyze the resulting logs, run an [Interactions Analytic](/docs/modules/data_agents/interactions) job.
-
-The Jupyter notebook worker is no longer the primary simulation UI.
+See **[Simulations](/docs/configuration/simulations)** for the current process (Validate connections, optional scenario describe, MCP tools). Single-call tests belong on the [Runtime Dashboard](/docs/runtime/dashboard). Business evidence for one deployment: [Campaign Testing](/docs/runtime/testing). To analyze the resulting logs, run an [Interactions Analytic](/docs/modules/data_agents/interactions) job.
 
 ---
 
@@ -23233,7 +23476,7 @@ Tabular approaches (`binaryThompson`, `epsilonGreedy`, `QLearning`) partition th
 | Loss Aversion (`lossAversion`) | Ignored-offer penalty + UCB | Failures hurt more than accepts help | Naturally low take-up on every arm | Rebuilt |
 | Risk Aversion (`riskAversion`) | Mean–variance utility | Low variance + decent mean | No history → no scores | Rebuilt |
 | Prospect Theory (`prospectTheory`) | Seeded values + drift | Adaptive drift + internal ε | Need for a single winner | Rebuilt |
-| Sentimental Equilibrium | Aggregate sentiment/effort | Not a per-offer ranker | Used as NBO | Single-shot / rebuilt |
+| Sentimental Equilibrium | Offer rank from response-rate utility | Equilibrium solve is unused by `score()` | Treating `arm_reward` as the contact rate | Rebuilt each cycle |
 | Coverage-Aware Thompson | Thompson + long-tail boost | Coverage fights concentration | Fairness KPI vs fastest winner | Rebuilt behavioral state; Beta-like sampling |
 | Long-Tail Boost MF | WRMF/ALS factors | Matrix density | Sparse logs / cold start | Rebuilt |
 | Generative (`generative`) | None (LLM per request) | Prompt + lookup vars | Latency, cost, audit | Not accumulated |
@@ -23437,6 +23680,8 @@ The `experiment_selector` network will randomly assign customers to experiment g
 - The logging connection and database should be the same for all of the ecosystem.Ai runtimes in the network, including the network runtime itself
 - An index `{"params.value":1,"predictor":1}` should be added to those already present in the logging collection
 
+**N-group allocations:** `groups.length` must be `random_splits.length + 1`. Splits are cumulative allocations that sum to ~1.0 (for example three groups `[0.2, 0.5, 0.3]`). Legacy two-group configs with a single split still treat that value as a threshold between `groups[0]` and `groups[1]`. Runtime reads splits and groups from `selector` first, then from the top-level document.
+
 ### **network_config**:
 ```json
 {
@@ -23475,6 +23720,24 @@ Besides the `no_logging_router` network type, both the Network Selector runtime 
 
 **Note:** - The Network Selector and nodes should use the same contacts and response collections
   - The `/response` API should be called on the Network Selector runtime rather than the node runtime
+  - Closed loop is `POST /invocations` then `POST /response` (singular) with that row’s `uuid` + `offer_name`
+
+## Nested selectors
+
+A child Network Selector is another named config. Nested hops stamp `in_params.ecosystem_network_uuid` (nearest logged parent), `ecosystem_network_path` (campaign@url list), and `ecosystem_network_depth`. Runtime rejects cycles and depth greater than 8 before making the child HTTP call. Connect and read timeouts are bounded on the dedicated network worker; global HTTP settings are unchanged. Each nested config has its own type, selector deployment `(project_id, deployment_id, version)`, logging policy, and targets.
+
+## Workbench workflow
+
+Named shared configs live in Workbench under **Project → Projects → Network Selector Configs**:
+
+- Shared library: `/entities/projects/network-selectors`
+- Project assignments: `/entities/projects/:projectId/network-selectors`
+- Identity is the unique immutable config **name**. Selector and target deployments use `(project_id, deployment_id, version)`. Mongo `_id` is not part of this contract.
+- Projects store `project_network_selectors: [{name, role, enabled}]`. The same named config can be assigned to many projects.
+- Save writes Workbench project, deployment, and collection configuration only. It does not publish, refresh, or restart Runtime.
+- Live tests require explicit confirmation against already-deployed campaigns and disclose that `/invocations` writes normal contact logs.
+- Rename is **Clone as new name**. Delete is blocked while any project is assigned.
+- Project Generate remains an entry point; after create, **Manage Network Selector** opens the named config editor.
 
 ---
 
@@ -25285,7 +25548,15 @@ There should now be a `virtual_variables` object saved in the JSON settings of t
                 ]
 ```
 
-To use your Virtual Variables you need to add them to your model or to your Dynamic Interaction configuration. To add a virtual variable to your model, add the derived variable to your model training feature store and train the model as usual. To add a virtual variable to your Dynamic Interaction configuration make sure your Dynamic Interaction configuration is linked to the Deployment in the New Knowledge accordion. Then go to the [Variables](/docs/configuration/dynamic/parameters/) tab and select the `Get values from external data store when scoring` checkbox. This will enable a dropdown list from which you can select a variable from the customer feature store configured in your deployment. The names of the Virtual Variables should be available in the list of variables. Select the desired variables and save your configuration. The same `virtual_variables` object that is saved in the Deployment json should now be saved record for the Dynamic Interaction in the `dynamic_engagement` collection in the `ecosystem_meta` database. 
+Defining a virtual variable does **not** train by itself. The runtime derives the `name` into `featuresObj` after customer lookup (discretize: default once, first inclusive `from`/`to` match wins; concatenate: space-join, skip nulls). Training uses those labels only when you select the **name** as Contextual Variable One/Two and/or a Dynamic Recommender training field, and Generate Options applies the same rules so seeded options match score-time labels.
+
+To use a virtual variable in Dynamic Engagement (Workbench2):
+1. Link the Dynamic Interaction to the Deployment (same prediction case / `uuid`).
+2. On the Variables tab, Contextual Variable One/Two dropdowns include feature-store keys **plus** virtual names from that linked deployment.
+3. Selecting a virtual name sets `contextual_variable_*_lookup` to that name, `*_from_data_source` to true, and prefills values from bucket labels plus `default`.
+4. Extra features for Naive Bayes and other factorised approaches belong in **training fields**, not a concatenated contextual slot. Do not list the same virtual name as both a contextual slot and a training field (double partition).
+
+Score time still reads `virtual_variables` from `predictor.param.lookup` (Push from the deployment). A copy on the `dynamic_engagement` document is for inspectability; it is not a second engine. 
 
 The following truncated example shows how to set the `virtual_variables` object in the python package:
 ```python
@@ -25305,7 +25576,7 @@ virtual_variables.append(virt_var)
 virt_var = dm.define_deployment_virtual_variable(
     name="segment_two"
     ,original_variable="customer_feature_two"
-    ,default="gt500"
+    ,default="gt-500"
     ,variable_type="discretize"
     ,buckets=[
               {"from": 0,"label": "lt-50","to": 50},
@@ -25370,15 +25641,15 @@ else:
 ```
 When you push your Deplyoment configuration to the runtime the properties file that is created will
 ```properties
-predictor.param.lookup={predictor:'dynamic-recommender',mojo:1,database:'mongodb',db:'telecommunications',table:'feature_store',url:'',lookup:{"value":123,"key":"customer"},virtual_variables:[{"default":"gt-15","buckets":[{"from":0,"label":"lt-15","to":15}],"name":"segment_one","type":"discretize","original_variable":"feature_one","fields":[]},{"default":"gt-500","buckets":[{"from":0,"label":"lt-50","to":50},{"from":50,"label":"50-250","to":250},{"from":250,"label":"250-500","to":500}],"name":"segment_two","type":"discretize","original_variable":"feature_one","fields":[]}],result:{parm1:'field1', parm2:'field2'}}
+predictor.param.lookup={predictor:'dynamic-recommender',mojo:1,database:'mongodb',db:'telecommunications',table:'feature_store',url:'',lookup:{"value":123,"key":"customer"},virtual_variables:[{"default":"gt-15","buckets":[{"from":0,"label":"lt-15","to":15}],"name":"segment_one","type":"discretize","original_variable":"customer_feature_one","fields":[]},{"default":"gt-500","buckets":[{"from":0,"label":"lt-50","to":50},{"from":50,"label":"50-250","to":250},{"from":250,"label":"250-500","to":500}],"name":"segment_two","type":"discretize","original_variable":"customer_feature_two","fields":[]}],result:{parm1:'field1', parm2:'field2'}}
 ```
 
 ## Virtual Variables and pre and post scoring logic
 
 ### Pre scoring logic
-If the Virtual Variables are configured in the `properties` file then they will be derived and added to `featuresObj` before the pre-scoring logic is called. Otherwise the `getVirtualVariables` method can be called in the pre-scoring logic to derive the Virtual Variables from the customer feature store lookup. The `getVirtualVariables` method will return `params` with an updated `featuresObj` which contains the values of the Virtual Variables.
+When `virtual_variables` are present on `predictor.param.lookup`, **StageParamsDB** derives them into `featuresObj` after customer lookup and **before** the pre-score plugin runs. `PreScoreDynamic` does **not** call `getVirtualVariables`. Post-score can fill contextual slots from `featuresObj` using `contextual_variable_*_name` (and `*_lookup` when set).
 
-To use Virtual Variables for the contextual variables in a Dynamic Interaction configuration, the `getDynamicSettings` and `getPrepopulateContextualVariables` methods need to be called in the pre scoring logic. The template for doing so is the `PreScoreDynamic` class which is shown below. `getDynamicSettings` will add the Dynamic Interaction configuration from `ecosystem_meta.dynamic_engagement` to `params` with the key `dynamicCorporaPreScore`. `getPrepopulateContextualVariables` will add the values of the virtual variables to `params.in_params` with the keys `contextual_variable_one` and `contextual_variable_two`. This will result in the values of the virtual variables being  added to the contextual variables objects in the `params` JSONObject that is passed through the runtime.
+To use Virtual Variables for the contextual variables in a Dynamic Interaction configuration, the `getDynamicSettings` and `getPrepopulateContextualVariables` methods still need to be called in the pre scoring logic. The template is `PreScoreDynamic` below. `getDynamicSettings` adds the Dynamic Interaction configuration from `ecosystem_meta.dynamic_engagement` to `params` as `dynamicCorporaPreScore`. `getPrepopulateContextualVariables` copies derived values into `params.in_params` as `contextual_variable_one` / `contextual_variable_two` when `*_lookup` is set.
 ```java
 package com.ecosystem.plugin.customer;
 
@@ -25409,7 +25680,7 @@ public class PreScoreDynamic extends PreScoreSuper {
 
         try {
 
-            /* Get dynamic properties and add virtual variables to the feature store. */
+            /* Dynamic Engagement settings. Virtual variables are already on featuresObj from lookup. */
             params = getDynamicSettings(mongoClient, params);
 
             /* Populate contextual variables by default based on settings. */
@@ -25426,7 +25697,7 @@ public class PreScoreDynamic extends PreScoreSuper {
 }
 ```
 
-**Note:** Prior to version 0.9.4.3 `getPrePredict` is not passed the Mongo Connection (`mongoClient`). In this case you will need to open a close a Mongo connection in the pre scoring logic, as shown in the code below. Note that this will increase the load on the database.
+**Note:** Prior to version 0.9.4.3 `getPrePredict` is not passed the Mongo Connection (`mongoClient`). In this case you will need to open a close a Mongo connection in the pre scoring logic, as shown in the code below. Note that this will increase the load on the database. This legacy example also calls `getVirtualVariables`; current `PreScoreDynamic` does not — lookup derivation happens in StageParamsDB.
     
 ```java
 package com.ecosystem.plugin.customer;
@@ -26669,5 +26940,179 @@ The Prediction Platform shields users from the complexity of working with human 
 - **Contextual prediction engine:** Predict next-best offer, action or recommendation from real-time, contextual data.
 
 When orienting systems to deal with individual human behavior, there needs to be a corresponding change in technical capabilities. The modern engagement environment requires a shift away from mass marketing to individual-level engagement, at scale. Contextualized, real-time predictions that converge on the individual require an architectural-level shift — away from legacy systems built on old notions of customer engagement, to systems that can deal with new data arriving every few milliseconds, and facilitate real-time, adaptive machine learning.
+
+---
+
+## Agentic capabilities when creating recommenders
+
+Source: `blog/2026-09-18_agentic-capabilities-recommenders.mdx`
+URL: https://ecosystem.ai/blog/2026-09-18_agentic-capabilities-recommenders
+Summary: How Workbench2’s Ecosystem Agent was built — and the capabilities that speed up recommender project creation, scoring, and day-two maintenance.
+Date: 2026/09/18
+Tags: agentic, recommender, workbench, MCP
+
+A recommender is not a prompt. It is a project, an offer catalog, a Dynamic Engagement (or Two-Tower, or personality pipeline), a Runtime deployment, and a closed loop that actually learns. The slow part is rarely “pick an algorithm.” It is wiring those pieces without inventing configuration, then keeping them honest after the first scores land.
+
+Workbench2’s **Ecosystem Agent** is the operator we built for that work. It sits in `/assistant`, talks only through Workbench MCP, and treats the form you have open as live context. It does **not** chat with customers — that is EcoGentic. It does **not** score campaigns by guessing — that is Runtime `POST /invocations` then `POST /response`.
+
+This post explains how that agent was built, then lists the capabilities you can use today to create and maintain recommender projects faster.
+
+## What we built (and what we refused to build)
+
+The Ecosystem Agent is a Workbench **operator**, implemented with the Claude Agent SDK, but **model traffic never goes to Anthropic**. Every turn hits Workbench `POST /v1/messages` and the **default** LLM configured under Administration. There is no `sk-ant-` key in the image.
+
+Three design rules from day one:
+
+1. **Tools only.** Allowed: Workbench MCP tools (`mcp__ecosystem-workbench`). Disallowed: Bash, Write, Edit, WebSearch. The agent cannot shell out or rewrite your repo.
+2. **Confirm before mutate.** `call_endpoint`, `entity`, and `update_current_form` need `confirm=true`. The operator still **Saves** the form.
+3. **Ground in this platform.** Algorithm names come from `recommend_algorithm` / `explain_algorithms`. Convergence advice comes from `explain_convergence`. Navigation comes from the Workbench product guide. Numbers come from tool results. The agent is not allowed to invent approach IDs, scores, or deployment names.
+
+That is the opposite of a generic coding copilot glued onto a recommender UI.
+
+```mermaid
+flowchart TB
+  Op[Operator /assistant]
+  SDK[Agent SDK]
+  LLM[Workbench POST /v1/messages]
+  MCP[In-process MCP]
+  API["Private /api/v1"]
+  RT["Runtime /invocations + /response"]
+
+  Op --> SDK
+  SDK --> LLM
+  SDK --> MCP
+  MCP --> API
+  MCP -->|score_customer / send_feedback| RT
+```
+
+External Cursor / Claude Code can attach the same tools over `POST /mcp` with a Workbench JWT and a public credential (`ewb_public_…`). In-app chat does not need that key. Runtime builtin MCP (`POST` on the scoring host) is a **different** server — use it for `invoke` / `response`, not for editing Dynamic Engagement documents.
+
+## Contextual intelligence: the open form is the working set
+
+When you are on an editor, Workbench appends a `[Current form]` stanza: collection, id, dirty flag, and the live (possibly unsaved) JSON. The agent treats that document as the working set.
+
+| Operator says | Agent does |
+| --- | --- |
+| “Explain this” / “explain this project” | MCP `explain_entity` — answers from the document + registry metadata |
+| “Set epsilon to …” / “bind gender as a campaign param” | `update_current_form` with a patch (`confirm=true`) — **you** review and Save |
+| “Create / persist this” | `entity` CRUD on `/api/v1/entities/<collection>` (`confirm=true`) |
+
+List pages do not send a document. The agent must not invent one.
+
+That loop is how maintenance stays fast: you stay on Dynamic Engagement, ask why an arm is stuck, get an explanation grounded in **this** config, then accept a patch instead of re-keying JSON.
+
+## Generate the project, then specialize the recommender
+
+On [Projects](/docs/configuration/project) use **Generate project**. Natural language is classified into platform features (offer matrix, whitelist, budget, lookup from data, generative, champion-challenger, and so on). The generator creates assets in a fixed order so UUIDs actually link:
+
+1. Dynamic Engagement first (gets a UUID)
+2. Deployment step, with `pulse_responder_uuid` pointed at that engagement
+3. Project wrapping both
+
+Post-score plugins follow the same product rules the Runtime uses. Dynamic and static scoring both default to `PlatformDynamicEngagement`. Spend / money personality and offer-matrix recommenders pick their dedicated post-score classes. Pre-score and reward stay on the platform defaults unless you override them.
+
+Then ask the Ecosystem Agent **which approach to use**. It calls `recommend_algorithm` and answers in **dropdown names** (Ecosystem Rewards Algorithm, Two-Tower Similarity, H2O MOJO, Spend Personality, Network Selector). Runtime `approach` / `sub_approach` IDs belong in a config snippet, not in chat. Human Behavioral Algorithm always needs a type — Loss Aversion if you do not specify one.
+
+**info:** Network Analysis Algorithm (PageRank **inside** one Dynamic Engagement) is not Network Selector (traffic split / champion-challenger across runtimes). The agent is taught that fork on purpose.
+
+## Capability map: accelerate creation
+
+These are the capabilities we wired so a recommender project does not start from a blank Mongo document.
+
+### 1. Orient without a tribal wiki
+
+`describe_workbench` and `explain_workbench` answer “where is Dynamic Engagement?” with clickable paths (`/entities/dynamic_engagement`, `/entities/offer_matrix`, `/runtime-console`, `/assistant`). The source is the committed Workbench operator guide, not a hallucinated sitemap.
+
+### 2. Discover the real API
+
+`list_api_catalog` returns the Public API Access catalog — scopes and `/public/v1` routes — so notebooks and MCP clients use the same surface as Administration → API Keys. `call_endpoint` is the escape hatch when a typed tool does not exist. Mutations still need confirm.
+
+### 3. Bind offers and identity
+
+Offer Matrix is first-class (`/entities/offer_matrix`). Feedback matching on Runtime uses `offer_name` (or `offer` / `offer_treatment_code`) plus the `uuid` from `final_result`. The agent is instructed to copy those from the score tool, never to invent them.
+
+### 4. Configure learning where it lives
+
+Dynamic Experimentation is the `dynamic_engagement` entity plus Runtime scoring. The agent does not invent a second experiment engine. Training fields, epsilon, rewards, and windows are edited on the open form or explained via `explain_algorithms` / `explain_convergence`.
+
+### 5. Ground offers in business language
+
+Ontology tools (`list_ontologies`, `describe_ontology`, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology`) map “customers older than 40” onto enabled Mongo/Trino mappings. Campaigns and scoring resolve terms to fields; they do not query Turtle by hand. If Ontology Management is off, the agent says so and falls back.
+
+### 6. Score a real deployment
+
+`list_deployments` → `score_customer` → ranked offers from the tool only → on accept, `send_feedback` with that row’s `uuid` and `offer_name`. That wraps the Runtime closed loop. `params` remains a JSON **string** (empty object `""` as a string, or encoded `input` / `value` arrays). Never a nested object.
+
+### 7. Attach campaigns without confusing channels
+
+Intelligent Sales lists delivery channels (email, WhatsApp, Python, …), assigns published options, triggers sample vs production runs, and drafts cron from plain English. Runtime scoring `channel` (`app` / `web` / `api`) is a different field. The skills keep those apart.
+
+## Capability map: accelerate maintenance
+
+Creation is half the cost. These capabilities are for the week after go-live.
+
+| Need | Capability | What it actually does |
+| --- | --- | --- |
+| “Why is this config like this?” | `explain_entity` | Read-only markdown from the live form + entity metadata |
+| “Why aren’t scores moving?” | `explain_convergence` | Priors, `alpha_zero` / `beta_zero`, training cells, epsilon — from the Model Convergence guide, not generic bandit folklore |
+| “Change this field” | `update_current_form` | Patch the editor; you Save |
+| “Did learning happen?” | `send_feedback` / Runtime `/response` | Same `uuid` ties ContactLog to ResponseLog |
+| “Rehearse traffic” | [Simulations](/docs/configuration/simulations) | Workbench `/entities/simulation` — Save anytime; Run when connections validate |
+| “Is the campaign wired?” | Channel tools + Runtime Console | Delivery vs scoring; campaign BDD on the Runtime Dashboard |
+| “Personality drift” | Spend/money MCP + public `/runs` | Phased pipelines; poll jobs — not a one-shot notebook forever |
+
+Closed loop reminder: `POST /invocations` ranks. `POST /response` (singular) with `uuid` + `offer_name` is what the rolling process counts as success. Thompson samples the stored Beta. Unbinned numeric training fields make every cell `n=1` — the convergence skill is there so that diagnosis is repeatable.
+
+## Skills we ship with the operator
+
+Committed operator skills (Workbench `.claude/skills/`) are the playbooks the agent follows:
+
+| Skill | When you use it |
+| --- | --- |
+| `claude-operator` | Default MCP-only policy |
+| `workbench-navigator` | Where / what / Path links |
+| `algorithm-selection` | Which approach; explain catalog |
+| `dynamic-experimentation` | Configure DE + learning loop |
+| `model-convergence` | Priors, stalls, levers |
+| `real-time-recommender` | Score + `/response` |
+| `intelligent-sales` | Campaigns and delivery channels |
+| `ontology-data` | Terms → mapped queries |
+| `spend-personality` / `money-personality` / `predictive-personality` | Trait pipelines composed with a live score |
+| `conversational` | EcoGentic journeys — not `/assistant` |
+| `interaction-science` | Sentimental equilibrium |
+
+Administration → Agents is the catalog of those product agents plus the Ecosystem Agent itself. Coverage is `wired` / `partial` / `gap` on purpose — we do not pretend every row is fully autonomous.
+
+## A concrete recommender session
+
+1. In Workbench, open **Projects** → **Generate project**: “Next-best offer on app, learn online from accept, use our offer matrix.”
+2. Open the generated Dynamic Engagement. Ask the agent: “Explain this.” It calls `explain_entity`.
+3. “Which algorithm?” → `recommend_algorithm` (likely a Dynamic Engagement family; dropdown name, not a guessed ID).
+4. Push the deployment. In Runtime Console or via the agent: `list_deployments`, `score_customer` for a known `customer_id`.
+5. Accept an offer in the tester (or `send_feedback`) with the returned `uuid` and `offer_name`.
+6. A week later: “Why is offer B stuck at the prior?” → `explain_convergence` on this form. Patch training fields or epsilon via `update_current_form`. Save. Re-score.
+
+That is project creation **and** maintenance in the same agent, on the same MCP contract.
+
+## What not to mix
+
+| Surface | Job |
+| --- | --- |
+| Ecosystem Agent `/assistant` | Operators, config, explain, score via a **deployment** |
+| EcoGentic `/ecogentic` | Customer journeys |
+| Data Agents | Analytics jobs and markdown reports |
+| Runtime `POST /mcp` | `invoke` / `response` / ontology validators on the Java engine |
+| Workbench `POST /mcp` | Deployments, entities, enrichment, public catalog |
+
+If you point Cursor at the wrong `/mcp`, you will not see `list_api_catalog` on Runtime, and you will not see `invoke` on Workbench. That split is intentional.
+
+## Start
+
+- In Workbench: header **Ecosystem Agent**, or `/assistant`
+- Catalog: **Administration → Agents**
+- Keys for external attach: **Administration → API Keys → Public API Access**
+- Platform docs: [Public APIs, Agents & MCP](/docs/configuration/workbench_apis), [Runtime MCP](/docs/runtime/mcp), [Closed-loop API](/docs/runtime/access)
+
+The agent is there to shorten the distance between “we need a recommender” and a deployment that can learn — without letting a general-purpose model invent the platform.
 
 ---

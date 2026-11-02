@@ -5,7 +5,6 @@ description: Cross-module bridges between entities, workbench, server, and runti
 
 # Alignments
 
-File: [`/ontology/alignments.ttl`](/ontology/alignments.ttl)  
 Namespace: `https://ecosystem.ai/ontology/platform#`
 
 Alignments relate concepts that live in different modules without merging their identity.
@@ -17,12 +16,11 @@ Alignments relate concepts that live in different modules without merging their 
 | Deployed campaign | `ent:DeploymentStep` / project campaign | `rt:CampaignContext` | What Workbench pushes becomes the runtime unit |
 | Offer catalog | `ent:OfferMatrix` / `OfferMatrixEntry` | `rt:hasOfferMatrix` | Same closed rows at design and score time |
 | Feature store | `ent:FeatureStoreRef` | `rt:FeatureLookupConfig` | Design-time pointer → runtime lookup |
-| Dynamic engagement | `ent:DynamicEngagement` | `rt:DynamicEngagementConfig` | Bandit / learning config on both sides |
-| Modeling ↔ Workbench | `srv:ModelingProject` | `ent:Project` | Optional shared identity when products share a project |
-| Solution case | `wb:SolutionCase` | Project + runtime campaign | Product pack binds meta + runtime |
+| Static feature-store frames | `ent:hasFeatureStoreFrame` | `ent:Frame` | H2O frames on the project. Not the open customer lookup |
+| Dynamic engagement | `ent:DynamicEngagement` | `rt:DynamicEngagementConfig` | Same six approaches. `behaviorAlgos` needs a behavioral type |
+| Scoring mode | `ent:scoringMode` | `rt:PostPredictPlugin` | The post-score class decides dynamic, static, lookup, or network |
+| Personality lookup | `ent:SpendPersonalityLookup`, `ent:MoneyPersonalityLookup` | `rt:PersonalityOfferResult` | Lookup-only copy. Not a learning approach |
+| Solution case | `wb:SpendPersonalityCase`, `wb:MoneyPersonalityCase` | those lookup classes | Workbench case for the same lookup scoring |
+| Modeling ↔ Workbench | `srv:ModelingProject` | `ent:Project` | Optional shared identity. `engagementKind` is only on the Workbench project |
 
-Exact property IRIs and OWL axioms are in the Turtle; treat this page as the **concept map**, the TTL as the **machine-readable source**.
-
-## Umbrella import
-
-[`/ontology/platform.ttl`](/ontology/platform.ttl) imports entities, workbench, server, runtime, and alignments so a single graph load covers the suite.
+This page is the concept map across the modules. The site does not serve a combined Turtle graph.

@@ -1,0 +1,33 @@
+---
+title: LoRA Training
+description: Train a LoRA residual on flatten accept/reject pairs and export embeddings for runtime.
+---
+
+# LoRA Training
+
+## Data
+
+1. **Flatten log** (`ecosystemruntime_flatten`): offers that were shown, with
+   `accepted` as the label. That log is the common behavior signal.
+2. **Offer matrix**: every offer that may be presented gets an item vector at
+   export time, including cold offers never shown in the log.
+3. **Templates**: user and item text templates filled from selected columns
+   (customer, channel, segment, offer attributes).
+
+## Steps in Workbench
+
+1. Create a config on **LoRA Recommender**.
+2. Set encoder `nomic-embed-text`, rank (default 8), alpha (default 16), and
+   templates. `rank=0` exports raw nomic vectors.
+3. **Train** — notebooks `POST /pytorch/train` with `model_type=lora`.
+4. **Concept test** — rank offers for one customer.
+5. **Export embeddings** — write `logging.lora_user_embeddings` and
+   `logging.lora_item_embeddings` for the `run_id`.
+
+## Residual
+
+With frozen encoder vector `z`:
+
+`z' = normalize(z + (alpha / r) * B A z)`
+
+`B` starts at zero so step 0 matches the encoder. Only `A` and `B` train.

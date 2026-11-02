@@ -5,7 +5,7 @@ description: ecosystem-server modeling project, diagram, ontology context, and g
 
 # Modeling Server
 
-Namespace: [`https://ecosystem.ai/ontology/server#`](/ontology/server.ttl)
+Namespace: `https://ecosystem.ai/ontology/server#`
 
 Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code generation. This module does **not** duplicate industry domain catalogs (CRM, banking, …); those live under `https://ecosystemcode.com/ontology/{domainId}`.
 
@@ -13,7 +13,7 @@ Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code
 
 | Class | Definition |
 |-------|------------|
-| `ModelingProject` | UML / modeling project with description and optional `OntologyContext` |
+| `ModelingProject` | UML / modeling project with description and optional `OntologyContext`. `engagementKind` is not a field on this class |
 | `Diagram` | Saved UML diagram (class, sequence, …) |
 | `OntologyContext` | Structured ontology on the project: domain ids, structuredModel, promptContext, roles |
 | `DomainCatalogEntry` | Hosted business-domain seed (`ontology.ttl` + `shapes.ttl`) via DomainCatalogService |
@@ -39,8 +39,6 @@ Concepts for **ecosystem-server** modeling — UML, ontology synthesis, and code
 | `triggeredByProject` | UmlGenerationJob → ModelingProject |
 | `producesArtifact` | AppGenerationJob → PlantUmlArtifact |
 
-`ModelingProject` is related to Workbench `Project` only when intentionally shared — see [Alignments](/docs/ontology/alignments).
+`ModelingProject` is related to Workbench `Project` only when intentionally shared — see [Alignments](/docs/ontology/alignments). `engagementKind` is a Workbench project property. It does not apply to a modeling project.
 
 Full tables: [Server Catalog](/docs/ontology/server-catalog)
-
-Download: [`/ontology/server.ttl`](/ontology/server.ttl)

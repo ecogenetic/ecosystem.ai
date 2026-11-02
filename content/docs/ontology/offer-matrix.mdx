@@ -39,6 +39,6 @@ The offer catalog is **closed** at scoring time. Every linked row used by the ru
 
 Pre/post scoring plugins and bandit arms join on `offer_name` / option keys. Open-ended extra fields on matrix rows break matching and learning. Put customer context in the **open** feature lookup instead — see [Customer Feature Lookup](/docs/ontology/customer-features).
 
-## SHACL
+## Constraint
 
-Shapes live in [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl) and [`/ontology/runtime-shapes.ttl`](/ontology/runtime-shapes.ttl).
+Offer matrix rows stay on the six fields above, at design time and at scoring time.

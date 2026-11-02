@@ -19,5 +19,4 @@ export default {
   alignments: 'Alignments',
   platform: 'Platform Modules',
   glossary: 'Glossary',
-  downloads: 'Downloads',
 }

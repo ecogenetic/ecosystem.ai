@@ -22,7 +22,7 @@ Bind the private API to the cluster network. External notebooks and vendors shou
 
 ## How the SPA authenticates
 
-1. User signs in (Workbench login).
+1. User signs in via Workbench login (local password, On-Premises Active Directory LDAP/LDAPS bind, or Microsoft Entra ID OIDC SSO — see [Active Directory & SSO](/docs/configuration/workbench_apis/active_directory)).
 2. JWT is stored as the session (`ecosystem_auth`).
 3. Frontend calls `/api/v1/…` (Vite proxies to `:8001` in local `frontend/run.sh`).
 4. `JWTAuthMiddleware` rejects missing/invalid tokens on protected routes.

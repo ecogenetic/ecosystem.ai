@@ -26,7 +26,6 @@ Like an operational ontology elsewhere, it connects digital assets (Mongo collec
 | Modeling server concepts | [Server](/docs/ontology/server) · [full catalog](/docs/ontology/server-catalog) |
 | Fixed offer catalog shape | [Offer Matrix](/docs/ontology/offer-matrix) |
 | Open customer / feature docs | [Customer Feature Lookup](/docs/ontology/customer-features) |
-| Machine-readable downloads | [Downloads](/docs/ontology/downloads) |
 | Term lookup | [Glossary](/docs/ontology/glossary) |
 
 ## Modules at a glance
@@ -46,6 +45,6 @@ Full IRIs use the base `https://ecosystem.ai/ontology/`. See [Namespaces](/docs/
 1. **Offer Matrix rows are closed** — `offer_id`, `offer_name`, `cost`, `price`, `category`, `static_offers`
 2. **Customer / feature lookup is open** — any document shape keyed by customer (or configured lookup key)
 
-## Formal artifacts
+## Published form
 
-Turtle (OWL 2 + RDFS + SKOS) and SHACL shapes are published under [`/ontology/*.ttl`](/docs/ontology/downloads). Use them in tooling, synthetic data grounding, or as the contract for integrations.
+These pages are the published vocabulary. The site does not serve Turtle or SHACL files. Customers still describe their own open lookup documents, and Workbench can export an indicative ontology from a collection they own.

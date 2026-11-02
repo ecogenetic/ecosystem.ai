@@ -1,27 +1,28 @@
 ---
 title: Workbench concept catalog
-description: Complete class and property catalog from workbench.ttl
+description: Complete class and property catalog for Workbench application concepts
 ---
 
 # Workbench concept catalog
 
-Generated from the published Turtle. Download [`/ontology/workbench.ttl`](/ontology/workbench.ttl) for machine-readable definitions.
+Class and property reference for Workbench application concepts. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/workbench#`
 
-## Classes (11)
+## Classes (12)
 
 | Local name | Pref label | Definition |
 |------------|------------|------------|
 | `AnalyticsDashboard` | Analytics Dashboard | Workbench analytics studio dashboard with charts and filters over Mongo collections. |
 | `AsyncJob` | Async Job | Background job for training, synthetic data, enrichment, or generation workflows. |
 | `IndicativeOntologyInference` | Indicative Ontology Inference | Operation that samples a Mongo collection and emits an indicative Turtle ontology draft from observed fields. |
+| `MoneyPersonalityCase` | Money Personality Case | Lookup-only money personality scoring. Any lookup store is valid when documents carry the PostScoreMoneyPersonality fields. The runtime result is PersonalityOfferResult. |
 | `NetworkGraph` | Network Graph | Knowledge or network analysis graph managed in the Networks submodule. |
 | `NetworkOntologyDefinition` | Network Ontology Definition | JSON ontology definition used by Networks for entity types, relation types, and inference rules (distinct from Turtle platform ontologies). |
 | `PublicApiCatalogEntry` | Public API Catalog Entry | Documented public API entity label and collection mapping exposed by the Workbench public API catalog. |
 | `RuntimeConsole` | Runtime Console | UI surface for inspecting and operating deployed ecosystem-runtime campaigns. |
 | `SolutionCase` | Solution Case | Productized Workbench solution configuration such as Spend Personality or Two-Tower recommender. |
-| `SpendPersonalityCase` | Spend Personality Case | Spend and money personality scoring case with trait outputs and messaging. |
+| `SpendPersonalityCase` | Spend Personality Case | Lookup-only spend personality scoring. Any lookup store is valid when documents carry the PostScoreSpendingPersonality fields. The runtime result is PersonalityOfferResult. |
 | `SyntheticDataRequest` | Synthetic Data Request | Request to generate Mongo documents from a free-text prompt, optionally grounded by an open ontology TTL. |
 | `TwoTowerCase` | Two-Tower Case | Two-tower recommender training and deployment case. |
 

@@ -1,30 +1,31 @@
 ---
 title: Runtime concept catalog
-description: Complete class and property catalog from runtime.ttl
+description: Complete class and property catalog for the runtime closed loop
 ---
 
 # Runtime concept catalog
 
-Generated from the published Turtle. Download [`/ontology/runtime.ttl`](/ontology/runtime.ttl) for machine-readable definitions.
+Class and property reference for the runtime closed loop. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/runtime#`
 
-## Classes (29)
+## Classes (30)
 
 | Local name | Pref label | Definition |
 |------------|------------|------------|
 | `AcceptedOffer` | Accepted Offer | Element of offers_accepted; typically mirrors slim OfferResult fields. |
 | `CampaignContext` | Campaign Context | Isolated runtime unit keyed by campaign/predictor name: models, corpora, plugins, logging collections, feature lookup, and optional linked offer matrix. |
 | `ContactLog` | Contact Log | Mongo logging document for an invocation (logging.ecosystemruntime): uuid, predictor, api_params, params lookup, final_result, stats, scoring_data, date indexes. |
-| `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed (personality traits, recommender context, arbitrary features). Not a closed schema. |
-| `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for dynamic_engagement algorithm and contextual variables. |
+| `CustomerFeatureDocument` | Customer Feature Document | Open polymorphic document returned by predictor.param.lookup or built from API params input/value. Any field shape is allowed. A spend or money personality lookup is valid when the document has the fields the post-score plugin copies. This is not an H2O feature-store frame and not a closed schema. |
+| `DynamicEngagementConfig` | Dynamic Engagement Config | Runtime corpora entry for a dynamic engagement. The approach is epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, or Network. A behavioral type is required only for behaviorAlgos: lossAversion, riskAversion, prospectTheory, sentimentalEquilibrium, coverageAwareThompson, longTailBoostMF, generative. Spend Personality and Money Personality are not approaches. |
 | `FeatureLookupConfig` | Feature Lookup Config | Configuration for customer/feature DB lookup (database, collection, key, typically customer). |
 | `FinalResultEntry` | Final Result Entry | One ranked row in final_result with rank, slim result, and result_full. |
 | `GlobalSettings` | Global Settings | Deployment properties for a campaign (plugins, logging, offer matrix path, param lookup, corpora). |
-| `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: errors, config, database, params snapshots. |
+| `InvocationDebug` | Invocation Debug | Optional debug payload on InvocationResponse when debug was requested: explanations, errors, config, database, params snapshots. |
 | `InvocationDebugConfig` | Invocation Debug Config | In-memory campaign snapshot: plugin_prescore, plugin_postscore, models_loaded, offers_loaded, mongo_client. |
 | `InvocationDebugDatabase` | Invocation Debug Database | Mongo ping snapshot from RuntimeConfig.getDatabaseStatus when client is present. |
 | `InvocationDebugError` | Invocation Debug Error | One recorded pipeline error in debug.errors: stage, code, exception, at, message. |
+| `InvocationDebugExplanation` | Invocation Debug Explanation | Operator-facing explanation in debug.explanations: code, severity, title, message, optional hint. |
 | `InvocationDebugParams` | Invocation Debug Params | Sanitized request, lookup, and feature-name snapshot (no offer matrix or secrets). |
 | `InvocationRequest` | Invocation Request | POST /invocations body: campaign, subcampaign, customer, channel, numberoffers, userid, params (JSON string). |
 | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
@@ -33,8 +34,8 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `OfferMatrixEntry` | Offer Matrix Entry | Canonical offer row: offer_id, offer_name, cost, price, category, static_offers. |
 | `OfferResult` | Offer Result | Slim scored offer: uuid, offer, offer_name, score, final_score, cost, price, offer_value, arm_reward, modified_offer_score. |
 | `Option` | Option | Dynamic engagement options row: optionKey joins OfferMatrixEntry.offer_id; alpha, beta, arm_reward, propensity. |
-| `PersonalityOfferResult` | Personality Offer Result | Spend/money personality result_full with trait scores (conservative, prudent, adventurous, …) and personality/trait labels. |
-| `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result from model output, options, and offer matrix. |
+| `PersonalityOfferResult` | Personality Offer Result | Lookup-only result_full from PostScoreSpendingPersonality, including generated copies, or PostScoreMoneyPersonality. Those plugins copy precomputed fields. They do not score an H2O model and do not update the options store. |
+| `PostPredictPlugin` | Post-Predict Plugin | plugin.postscore class that builds final_result. PlatformDynamicEngagement is dynamic engagement. PostScoreBasic is static model scoring. PostScoreSpendingPersonality, including generated copies, and PostScoreMoneyPersonality are lookup-only. PostScoreNetwork is a network step. |
 | `PrePredictPlugin` | Pre-Predict Plugin | plugin.prescore class that mutates params before scoring. |
 | `ProductOfferResult` | Product Offer Result | Recommender result_full with nested product catalog fields and bandit stats (alpha, beta, propensity). |
 | `ResponseFeedback` | Response Feedback | POST /response body: uuid required; offers_accepted with offer_name (preferred match key). |
@@ -43,7 +44,7 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `ScoringParams` | Scoring Params | Internal pipeline object combining API fields, featuresObj, offerMatrix, corpora, and MAB flags passed to plugins. |
 | `ServerInfo` | Server Info | Runtime host metadata: hostname, address, port, version. |
 
-## Object properties (24)
+## Object properties (25)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
@@ -54,6 +55,7 @@ Namespace: `https://ecosystem.ai/ontology/runtime#`
 | `hasDebugConfig` | has debug config | `runtime:InvocationDebug` | `runtime:InvocationDebugConfig` |  |
 | `hasDebugDatabase` | has debug database | `runtime:InvocationDebug` | `runtime:InvocationDebugDatabase` |  |
 | `hasDebugError` | has debug error | `runtime:InvocationDebug` | `runtime:InvocationDebugError` |  |
+| `hasDebugExplanation` | has debug explanation | `runtime:InvocationDebug` | `runtime:InvocationDebugExplanation` |  |
 | `hasDebugParams` | has debug params | `runtime:InvocationDebug` | `runtime:InvocationDebugParams` |  |
 | `hasDynamicEngagement` | has dynamic engagement | `runtime:CampaignContext` | `runtime:DynamicEngagementConfig` |  |
 | `hasEntry` | has entry | `runtime:OfferMatrix` | `runtime:OfferMatrixEntry` |  |

@@ -5,7 +5,7 @@ description: Complete catalog of Workbench2 ecosystem_meta entity concepts in th
 
 # Entities (Workbench Meta)
 
-Namespace: [`https://ecosystem.ai/ontology/entities#`](/ontology/entities.ttl)
+Namespace: `https://ecosystem.ai/ontology/entities#`
 
 These classes map to Mongo collections (and embedded deployment config) managed in Workbench2. The **Project** is the hub; other entities attach via asset arrays and foreign keys.
 
@@ -15,7 +15,25 @@ These classes map to Mongo collections (and embedded deployment config) managed 
 |-------|------------|------------|
 | `Project` | Project | Hub that groups predictors, frames, dynamic engagements, offer matrices, campaigns, agents, and deployment steps |
 
-**Key properties:** `projectId`, `projectDescription`, `purpose`, `projectType`, `projectOwner`
+**Key properties:** `projectId`, `projectDescription`, `purpose`, `projectType` (a label, not the classifier), `projectOwner`, `engagementKind` (`dynamic` | `static` | `hybrid`)
+
+`engagementKind` is derived from `hasDynamicEngagement`, `hasPredictor`, `hasFeatureStoreFrame`, and each deployment step’s `scoringMode`. A stored `projectType` such as `recommender` or `algorithm` does not decide the kind. `dynamic_recommender` is the review canonical label for a dynamic project. It is still not the classifier.
+
+## Dynamic, static, and hybrid
+
+| Example project | Stored `projectType` | `engagementKind` | Why |
+|-----------------|----------------------|------------------|-----|
+| `outreach_message_recommender` | `dynamic` | dynamic | Dynamic engagement links, no predictors, no feature-store frames. The label agrees. |
+| `dynamic_recommender_convergence` | `recommender` | dynamic | Six dynamic engagements and no static models. The label does not agree. |
+| `banking_credit_v2` | `solution_template` | hybrid | Static steps and predictors together with dynamic engagement steps. |
+
+Spend Personality and Money Personality are **lookup-only**. They are not Dynamic Engagement approaches and they are not `learningAlgorithm` values. `PostScoreSpendingPersonality` (including generated `PostScoreSpendingPersonality_*` copies) and `PostScoreMoneyPersonality` copy precomputed scores from whatever database and collection the deployment lookup points at. Any store is valid when the document has the fields that post-score reads.
+
+On `spend_personality`, the `spend_personality` and `money_personality` deployments are lookup-only, while `dynamic_recommender_behavior` is dynamic engagement. `options.is_multi_armed_bandit` does not turn a personality plugin into a dynamic step. The collection names on one installation are examples, not required names.
+
+Spend lookup fields: `personality`, `personality_score`, and when present `trait` and `trait_score`. Optional dimensions include `Experiential`, `Extrovert`, `Enthusiastic`, `Industrious`, `Intentional`, and `Introvert`.
+
+Money lookup fields: `money_personality` or `personality`, `money_trait` or `trait`, a matching score (`money_personality_score` or `personality_score`), and dimension fields such as `conservative`, `carefree`, `adventurous`, `borrower`, `cautious`, `indulger`, `prudent`, and `adventurer`.
 
 ## Static models
 
@@ -34,7 +52,11 @@ These classes map to Mongo collections (and embedded deployment config) managed 
 | `FeatureStoreRef` | DB + collection for customer/context lookup |
 | `OptionsStoreRef` | Options / arms store (alpha, beta, rewards) |
 
-**Key properties:** `engagementName`, `learningAlgorithm` (e.g. `binaryThompson`, `epsilonGreedy`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`; when `behaviorAlgos`, also set behavioral type via `sub_approach`)
+**Key properties:** `engagementName`, `learningAlgorithm`, `behavioralType`
+
+`learningAlgorithm` is `randomisation.approach` and must be one of the Dynamic Engagement dropdown values: `epsilonGreedy`, `binaryThompson`, `naiveBayes`, `QLearning`, `behaviorAlgos`, `Network`.
+
+`behavioralType` is `randomisation.sub_approach`. Set it only when `learningAlgorithm` is `behaviorAlgos`: `lossAversion`, `riskAversion`, `prospectTheory`, `sentimentalEquilibrium`, `coverageAwareThompson`, `longTailBoostMF`, `generative`. `generative` is a behavioral type, not a top-level approach.
 
 **Links:** `hasFeatureStore`, `hasOptionsStore`
 
@@ -69,7 +91,9 @@ See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
 | `ResponderConfig` | `responder_config` |
 | `Dashboard` | analytics dashboards |
 | `EnrichmentPipeline` | enrichment pipelines |
-| `DeploymentStep` | Embedded on Project — pushed to runtime |
+| `DeploymentStep` | Embedded on Project — pushed to runtime. `scoringMode` is `dynamic`, `static`, or `lookup`. `stepType` is the stored label and does not override `scoringMode`. |
+| `SpendPersonalityLookup` | Lookup document copied by `PostScoreSpendingPersonality`. Collection is per installation. |
+| `MoneyPersonalityLookup` | Lookup document copied by `PostScoreMoneyPersonality`. Collection is per installation. |
 
 ## Project asset links (object properties)
 
@@ -77,9 +101,10 @@ See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
 |----------|-----------|-----------------|
 | `hasPredictor` | Project → Predictor | `project_predictors` |
 | `hasFrame` | Project → Frame | `project_models` |
+| `hasFeatureStoreFrame` | Project → Frame | `feature_stores` (static H2O frames; leave empty on a dynamic project) |
 | `hasDynamicEngagement` | Project → DynamicEngagement | `project_dynamic_interactions` |
 | `hasOfferMatrix` | Project → OfferMatrix | `project_offer_matrices` |
-| `hasCampaign` | Project → Campaign | campaigns |
+| `hasCampaign` | Project → Campaign | `project_campaigns` |
 | `hasAgent` | Project → AgentConfig | `project_agents` |
 | `hasDeploymentStep` | Project → DeploymentStep | `deployment_step` |
 | `hasPrompt` | Project → Prompt | `project_prompts` |
@@ -93,5 +118,3 @@ See [Offer Matrix](/docs/ontology/offer-matrix) for the canonical row JSON.
 | `belongsToCatalog` | ContactRecord → ContactCatalog | — |
 
 Full tables (every class and property): [Entities Catalog](/docs/ontology/entities-catalog) · [Concept Index](/docs/ontology/concept-index)
-
-Download: [`/ontology/entities.ttl`](/ontology/entities.ttl) · shapes: [`/ontology/entities-shapes.ttl`](/ontology/entities-shapes.ttl)

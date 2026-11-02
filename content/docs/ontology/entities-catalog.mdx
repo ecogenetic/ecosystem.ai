@@ -1,15 +1,15 @@
 ---
 title: Entities concept catalog
-description: Complete class and property catalog from entities.ttl
+description: Complete class and property catalog for Workbench meta concepts
 ---
 
 # Entities concept catalog
 
-Generated from the published Turtle. Download [`/ontology/entities.ttl`](/ontology/entities.ttl) for machine-readable definitions.
+Class and property reference for Workbench meta concepts. The site does not serve a Turtle download.
 
 Namespace: `https://ecosystem.ai/ontology/entities#`
 
-## Classes (22)
+## Classes (24)
 
 | Local name | Pref label | Definition |
 |------------|------------|------------|
@@ -27,6 +27,7 @@ Namespace: `https://ecosystem.ai/ontology/entities#`
 | `FactInjectionConfig` | Fact Injection Config | Fact injection / chat configuration (collection: chat_config). |
 | `FeatureStoreRef` | Feature Store Reference | Pointer to a feature-store database and collection used for customer or context lookup. |
 | `Frame` | Frame | Training or reference data frame used by static model predictors (collection: frames). |
+| `MoneyPersonalityLookup` | Money Personality Lookup | Lookup-only money personality score copied by PostScoreMoneyPersonality. Any database and collection is valid when the document has the score fields. |
 | `OfferMatrix` | Offer Matrix | First-class offer catalog entity (collection: offer_matrix) with spec, version, status, and rows or linked rows collection. |
 | `OfferMatrixEntry` | Offer Matrix Entry | A single offer row in a matrix. Canonical runtime scoring fields: offer_id, offer_name, cost, price, category, static_offers. |
 | `OptionsStoreRef` | Options Store Reference | Pointer to the dynamic engagement options store (arms / options with alpha, beta, rewards). |
@@ -35,20 +36,22 @@ Namespace: `https://ecosystem.ai/ontology/entities#`
 | `Prompt` | Prompt | Generative prompt library entry (collection: prompt_library). |
 | `ResponderConfig` | Responder API Config | Responder / API configuration for serving predictions (collection: responder_config). |
 | `Simulation` | Simulation | Simulation configuration for offline evaluation of deployments. |
+| `SpendPersonalityLookup` | Spend Personality Lookup | Lookup-only spend personality score copied by PostScoreSpendingPersonality, including generated PostScoreSpendingPersonality_* copies. Any database and collection is valid when the document has the score fields. |
 
-## Object properties (20)
+## Object properties (21)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
 | `belongsToCatalog` | belongs to catalog | `entities:ContactRecord` | `entities:ContactCatalog` |  |
 | `hasAgent` | has agent | `entities:Project` | `entities:AgentConfig` | project_agents asset link. |
 | `hasCalendar` | has calendar | `entities:Project` | `entities:Calendar` |  |
-| `hasCampaign` | has campaign | `entities:Project` | `entities:Campaign` |  |
+| `hasCampaign` | has campaign | `entities:Project` | `entities:Campaign` | project_campaigns asset link. |
 | `hasDataConnection` | has data connection | `entities:Project` | `entities:DataConnection` |  |
 | `hasDeploymentStep` | has deployment step | `entities:Project` | `entities:DeploymentStep` | deployment_step array on the project document. |
 | `hasDynamicEngagement` | has dynamic engagement | `entities:Project` | `entities:DynamicEngagement` | project_dynamic_interactions asset link. |
 | `hasFactInjectionConfig` | has fact injection config | `entities:Project` | `entities:FactInjectionConfig` |  |
 | `hasFeatureStore` | has feature store | `entities:DynamicEngagement` | `entities:FeatureStoreRef` |  |
+| `hasFeatureStoreFrame` | has feature store frame | `entities:Project` | `entities:Frame` | feature_stores array. Static H2O frames. Leave empty for dynamic projects. |
 | `hasFrame` | has frame | `entities:Project` | `entities:Frame` | project_models asset link. |
 | `hasOfferEntry` | has offer entry | `entities:OfferMatrix` | `entities:OfferMatrixEntry` |  |
 | `hasOfferMatrix` | has offer matrix | `entities:Project` | `entities:OfferMatrix` | project_offer_matrices asset link. |
@@ -61,32 +64,43 @@ Namespace: `https://ecosystem.ai/ontology/entities#`
 | `usesFrame` | uses frame | `entities:Predictor` | `entities:Frame` | Training frame referenced by model_parms.training_frame. |
 | `usesOfferMatrix` | uses offer matrix | `entities:Campaign` | `entities:OfferMatrix` |  |
 
-## Datatype properties (24)
+## Datatype properties (35)
 
 | Local name | Pref label | Domain | Range | Definition |
 |------------|------------|--------|-------|------------|
 | `agentName` | agent name | `entities:AgentConfig` | `xsd:string` |  |
+| `behavioralType` | behavioral type | `entities:DynamicEngagement` | `xsd:string` | randomisation.sub_approach. Required only for behaviorAlgos: lossAversion, riskAversion, prospectTheory, sentimentalEquilibrium, coverageAwareThompson, longTailBoostMF, generative. |
 | `campaignId` | campaign id | `entities:Campaign` | `xsd:string` |  |
 | `catalogId` | catalog id | `entities:ContactCatalog` | `xsd:string` |  |
 | `category` | category | `entities:OfferMatrixEntry` | `xsd:string` |  |
 | `contactId` | contact id | `entities:ContactRecord` | `xsd:string` |  |
 | `cost` | cost | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
 | `deploymentName` | deployment name | `entities:DeploymentStep` | `xsd:string` |  |
+| `engagementKind` | engagement kind | `entities:Project` | `xsd:string` | dynamic, static, or hybrid. Derived from links and scoringMode. projectType is not the classifier. |
 | `engagementName` | name | `entities:DynamicEngagement` | `xsd:string` |  |
 | `frameId` | frame id | `entities:Frame` | `xsd:string` |  |
-| `learningAlgorithm` | learning algorithm | `entities:DynamicEngagement` | `xsd:string` | Approach such as epsilonGreedy, binaryThompson, QLearning, naiveBayes, generative. |
+| `learningAlgorithm` | learning algorithm | `entities:DynamicEngagement` | `xsd:string` | randomisation.approach: epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, Network. |
 | `matrixStatus` | status | `entities:OfferMatrix` | `xsd:string` | draft \| active \| archived. |
 | `matrixVersion` | version | `entities:OfferMatrix` | `xsd:integer` |  |
 | `modelId` | model id | `entities:Predictor` | `xsd:string` |  |
+| `moneyPersonality` | money personality | `entities:MoneyPersonalityLookup` | `xsd:string` | money_personality, or personality when that is the stored label. |
+| `moneyPersonalityScore` | money personality score | `entities:MoneyPersonalityLookup` | `xsd:decimal` | money_personality_score, or personality_score. |
+| `moneyTrait` | money trait | `entities:MoneyPersonalityLookup` | `xsd:string` |  |
 | `offerId` | offer id | `entities:OfferMatrixEntry` | `xsd:string` | Join key for options store and matrix lookup. |
 | `offerMatrixId` | offer matrix id | `entities:OfferMatrix` | `xsd:string` |  |
 | `offerName` | offer name | `entities:OfferMatrixEntry` | `xsd:string` | Display name; primary /response match key. |
+| `personality` | personality | `entities:SpendPersonalityLookup` | `xsd:string` | Spend personality label copied to offer, offer_id, and offer_name. |
+| `personalityScore` | personality score | `entities:SpendPersonalityLookup` | `xsd:decimal` | personality_score on the looked-up document. |
 | `predictId` | predict id | `entities:Predictor` | `xsd:string` | Prediction case identifier (predict_id / prediction_case_id). |
 | `price` | price | `entities:OfferMatrixEntry` | `xsd:decimal` |  |
 | `projectDescription` | project description | `entities:Project` | `xsd:string` |  |
 | `projectId` | project id | `entities:Project` | `xsd:string` | Primary business identifier for the project (project_id). |
 | `projectOwner` | project owner | `entities:Project` | `xsd:string` |  |
-| `projectType` | project type | `entities:Project` | `xsd:string` |  |
+| `projectType` | project type | `entities:Project` | `xsd:string` | Free label. Not the classifier. Review may set dynamic_recommender. |
 | `purpose` | purpose | `entities:Project` | `xsd:string` |  |
+| `scoringMode` | scoring mode | `entities:DeploymentStep` | `xsd:string` | dynamic, static, or lookup. |
 | `staticOffers` | static offers | `entities:OfferMatrixEntry` | `xsd:decimal` | Static priority slate when greater than 0. |
+| `stepType` | step type | `entities:DeploymentStep` | `xsd:string` | deployment_step.step_type. Does not override scoringMode. |
+| `trait` | trait | `entities:SpendPersonalityLookup` | `xsd:string` |  |
+| `traitScore` | trait score | `entities:SpendPersonalityLookup` | `xsd:decimal` | trait_score when present. |
 
