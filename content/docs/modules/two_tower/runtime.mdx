@@ -117,9 +117,10 @@ predictor.twotower.customer.key=customer_id
 predictor.twotower.offer.key=offer
 predictor.twotower.metric=cosine
 
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
 ```
+
+Bind **PrePredictTwoTower** and **PostScoreTwoTower** (or set `plugin.prescore` /
+`plugin.postscore` from your Workbench export).
 
 <Callout type="warning" title="run.id is required">
   `predictor.twotower.run.id` is **mandatory** for similarity deployments. The
@@ -146,7 +147,7 @@ values fall back to cosine with a warning.
 Optional live user embedding via PyTorch:
 
 ```properties
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:customer_offer_retrieval_v1
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
 ```
 
 This optional property is most useful when user vectors must be generated from
@@ -208,9 +209,6 @@ predictor.model.type=similarity
 
 # no mojo.key, and no dynamic_engagement corpora
 
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictTwoTower
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreTwoTower
-
 predictor.twotower.run.id=tt_abc123
 predictor.twotower.embedding.db=logging
 predictor.twotower.user.collection=two_tower_user_embeddings
@@ -220,7 +218,7 @@ predictor.twotower.offer.key=offer
 predictor.twotower.metric=cosine
 
 # optional: live user-tower embedding via the PyTorch sidecar
-predictor.twotower.user.embed=pytorch:http://ecosystem-notebooks:8010:customer_offer_retrieval_v1
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
 
 predictor.offer.matrix={ ... }
 ```

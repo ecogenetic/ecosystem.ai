@@ -3,6 +3,9 @@ import { generateStaticParamsFor } from 'nextra/pages'
 
 const siteUrl = 'https://developer.ecosystem.ai'
 
+/** Pre-render at build time; URL list comes from Nextra static params. */
+export const dynamic = 'force-static'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticParams = await generateStaticParamsFor('mdxPath')()
   const fromMdx = staticParams
