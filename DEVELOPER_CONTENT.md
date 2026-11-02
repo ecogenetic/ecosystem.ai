@@ -2,7 +2,7 @@
 
 This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://developer.ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
 
-Corpus: 273 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
+Corpus: 272 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
 
 ## Document index
 
@@ -121,7 +121,6 @@ Corpus: 273 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Time Series Report](#docs-modules-data-agents-reports-time-series) — `docs/modules/data_agents/reports/time_series.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/reports/time_series
 - [Data Agents Setup](#docs-modules-data-agents-setup) — `docs/modules/data_agents/setup.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/setup
 - [Modules](#docs-modules-index) — `docs/modules/index.mdx` — https://developer.ecosystem.ai/docs/modules
-- [LoRA Recommender](#docs-modules-lora) — `docs/modules/lora.mdx` — https://developer.ecosystem.ai/docs/modules/lora
 - [LoRA Recommender Module](#docs-modules-lora-index) — `docs/modules/lora/index.mdx` — https://developer.ecosystem.ai/docs/modules/lora
 - [LoRA Runtime](#docs-modules-lora-runtime) — `docs/modules/lora/runtime.mdx` — https://developer.ecosystem.ai/docs/modules/lora/runtime
 - [LoRA Training](#docs-modules-lora-training) — `docs/modules/lora/training.mdx` — https://developer.ecosystem.ai/docs/modules/lora/training
@@ -5756,6 +5755,8 @@ Two ways to run that loop:
 
 Workbench runs the loop **in-process** on the Workbench FastAPI backend (Motor Mongo + async Runtime HTTP). Python is more flexible for custom scripts. Both still need a pushed Dynamic Interaction deployment and a reachable Runtime.
 
+The same knobs, including `simulation_type=log_replay`, are on the public gateway under `/public/v1/simulations/*` ([Public APIs — Simulations](/docs/configuration/workbench_apis/public#simulations)).
+
 **Not Data Agents:** A simulation **writes** Runtime logs. To **analyze** those logs (funnel, rank uptake, catalog), run an [Interactions Analytic](/docs/modules/data_agents/interactions) job on the same `ecosystemruntime` / `ecosystemruntime_response` collections.
 
 **Notebooks simulation deprecated:** The ecosystem-notebooks `process_simulation` routes return **410**. Configure and run simulations in Workbench 2 only.
@@ -6043,91 +6044,68 @@ Test model using default settings.
 
 Source: `docs/configuration/workbench_apis/active_directory.mdx`
 URL: https://developer.ecosystem.ai/docs/configuration/workbench_apis/active_directory
-Summary: Configure Microsoft Entra ID (Azure AD) OIDC v2.0, On-Premises Active Directory (LDAP/LDAPS), zero-click corporate network Auto-SSO, and AD group-to-role mapping across ecosystem-server, Workbench2, and Data Agents
+Summary: Configure Microsoft Entra ID (Azure AD) OIDC, on-premises Active Directory (LDAP/LDAPS), corporate auto-SSO, and AD group-to-role mapping for ecosystem-server, Workbench, and Data Agents
 
 # Active Directory & Enterprise SSO
 
-`ecosystem-server` is the central identity authority and HS256 JWT issuer across **Ecosystem Workbench2** (`:5270` / `:8001`), **Data Agents** (`:8000`), and **Ecosystem Modeling**. Both SPAs delegate login and SSO discovery to `ecosystem-server`, receive the canonical `{ token: { access_token, refresh_token, expires_in } }` session payload, and verify the token signature and `role` claims in `JWTAuthMiddleware`.
+`ecosystem-server` is the central identity service for **Ecosystem Workbench** and **Data Agents**. Both SPAs use the same login and SSO discovery endpoints on `ecosystem-server`, then store the returned session token for API calls.
 
-**Zero-impact default when AD is not configured:** When `ENTRA_ENABLED` and `AD_LDAP_ENABLED` are unset or `false`, `GET /api/v1/auth/providers` returns `enabled: false`, the login screens render only the standard email/password form with zero extra redirects, and `POST /api/auth/login` authenticates against `user_master` unchanged.
+| Product | Typical local ports |
+| --- | --- |
+| Workbench UI | `:5270` |
+| Workbench API | `:8001` |
+| Data Agents UI | `:54325` |
+| Data Agents API | `:54324` |
+| `ecosystem-server` | `:3002` (local default; use your deployed URL in production) |
 
-## Architecture & Authentication Flow
+**Default when AD is not configured:** When `ENTRA_ENABLED` and `AD_LDAP_ENABLED` are unset or `false`, provider discovery reports SSO disabled, login screens show email/password only, and `POST /api/auth/login` authenticates against local `user_master` as before.
+
+## Architecture (high level)
 
 ```mermaid
 flowchart TB
-  subgraph userLayer [Corporate User]
-    User["User Browser\n(Corp Network / Workstation)"]
-  end
+  User["User browser"]
+  WB["Workbench SPA"]
+  DA["Data Agents SPA"]
+  WBAPI["Workbench API"]
+  DAAPI["Data Agents API"]
+  SRV["ecosystem-server"]
+  AD["LDAP / LDAPS"]
+  Entra["Microsoft Entra ID OIDC"]
 
-  subgraph clients [Frontend SPAs]
-    WB2_UI["Workbench2 SPA (:5270)"]
-    DA_UI["Data Agents SPA"]
-  end
-
-  subgraph proxies [Python FastAPI Backends]
-    WB2_BE["Workbench2 Backend (:8001)\n/api/v1/auth/* + JWTAuthMiddleware"]
-    DA_BE["Data Agents Backend (:8000)\n/api/v1/auth/* + JWTAuthMiddleware"]
-  end
-
-  subgraph server [Ecosystem Server - Central Identity Authority]
-    AuthCtrl["AuthController (/api/auth/login)\nLocal + LDAP/LDAPS Bind"]
-    OAuthCtrl["OAuth2Controller (/api/auth/oauth2/*)\nEntra ID OIDC + Google OAuth2"]
-    RoleSync["AdGroupRoleMapper\nAD Groups / App Roles to Role Claims"]
-    TokenSvc["TokenService\nMints HS256 JWT with role claims"]
-  end
-
-  subgraph directories [Active Directory Providers]
-    OnPremAD["On-Premises Active Directory\nLDAP / LDAPS (389 / 636)"]
-    Entra["Microsoft Entra ID (Azure AD)\nOIDC v2.0 + JWKS"]
-  end
-
-  User -->|"Opens app"| WB2_UI
-  User -->|"Opens app"| DA_UI
-
-  WB2_UI -->|"1a. Password / LDAP login"| WB2_BE
-  WB2_UI -->|"1b. SSO Redirect (return_to)"| WB2_BE
-  DA_UI -->|"1a. Password / LDAP login"| DA_BE
-  DA_UI -->|"1b. SSO Redirect (return_to)"| DA_BE
-
-  WB2_BE --> AuthCtrl
-  DA_BE --> AuthCtrl
-  AuthCtrl -->|"Bind + memberOf lookup"| OnPremAD
-
-  WB2_BE --> OAuthCtrl
-  DA_BE --> OAuthCtrl
-  OAuthCtrl -->|"Auth Code + PKCE"| Entra
-
-  AuthCtrl --> RoleSync
-  OAuthCtrl --> RoleSync
-  RoleSync --> TokenSvc
+  User --> WB
+  User --> DA
+  WB --> WBAPI
+  DA --> DAAPI
+  WBAPI --> SRV
+  DAAPI --> SRV
+  SRV --> AD
+  SRV --> Entra
 ```
 
-## Supported Active Directory Modes
+Frontends call their backend `/api/v1/auth/*` routes; backends proxy to `ecosystem-server` for login, OAuth redirects, and token issuance.
 
-| Mode | Protocol | Entry Endpoint | When to Use |
+## Supported modes
+
+| Mode | Protocol | Entry (via backend proxy) | When to use |
 | --- | --- | --- | --- |
-| **Microsoft Entra ID (Azure AD)** | OIDC v2.0 Authorization Code + PKCE (`S256`) + RSA-SHA256 JWKS verification | `GET /api/v1/auth/oauth2/entra` → `GET /api/auth/oauth2/entra` | Cloud or hybrid Azure AD tenants with browser SSO and conditional access MFA |
-| **On-Premises Active Directory** | JNDI LDAP / LDAPS (`389` / `636`) bind + `memberOf` lookup | `POST /api/v1/auth/login` → `POST /api/auth/login` | Direct domain credential verification (`user@domain.com` or `sAMAccountName`) inside a corporate network |
-| **Corporate Network Auto-SSO** | Silent Entra OIDC (`prompt=none`) or Trusted Ingress Proxy (`X-Forwarded-User` / `X-Auth-Request-Email`) | Automatic on `/login` when `autoSso: true` | Zero-click sign-in when the user is already authenticated on their corporate workstation |
+| **Microsoft Entra ID** | OIDC v2 authorization code + PKCE | `GET /api/v1/auth/oauth2/entra` | Cloud or hybrid Azure AD with browser SSO |
+| **On-premises AD** | LDAP / LDAPS bind + group lookup | `POST /api/v1/auth/login` | Domain credentials on the corporate network |
+| **Corporate auto-SSO** | Silent Entra OIDC or trusted ingress headers | Automatic on `/login` when enabled | Zero-click sign-in when the user already has a corporate session |
 
-## 1. Microsoft Entra ID (Azure AD) Setup
+## 1. Microsoft Entra ID (Azure AD)
 
-### Step 1: Register or Configure the App in Azure Portal
+### App registration
 
-1. Open **Azure Portal → Microsoft Entra ID → App registrations**.
-2. Select your application (or click **+ New registration**).
-3. Copy from **Overview**:
-   - **Directory (tenant) ID** → `ENTRA_TENANT_ID`
-   - **Application (client) ID** → `ENTRA_CLIENT_ID`
-4. Open **Certificates & secrets → + New client secret**, create a secret, and copy the **Value** → `ENTRA_CLIENT_SECRET`.
-5. Open **Authentication → + Add a platform → Web** and register the `ecosystem-server` callback URI:
+1. **Azure Portal → Microsoft Entra ID → App registrations** → your app (or **New registration**).
+2. From **Overview**, copy **Directory (tenant) ID** → `ENTRA_TENANT_ID` and **Application (client) ID** → `ENTRA_CLIENT_ID`.
+3. **Certificates & secrets** → create a client secret → `ENTRA_CLIENT_SECRET`.
+4. **Authentication → Web** → register the `ecosystem-server` callback, for example:
    ```text
    http://localhost:3002/api/auth/oauth2/entra/callback
    ```
-   *(In production, use your deployed `ecosystem-server` URL, e.g. `https://server.bank.internal/api/auth/oauth2/entra/callback`.)*
-6. *(Optional — Group Sync)* Open **Token configuration → + Add groups claim** and select **Security groups** (or configure App Roles under **App roles**).
-
-Or configure the Redirect URI and group claims via Azure CLI:
+   In production use your public server URL, e.g. `https://server.example.com/api/auth/oauth2/entra/callback`.
+5. *(Optional)* **Token configuration → Add groups claim** (security groups or app roles).
 
 ```bash
 az ad app update \
@@ -6136,144 +6114,121 @@ az ad app update \
   --set groupMembershipClaims="SecurityGroup"
 ```
 
-### Step 2: Set Environment Variables on `ecosystem-server`
+### Environment variables (`ecosystem-server`)
 
 ```bash
 ```
 
-## 2. On-Premises Active Directory (LDAP / LDAPS) Setup
+## 2. On-premises Active Directory (LDAP / LDAPS)
 
-When `AD_LDAP_ENABLED=true` and `AD_LDAP_URL` is set, `POST /api/auth/login` authenticates the user's domain credentials via LDAP/LDAPS bind, extracts `mail`, `displayName`, and `memberOf` group DNs, JIT-provisions the user in `user_master` if not yet present, and mints the internal JWT.
+When `AD_LDAP_ENABLED=true`, `POST /api/auth/login` binds with the user's domain credentials, reads profile and group membership, provisions the user in `user_master` if needed, and returns a session token.
 
 ```bash
-# Optional service account for searching user DN + memberOf prior to user bind:
-# Allow break-glass local accounts in user_master when user is not in AD:
 ```
 
-## 3. Silent / Zero-Click Corporate Network Sign-In (Auto-SSO)
+**Production LDAP:** Set `AD_LDAP_FALLBACK_LOCAL=false` so only directory users can sign in. Configure a dedicated **emergency break-glass administrator** in `user_master` (strong password, MFA where possible) and restrict who knows that account. Do not rely on local-password fallback in production unless you explicitly accept that risk.
 
-When an operator is on the corporate network and already signed into their Windows / macOS domain session or Microsoft 365:
+## 3. Silent / zero-click sign-in (auto-SSO)
 
-- **Entra Seamless Auto-SSO (`ENTRA_AUTO_SSO=true`):**
-  When an unauthenticated user opens Workbench2 or Data Agents, `LoginPage` queries `GET /api/v1/auth/providers`. When `autoSso: true` is returned, the browser automatically redirects through `/api/v1/auth/oauth2/entra?silent=true` (`prompt=none`), exchanges the corporate session for an Ecosystem JWT, and lands the user directly in the workspace without clicking a button.
-  - Clicking **Sign Out** sets `sessionStorage['ecosystem_sso_logged_out'] = '1'` and navigates to `/login?nosso=1` so the user is never trapped in a redirect loop and can switch accounts.
-- **Trusted Corporate Ingress Proxy (`AD_TRUSTED_HEADER_ENABLED=true`):**
-  When fronted by an enterprise ingress proxy (Azure AD Application Proxy, `oauth2-proxy`, Keycloak, or Kerberos SPNEGO proxy) that sends `X-Ecosystem-Proxy-Secret` along with `X-Auth-Request-Email` / `X-Forwarded-User` and `X-Forwarded-Groups`, `GET /api/auth/oauth2/trusted` mints the JWT and redirects to `/oauth-callback#access_token=…`.
+- **`ENTRA_AUTO_SSO=true`:** Unauthenticated visits to Workbench or Data Agents can redirect through silent Entra OIDC (`prompt=none`) when the corporate session is already present.
+- **Trusted ingress proxy (`AD_TRUSTED_HEADER_ENABLED=true`):** When fronted by an enterprise proxy that forwards identity headers (email and optional groups) and a shared proxy secret you configure on the server, `GET /api/auth/oauth2/trusted` can mint a session and redirect back to the SPA.
 
-## 4. AD Group & App Role Mapping to Workbench RBAC
+Sign-out should land on `/login?nosso=1` so users are not stuck in an SSO loop when switching accounts.
 
-`AdGroupRoleMapper` maps Active Directory `memberOf` CNs, Entra Security Group IDs/names, and Entra App Roles into the JWT `role` array:
+## 4. AD groups and Workbench roles
 
-| Variable | Default | Purpose |
+Directory groups and Entra app roles map into JWT **role** claims used by Workbench and Data Agents RBAC.
+
+| Variable | Example default | Purpose |
 | --- | --- | --- |
-| `AD_ADMIN_GROUPS` | `admin,ADMIN,Ecosystem-Admins,capricorn.admin,ecosystem.admin,Domain Admins` | Comma-separated AD group CNs, group Object IDs, or App Roles that grant `ADMIN` + `USER` |
-| `AD_ROLE_MAP` | *(empty)* | Explicit mapping of AD groups to Workbench2 custom roles in `ecosystem_meta.roles` (e.g. `WB-Analysts=analyst,Marketing-Team=campaign_manager` or JSON `{"WB-Analysts":"analyst"}`) |
-| `AD_PASSTHROUGH_ROLES` | `true` | Passes Entra App Role slugs through into JWT `role` claims so matching roles in **Administration → Roles** resolve automatically |
+| `AD_ADMIN_GROUPS` | `admin,ADMIN,Ecosystem-Admins,ecosystem.admin,Domain Admins` | Groups that grant administrator access |
+| `AD_ROLE_MAP` | *(empty)* | Map AD group names to custom Workbench roles, e.g. `WB-Analysts=analyst` or JSON `{"WB-Analysts":"analyst"}` |
+| `AD_PASSTHROUGH_ROLES` | `true` | Include Entra app role values in JWT roles when they match roles defined under **Administration → Roles** |
 
-When the user lands in Workbench2 (`:5270`) or Data Agents (`:8000`), `AuthContext` normalizes the JWT `role` claims and `PermissionContext` resolves effective permissions via `POST /api/v1/roles/resolve`.
+Resolve effective permissions in the product UI via role administration after SSO.
 
-## 5. Complete `ecosystem-server` Environment Variables Reference
+## 5. Environment variable reference (`ecosystem-server`)
 
-Add these environment variables to **`ecosystem-server`** (`docker-compose.yml`, Kubernetes `Secret` / `ConfigMap`, or `run_local.sh`). Workbench2 (`:8001`) and Data Agents (`:8000`) do **not** require separate Entra or LDAP credentials—they only need `ECOSYSTEM_SERVER` pointing to `ecosystem-server` (and `JWT_ACCESS_TOKEN_SECRET_KEY` when signature verification is enforced).
+Workbench (`:8001`) and Data Agents (`:54324`) do **not** need separate Entra or LDAP secrets. Point both at `ecosystem-server` with `ECOSYSTEM_SERVER` (see downstream table).
 
-### Microsoft Entra ID (Azure AD) OIDC Variables
+### Entra OIDC
 
-| Environment Variable | Spring Property | Default | Required for Entra? | Description |
-| --- | --- | --- | --- | --- |
-| `OAUTH2_ENABLED` | `oauth2.enabled` | `false` | Recommended (`true`) | Master OAuth2 switch (also auto-enabled when `ENTRA_ENABLED=true` and Entra credentials are set). |
-| `ENTRA_ENABLED` | `oauth2.entra.enabled` | `false` | **Yes** (`true`) | Enables the `/api/auth/oauth2/entra` and `/api/auth/oauth2/entra/callback` OIDC endpoints and exposes `"entra"` in `/api/auth/oauth2/status`. |
-| `ENTRA_TENANT_ID` | `oauth2.entra.tenant-id` | *(empty)* | **Yes** | Microsoft Entra **Directory (tenant) ID** UUID from the App Registration Overview blade. |
-| `ENTRA_CLIENT_ID` | `oauth2.entra.client-id` | *(empty)* | **Yes** | Microsoft Entra **Application (client) ID** UUID from the App Registration Overview blade. |
-| `ENTRA_CLIENT_SECRET` | `oauth2.entra.client-secret` | *(empty)* | **Yes** | Client secret **Value** (not the Secret ID) created under **Certificates & secrets**. |
-| `ENTRA_BACKEND_CALLBACK` | `oauth2.entra.backend-callback-url` | `http://localhost:3002/api/auth/oauth2/entra/callback` | **Yes** (in prod) | Exact Web Redirect URI registered on the Entra App Registration. Must match the public URL of `ecosystem-server`. |
-| `ENTRA_ALLOWED_RETURN_ORIGINS` | `oauth2.entra.allowed-return-origins` | `http://localhost:5270,http://127.0.0.1:5270,http://localhost:5173,http://localhost:5174,http://localhost:8000,http://localhost:3000` | **Yes** (in prod) | Comma-separated allowlist of frontend origins (`Workbench2`, `Data Agents`, `Modeling`) permitted in the `return_to` parameter. Prevents open-redirect attacks. |
-| `ENTRA_AUTO_SSO` | `oauth2.entra.auto-sso` | `false` | Optional | When `true`, unauthenticated users opening Workbench2 or Data Agents on the corporate network are automatically redirected through silent Entra SSO (`prompt=none`). |
-| `OAUTH2_FRONTEND_CALLBACK` | `oauth2.frontend-callback-url` | `http://localhost:5174/oauth-callback` | Optional | Fallback frontend callback URL used when a caller does not pass `return_to`. |
-
-### On-Premises Active Directory (LDAP / LDAPS) Variables
-
-| Environment Variable | Spring Property | Default | Required for LDAP? | Description |
-| --- | --- | --- | --- | --- |
-| `AD_LDAP_ENABLED` | `ad.ldap.enabled` | `false` | **Yes** (`true`) | Enables Active Directory LDAP/LDAPS bind inside `POST /api/auth/login` and exposes `"ldap"` in `/api/auth/oauth2/status`. |
-| `AD_LDAP_URL` | `ad.ldap.url` | *(empty)* | **Yes** | LDAP or LDAPS server URL (e.g. `ldaps://dc01.corp.example.com:636` or `ldap://dc01.corp.example.com:389`). |
-| `AD_LDAP_BASE_DN` | `ad.ldap.base-dn` | *(empty)* | **Yes** | Base Distinguished Name for user searches (e.g. `DC=corp,DC=example,DC=com`). |
-| `AD_LDAP_USER_SEARCH_FILTER` | `ad.ldap.user-search-filter` | `(|(userPrincipalName={0})(mail={0})(sAMAccountName={0}))` | Optional | LDAP filter used to match the login input against `userPrincipalName`, `mail`, or `sAMAccountName`. |
-| `AD_LDAP_BIND_DN` | `ad.ldap.bind-dn` | *(empty)* | Optional | Service account DN used to search for the user's entry and `memberOf` groups before binding as the user. If empty, direct user bind is used. |
-| `AD_LDAP_BIND_PASSWORD` | `ad.ldap.bind-password` | *(empty)* | Optional | Password for `AD_LDAP_BIND_DN`. |
-| `AD_LDAP_DEFAULT_DOMAIN` | `ad.ldap.default-domain` | *(empty)* | Optional | Default domain appended when a user signs in with a short `sAMAccountName` (e.g. `jdoe` → `jdoe@corp.example.com`). |
-| `AD_LDAP_FALLBACK_LOCAL` | `ad.ldap.fallback-local` | `true` | Optional | When `true`, if a user is not found in Active Directory, `ecosystem-server` falls back to local `user_master` authentication (allowing break-glass admin accounts such as `admin@ecosystem.ai`). Set to `false` to enforce strict AD-only login. |
-| `AD_LDAP_CONNECT_TIMEOUT_MS` | `ad.ldap.connect-timeout-ms` | `5000` | Optional | LDAP socket connection timeout in milliseconds. |
-| `AD_LDAP_READ_TIMEOUT_MS` | `ad.ldap.read-timeout-ms` | `5000` | Optional | LDAP search/read timeout in milliseconds. |
-
-### Group-to-Role Mapping & Trusted Corporate Proxy Variables
-
-| Environment Variable | Spring Property | Default | Description |
-| --- | --- | --- | --- |
-| `AD_ADMIN_GROUPS` | `ad.roles.admin-groups` | `admin,ADMIN,Ecosystem-Admins,capricorn.admin,ecosystem.admin,Domain Admins` | Comma-separated AD group CNs, Entra Group Object IDs, or Entra App Roles that grant `ADMIN` + `USER` in the issued JWT. |
-| `AD_ROLE_MAP` | `ad.roles.map` | *(empty)* | Comma/semicolon-separated `ADGroup=workbenchRole` pairs or JSON object mapping AD groups to Workbench2 roles in `ecosystem_meta.roles`. |
-| `AD_PASSTHROUGH_ROLES` | `ad.roles.passthrough` | `true` | Automatically includes Entra App Role values in the JWT `role` array. |
-| `AD_TRUSTED_HEADER_ENABLED` | `ad.trusted-header.enabled` | `false` | Enables `GET /api/auth/oauth2/trusted` for corporate ingress proxies (Azure AD App Proxy, `oauth2-proxy`, Keycloak, Kerberos SPNEGO). |
-| `AD_TRUSTED_PROXY_SECRET` | `ad.trusted-header.proxy-secret` | *(empty)* | Shared secret verified against the `X-Ecosystem-Proxy-Secret` request header before trusting `X-Auth-Request-Email` / `X-Forwarded-User`. |
-
-### Downstream Service Variables (`ecosystem-workbench2` & `ecosystem-data-agents`)
-
-| Environment Variable | Service | Purpose |
+| Environment variable | Required for Entra | Description |
 | --- | --- | --- |
-| `ECOSYSTEM_SERVER` | Workbench2 (`:8001`) & Data Agents (`:8000`) | Base URL of `ecosystem-server` (e.g. `http://localhost:3002` or `http://ecosystem-server:3001`) used by `/api/v1/auth/providers`, `/api/v1/auth/oauth2/{provider}`, and `/api/v1/auth/login`. |
-| `JWT_ACCESS_TOKEN_SECRET_KEY` | Workbench2 (`:8001`) & Data Agents (`:8000`) | Raw secret matching `jwt.accessTokenSecretKey` on `ecosystem-server` for HS256 JWT signature verification. |
-| `BANK_DEPLOY_PROFILE` | Workbench2 (`:8001`) | When `true`, enforces mandatory HS256 JWT signature verification, `CHANNEL_ENCRYPTION_KEY`, and strict CORS origin allowlisting. |
+| `OAUTH2_ENABLED` | Recommended | Master OAuth2 switch |
+| `ENTRA_ENABLED` | **Yes** | Enables Entra authorize/callback endpoints |
+| `ENTRA_TENANT_ID` | **Yes** | Tenant (directory) UUID |
+| `ENTRA_CLIENT_ID` | **Yes** | Application (client) UUID |
+| `ENTRA_CLIENT_SECRET` | **Yes** | Client secret value |
+| `ENTRA_BACKEND_CALLBACK` | **Yes** (prod) | Must match the redirect URI registered in Entra |
+| `ENTRA_ALLOWED_RETURN_ORIGINS` | **Yes** (prod) | Comma-separated SPA origins allowed in `return_to` (open-redirect protection) |
+| `ENTRA_AUTO_SSO` | Optional | Enable silent corporate SSO |
+| `OAUTH2_FRONTEND_CALLBACK` | Optional | Fallback SPA callback when `return_to` is omitted |
 
-### Ready-to-Use `.env` / Docker Compose Snippet for `ecosystem-server`
+### LDAP / LDAPS
+
+| Environment variable | Required for LDAP | Description |
+| --- | --- | --- |
+| `AD_LDAP_ENABLED` | **Yes** | Enables LDAP bind on login |
+| `AD_LDAP_URL` | **Yes** | e.g. `ldaps://dc01.corp.example.com:636` |
+| `AD_LDAP_BASE_DN` | **Yes** | Search base DN |
+| `AD_LDAP_USER_SEARCH_FILTER` | Optional | LDAP filter matching login to `userPrincipalName`, `mail`, or `sAMAccountName`. Default is the same OR-filter as in the LDAP setup example above (`{0}` is the login string). |
+| `AD_LDAP_BIND_DN` | Optional | Service account for search before user bind |
+| `AD_LDAP_BIND_PASSWORD` | Optional | Password for bind DN |
+| `AD_LDAP_DEFAULT_DOMAIN` | Optional | Appended when users sign in with short `sAMAccountName` |
+| `AD_LDAP_FALLBACK_LOCAL` | Optional | If `true`, unknown LDAP users may fall back to local `user_master`. Prefer `false` in production |
+| `AD_LDAP_CONNECT_TIMEOUT_MS` | Optional | Connection timeout (default `5000`) |
+| `AD_LDAP_READ_TIMEOUT_MS` | Optional | Read timeout (default `5000`) |
+
+### Group mapping and trusted proxy
+
+| Environment variable | Description |
+| --- | --- |
+| `AD_ADMIN_GROUPS` | Groups granting admin roles (comma-separated) |
+| `AD_ROLE_MAP` | Explicit AD group → Workbench role map |
+| `AD_PASSTHROUGH_ROLES` | Pass Entra app roles into JWT |
+| `AD_TRUSTED_HEADER_ENABLED` | Enable trusted ingress SSO |
+| `AD_TRUSTED_PROXY_SECRET` | Shared secret your proxy sends; must match server config |
+
+### Downstream services
+
+| Environment variable | Service | Purpose |
+| --- | --- | --- |
+| `ECOSYSTEM_SERVER` | Workbench & Data Agents | Base URL of `ecosystem-server` for `/api/v1/auth/providers`, OAuth redirects, and login proxy |
+
+Follow your deployment guide for any JWT signature verification settings required between server and backends.
+
+### Example `.env` snippet (`ecosystem-server`)
 
 ```dotenv
-# --- Microsoft Entra ID (Azure AD) OIDC ---
 OAUTH2_ENABLED=true
 ENTRA_ENABLED=true
-ENTRA_TENANT_ID=bee76bcd-c24a-4367-9feb-0b35199d8104
-ENTRA_CLIENT_ID=7208ec8d-fd46-4900-ad36-dc8d54955e3e
-ENTRA_CLIENT_SECRET=<your-entra-client-secret-value>
+ENTRA_TENANT_ID=<your-tenant-id>
+ENTRA_CLIENT_ID=<your-client-id>
+ENTRA_CLIENT_SECRET=<your-client-secret>
 ENTRA_BACKEND_CALLBACK=http://localhost:3002/api/auth/oauth2/entra/callback
-ENTRA_ALLOWED_RETURN_ORIGINS=http://localhost:5270,http://127.0.0.1:5270,http://localhost:8000,http://localhost:5173
+ENTRA_ALLOWED_RETURN_ORIGINS=http://localhost:5270,http://127.0.0.1:5270,http://localhost:54325,http://localhost:5173
 ENTRA_AUTO_SSO=false
 
-# --- On-Premises Active Directory (LDAP / LDAPS) (Optional) ---
 AD_LDAP_ENABLED=false
-AD_LDAP_URL=ldaps://ad.corp.example.com:636
-AD_LDAP_BASE_DN=DC=corp,DC=example,DC=com
-AD_LDAP_BIND_DN=
-AD_LDAP_BIND_PASSWORD=
-AD_LDAP_FALLBACK_LOCAL=true
+AD_LDAP_FALLBACK_LOCAL=false
 
-# --- AD Group -> Ecosystem Role Mapping ---
-AD_ADMIN_GROUPS="admin,ADMIN,Ecosystem-Admins,capricorn.admin,ecosystem.admin,Domain Admins"
+AD_ADMIN_GROUPS="admin,ADMIN,Ecosystem-Admins,ecosystem.admin,Domain Admins"
 AD_ROLE_MAP="WB-Analysts=analyst,Marketing-Team=campaign_manager"
 ```
 
-## Verification Endpoints
-
-Check active provider configuration from either backend or directly against `ecosystem-server`:
+## Verification
 
 ```bash
-# Via Workbench2 or Data Agents backend proxy:
+# Via Workbench or Data Agents backend:
 curl http://localhost:8001/api/v1/auth/providers
+curl http://localhost:54324/api/v1/auth/providers
 
 # Directly on ecosystem-server:
 curl http://localhost:3002/api/auth/oauth2/status
 ```
 
-Response when Entra ID is enabled:
-
-```json
-{
-  "enabled": true,
-  "configured": true,
-  "providers": ["entra", "google"],
-  "entraEnabled": true,
-  "ldapEnabled": false,
-  "autoSso": false,
-  "autoSsoProvider": ""
-}
-```
+When Entra is enabled, status includes `"entra"` among providers and reports whether LDAP and auto-SSO are active.
 
 ---
 
@@ -6725,7 +6680,7 @@ Summary: Workbench private FastAPI on port 8001 — session JWT, router map, and
 
 # Private APIs
 
-The private Workbench API is `app.main:app` on port **8001**. The SPA (`:5270`) and Campaign Management call this surface with a **Workbench session JWT**. It is the source of truth for operators. The public gateway proxies a **curated subset** into `/public/v1`.
+The private Workbench API listens on port **8001**. The SPA (`:5270`) and Campaign Management call this surface with a **Workbench session JWT**. It is the source of truth for operators. The public gateway proxies a **curated subset** into `/public/v1`.
 
 ```text
 http://localhost:8001/api/v1/…
@@ -6888,7 +6843,7 @@ Summary: Workbench public gateway on port 8004 — one-credential auth, scopes, 
 
 # Public APIs
 
-The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates a public credential, forwards the **caller's JWT** to private Workbench `:8001/api/v1`, and writes audit events. It never uses a shared operator token for interactive user requests.
+The public gateway is a **separate FastAPI app** (`app.public_api.main:app`) on port **8004**. It validates either a Workbench JWT or a public key. With a key alone, private calls use the [linked internal API key](/docs/configuration/workbench_apis/keys) on that credential (Administration → API Keys → Public API Access). When a JWT is present, it is forwarded to private Workbench `:8001/api/v1`. The gateway writes audit events and never uses a shared operator token for interactive user requests.
 
 `PUBLIC_API_INTERNAL_SERVICE_TOKEN` is an optional server-only fallback for automated jobs, not for people.
 
@@ -6945,6 +6900,9 @@ The Python SDK's `login()` is **optional** when you call with a scoped public ke
 | `money-personality:runs` | Money Personality process |
 | `sentimental-equilibrium:runs` | Sentimental equilibrium process |
 | `two-tower:configs` / `two-tower:train` | Two-Tower configs, train, export, batch-score |
+| `lora:configs` / `lora:train` | LoRA Recommender configs, train, export, batch-score |
+| `data-management:read` / `data-management:write` | Mongo Data Management (optional credential bindings `database_names`, `collection_refs` as `db.collection`) |
+| `simulation:read` / `simulation:runs` | Simulation status, logs, results; start and cancel runs |
 | `ontology:read` / `ontology:write` | Ontology documents and mappings |
 
 Grant the minimum set. Polling async work also needs `jobs:read`.
@@ -7039,6 +6997,57 @@ The ecosystem-server munge option `sentiment` is retired. Callers that still hit
 | `POST` | `/public/v1/two-tower/batch-score` | `two-tower:train` | Top-K offers to a collection |
 | `POST` | `/public/v1/two-tower/generate-python` | `two-tower:train` | Runnable Python + explanation |
 
+## LoRA Recommender
+
+Same shape as Two-Tower on the public gateway. Operator UI: [LoRA Recommender](/docs/modules/lora).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/lora/configs` | `lora:configs` | List or upsert |
+| `GET` / `PUT` | `/public/v1/lora/configs/{config_id}` | `lora:configs` | Read / update |
+| `GET` | `/public/v1/lora/predictors` | `lora:configs` | Distinct predictors in flatten |
+| `GET` | `/public/v1/lora/predictor-date-bounds` | `lora:configs` | Date range and row count |
+| `GET` | `/public/v1/lora/runs` | `lora:configs` | Recent training runs |
+| `POST` | `/public/v1/lora/train` | `lora:train` | Start training |
+| `POST` | `/public/v1/lora/concept-test` | `lora:train` | Sync concept rank for one customer |
+| `POST` | `/public/v1/lora/export-embeddings` | `lora:train` | Export user/item embeddings |
+| `POST` | `/public/v1/lora/batch-score` | `lora:train` | Top-K offers to a collection |
+| `POST` | `/public/v1/lora/generate-python` | `lora:train` | Runnable Python + explanation |
+
+## Simulations
+
+Workbench in-process simulation engine. UI and field semantics: [Simulations](/docs/configuration/simulations).
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/public/v1/simulations/status` | `simulation:read` | Mongo / engine health |
+| `POST` | `/public/v1/simulations/validate-connections` | `simulation:read` | Database and pulse-responder checks |
+| `POST` | `/public/v1/simulations/from-deployment` | `simulation:runs` | Materialize simulation from a deployment |
+| `POST` | `/public/v1/simulations/run` | `simulation:runs` | Start a run |
+| `POST` | `/public/v1/simulations/cancel` | `simulation:runs` | Cooperative cancel |
+| `GET` / `DELETE` | `/public/v1/simulations/logs` | `simulation:read` / `simulation:runs` | Read or clear run logs |
+| `GET` | `/public/v1/simulations/results/parameters` | `simulation:read` | Options-store parameter snapshots |
+| `GET` | `/public/v1/simulations/results/plot` | `simulation:read` | Plot series |
+| `GET` | `/public/v1/simulations/results/options` | `simulation:read` | Options-store snapshots |
+
+## Data Management
+
+Scoped Mongo inspection and document CRUD (not entity collections). Optional credential bindings: `database_names`, `collection_refs` (`db.collection`).
+
+**Hard-blocked and private-only:** The gateway rejects `admin`, `local`, and `config`, any `system.*` collection, and the public credential / audit collections. **Drop**, **rename**, **deleteMany**, **aggregate**, and **export** stay on the private API only.
+
+| Method | Path | Scope | Purpose |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/public/v1/data-management/databases` | read / write | List or create databases |
+| `GET` / `POST` | `/public/v1/data-management/databases/{database}/collections` | read / write | List or create collections |
+| `GET` | `/public/v1/data-management/databases/{database}/collections/{collection}/fields` | `data-management:read` | Field sample / schema |
+| `GET` | `/public/v1/data-management/databases/{database}/collections/{collection}/indexes` | `data-management:read` | Index list |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents/query` | `data-management:read` | Query documents |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents` | `data-management:write` | Insert documents |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/documents/update` | `data-management:write` | Update documents (**POST**, not PUT) |
+| — | (single-document delete — path in live catalog) | `data-management:write` | Delete one document |
+| `POST` | `/public/v1/data-management/databases/{database}/collections/{collection}/import` | `data-management:write` | Import documents |
+
 ## Ontology
 
 Updates use **POST**, not PUT/PATCH. Same contract as private `/api/v1/ontology/*`.
@@ -7121,6 +7130,9 @@ Public collections include: projects, agent configs / nodes / channels, custom c
 | `PUBLIC_API_INTERNAL_BASE_URL` | `http://localhost:8001/api/v1` | Private proxy target |
 | `PUBLIC_API_INTERNAL_SERVICE_TOKEN` | — | Job fallback only |
 | `PUBLIC_API_AUDIT_TTL_DAYS` | `0` = keep | Audit TTL |
+| `PUBLIC_API_DOCS_ENABLED` | — (see Workbench `public-api-gateway` runbook) | Enable OpenAPI at `/docs` on `:8004` |
+| `PUBLIC_API_DEFAULT_RATE_LIMIT_PER_MINUTE` | — (see runbook) | Default per-credential rate limit |
+| `PUBLIC_API_EXTERNAL_BASE_URL` | — | Public base URL for open-tracking and unsubscribe links (must be reachable from mail clients) |
 
 Related: [Private APIs](/docs/configuration/workbench_apis/private), [API Keys](/docs/configuration/workbench_apis/keys), [MCP](/docs/configuration/workbench_apis/mcp).
 
@@ -7781,6 +7793,8 @@ It is **not** the Runtime scorer, [Spend Personality](/docs/modules/spend_person
 ![Configurations list — Analytic, Financial, Personality, and Interactions](/images/modules/data-agents/configurations.png)
 
 **Same login as Workbench:** The SPA stores `ecosystem_auth` and sends `Authorization: Bearer`. Login proxies to Ecosystem Server. Set `AUTH_ENABLED=false` only for offline local work.
+
+**Enterprise SSO:** Microsoft Entra ID, on-premises LDAP, and corporate auto-SSO are configured on **ecosystem-server** and shared with Workbench. See [Active Directory & SSO](/docs/configuration/workbench_apis/active_directory) for provider setup, group-to-role mapping, and verification endpoints (Data Agents API `:54324` exposes the same `/api/v1/auth/providers` proxy as Workbench).
 
 ## Where it fits
 
@@ -10207,21 +10221,31 @@ Modules are operator products that sit on Workbench and compose with the Runtime
 
 ---
 
-## LoRA Recommender
+## LoRA Recommender Module
 
-Source: `docs/modules/lora.mdx`
+Source: `docs/modules/lora/index.mdx`
 URL: https://developer.ecosystem.ai/docs/modules/lora
-Summary: Low-rank residual recommender on frozen nomic-embed-text — train in Workbench, score through Runtime plugins
+Summary: Train a LoRA recommender in Workbench and score offers through the Runtime closed loop
 
-# LoRA Recommender
+# LoRA Recommender Module
 
-The **LoRA Recommender** is a **retrieval module**, not a generative LLM feature. It trains a low-rank residual on top of frozen **`nomic-embed-text`** embeddings, then scores offers in the Runtime closed loop like other recommenders.
+Train and deploy a **LoRA Recommender** in Workbench, then score ranked offers through the same Runtime closed loop as other recommenders (`POST /invocations`, then `POST /response`).
 
 Operator entry: **Solutions → LoRA Recommender** (`/lora`).
 
+It is a **sibling** of [Two-Tower](/docs/modules/two_tower). Two-Tower (`predictor.model.type=similarity`) is unchanged.
+
+## Where it fits
+
+| Stage | Component |
+| --- | --- |
+| Train / export | Workbench **Solutions → LoRA Recommender** |
+| Live score | ecosystem-runtime with `predictor.model.type=lora` |
+| Plugins | PrePredictLoRA and PostScoreLoRA (bind on deployment) |
+
 ## Training data
 
-Feature rows typically come from **`logging.ecosystemruntime_flatten`**, produced by [Generate CPR Feature Store](/docs/configuration/cpr_feature_store). Align date windows with your Two-Tower jobs when both modules share the same deployment.
+Feature rows typically come from **`logging.ecosystemruntime_flatten`**, produced by [Generate CPR Feature Store](/docs/configuration/cpr_feature_store). Align date windows with Two-Tower jobs when both modules share a deployment.
 
 Embeddings and run metadata live in:
 
@@ -10230,83 +10254,28 @@ Embeddings and run metadata live in:
 
 ## Operator flow
 
-1. Configure a LoRA job (rank, corpora, train/validation split).
-2. **Train** — fits the residual on frozen encoder outputs (`rank=0` disables the residual for baseline comparisons).
-3. **Concept test** — offline checks before export.
-4. **Export** — artifacts for deployment binding.
-5. **Bind on deployment** — set runtime properties (below) and **Push** to the target runtime.
+1. Configure a LoRA job in the Workbench UI (training corpora and split).
+2. **Train**, then **Concept test** and **Export embeddings** when you are ready to deploy.
+3. **Bind on deployment** — open the deployment step, set **Model Type → LoRA Recommender**, and bind the training **`run_id`**. Set [runtime properties](/docs/modules/lora/runtime) and **Push**. Push fails if required embedding data for that run is not present.
+4. Optional: **Generate Notebook** or **Use in Python** for a standalone training script.
 
-Public HTTP routes also exist under Workbench `public_api/routers/lora.py` for scoped integrations.
-
-## Runtime scoring
-
-Set on the deployment / `ecosystem.properties`:
-
-```properties
-predictor.model.type=lora
-predictor.lora.rank=8
-predictor.lora.user_embedding_collection=logging.lora_user_embeddings
-predictor.lora.item_embedding_collection=logging.lora_item_embeddings
-plugin.prescore=…PrePredictLoRA
-plugin.postscore=…PostScoreLoRA
-```
-
-Exact property keys follow your project template; see Workbench deployment export for the bound class names.
-
-Closed loop unchanged: `POST /invocations` then `POST /response` with `params` as a JSON **string**.
-
-## Project Generate
-
-Project **Generate** can emit LoRA-related keywords and deployment snippets when the prompt describes embedding-based retrieval — use it after the flatten store and training corpora exist.
-
-## Related
-
-- [Two-Tower Module](/docs/modules/two_tower) — dual-encoder retrieval in the same embedding space family
-- [CPR Feature Store](/docs/configuration/cpr_feature_store) — flatten source for training
-- [Runtime plugins](/docs/runtime/plugins) — Pre-Predict and Post-Score binding
-
----
-
-## LoRA Recommender Module
-
-Source: `docs/modules/lora/index.mdx`
-URL: https://developer.ecosystem.ai/docs/modules/lora
-Summary: Low-rank adaptation on frozen nomic embeddings for offer ranking — train in Workbench, export vectors, score with PrePredictLoRA and PostScoreLoRA.
-
-# LoRA Recommender Module
-
-## Overview
-
-The **LoRA Recommender** adapts frozen text embeddings (default
-`nomic-embed-text`) with a small low-rank residual, then ranks offers by
-cosine or dot-product similarity — the same live scoring shape as Two-Tower.
-
-```mermaid
-flowchart LR
-  text["Customer and offer text"] --> nomic["nomic-embed-text"]
-  nomic --> residual["LoRA residual"]
-  residual --> mongo["Mongo embeddings"]
-  mongo --> score["PrePredictLoRA + PostScoreLoRA"]
-```
-
-It is a **sibling** of [Two-Tower](/docs/modules/two_tower). Two-Tower
-(`predictor.model.type=similarity`) is unchanged.
-
-## Where it fits
-
-| Stage | Component |
-|-------|-----------|
-| Train / export | Workbench **Solutions → LoRA Recommender** (`/lora`) + notebooks PyTorch sidecar |
-| Live score | ecosystem-runtime `predictor.model.type=lora` |
-| Plugins | `PrePredictLoRA`, `PostScoreLoRA` |
+External integrations: [public gateway LoRA routes](/docs/configuration/workbench_apis/public#lora-recommender) with scopes `lora:configs` and `lora:train`.
 
 ## Closed loop
 
-When collecting feedback: `POST /invocations`, then `POST /response` (singular)
-with that row’s `uuid` + `offer_name`. `params` is a JSON string.
+When collecting feedback: `POST /invocations`, then `POST /response` (singular) with that row’s `uuid` and `offer_name`. `params` is a JSON **string**.
 
-**info:** Chat models such as qwen3.8 are not used for ranking. The embeddings path
-  stays on `nomic-embed-text` (or your configured `EMBEDDING_SERVER_MODEL`).
+## In this module
+
+- [Training](/docs/modules/lora/training) — corpora, templates, export
+- [Runtime](/docs/modules/lora/runtime) — deployment properties and plugins
+
+## Related
+
+- [Two-Tower Module](/docs/modules/two_tower) — dual-encoder retrieval
+- [CPR Feature Store](/docs/configuration/cpr_feature_store) — flatten source for training
+- [Runtime plugins](/docs/runtime/plugins) — Pre-Predict and Post-Score binding
+- [Public APIs — LoRA](/docs/configuration/workbench_apis/public#lora-recommender)
 
 ---
 
@@ -10320,35 +10289,35 @@ Summary: Score exported LoRA embeddings with PrePredictLoRA and PostScoreLoRA.
 
 ## Properties
 
+Set on the deployment / `ecosystem.properties`:
+
 ```properties
 predictor.model.type=lora
 predictor.lora.run.id=<run_id>
 predictor.lora.embedding.db=logging
 predictor.lora.user.collection=lora_user_embeddings
 predictor.lora.item.collection=lora_item_embeddings
-predictor.lora.customer.key=customer_id
-predictor.lora.offer.key=offer
+predictor.lora.customer.key=<customer_field>
+predictor.lora.offer.key=<offer_field>
 predictor.lora.metric=cosine
-plugin.prescore=com.ecosystem.plugin.customer.PrePredictLoRA
-plugin.postscore=com.ecosystem.plugin.customer.PostScoreLoRA
 ```
 
-`model.type=lora` skips H2O MOJO and Dynamic Engagement, the same way
-`similarity` does. Ranking uses `SimilarityScorer` (cosine or dot).
+Replace `<run_id>`, `<customer_field>`, and `<offer_field>` with values from your project and flatten schema. Bind **PrePredictLoRA** and **PostScoreLoRA** on the deployment step (or set `plugin.prescore` / `plugin.postscore` to the class names your project export emits).
+
+`model.type=lora` skips H2O MOJO and Dynamic Engagement, the same way `similarity` does. Ranking uses cosine or dot product per `predictor.lora.metric`.
 
 ## Plugins
 
 | Plugin | Role |
-|--------|------|
-| `PrePredictLoRA` | Load the customer vector and offer-matrix item cache for the run |
-| `PostScoreLoRA` | Rank candidates, apply offer-matrix eligibility / whitelist |
+| --- | --- |
+| PrePredictLoRA | Load the customer vector and offer-matrix item cache for the run |
+| PostScoreLoRA | Rank candidates; apply offer-matrix eligibility / whitelist |
 
 Push fails if the bound `run_id` has no embedding documents in those collections.
 
 ## Feedback
 
-Closed loop: `POST /invocations` then `POST /response` with `uuid` +
-`offer_name`. Endpoint is singular `/response`.
+Closed loop: `POST /invocations` then `POST /response` with `uuid` and `offer_name`. Endpoint is singular `/response`.
 
 ---
 
@@ -10362,29 +10331,19 @@ Summary: Train a LoRA residual on flatten accept/reject pairs and export embeddi
 
 ## Data
 
-1. **Flatten log** (`ecosystemruntime_flatten`): offers that were shown, with
-   `accepted` as the label. That log is the common behavior signal.
-2. **Offer matrix**: every offer that may be presented gets an item vector at
-3. **Templates**: user and item text templates filled from selected columns
-   (customer, channel, segment, offer attributes).
+1. **Flatten log** (`ecosystemruntime_flatten`): offers that were shown, with `accepted` as the label.
+2. **Offer matrix**: every offer that may be presented gets an item vector at export time, including cold offers never shown in the log.
+3. **Templates**: user and item text templates filled from selected columns (customer, channel, segment, offer attributes).
 
 ## Steps in Workbench
 
 1. Create a config on **LoRA Recommender**.
-2. Set encoder `nomic-embed-text`, rank (default 8), alpha (default 16), and
-   templates. `rank=0` exports raw nomic vectors.
-3. **Train** — notebooks `POST /pytorch/train` with `model_type=lora`.
-4. **Concept test** — rank offers for one customer.
-5. **Export embeddings** — write `logging.lora_user_embeddings` and
-   `logging.lora_item_embeddings` for the `run_id`.
+2. Set rank, alpha, and templates in the UI. Use rank `0` when you want baseline encoder vectors without the trained residual.
+3. **Train** — runs the configured training job in Workbench (notebooks sidecar when enabled).
+4. **Concept test** — rank offers for one customer offline.
+5. **Export embeddings** — write `logging.lora_user_embeddings` and `logging.lora_item_embeddings` for the `run_id`.
 
-## Residual
-
-With frozen encoder vector `z`:
-
-`z' = normalize(z + (alpha / r) * B A z)`
-
-`B` starts at zero so step 0 matches the encoder. Only `A` and `B` train.
+Training reads accept/reject signal from the flatten store; export must cover all matrix offers you intend to score live.
 
 ---
 
@@ -15081,12 +15040,12 @@ Alphabetical index of every class and property in the platform ontology suite. M
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationResponse` | Invocation Response | API return with uuid, final_result ranked offers, explore/cache flags, in_params echo. |
 | [runtime](/docs/ontology/runtime-catalog) | Class | `InvocationStats` | Invocation Stats | Timing and model metadata on a contact log (duration, epsilon, predictor, error). |
 | [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobId` | job id |  |
-| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobLifecycleState` | lifecycle state | Queued \\| Running \\| Succeeded \\| Failed \\| Cancelled. |
+| [workbench](/docs/ontology/workbench-catalog) | Datatype property | `jobLifecycleState` | lifecycle state | `Queued`, `Running`, `Succeeded`, `Failed`, or `Cancelled`. |
 | [runtime](/docs/ontology/runtime-catalog) | Object property | `joinsOffer` | joins offer | optionKey equals matrix offer_id. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `learningAlgorithm` | learning algorithm | randomisation.approach: epsilonGreedy, binaryThompson, naiveBayes, QLearning, behaviorAlgos, Network. |
 | [entities](/docs/ontology/entities-catalog) | Object property | `linkedToProject` | linked to project | project_ids on contacts catalog / records. |
 | [runtime](/docs/ontology/runtime-catalog) | Datatype property | `lookupKey` | lookup key |  |
-| [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixStatus` | status | draft \\| active \\| archived. |
+| [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixStatus` | status | `draft`, `active`, or `archived`. |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `matrixVersion` | version |  |
 | [entities](/docs/ontology/entities-catalog) | Datatype property | `modelId` | model id |  |
 | [server](/docs/ontology/server-catalog) | Class | `ModelingProject` | Modeling Project | UML / modeling project persisted in ecosystem-server (projects collection) with description, diagrams, and optional ontologyContext. engagementKind belongs to the Workbench Project, not to this class. |
@@ -15396,7 +15355,7 @@ These classes map to Mongo collections (and embedded deployment config) managed 
 |-----------------|----------------------|------------------|-----|
 | `outreach_message_recommender` | `dynamic` | dynamic | Dynamic engagement links, no predictors, no feature-store frames. The label agrees. |
 | `dynamic_recommender_convergence` | `recommender` | dynamic | Six dynamic engagements and no static models. The label does not agree. |
-| `banking_credit_v2` | `solution_template` | hybrid | Static steps and predictors together with dynamic engagement steps. |
+| `sample_credit_hybrid` | `solution_template` | hybrid | Static steps and predictors together with dynamic engagement steps. |
 
 Spend Personality and Money Personality are **lookup-only**. They are not Dynamic Engagement approaches and they are not `learningAlgorithm` values. `PostScoreSpendingPersonality` (including generated `PostScoreSpendingPersonality_*` copies) and `PostScoreMoneyPersonality` copy precomputed scores from whatever database and collection the deployment lookup points at. Any store is valid when the document has the fields that post-score reads.
 
@@ -21102,9 +21061,9 @@ Separate container for **custom FastAPI APIs** and **MLFlow model download** —
 ecosystem-runtime-mcp:
   image: ecosystemai/ecosystem-runtime-mcp:arm64
   environment:
-    RUNTIME_URL: "http://ecosystem-runtime-backend:8081"
+    RUNTIME_URL: "http://<runtime-host>:8081"
     PORT: 8092
-    MLFLOW_TRACKING_URI: "http://mlflow:8085"
+    MLFLOW_TRACKING_URI: "http://<mlflow-host>:8085"
     RUNTIME_CONFIG: "/data/config/runtime_config.json"
     MONGO_CONNECT: ${MONGO_CONNECT_STRING}
   ports:
@@ -26963,6 +26922,14 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 
 ## October 2026
 
+- **Deployment Test phone.** Editable `/invocations` body in a phone frame; each scored row can **Accept** (`POST /deployments/test-response` closes the loop via `/response`); **Integrate** tab with TS/JS/Python/React/Vue snippets
+- **Project Git linking.** Projects link to GitHub/GitLab repositories (Project Versions)
+- **Solution templates.** Credit, credit priced offer, and personality × send-time
+- **Spend/Money Personality batch scoring.** Slices and a period interval; Process step shows errors on reattach
+- **Analytics.** Correlation chart, personality-drift template, dashboard generation from a prompt (built-in templates via `template_id`), Dashboard Studio interactive tables
+- **Marketing and sales outreach templates.** `wednesday_webinar_invite`, `recorded_mini_pitch`, `sales_three_email_sequence`
+- **Ontology Load Meta.** Loads the packaged platform graphs
+- **Public gateway.** Data Management, Simulations, and LoRA routes
 - **Custom Forms**, **Data Management & Campaign**, **Time Process Campaign**, **Table Views**, **Project Utilities**
 - **Explanations** and **Sentimental Equilibrium** operator updates
 - **Simulation transformations** and **log replay** (Shared notebook export; results in `simulations.simulation_logs` / `simulation_param_outputs`)

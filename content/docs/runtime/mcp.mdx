@@ -229,9 +229,9 @@ Separate container for **custom FastAPI APIs** and **MLFlow model download** —
 ecosystem-runtime-mcp:
   image: ecosystemai/ecosystem-runtime-mcp:arm64
   environment:
-    RUNTIME_URL: "http://ecosystem-runtime-backend:8081"
+    RUNTIME_URL: "http://<runtime-host>:8081"
     PORT: 8092
-    MLFLOW_TRACKING_URI: "http://mlflow:8085"
+    MLFLOW_TRACKING_URI: "http://<mlflow-host>:8085"
     RUNTIME_CONFIG: "/data/config/runtime_config.json"
     MONGO_CONNECT: ${MONGO_CONNECT_STRING}
   ports:

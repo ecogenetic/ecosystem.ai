@@ -1,43 +1,56 @@
 ---
 title: LoRA Recommender Module
-description: Low-rank adaptation on frozen nomic embeddings for offer ranking — train in Workbench, export vectors, score with PrePredictLoRA and PostScoreLoRA.
+description: Train a LoRA recommender in Workbench and score offers through the Runtime closed loop
 ---
 
 import { Callout } from 'nextra/components'
 
 # LoRA Recommender Module
 
-## Overview
+Train and deploy a **LoRA Recommender** in Workbench, then score ranked offers through the same Runtime closed loop as other recommenders (`POST /invocations`, then `POST /response`).
 
-The **LoRA Recommender** adapts frozen text embeddings (default
-`nomic-embed-text`) with a small low-rank residual, then ranks offers by
-cosine or dot-product similarity — the same live scoring shape as Two-Tower.
+Operator entry: **Solutions → LoRA Recommender** (`/lora`).
 
-```mermaid
-flowchart LR
-  text["Customer and offer text"] --> nomic["nomic-embed-text"]
-  nomic --> residual["LoRA residual"]
-  residual --> mongo["Mongo embeddings"]
-  mongo --> score["PrePredictLoRA + PostScoreLoRA"]
-```
-
-It is a **sibling** of [Two-Tower](/docs/modules/two_tower). Two-Tower
-(`predictor.model.type=similarity`) is unchanged.
+It is a **sibling** of [Two-Tower](/docs/modules/two_tower). Two-Tower (`predictor.model.type=similarity`) is unchanged.
 
 ## Where it fits
 
 | Stage | Component |
-|-------|-----------|
-| Train / export | Workbench **Solutions → LoRA Recommender** (`/lora`) + notebooks PyTorch sidecar |
-| Live score | ecosystem-runtime `predictor.model.type=lora` |
-| Plugins | `PrePredictLoRA`, `PostScoreLoRA` |
+| --- | --- |
+| Train / export | Workbench **Solutions → LoRA Recommender** |
+| Live score | ecosystem-runtime with `predictor.model.type=lora` |
+| Plugins | PrePredictLoRA and PostScoreLoRA (bind on deployment) |
+
+## Training data
+
+Feature rows typically come from **`logging.ecosystemruntime_flatten`**, produced by [Generate CPR Feature Store](/docs/configuration/cpr_feature_store). Align date windows with Two-Tower jobs when both modules share a deployment.
+
+Embeddings and run metadata live in:
+
+- `logging.lora_user_embeddings`
+- `logging.lora_item_embeddings`
+
+## Operator flow
+
+1. Configure a LoRA job in the Workbench UI (training corpora and split).
+2. **Train**, then **Concept test** and **Export embeddings** when you are ready to deploy.
+3. **Bind on deployment** — open the deployment step, set **Model Type → LoRA Recommender**, and bind the training **`run_id`**. Set [runtime properties](/docs/modules/lora/runtime) and **Push**. Push fails if required embedding data for that run is not present.
+4. Optional: **Generate Notebook** or **Use in Python** for a standalone training script.
+
+External integrations: [public gateway LoRA routes](/docs/configuration/workbench_apis/public#lora-recommender) with scopes `lora:configs` and `lora:train`.
 
 ## Closed loop
 
-When collecting feedback: `POST /invocations`, then `POST /response` (singular)
-with that row’s `uuid` + `offer_name`. `params` is a JSON string.
+When collecting feedback: `POST /invocations`, then `POST /response` (singular) with that row’s `uuid` and `offer_name`. `params` is a JSON **string**.
 
-<Callout type="info">
-  Chat models such as qwen3.8 are not used for ranking. The embeddings path
-  stays on `nomic-embed-text` (or your configured `EMBEDDING_SERVER_MODEL`).
-</Callout>
+## In this module
+
+- [Training](/docs/modules/lora/training) — corpora, templates, export
+- [Runtime](/docs/modules/lora/runtime) — deployment properties and plugins
+
+## Related
+
+- [Two-Tower Module](/docs/modules/two_tower) — dual-encoder retrieval
+- [CPR Feature Store](/docs/configuration/cpr_feature_store) — flatten source for training
+- [Runtime plugins](/docs/runtime/plugins) — Pre-Predict and Post-Score binding
+- [Public APIs — LoRA](/docs/configuration/workbench_apis/public#lora-recommender)
