@@ -1,16 +1,16 @@
 export default {
   index: 'Intro',
+  access: 'API Access',
+  mcp: 'MCP Support',
+  deployment: 'Push Your Deployment',
+  environment_variables: 'Environment Variables',
   configuration: 'Configuration',
   plugins: 'Plugins',
   prepredict: 'Plugins: Pre-Predict',
   apiconfiguration: 'Plugins: API Configuration',
   postpredict: 'Plugins: Post-Predict',
-  deployment: 'Push Your Deployment',
-  environment_variables: "Environment Variables",
-  access: 'API Access',
   logging: 'Logging & Reporting',
   externalruntimecalls: 'External Runtime Calls',
-  mcp: "MCP Support",
   mlflowintegration: 'MLFlow Integration',
-  runtimeversion: 'Release Notes'
+  runtimeversion: 'Release Notes',
 }

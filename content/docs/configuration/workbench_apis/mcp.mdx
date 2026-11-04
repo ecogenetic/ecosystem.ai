@@ -7,13 +7,12 @@ import { Callout } from 'nextra/components'
 
 # MCP
 
-Ecosystem exposes **three MCP-related surfaces**. They share the path `/mcp` but are **not interchangeable**.
+Ecosystem exposes **two MCP servers** on the path `/mcp`. They are **not interchangeable**.
 
 | Surface | Where | Transport | Use for |
 | --- | --- | --- | --- |
 | **Workbench MCP** | `ecosystem-workbench2` `:8001` | Streamable HTTP `POST /mcp` | Deployments, entities, enrichment, public catalog, operator chat |
-| **Runtime builtin MCP** | Java Runtime `:8091` | `POST /mcp` JSON-RPC | `invoke` / `response`, campaign admin, runtime ontology |
-| **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` | FastAPI `/mcp` | MLFlow refresh, custom FastAPI |
+| **Runtime MCP** | Java Runtime (built in; same port as scoring) | `POST /mcp` JSON-RPC | `invoke` / `response`, campaign admin, runtime ontology |
 
 Protocol: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28). Runtime detail: [MCP Support](/docs/runtime/mcp).
 
@@ -134,8 +133,6 @@ Closed loop:
 
 `params` is a JSON string, never a nested object.
 
-## Sidecar
-
-The Python `ecosystem-runtime-mcp` image is for **custom FastAPI** and **MLFlow model download**. It is not the Java JSON-RPC server and not Workbench MCP.
+MLFlow model import is configured on the **Java runtime** ([MLFlow integration](/docs/runtime/mlflowintegration)), not a separate MCP image.
 
 Related: [Agents](/docs/configuration/workbench_apis/agents), [Public APIs](/docs/configuration/workbench_apis/public), [Runtime MCP](/docs/runtime/mcp), [Ontology for agents](/docs/ontology/agents).
