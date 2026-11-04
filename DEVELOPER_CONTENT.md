@@ -2,7 +2,7 @@
 
 This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://developer.ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
 
-Corpus: 272 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
+Corpus: 275 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
 
 ## Document index
 
@@ -32,6 +32,7 @@ Corpus: 272 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Deployment Options](#docs-configuration-deployment-index) — `docs/configuration/deployment/index.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment
 - [Deployment Parameters](#docs-configuration-deployment-parameters) — `docs/configuration/deployment/parameters.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment/parameters
 - [Deployment Properties](#docs-configuration-deployment-properties) — `docs/configuration/deployment/properties.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment/properties
+- [Deployment Test](#docs-configuration-deployment-test) — `docs/configuration/deployment/test.mdx` — https://developer.ecosystem.ai/docs/configuration/deployment/test
 - [Model Convergence](#docs-configuration-dynamic-convergence) — `docs/configuration/dynamic/convergence.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/convergence
 - [Custom Rewards](#docs-configuration-dynamic-customrewards) — `docs/configuration/dynamic/customrewards.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic/customrewards
 - [Dynamic Interactions](#docs-configuration-dynamic-index) — `docs/configuration/dynamic/index.mdx` — https://developer.ecosystem.ai/docs/configuration/dynamic
@@ -47,6 +48,7 @@ Corpus: 272 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Generative Models](#docs-configuration-generative-models) — `docs/configuration/generative/models.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/models
 - [Vector Stores](#docs-configuration-generative-vector-stores) — `docs/configuration/generative/vector_stores.mdx` — https://developer.ecosystem.ai/docs/configuration/generative/vector_stores
 - [Intro](#docs-configuration-index) — `docs/configuration/index.mdx` — https://developer.ecosystem.ai/docs/configuration
+- [Modeling & application code generation](#docs-configuration-modeling-generation) — `docs/configuration/modeling_generation.mdx` — https://developer.ecosystem.ai/docs/configuration/modeling_generation
 - [Project / Module](#docs-configuration-project) — `docs/configuration/project.mdx` — https://developer.ecosystem.ai/docs/configuration/project
 - [Project Review and Update](#docs-configuration-project-review) — `docs/configuration/project_review.mdx` — https://developer.ecosystem.ai/docs/configuration/project_review
 - [ecosystem-notebooks Python Package](#docs-configuration-pythonpackage) — `docs/configuration/pythonpackage.mdx` — https://developer.ecosystem.ai/docs/configuration/pythonpackage
@@ -216,6 +218,7 @@ Corpus: 272 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Pre-Score Lookup Plugin](#docs-runtime-prepredict-prescorelookup) — `docs/runtime/prepredict/prescorelookup.mdx` — https://developer.ecosystem.ai/docs/runtime/prepredict/prescorelookup
 - [ecosystem.Ai runtime release notes](#docs-runtime-runtimeversion) — `docs/runtime/runtimeversion.mdx` — https://developer.ecosystem.ai/docs/runtime/runtimeversion
 - [Campaign Testing](#docs-runtime-testing) — `docs/runtime/testing.mdx` — https://developer.ecosystem.ai/docs/runtime/testing
+- [Campaign delivery](#docs-user-guides-campaigns-index) — `docs/user_guides/campaigns/index.mdx` — https://developer.ecosystem.ai/docs/user_guides/campaigns
 - [Deployment](#docs-user-guides-dynamic-deployment) — `docs/user_guides/dynamic/deployment.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/deployment
 - [Manage Files & Feature Engineering](#docs-user-guides-dynamic-files-features) — `docs/user_guides/dynamic/files_features.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/files_features
 - [How it Works](#docs-user-guides-dynamic-how-it-works) — `docs/user_guides/dynamic/how_it_works.mdx` — https://developer.ecosystem.ai/docs/user_guides/dynamic/how_it_works
@@ -3666,6 +3669,56 @@ logging.detail=true
 
 ---
 
+## Deployment Test
+
+Source: `docs/configuration/deployment/test.mdx`
+URL: https://developer.ecosystem.ai/docs/configuration/deployment/test
+Summary: Laboratory phone-frame closed-loop test for a pushed deployment — Accept, Integrate snippets, and test-response.
+
+# Deployment Test
+
+After you **push** a deployment, use **Deployment Test** in Workbench to exercise the same closed loop as production scoring without leaving the deployment editor.
+
+**Not Runtime Dashboard:** [Runtime Dashboard](/docs/runtime/dashboard) tests whatever campaign is active on a Runtime JVM. Deployment Test targets **one Workbench deployment** (project + deployment + version) through the Workbench backend and the runtime path configured on that deployment.
+
+## Where to open it
+
+1. Open the project and deployment you pushed.
+2. Open **Deployment Test** (phone-frame UI on the deployment).
+
+## Phone frame
+
+- Edit the **`POST /invocations`** JSON body in the phone preview (customer, channel, `numberoffers`, `params` as a JSON **string**, and other fields your deployment expects).
+- **Invoke** to score. Ranked rows appear in the frame.
+- Select a row and **Accept** to close the loop. Workbench calls **`POST /deployments/test-response`**, which forwards feedback as Runtime **`POST /response`** (singular) using that row’s `uuid` and `offer_name`.
+
+For the full invoke/response contract see [Quick Start — closed loop](/docs/quick_start) and [Deployment endpoints](/docs/configuration/deployment/endpoints).
+
+## Integrate tab
+
+The **Integrate** tab copies ready-made client snippets for the same invoke/accept flow:
+
+| Stack | Snippet |
+| --- | --- |
+| TypeScript / JavaScript | Fetch or axios-style examples |
+| Python | Requests example |
+| React | Component hook pattern |
+| **Vue** | Composition-friendly example |
+
+Use these when embedding scoring in an app; keep `params` a string and send **`POST /response`** after accept.
+
+## Related testing paths
+
+| Goal | Surface |
+| --- | --- |
+| Single deployment, operator UI | **Deployment Test** (this page) |
+| Any active Runtime campaign | [Runtime Dashboard](/docs/runtime/dashboard) |
+| Volume / options-store analytics | [Simulations](/docs/configuration/simulations) |
+| Isolated business evidence for one deployment | [Runtime Testing](/docs/runtime/testing) (`/runtime-testing`) |
+| Plugin-level Cucumber | Runtime `POST /test/campaign` ([Campaign Testing](/docs/runtime/testing)) |
+
+---
+
 ## Model Convergence
 
 Source: `docs/configuration/dynamic/convergence.mdx`
@@ -4382,6 +4435,68 @@ There are many ways to configure ecosystem.Ai, including:
 The Configuration section of the documentation covers the detail of the configuration options available in the ecosystem.Ai platform. These configurations are largely illustrated using the Workbench, the same configurations can be created using any of the other available interfaces.
 
 For detailed guides on creating configurations for a specific case, see the [User Guides](/docs/user_guides).
+
+---
+
+## Modeling & application code generation
+
+Source: `docs/configuration/modeling_generation.mdx`
+URL: https://developer.ecosystem.ai/docs/configuration/modeling_generation
+Summary: ecosystem-server modeling projects, ontology context, and generated client code including Vue.
+
+# Modeling & application code generation
+
+**ecosystem-server** hosts **modeling projects**: UML diagrams, ontology context, and async jobs that generate application code from your model. Workbench **Project Generate** on a deployment creates plugin/git artefacts for the Runtime; modeling generation is the server-side path for full application stacks.
+
+Ontology concepts: [Modeling Server](/docs/ontology/server) · [Server catalog](/docs/ontology/server-catalog).
+
+## Modeling project shape
+
+| Piece | Role |
+| --- | --- |
+| `ModelingProject` | Container for diagrams and generation settings |
+| `Diagram` | Class, sequence, or other UML views |
+| `OntologyContext` | Domain ids, structured model, prompt context, roles |
+| `UmlGenerationJob` | Analyze or generate UML from prompts |
+| `AppGenerationJob` | Async **application code generation** from the model |
+| `OntologySynthesisRun` | Merge diagrams / data / roles → Turtle export |
+
+Domain seed catalog (public): [ecosystem-domain-catalog](https://github.com/ecogenetic/ecosystem-domain-catalog) — business-domain Turtle and SHACL used when `usesDomainCatalog` is set on the ontology context.
+
+## Generated client stacks
+
+Application generation can emit integration code for the same closed loop documented on the developer site:
+
+| Output | Use |
+| --- | --- |
+| TypeScript / JavaScript | Browser or Node clients |
+| Python | Scripts and notebooks |
+| React | Component examples |
+| **Vue** | Composition-API friendly snippets |
+
+Workbench **Deployment Test → Integrate** tab produces the same stack list for an **already pushed deployment** ([Deployment Test](/docs/configuration/deployment/test)). Modeling generation targets the **application** implied by your UML/ontology project rather than a single deployment’s plugin JAR.
+
+**Deployment Generate vs modeling Generate:** **Deployment → Generate** (see [Deployment parameters — Build and Generate](/docs/configuration/deployment/parameters)) creates a git branch with **Runtime plugin** code for that deployment. **Modeling → App generation** on ecosystem-server creates **application** projects from diagrams and ontology context. Use both when you need plugins on the Runtime and a separate client app.
+
+## Ontology-aware generation
+
+Recent ontology work connects:
+
+- **Workbench Ontology Management** — mappings, `resolve-term`, MCP `generate_ontology_query` / `query_data_via_ontology` ([Ontology for agents](/docs/ontology/agents))
+- **Domain catalog** — shared industry vocabulary and optional source mappings ([Data and Ontology](/docs/ontology/data-and-ontology))
+- **Modeling synthesis** — `OntologySynthesisRun` exports Turtle aligned with diagrams
+
+When Ontology Management is enabled, prefer resolving business terms to mapped fields before generating queries or client payloads.
+
+## Docker images (reference only)
+
+Ecogenetic publishes refreshed **`ecosystem-server`**, **`ecosystem-modeling`**, and related images on Docker Hub (`ecosystemai/*`). Pin by digest or an explicit tag your install documents — do not assume `latest` matches a specific semver unless your release notes say so.
+
+## Related
+
+- [Project](/docs/configuration/project) — Workbench project document
+- [Deployment parameters](/docs/configuration/deployment/parameters) — plugin Generate/Build flags
+- [Public API — Ontology](/docs/configuration/workbench_apis/public#ontology)
 
 ---
 
@@ -15003,6 +15118,10 @@ For ecosystem-runtime campaigns:
 - **Customer / feature lookup** — open bag (any shape) — [Customer Feature Lookup](/docs/ontology/customer-features)
 - **Offer matrix** — fixed six fields — [Offer Matrix](/docs/ontology/offer-matrix)
 
+## Domain catalog (industry seeds)
+
+Packaged **business-domain** Turtle (banking, CRM, software, …) and optional source mappings live in the public [ecosystem-domain-catalog](https://github.com/ecogenetic/ecosystem-domain-catalog) repository (live site [ontology.ecosystem.ai](https://ontology.ecosystem.ai)). Workbench **Ontology Load Meta** loads platform graphs; catalog entries can seed `OntologyContext` on ecosystem-server modeling projects — see [Modeling & Code Generation](/docs/configuration/modeling_generation).
+
 ---
 
 ## Entities concept catalog
@@ -15305,6 +15424,7 @@ Like an operational ontology elsewhere, it connects digital assets (Mongo collec
 | Fixed offer catalog shape | [Offer Matrix](/docs/ontology/offer-matrix) |
 | Open customer / feature docs | [Customer Feature Lookup](/docs/ontology/customer-features) |
 | Term lookup | [Glossary](/docs/ontology/glossary) |
+| Industry domain seeds (public catalog) | [ecosystem-domain-catalog](https://github.com/ecogenetic/ecosystem-domain-catalog) on GitHub · live [ontology.ecosystem.ai](https://ontology.ecosystem.ai) |
 
 ## Modules at a glance
 
@@ -22331,7 +22451,7 @@ Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 
 ## 0.9.7.x (Oct 2026)
 
-Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed 24 Oct 2026).
+Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed **3 Nov 2026** on Docker Hub; earlier push 24 Oct 2026).
 
 ### New functionality
 - **SQL Server stored procedures** — `SqlServerWorker`, `POST /callSqlServerProcedure`, env `SQLSERVER_URL`, `SQLSERVER_USER`, `SQLSERVER_PASSWORD`, properties `sqlserver.*`, `mssql-jdbc` **13.6.0**. See [SQL Server](/docs/configuration/data/sqlserver).
@@ -22673,6 +22793,79 @@ Analyze extracts one-factor-at-a-time param values from pre/post score (plus ope
 Operators start suites and read results from the **Ecosystem Agent** or HTTP `POST /mcp`: `analyze_runtime_testing` → `plan_runtime_testing` (`confirm=true`) → `start_runtime_testing_run` (`confirm=true`) → `list_runtime_testing_runs` / `get_runtime_testing_run`. Live execution is isolated-only.
 
 Do not change `/test/campaign*` contracts or plugin signatures to support that Workbench product.
+
+---
+
+## Campaign delivery
+
+Source: `docs/user_guides/campaigns/index.mdx`
+URL: https://developer.ecosystem.ai/docs/user_guides/campaigns
+Summary: Workbench campaign documents, delivery channels, runs, dry checks, and how they relate to Runtime scoring.
+
+# Campaign delivery
+
+Workbench manages **delivery campaigns** (email, SMS, WhatsApp, schedules, and agent-assisted outreach). That layer is separate from **Runtime scoring campaigns** (`campaign` / `subcampaign` on `POST /invocations`).
+
+| Layer | What it is | Typical API |
+| --- | --- | --- |
+| **Delivery campaign** | Business overlay: audience, channels, content, schedules, runs | Workbench `/api/v1/campaigns` and [Public API — Campaigns](/docs/configuration/workbench_apis/public#campaigns) |
+| **Scoring deployment** | Predictor pushed to Runtime | `POST /invocations` → `POST /response` on the Runtime host |
+
+Runtime `channel` values such as `app`, `web`, or `api` describe the scoring context. Delivery **channel catalog** entries (email providers, WhatsApp, …) live on the Workbench campaign document.
+
+## Operator surfaces
+
+| Surface | Use for |
+| --- | --- |
+| **Campaign manager** (Intelligent Sales) | Edit campaign documents, channels, schedules, and triggers |
+| **Custom Forms** | Capture structured inputs linked to campaign workflows |
+| **Data Management & Campaign** | Join audience data with campaign entities |
+| **Time Process Campaign** | Time-based process steps on a campaign graph |
+| **Campaign Management service** | Agentic campaign ops when `ecosystem-campaign-management` is deployed — see [Claude Agent — Campaign Management](/docs/workers/agent_framework/claude-agent#campaign-management) |
+| **Campaign Outreach Agent** | Build/configure/run outreach via MCP tools (`sample_run`, `test_target_email`) — [Workbench MCP](/docs/configuration/workbench_apis/mcp) |
+
+## Campaign process workflow
+
+A typical end-to-end **campaign process** (business overlay + technical execution) looks like this:
+
+```mermaid
+flowchart LR
+  intent[Plan intent and audience]
+  doc[Campaign document in Workbench]
+  ready[Readiness and approvals]
+  trig[Trigger or schedule]
+  run[Run progress and evidence]
+  score[Runtime scoring where configured]
+  learn[Outcomes and analytics]
+
+  intent --> doc --> ready --> trig --> run
+  run --> score
+  run --> learn
+```
+
+1. **Plan** audience, content, and channels on the campaign document (or with the Campaign Agent / Outreach Agent where enabled).
+2. **Wire** delivery channels — `GET /public/v1/campaigns/channel-catalog`, then set selection with `PUT …/channel-selection` ([Public API](/docs/configuration/workbench_apis/public#campaigns)).
+3. **Validate before live send** — prefer a **dry or sample run** first:
+   - Outreach MCP: `run_outreach_campaign` with `sample_run` and optional `test_target_email` ([MCP tool table](/docs/configuration/workbench_apis/mcp)).
+   - Inspect **`GET /public/v1/campaigns/runs/{run_id}/progress`** before promoting to production traffic.
+4. **Trigger** with `POST /public/v1/campaigns/{campaign_id}/trigger` or arm schedules via `POST …/schedules/sync`.
+5. **Monitor** runs (`GET …/runs`, `GET …/runs/{run_id}`) and **stop** if needed (`POST …/runs/{run_id}/stop`).
+6. Where a deployment is linked, closed-loop **scoring** still uses Runtime [`POST /invocations`](/docs/quick_start) then [`POST /response`](/docs/quick_start).
+
+**Delivery vs scoring:** Changing delivery schedules does not replace pushing or testing a **deployment**. Use [Deployment Test](/docs/configuration/deployment/test) or [Runtime Testing](/docs/runtime/testing) for predictor behaviour.
+
+## HTTP API summary
+
+Full tables: [Public API — Campaigns](/docs/configuration/workbench_apis/public#campaigns). Private `/api/v1/campaigns` mirrors campaign CRUD, `_generate` helpers, and operator triggers ([Private APIs](/docs/configuration/workbench_apis/private)).
+
+Entity collection name on the public gateway: **`campaigns`** (see [Entity collections](/docs/configuration/workbench_apis/public#entity-collections)).
+
+## Related
+
+- [Claude Agent](/docs/workers/agent_framework/claude-agent) — Campaign Management profile and CM MCP bridge
+- [Deployment Test](/docs/configuration/deployment/test) — closed-loop test for a pushed deployment
+- [Simulations](/docs/configuration/simulations) — volume traffic against a deployment
+- [Ontology for agents](/docs/ontology/agents) — grounding agent tools before API calls
 
 ---
 
@@ -23168,6 +23361,8 @@ Summary: Test a pushed Dynamic Interaction deployment — Manage APIs for single
 Once you have pushed your deployment configuration you should do some testing to see if the results align with your expectations.
 
 Configure and run closed-loop traffic at **Simulation** (`/entities/simulation`) — the loop runs **in-process** on the Workbench backend ([Simulations](/docs/configuration/simulations)). For automated business evidence on **one** project, deployment, and version, use **Runtime Testing** (`/runtime-testing`) ([Campaign Testing](/docs/runtime/testing)).
+
+For a **phone-frame** invoke/accept test on the deployment you just pushed, use [Deployment Test](/docs/configuration/deployment/test) on that deployment.
 
 There are two ways to test your deployment from the Laboratory walkthrough below:
 
@@ -26088,7 +26283,7 @@ use the same private API base with the user JWT.
 | Surface | Auth | Purpose |
 | --- | --- | --- |
 | `POST /v1/messages` | Public path; model remapped to default LLM | What external Agent SDK / Claude Code calls when `ANTHROPIC_BASE_URL` = Workbench |
-| `POST /mcp` | `Authorization: Bearer` + `X-API-Key` | Full HTTP MCP tool set |
+| `POST /mcp` | One credential: JWT **or** public key (`Authorization: Bearer …` **or** `X-API-Key`) | Full HTTP MCP tool set |
 
 Copy live snippets from Workbench **Administration → Agents → Access**.
 
@@ -26729,6 +26924,22 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 - **Campaign Outreach Agent** and outreach MCP tools
 - **Ontology** catalog updates
 
+## November 2026 (early)
+
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **3 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+
+Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides/campaigns), [Deployment Test](/docs/configuration/deployment/test), [Modeling & Code Generation](/docs/configuration/modeling_generation)):
+
+- **Campaign process** — campaign document workflow, channel selection, triggers, schedules, and run progress/stop ([Public API — Campaigns](/docs/configuration/workbench_apis/public#campaigns))
+- **Dry / sample runs** — validate outreach and delivery runs before live send (`sample_run` on outreach MCP tools; inspect run progress via the campaigns API)
+- **Campaign Management ↔ Workbench** — CM agent MCP bridge and `tool_profile: campaign_management` ([Claude Agent](/docs/workers/agent_framework/claude-agent#campaign-management))
+- **Active Directory / SSO** — Entra, LDAP, and group-to-role mapping hardening on ecosystem-server ([Active Directory & SSO](/docs/configuration/workbench_apis/active_directory))
+- **Ontology** — Workbench ontology tooling plus public [ecosystem-domain-catalog](https://github.com/ecogenetic/ecosystem-domain-catalog) domain seeds and mappings
+- **Application code generation** — ecosystem-server modeling jobs, including **Vue** client output alongside TS/JS/Python/React ([Modeling & Code Generation](/docs/configuration/modeling_generation))
+- **Workbench UI** — sorting stability fix for locale-sensitive lists (PR #20 in ecosystem-workbench2)
+
+Build **`3153`** remains the published Workbench 2.0.3 train unless `platform/versions.json` on your deployment reports a newer build.
+
 ## What's Changed (earlier 2.0.3 train)
 
 ### Workbench
@@ -26742,7 +26953,7 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 - MCP tools for the **algorithm catalog**.
 - Spend / Money Personality **drift**.
 - Post-score and data-connection fixes for new corpora.
-- SQL Server stored procedures (`097-latest` / `097-arm64` images, Oct 2026).
+- SQL Server stored procedures (`097-latest` / `097-arm64` images; repushed Nov 2026).
 
 ### What to pin
 ```json
