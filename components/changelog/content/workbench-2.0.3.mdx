@@ -22,6 +22,22 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 - **Campaign Outreach Agent** and outreach MCP tools
 - **Ontology** catalog updates
 
+## November 2026 (early)
+
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **3 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+
+Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides/campaigns), [Deployment Test](/docs/configuration/deployment/test), [Modeling & Code Generation](/docs/configuration/modeling_generation)):
+
+- **Campaign process** — campaign document workflow, channel selection, triggers, schedules, and run progress/stop ([Public API — Campaigns](/docs/configuration/workbench_apis/public#campaigns))
+- **Dry / sample runs** — validate outreach and delivery runs before live send (`sample_run` on outreach MCP tools; inspect run progress via the campaigns API)
+- **Campaign Management ↔ Workbench** — CM agent MCP bridge and `tool_profile: campaign_management` ([Claude Agent](/docs/workers/agent_framework/claude-agent#campaign-management))
+- **Active Directory / SSO** — Entra, LDAP, and group-to-role mapping hardening on ecosystem-server ([Active Directory & SSO](/docs/configuration/workbench_apis/active_directory))
+- **Ontology** — Workbench ontology tooling plus public [ecosystem-domain-catalog](https://github.com/ecogenetic/ecosystem-domain-catalog) domain seeds and mappings
+- **Application code generation** — ecosystem-server modeling jobs, including **Vue** client output alongside TS/JS/Python/React ([Modeling & Code Generation](/docs/configuration/modeling_generation))
+- **Workbench UI** — sorting stability fix for locale-sensitive lists (PR #20 in ecosystem-workbench2)
+
+Build **`3153`** remains the published Workbench 2.0.3 train unless `platform/versions.json` on your deployment reports a newer build.
+
 ## What's Changed (earlier 2.0.3 train)
 
 ### Workbench
@@ -35,7 +51,7 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 - MCP tools for the **algorithm catalog**.
 - Spend / Money Personality **drift**.
 - Post-score and data-connection fixes for new corpora.
-- SQL Server stored procedures (`097-latest` / `097-arm64` images, Oct 2026).
+- SQL Server stored procedures (`097-latest` / `097-arm64` images; repushed Nov 2026).
 
 ### What to pin
 ```json

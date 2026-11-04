@@ -3,4 +3,5 @@ export default {
   parameters: 'Parameters',
   endpoints: 'Endpoints APIs',
   properties: 'Deployment Properties',
+  test: 'Deployment Test',
 }

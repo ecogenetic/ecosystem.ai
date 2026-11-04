@@ -95,7 +95,7 @@ use the same private API base with the user JWT.
 | Surface | Auth | Purpose |
 | --- | --- | --- |
 | `POST /v1/messages` | Public path; model remapped to default LLM | What external Agent SDK / Claude Code calls when `ANTHROPIC_BASE_URL` = Workbench |
-| `POST /mcp` | `Authorization: Bearer` + `X-API-Key` | Full HTTP MCP tool set |
+| `POST /mcp` | One credential: JWT **or** public key (`Authorization: Bearer …` **or** `X-API-Key`) | Full HTTP MCP tool set |
 
 Copy live snippets from Workbench **Administration → Agents → Access**.
 

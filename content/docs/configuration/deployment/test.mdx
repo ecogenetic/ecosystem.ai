@@ -1,0 +1,50 @@
+---
+title: Deployment Test
+description: Laboratory phone-frame closed-loop test for a pushed deployment — Accept, Integrate snippets, and test-response.
+---
+
+import { Callout } from 'nextra/components'
+
+# Deployment Test
+
+After you **push** a deployment, use **Deployment Test** in Workbench to exercise the same closed loop as production scoring without leaving the deployment editor.
+
+<Callout type="info" title="Not Runtime Dashboard">
+[Runtime Dashboard](/docs/runtime/dashboard) tests whatever campaign is active on a Runtime JVM. Deployment Test targets **one Workbench deployment** (project + deployment + version) through the Workbench backend and the runtime path configured on that deployment.
+</Callout>
+
+## Where to open it
+
+1. Open the project and deployment you pushed.
+2. Open **Deployment Test** (phone-frame UI on the deployment).
+
+## Phone frame
+
+- Edit the **`POST /invocations`** JSON body in the phone preview (customer, channel, `numberoffers`, `params` as a JSON **string**, and other fields your deployment expects).
+- **Invoke** to score. Ranked rows appear in the frame.
+- Select a row and **Accept** to close the loop. Workbench calls **`POST /deployments/test-response`**, which forwards feedback as Runtime **`POST /response`** (singular) using that row’s `uuid` and `offer_name`.
+
+For the full invoke/response contract see [Quick Start — closed loop](/docs/quick_start) and [Deployment endpoints](/docs/configuration/deployment/endpoints).
+
+## Integrate tab
+
+The **Integrate** tab copies ready-made client snippets for the same invoke/accept flow:
+
+| Stack | Snippet |
+| --- | --- |
+| TypeScript / JavaScript | Fetch or axios-style examples |
+| Python | Requests example |
+| React | Component hook pattern |
+| **Vue** | Composition-friendly example |
+
+Use these when embedding scoring in an app; keep `params` a string and send **`POST /response`** after accept.
+
+## Related testing paths
+
+| Goal | Surface |
+| --- | --- |
+| Single deployment, operator UI | **Deployment Test** (this page) |
+| Any active Runtime campaign | [Runtime Dashboard](/docs/runtime/dashboard) |
+| Volume / options-store analytics | [Simulations](/docs/configuration/simulations) |
+| Isolated business evidence for one deployment | [Runtime Testing](/docs/runtime/testing) (`/runtime-testing`) |
+| Plugin-level Cucumber | Runtime `POST /test/campaign` ([Campaign Testing](/docs/runtime/testing)) |

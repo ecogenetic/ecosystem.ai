@@ -9,6 +9,7 @@ export default {
   dynamic: 'Dynamic Models',
   generative: 'Generative Models',
   deployment: 'Deployments',
+  modeling_generation: 'Modeling & Code Generation',
   api: 'API Management',
   simulations: 'Simulations',
   pythonpackage: 'Python Package',

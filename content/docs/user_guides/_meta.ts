@@ -5,6 +5,7 @@ export default {
     type: 'separator',
   },
   recommender: 'Recommender',
+  campaigns: 'Campaign delivery',
   dynamic: 'Dynamic Recommender',
   contributing: {
     "title": "Runtime Configurations",

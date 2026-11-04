@@ -1,0 +1,62 @@
+---
+title: Modeling & application code generation
+description: ecosystem-server modeling projects, ontology context, and generated client code including Vue.
+---
+
+import { Callout } from 'nextra/components'
+
+# Modeling & application code generation
+
+**ecosystem-server** hosts **modeling projects**: UML diagrams, ontology context, and async jobs that generate application code from your model. Workbench **Project Generate** on a deployment creates plugin/git artefacts for the Runtime; modeling generation is the server-side path for full application stacks.
+
+Ontology concepts: [Modeling Server](/docs/ontology/server) · [Server catalog](/docs/ontology/server-catalog).
+
+## Modeling project shape
+
+| Piece | Role |
+| --- | --- |
+| `ModelingProject` | Container for diagrams and generation settings |
+| `Diagram` | Class, sequence, or other UML views |
+| `OntologyContext` | Domain ids, structured model, prompt context, roles |
+| `UmlGenerationJob` | Analyze or generate UML from prompts |
+| `AppGenerationJob` | Async **application code generation** from the model |
+| `OntologySynthesisRun` | Merge diagrams / data / roles → Turtle export |
+
+Domain seed catalog (public): [ecosystem-domain-catalog](https://github.com/ecogenetic/ecosystem-domain-catalog) — business-domain Turtle and SHACL used when `usesDomainCatalog` is set on the ontology context.
+
+## Generated client stacks
+
+Application generation can emit integration code for the same closed loop documented on the developer site:
+
+| Output | Use |
+| --- | --- |
+| TypeScript / JavaScript | Browser or Node clients |
+| Python | Scripts and notebooks |
+| React | Component examples |
+| **Vue** | Composition-API friendly snippets |
+
+Workbench **Deployment Test → Integrate** tab produces the same stack list for an **already pushed deployment** ([Deployment Test](/docs/configuration/deployment/test)). Modeling generation targets the **application** implied by your UML/ontology project rather than a single deployment’s plugin JAR.
+
+<Callout type="info" title="Deployment Generate vs modeling Generate">
+**Deployment → Generate** (see [Deployment parameters — Build and Generate](/docs/configuration/deployment/parameters)) creates a git branch with **Runtime plugin** code for that deployment. **Modeling → App generation** on ecosystem-server creates **application** projects from diagrams and ontology context. Use both when you need plugins on the Runtime and a separate client app.
+</Callout>
+
+## Ontology-aware generation
+
+Recent ontology work connects:
+
+- **Workbench Ontology Management** — mappings, `resolve-term`, MCP `generate_ontology_query` / `query_data_via_ontology` ([Ontology for agents](/docs/ontology/agents))
+- **Domain catalog** — shared industry vocabulary and optional source mappings ([Data and Ontology](/docs/ontology/data-and-ontology))
+- **Modeling synthesis** — `OntologySynthesisRun` exports Turtle aligned with diagrams
+
+When Ontology Management is enabled, prefer resolving business terms to mapped fields before generating queries or client payloads.
+
+## Docker images (reference only)
+
+Ecogenetic publishes refreshed **`ecosystem-server`**, **`ecosystem-modeling`**, and related images on Docker Hub (`ecosystemai/*`). Pin by digest or an explicit tag your install documents — do not assume `latest` matches a specific semver unless your release notes say so.
+
+## Related
+
+- [Project](/docs/configuration/project) — Workbench project document
+- [Deployment parameters](/docs/configuration/deployment/parameters) — plugin Generate/Build flags
+- [Public API — Ontology](/docs/configuration/workbench_apis/public#ontology)
