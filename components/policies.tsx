@@ -36,6 +36,7 @@ We may update this privacy policy from time to time. When we do, we will notify 
 
 If you have any questions about this Privacy Policy, please contact us at`}{' '}
           <Link href="mailto:amy@ecosystem.ai">amy@ecosystem.ai</Link>
+          {' or call (650) 681-2779'}
           {`. 
 
 Your use of ecosystem.Ai indicates your agreement to this Privacy Policy.`}
@@ -82,6 +83,7 @@ We reserve the right to modify these Terms at any time. We will notify users of 
 7. Contact Information
 If you have any questions about these Terms, please contact us at `}{' '}
           <Link href="mailto:amy@ecosystem.ai">amy@ecosystem.ai</Link>
+          {' or call (650) 681-2779'}
           {`.
 
 By using the Website, you acknowledge that you have read these Terms of Service and agree to be bound by them.`}
@@ -116,6 +118,7 @@ You can prevent the setting of cookies by adjusting the settings on your browser
   5. Contact Information
 If you have any questions about these policies, please contact us at `}{' '}
           <Link href="mailto:amy@ecosystem.ai">amy@ecosystem.ai</Link>
+          {' or call (650) 681-2779'}
           {`.
 `}
         </pre>
