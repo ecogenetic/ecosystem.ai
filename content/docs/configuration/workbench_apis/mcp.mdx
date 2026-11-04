@@ -133,6 +133,6 @@ Closed loop:
 
 `params` is a JSON string, never a nested object.
 
-MLFlow model import is configured on the **Java runtime** ([MLFlow integration](/docs/runtime/mlflowintegration)), not a separate MCP image.
+MLflow MOJO import on **0.9.7** is manual (download from MLflow, place on the runtime model path, then `/refresh`) — see [MLFlow integration](/docs/runtime/mlflowintegration). It is not part of `POST /mcp`.
 
 Related: [Agents](/docs/configuration/workbench_apis/agents), [Public APIs](/docs/configuration/workbench_apis/public), [Runtime MCP](/docs/runtime/mcp), [Ontology for agents](/docs/ontology/agents).

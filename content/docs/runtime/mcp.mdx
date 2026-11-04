@@ -16,7 +16,7 @@ The ecosystem.Ai runtime serves **Model Context Protocol (MCP) natively** on the
 - **Older transport** — `GET /mcp` plus `POST /mcp/message?sessionId=…` (HTTP+SSE) remains for older clients only; new integrations should use Streamable HTTP on `POST /mcp`.
 - **Auth** — when `MASTER_KEY` is configured, **mutating tools** require `X-API-KEY` or `Authorization: Bearer {MASTER_KEY}` (same key as other secured runtime APIs).
 
-Model registry import from MLFlow is also configured on this runtime. See [MLFlow integration](/docs/runtime/mlflowintegration).
+MLflow registry import on 0.9.7 is a **manual** MOJO copy plus `/refresh` — not an automatic runtime pull. See [MLFlow integration](/docs/runtime/mlflowintegration). Custom HTTP routes on the runtime use the [API Configuration](/docs/runtime/apiconfiguration/index) plugin (Java `/generateClass` / Workbench **Compile** where documented).
 
 Protocol reference: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
 
@@ -273,5 +273,5 @@ Per-deployment MCP snippets: `GET /api/v1/deployments/{name}/mcp`.
 - **Score runtime campaigns from an agent** → Runtime builtin MCP (`invoke` + `response`)
 - **Score Workbench deployments / run enrichment / catalog via `call_endpoint`** → Workbench MCP server
 - **In-app Operator or Campaign Management Claude turns** → [Claude Agent](/docs/workers/agent_framework/claude-agent)
-- **Import models from an MLFlow registry** → [MLFlow integration](/docs/runtime/mlflowintegration) on the Java runtime
+- **Import H2O MOJOs from MLflow (manual)** → [MLFlow integration](/docs/runtime/mlflowintegration); custom HTTP on the runtime → [API Configuration](/docs/runtime/apiconfiguration/index)
 - **Local agent with full Workbench API** → `ecosystem_workbench_mcp` stdio SDK

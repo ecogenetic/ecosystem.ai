@@ -6778,7 +6778,7 @@ Closed loop:
 
 `params` is a JSON string, never a nested object.
 
-MLFlow model import is configured on the **Java runtime** ([MLFlow integration](/docs/runtime/mlflowintegration)), not a separate MCP image.
+MLflow MOJO import on **0.9.7** is manual (download from MLflow, place on the runtime model path, then `/refresh`) — see [MLFlow integration](/docs/runtime/mlflowintegration). It is not part of `POST /mcp`.
 
 Related: [Agents](/docs/configuration/workbench_apis/agents), [Public APIs](/docs/configuration/workbench_apis/public), [Runtime MCP](/docs/runtime/mcp), [Ontology for agents](/docs/ontology/agents).
 
@@ -20752,7 +20752,7 @@ The ecosystem.Ai runtime serves **Model Context Protocol (MCP) natively** on the
 - **Older transport** — `GET /mcp` plus `POST /mcp/message?sessionId=…` (HTTP+SSE) remains for older clients only; new integrations should use Streamable HTTP on `POST /mcp`.
 - **Auth** — when `MASTER_KEY` is configured, **mutating tools** require `X-API-KEY` or `Authorization: Bearer {MASTER_KEY}` (same key as other secured runtime APIs).
 
-Model registry import from MLFlow is also configured on this runtime. See [MLFlow integration](/docs/runtime/mlflowintegration).
+MLflow registry import on 0.9.7 is a **manual** MOJO copy plus `/refresh` — not an automatic runtime pull. See [MLFlow integration](/docs/runtime/mlflowintegration). Custom HTTP routes on the runtime use the [API Configuration](/docs/runtime/apiconfiguration/index) plugin (Java `/generateClass` / Workbench **Compile** where documented).
 
 Protocol reference: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
 
@@ -21006,7 +21006,7 @@ Per-deployment MCP snippets: `GET /api/v1/deployments/{name}/mcp`.
 - **Score runtime campaigns from an agent** → Runtime builtin MCP (`invoke` + `response`)
 - **Score Workbench deployments / run enrichment / catalog via `call_endpoint`** → Workbench MCP server
 - **In-app Operator or Campaign Management Claude turns** → [Claude Agent](/docs/workers/agent_framework/claude-agent)
-- **Import models from an MLFlow registry** → [MLFlow integration](/docs/runtime/mlflowintegration) on the Java runtime
+- **Import H2O MOJOs from MLflow (manual)** → [MLFlow integration](/docs/runtime/mlflowintegration); custom HTTP on the runtime → [API Configuration](/docs/runtime/apiconfiguration/index)
 - **Local agent with full Workbench API** → `ecosystem_workbench_mcp` stdio SDK
 
 ---
@@ -21015,98 +21015,70 @@ Per-deployment MCP snippets: `GET /api/v1/deployments/{name}/mcp`.
 
 Source: `docs/runtime/mlflowintegration.mdx`
 URL: https://developer.ecosystem.ai/docs/runtime/mlflowintegration
-Summary: Import models from the MLFlow model registry
+Summary: Import H2O MOJO models from an MLFlow registry into the Java runtime (manual steps)
 
 # MLFlow Integration
-If models are not trained using the ecosystem Server, the trained models need to be made available to the ecosystem Runtime as part of the deployment process. The supported approach to do this is to use MLFlow as a model registry and import the models from MLFlow into the runtime.
 
-**Looking to train models in-platform?:** This page is for **importing** models from an external MLFlow
-  registry. To train sklearn / xgboost / lightgbm / pytorch models
-  directly from a MongoDB collection through the Workbench2 console
-  — and optionally deploy them onto Docker Desktop Kubernetes
-  alongside `ecosystem-runtime` — see the
-  [MLRun module](/docs/modules/mlrun).
+If models are not trained using the ecosystem Server, trained models must still be placed where the Java runtime can load them as part of deployment.
 
-**Note:** Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the runtime deployment has access to an H2O server used by MLFlow
+**Runtime 0.9.7:** **Automatic MLflow model pull is not built into runtime 0.9.7.** The sidecar-era registry sync (`MLFLOW_TRACKING_URI`, `RUNTIME_CONFIG`, `/update_runtime_config`) applied to **0.9.6.x** only. On 0.9.7, import MOJOs manually, then call [`/refresh`](/docs/runtime/access) to reload in-memory scoring state.
 
-## Configuration
-MLFlow integration is configured on the **Java runtime** (alongside scoring and built-in [MCP Support](/docs/runtime/mcp)). The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format:
-```json
-{
-    "mlflow_models": [
-                    {"name":"recommender-demo","version":7,"type":"h2o_mojo","mojo_artifact_path":"mojo"},
-                    {"name":"recommender-demo","version":7,"type":"h2o_model","h2o_url":"http://localhost:54321"}
-                    ]
-}
-```
-The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file. The currently supported types in the config file are `h2o_mojo` and `h2o_model`. `h2o_mojo` is preferred and requires that the mojo is stored as an artifact in MLFlow. `h2o_model` can be used when the mojo is not stored in MLFlow but it requires access to the H2O server used by MLFlow so that the model can be loaded into MLFlow and the mojo can be downloaded.
+**Train in-platform:** To train sklearn / xgboost / lightgbm / pytorch models from MongoDB through **Workbench2** — and optionally deploy onto Docker Desktop Kubernetes alongside `ecosystem-runtime` — use the [MLRun module](/docs/modules/mlrun).
 
-Calling the runtime [`/refresh`](/docs/runtime/access) API will, in addition to the standard refresh behaviour documented there, download and load the models from MLFlow.
+## Manual import (H2O MOJO)
 
-**Logging a mojo to MLFlow:** Below we give a minimal example showing how a mojo can be logged to MLFlow as part of the model logging process:
+Supported for models trained with **H2O** when the **MOJO is stored as an artifact** in MLflow.
+
+1. **Log the MOJO in MLflow** as part of model registration (see example below).
+2. **Download the MOJO** from the MLflow UI or MLflow client for the registered model version you need.
+3. **Place the MOJO** on the runtime host in the model directory your deployment expects (same layout you use when pushing model artifacts with Workbench — see [Push Your Deployment](/docs/runtime/deployment)).
+4. **Reload the runtime** with `POST /refresh` on the runtime base URL. [`/refresh`](/docs/runtime/access) clears and reloads scoring structures in memory; it does **not** download from MLflow.
+
+Agent scoring and MCP on 0.9.7+ use the built-in runtime [`POST /mcp`](/docs/runtime/mcp) endpoint; MCP is not a separate container.
+
+**Logging a MOJO to MLflow:** Minimal example — log the MOJO as an artifact when registering the H2O model:
+
 ```python
-# Import packages
 from pathlib import Path
 from h2o.estimators import H2OGradientBoostingEstimator
 
-# Train the model
-
-# Connect to H2O
 h2o.init()
 
-# Import the prostate dataset into H2O:
 prostate = h2o.import_file("http://s3.amazonaws.com/h2o-public-test-data/smalldata/prostate/prostate.csv")
-
-# Set the predictors and response; set the factors:
 prostate["CAPSULE"] = prostate["CAPSULE"].asfactor()
-predictors = ["ID","AGE","RACE","DPROS","DCAPS","PSA","VOL","GLEASON"]
+predictors = ["ID", "AGE", "RACE", "DPROS", "DCAPS", "PSA", "VOL", "GLEASON"]
 response = "CAPSULE"
 
-# Build and train the model:
-pros_gbm = H2OGradientBoostingEstimator(nfolds=5,
-                                        seed=1111,
-                                        keep_cross_validation_predictions = True)
+pros_gbm = H2OGradientBoostingEstimator(
+    nfolds=5,
+    seed=1111,
+    keep_cross_validation_predictions=True,
+)
 pros_gbm.train(x=predictors, y=response, training_frame=prostate)
-
-# Eval performance:
 perf = pros_gbm.model_performance()
 
-# Download the mojo the be logged as an artifact to MLFlow
 mojo_path = pros_gbm.download_mojo()
 
-# Log the model to MLFlow
-
-# Connect to MLFlow
-mlflow.set_tracking_uri(uri="http://localhost:8085")
-
-# Create a new MLflow Experiment
+mlflow.set_tracking_uri(uri="https://your-mlflow-host")
 mlflow.set_experiment("MLflow Quickstart")
 
-# Start an MLflow run
 with mlflow.start_run():
-    # Log the hyperparameters
     mlflow.log_param("nfolds", 5)
     mlflow.log_param("seed", 1111)
-
-    # Log the loss metric
-    mlflow.log_metric("accuracy",perf.accuracy()[0][1])
-
-    # Log the mojo for scoring
+    mlflow.log_metric("accuracy", perf.accuracy()[0][1])
     mlflow.log_artifact(Path(mojo_path))
-    
-    # Log the model, which inherits the parameters and metric
     model_info = mlflow.h2o.log_model(
         h2o_model=pros_gbm,
         name="prostate_model",
-        registered_model_name="tracking-quickstart"
+        registered_model_name="tracking-quickstart",
     )
-
-    # Set a tag that we can use to remind ourselves what this model was for
     mlflow.set_logged_model_tags(
-        model_info.model_id, {"Training Info": "Basic GBM model for prostate data"}
+        model_info.model_id,
+        {"Training Info": "Basic GBM model for prostate data"},
     )
 ```
-    When viewing the model in MLFlow you should now be able to see the mojo as well as the standard H2O artifacts.
+
+In MLflow you should see the MOJO artifact alongside the standard H2O model files. Download that artifact before step 3 above.
 
 ---
 
@@ -22480,9 +22452,9 @@ Current Runtime pin (`pom.xml` / Workbench `platform/versions.json`). Version op
 - `/refreshWithOptions` API call which updates the Options Store.
 - `/learning` API call which manually triggers the Dynamic Interaction learning.
 - `/updateCassandraConfig` API call which updates the cassandra.conf file.
-- MCP sidecar (Python image; builtin Java `POST /mcp` lands on 0.9.7)
-- Custom API configuration in python.
-- MLFlow integration
+- MCP sidecar (Python image) — **0.9.6.x only**; replaced in **0.9.7** by native [`POST /mcp`](/docs/runtime/mcp) on the Java runtime
+- Custom API configuration in Python (sidecar-era) — **0.9.6.x only**; use the [API Configuration](/docs/runtime/apiconfiguration/index) plugin and Workbench2 Custom API on 0.9.7+
+- MLFlow registry sync via sidecar config — **0.9.6.x only**; on **0.9.7** import MOJOs manually and call [`/refresh`](/docs/runtime/access) ([MLFlow integration](/docs/runtime/mlflowintegration))
 - Miscellaneous
   - Fixed issue where Dynamic Interaction configurations behind network runtimes would intermittently stop learning
   - Changed scaling of Bayesian Probabilistic scoring results
@@ -23095,13 +23067,11 @@ Building out and configuring your dynamic recommender project in the ecosystem.A
 
 ![Recommender introduction](/images/recommender/0_Introduction/Recommender.png)
 
-Two main interfaces can be used to access the ecosystem.Ai functionality: 
-- The Workbench graphical interface
-- Jupyter Notebooks. 
+Use the **Workbench2** graphical interface to configure recommenders and run closed-loop tests.
 
 #### This lesson takes you through the Workbench configuration for Recommenders.
 
-**Alternative interface:** If you would prefer to build your Recommender in a Notebook, head to <u>Dashboard</u> in your Workbench, and click on the <u>Jupyter Notebooks</u> icon. From there, navigate to <u>Documents</u>, <u>Get Started</u>> and find “Get Started Recommenders”.
+**Simulations in Workbench2:** To exercise a pushed deployment with closed-loop traffic (iterations, take-up, logs), use **Workbench2** **Simulation** and the process in [Simulations](/docs/configuration/simulations) and [Dynamic testing](/docs/user_guides/dynamic/testing).
 
 ---
 
@@ -24461,13 +24431,11 @@ Summary: Building out and configuring your recommender project in the ecosystem.
 # Introduction
 
 ![Recommender introduction](/images/recommender/0_Introduction/Recommender.png)
-In order to begin building out and configuring your recommender project in the Prediction Platform, two main interfaces can be used to access ecosystem.Ai functionality: 
-- The Workbench graphical interface
-- Jupyter Notebooks. 
+Begin building and configuring your recommender project in the Prediction Platform with the **Workbench2** graphical interface.
 
 #### This lesson takes you through the Workbench configuration for Recommenders.
 
-**Alternative interface:** If you would prefer to build your Recommender in a Notebook, head to <u>Dashboard</u> in your Workbench, and click on the <u>Jupyter Notebooks</u> icon. From there, navigate to <u>Documents</u>, <u>Get Started</u>> and find “Get Started Recommenders”.
+**Simulations in Workbench2:** For closed-loop testing of a pushed deployment, use **Workbench2** **Simulation** — see [Simulations](/docs/configuration/simulations).
 
 ---
 
@@ -27195,7 +27163,7 @@ The 2025 note promised MCP as a unified tool surface. We shipped **two** MCP ser
 1. **Runtime MCP** (`POST /mcp` on the Java Runtime, 0.9.7+) — built into the scoring process; score, close the loop, campaign admin from an agent. Dual-era JSON-RPC and 2026-07-28 Streamable HTTP.
 2. **Workbench MCP** — deployments, enrichment, scoring through the operator API.
 
-MLFlow model import runs on the Java runtime ([MLFlow integration](/docs/runtime/mlflowintegration)).
+MLflow MOJO import on 0.9.7 is manual ([MLFlow integration](/docs/runtime/mlflowintegration)); use Workbench2 MLRun for in-platform training.
 
 **Workbench 2.0** is the operator product (`platform/versions.json`). It pins Runtime; it does not replace it. Campaign manager, runtime push, simulations with visible failures, Spend/Money Personality (including **drift**), EcoGentic journeys, ontology-backed generation, and Claude/operator agents all sit here.
 
