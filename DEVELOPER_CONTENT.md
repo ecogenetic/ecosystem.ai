@@ -16260,7 +16260,7 @@ The YAML file is a Docker Compose configuration file which defines multiple Dock
 
 - [`ecosystem-server`](https://hub.docker.com/r/ecosystemai/ecosystem-server): Runs the `ecosystemai/ecosystem-server:arm64` Docker image. This service exposes several ports, uses several environment variables, and mounts the local directory specified by `DATA_PATH` to `/data` inside the container. Database files and other accessible data files are stored in this directory.
 
-- [`ecosystem-runtime-solo`](https://hub.docker.com/r/ecosystemai/ecosystem-runtime-solo), `ecosystem-runtime-solo2`, `ecosystem-runtime-solo3`, `ecosystem-runtime-solo4`, `ecosystem-runtime-solo5`: These five services use the `ecosystemai/ecosystem-runtime-solo:arm64` Docker image. Each one runs on its own unique port, and each one depends on the `ecosystem-server` service. This allows for 'permanently in production' runtime services to be run alongside the server.
+- [`ecosystem-runtime-solo`](https://hub.docker.com/r/ecosystemai/ecosystem-runtime-solo), `ecosystem-runtime-solo2`, `ecosystem-runtime-solo3`, `ecosystem-runtime-solo4`, `ecosystem-runtime-solo5`: These five services use the `ecosystemai/ecosystem-runtime-solo:097-arm64` Docker image. Each one runs on its own unique port, and each one depends on the `ecosystem-server` service. This allows for 'permanently in production' runtime services to be run alongside the server.
 
 - [`ecosystem-notebooks`](https://hub.docker.com/r/ecosystemai/ecosystem-notebooks): This service runs the `ecosystemai/ecosystem-notebooks:arm64` image, and mounts several directories from the host to the container.
 
@@ -16327,7 +16327,7 @@ services:
       - "54321:54321"
 
   ecosystem-runtime-solo:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime
     restart: unless-stopped
     environment:
@@ -16345,7 +16345,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo2:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime2
     restart: unless-stopped
     environment:
@@ -16364,7 +16364,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo3:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime3
     restart: unless-stopped
     environment:
@@ -16383,7 +16383,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo4:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime4
     restart: unless-stopped
     environment:
@@ -16402,7 +16402,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo5:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime5
     restart: unless-stopped
     environment:
@@ -17083,7 +17083,7 @@ spec:
     spec:
       containers:
       - name: ecosystem-runtime1
-        image: docker.io/ecosystemai/ecosystem-runtime-solo:arm64
+        image: docker.io/ecosystemai/ecosystem-runtime-solo:097-arm64
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: ecosystem-data
@@ -17788,7 +17788,7 @@ spec:
     spec:
       containers:
       - name: ecosystem-runtime1
-        image: docker.io/ecosystemai/ecosystem-runtime-solo:latest
+        image: docker.io/ecosystemai/ecosystem-runtime-solo:097-latest
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: ecosystem-data
@@ -19938,10 +19938,10 @@ spec:
   lookupPolicy:
     local: true
   tags:
-  - name: "0.9.5.0"
+  - name: "097-latest"
     from:
       kind: DockerImage
-      name: docker.io/ecosystemai/ecosystem-runtime-solo:0.9.5.0
+      name: docker.io/ecosystemai/ecosystem-runtime-solo:097-latest
     referencePolicy:
       type: Local
 
@@ -20227,7 +20227,7 @@ spec:
   - name: ecosystem-version
     value: "001"
   - name: runtime-version
-    value: "0.9.5.0"
+    value: "097-latest"
   - name: project
     value: "ecosystem"
   workspaces:
@@ -20287,7 +20287,7 @@ To be supported in the future:
 Variables can be set in the Docker run command like so:
 
 ```bash
-docker run --rm -d -p 8091:8091 --env MASTER_KEY=<from ecosystem.Ai> --env LOGGING_LEVEL_ROOT=ERROR ecosystemai/ecosystem-runtime-solo
+docker run --rm -d -p 8091:8091 --env MASTER_KEY=<from ecosystem.Ai> --env LOGGING_LEVEL_ROOT=ERROR ecosystemai/ecosystem-runtime-solo:097-latest
 ```
 
 ## IntelliJ Run Configuration Example
@@ -20966,7 +20966,7 @@ Separate container for **custom FastAPI APIs** and **MLFlow model download** —
 
 ```yaml
 ecosystem-runtime-mcp:
-  image: ecosystemai/ecosystem-runtime-mcp:arm64
+  image: ecosystemai/ecosystem-runtime-mcp:097-arm64
   environment:
     RUNTIME_URL: "http://<runtime-host>:8081"
     PORT: 8092
