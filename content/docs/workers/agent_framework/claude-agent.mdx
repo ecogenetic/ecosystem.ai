@@ -117,3 +117,13 @@ Workbench Ontology Overview **Test** opens the agent drawer with that prompt
 prepared (composer filled, not auto-sent).
 
 Related: [MCP Support](/docs/runtime/mcp) (Operator in-process vs HTTP `/mcp` vs stdio SDK).
+
+## Hands-free voice
+
+Recent Workbench **2.0.3** builds add optional **browser** voice on the Claude Agent composer (slide-over drawer and **`/assistant`**). Speech recognition captures your microphone input; the assistant can read replies aloud with the browser’s speech synthesis. Final transcripts go through the **same chat session and send path** as typed messages.
+
+- **No extra setup** — no new API keys, environment variables, or Workbench voice API.
+- **Browser requirement** — the client must support the Web Speech APIs (speech recognition and synthesis). Chromium-based browsers are the most reliable; Safari and Firefox vary by platform.
+- **Voice choice** — when the UI shows a voice picker, you can choose the spoken voice; otherwise the browser selects a default matched to your language.
+
+Campaign Management private chat and external Agent SDK attach are unchanged; hands-free voice applies to the in-app operator composer only.
