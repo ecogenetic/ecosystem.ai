@@ -7,7 +7,9 @@ import { Callout } from 'nextra/components'
 
 # Campaign delivery
 
-Workbench manages **delivery campaigns** (email, SMS, WhatsApp, schedules, and agent-assisted outreach). That layer is separate from **Runtime scoring campaigns** (`campaign` / `subcampaign` on `POST /invocations`).
+**Workbench2** holds the technical **master campaign record**: import/export, process graph, compile vs trigger or run, versions, and runs history (`/entities/campaigns` in the Workbench web app). **Campaign Management** (the Campaign Platform web app, for example **campaign.ecosystem.ai** when that service is deployed) is a **business-user overlay** that **pulls campaigns from Workbench2** for portfolio, design, operations, calendar, analytics, work queue, and **two-gate approvals** (Workbench technical approval, then Campaign Manager business approval). It includes **Campaign Agent** chat (see [Claude Agent — Campaign Management](/docs/workers/agent_framework/claude-agent#campaign-management)).
+
+Workbench also manages **delivery campaigns** (email, SMS, WhatsApp, schedules, and agent-assisted outreach) through the campaign document APIs. That layer is separate from **Runtime scoring campaigns** (`campaign` / `subcampaign` on `POST /invocations`).
 
 | Layer | What it is | Typical API |
 | --- | --- | --- |
@@ -20,7 +22,9 @@ Runtime `channel` values such as `app`, `web`, or `api` describe the scoring con
 
 | Surface | Use for |
 | --- | --- |
-| **Campaign manager** (Intelligent Sales) | Edit campaign documents, channels, schedules, and triggers |
+| **Workbench2 campaigns** (`/entities/campaigns`) | Master record: **Generate**, new campaign, **import/export** (campaign JSON), graph editor (**Extract**, **Recommend**, **Python**, **Branch**, **Defer**, **Write**, **Dispatch**, **State**, …), **Compile** vs **Trigger/Run**, **Versions**, **Runs** |
+| **Campaign Platform** (Campaign Management) | Overlay on Workbench2: portfolio, campaigns, design, operations, calendar, analytics, work queue, **Approvals**, **Campaign Agent** — see [Claude Agent — Campaign Management](/docs/workers/agent_framework/claude-agent#campaign-management) |
+| **Campaign manager** (Intelligent Sales) | Edit campaign documents, channels, schedules, and triggers inside Workbench |
 | **Custom Forms** | Capture structured inputs linked to campaign workflows |
 | **Data Management & Campaign** | Join audience data with campaign entities |
 | **Time Process Campaign** | Time-based process steps on a campaign graph |
@@ -46,7 +50,7 @@ flowchart LR
   run --> learn
 ```
 
-1. **Plan** audience, content, and channels on the campaign document (or with the Campaign Agent / Outreach Agent where enabled).
+1. **Plan** audience, content, and channels on the campaign document (or with **Campaign Agent** / **Outreach Agent** where enabled). Campaign Agent can queue changes for **Approvals**; its **Capabilities** list can include **starting and stopping a Workbench run** (same class of action as launch/stop under **Operations** in the Campaign Platform). Run-calendar edits can remain draft until pushed; undo scope is limited to overlay and finance changes in the product UI.
 2. **Wire** delivery channels — `GET /public/v1/campaigns/channel-catalog`, then set selection with `PUT …/channel-selection` ([Public API](/docs/configuration/workbench_apis/public#campaigns)).
 3. **Validate before live send** — prefer a **dry or sample run** first:
    - Outreach MCP: `run_outreach_campaign` with `sample_run` and optional `test_target_email` ([MCP tool table](/docs/configuration/workbench_apis/mcp)).
