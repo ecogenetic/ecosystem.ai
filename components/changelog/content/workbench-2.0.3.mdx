@@ -1,4 +1,4 @@
-Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`3153`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`3216`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
 
 ## October 2026
 
@@ -22,9 +22,11 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 - **Campaign Outreach Agent** and outreach MCP tools
 - **Ontology** catalog updates
 
-## November 2026 (early)
+## November 2026
 
-Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **3 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **5 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+
+- **Voice Bot 1 (build 3216).** Hands-free **browser** voice on the Claude Agent composer (`/assistant` and the operator drawer): microphone via Web Speech recognition, spoken replies via synthesis, same session as typed chat — [Claude Agent — Hands-free voice](/docs/workers/agent_framework/claude-agent#hands-free-voice). No new backend route or operator env vars.
 
 Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides/campaigns), [Deployment Test](/docs/configuration/deployment/test), [Modeling & Code Generation](/docs/configuration/modeling_generation)):
 
@@ -36,7 +38,7 @@ Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides
 - **Application code generation** — ecosystem-server modeling jobs, including **Vue** client output alongside TS/JS/Python/React ([Modeling & Code Generation](/docs/configuration/modeling_generation))
 - **Workbench UI** — sorting stability fix for locale-sensitive lists (PR #20 in ecosystem-workbench2)
 
-Build **`3153`** remains the published Workbench 2.0.3 train unless `platform/versions.json` on your deployment reports a newer build.
+Build **`3216`** is the published Workbench 2.0.3 train as of **2026-11-05** unless `platform/versions.json` on your deployment reports a newer build.
 
 ## What's Changed (earlier 2.0.3 train)
 

@@ -22451,7 +22451,7 @@ Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 
 ## 0.9.7.x (Oct 2026)
 
-Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed **3 Nov 2026** on Docker Hub; earlier push 24 Oct 2026).
+Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed **5 Nov 2026** on Docker Hub; earlier pushes 24 Oct and 3 Nov 2026).
 
 ### New functionality
 - **SQL Server stored procedures** — `SqlServerWorker`, `POST /callSqlServerProcedure`, env `SQLSERVER_URL`, `SQLSERVER_USER`, `SQLSERVER_PASSWORD`, properties `sqlserver.*`, `mssql-jdbc` **13.6.0**. See [SQL Server](/docs/configuration/data/sqlserver).
@@ -26306,6 +26306,16 @@ prepared (composer filled, not auto-sent).
 
 Related: [MCP Support](/docs/runtime/mcp) (Operator in-process vs HTTP `/mcp` vs stdio SDK).
 
+## Hands-free voice
+
+Recent Workbench **2.0.3** builds add optional **browser** voice on the Claude Agent composer (slide-over drawer and **`/assistant`**). Speech recognition captures your microphone input; the assistant can read replies aloud with the browser’s speech synthesis. Final transcripts go through the **same chat session and send path** as typed messages.
+
+- **No extra setup** — no new API keys, environment variables, or Workbench voice API.
+- **Browser requirement** — the client must support the Web Speech APIs (speech recognition and synthesis). Chromium-based browsers are the most reliable; Safari and Firefox vary by platform.
+- **Voice choice** — when the UI shows a voice picker, you can choose the spoken voice; otherwise the browser selects a default matched to your language.
+
+Campaign Management private chat and external Agent SDK attach are unchanged; hands-free voice applies to the in-app operator composer only.
+
 ---
 
 ## Agent Framework
@@ -26895,12 +26905,12 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion) · [MCP](/do
 
 Source: `changelog/workbench-2.0.3.mdx`
 URL: https://developer.ecosystem.ai/changelog/workbench-2.0.3
-Summary: Build 3153 — campaigns, LoRA, MCP, single-credential API. Pins Runtime 0.9.7.0.
-Date: 2026/10/31
+Summary: Build 3216 — Voice Bot 1, campaigns, LoRA, MCP. Pins Runtime 0.9.7.0.
+Date: 2026/11/05
 
 ---
 
-Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`3153`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`3216`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
 
 ## October 2026
 
@@ -26924,9 +26934,11 @@ Current platform train as of **2026-10-31**: Workbench **`2.0.3`** (build **`315
 - **Campaign Outreach Agent** and outreach MCP tools
 - **Ontology** catalog updates
 
-## November 2026 (early)
+## November 2026
 
-Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **3 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **5 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+
+- **Voice Bot 1 (build 3216).** Hands-free **browser** voice on the Claude Agent composer (`/assistant` and the operator drawer): microphone via Web Speech recognition, spoken replies via synthesis, same session as typed chat — [Claude Agent — Hands-free voice](/docs/workers/agent_framework/claude-agent#hands-free-voice). No new backend route or operator env vars.
 
 Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides/campaigns), [Deployment Test](/docs/configuration/deployment/test), [Modeling & Code Generation](/docs/configuration/modeling_generation)):
 
@@ -26938,7 +26950,7 @@ Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides
 - **Application code generation** — ecosystem-server modeling jobs, including **Vue** client output alongside TS/JS/Python/React ([Modeling & Code Generation](/docs/configuration/modeling_generation))
 - **Workbench UI** — sorting stability fix for locale-sensitive lists (PR #20 in ecosystem-workbench2)
 
-Build **`3153`** remains the published Workbench 2.0.3 train unless `platform/versions.json` on your deployment reports a newer build.
+Build **`3216`** is the published Workbench 2.0.3 train as of **2026-11-05** unless `platform/versions.json` on your deployment reports a newer build.
 
 ## What's Changed (earlier 2.0.3 train)
 
