@@ -72,11 +72,12 @@ Full selection tree: [Algorithms overview](/docs/configuration/algorithms).
 
 ## Agents, MCP, and Workbench 2 — shipped
 
-The 2025 note promised MCP as a unified tool surface. We shipped **three** MCP surfaces on purpose — they are not interchangeable ([MCP Support](/docs/runtime/mcp)):
+The 2025 note promised MCP as a unified tool surface. We shipped **two** MCP servers on purpose — they are not interchangeable ([MCP Support](/docs/runtime/mcp)):
 
-1. **Runtime builtin MCP** (`POST /mcp` on the Java Runtime, 0.9.7+) — score, close the loop, campaign admin from an agent. Dual-era JSON-RPC and 2026-07-28 Streamable HTTP.
+1. **Runtime MCP** (`POST /mcp` on the Java Runtime, 0.9.7+) — built into the scoring process; score, close the loop, campaign admin from an agent. Dual-era JSON-RPC and 2026-07-28 Streamable HTTP.
 2. **Workbench MCP** — deployments, enrichment, scoring through the operator API.
-3. **Runtime MCP sidecar** — MLFlow refresh and custom Python routers.
+
+MLflow MOJO import on 0.9.7 is manual ([MLFlow integration](/docs/runtime/mlflowintegration)); use Workbench2 MLRun for in-platform training.
 
 **Workbench 2.0** is the operator product (`platform/versions.json`). It pins Runtime; it does not replace it. Campaign manager, runtime push, simulations with visible failures, Spend/Money Personality (including **drift**), EcoGentic journeys, ontology-backed generation, and Claude/operator agents all sit here.
 

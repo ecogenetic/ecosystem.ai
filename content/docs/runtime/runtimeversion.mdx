@@ -66,9 +66,9 @@ Current Runtime pin (`pom.xml` / Workbench `platform/versions.json`). Version op
 - `/refreshWithOptions` API call which updates the Options Store.
 - `/learning` API call which manually triggers the Dynamic Interaction learning.
 - `/updateCassandraConfig` API call which updates the cassandra.conf file.
-- MCP sidecar (Python image; builtin Java `POST /mcp` lands on 0.9.7)
-- Custom API configuration in python.
-- MLFlow integration
+- MCP sidecar (Python image) — **0.9.6.x only**; replaced in **0.9.7** by native [`POST /mcp`](/docs/runtime/mcp) on the Java runtime
+- Custom API configuration in Python (sidecar-era) — **0.9.6.x only**; use the [API Configuration](/docs/runtime/apiconfiguration/index) plugin and Workbench2 Custom API on 0.9.7+
+- MLFlow registry sync via sidecar config — **0.9.6.x only**; on **0.9.7** import MOJOs manually and call [`/refresh`](/docs/runtime/access) ([MLFlow integration](/docs/runtime/mlflowintegration))
 - Miscellaneous
   - Fixed issue where Dynamic Interaction configurations behind network runtimes would intermittently stop learning
   - Changed scaling of Bayesian Probabilistic scoring results

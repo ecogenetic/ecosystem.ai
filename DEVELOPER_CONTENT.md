@@ -6504,7 +6504,7 @@ Create public credentials with an owner (user, service account, organization, or
 - [Public APIs](/docs/configuration/workbench_apis/public) — gateway routes and scopes
 - [Private APIs](/docs/configuration/workbench_apis/private) — `:8001/api/v1` routers
 - [Agents](/docs/configuration/workbench_apis/agents) — product catalog and Ecosystem Agent
-- [MCP](/docs/configuration/workbench_apis/mcp) — Workbench vs Runtime vs sidecar
+- [MCP](/docs/configuration/workbench_apis/mcp) — Workbench MCP vs Runtime MCP
 
 Related: [API Management](/docs/configuration/api) (test Runtime scoring from Workbench), [Runtime API Access](/docs/runtime/access), [Runtime MCP](/docs/runtime/mcp).
 
@@ -6654,13 +6654,12 @@ Summary: Workbench MCP versus Runtime builtin MCP — tools, auth, Cursor config
 
 # MCP
 
-Ecosystem exposes **three MCP-related surfaces**. They share the path `/mcp` but are **not interchangeable**.
+Ecosystem exposes **two MCP servers** on the path `/mcp`. They are **not interchangeable**.
 
 | Surface | Where | Transport | Use for |
 | --- | --- | --- | --- |
 | **Workbench MCP** | `ecosystem-workbench2` `:8001` | Streamable HTTP `POST /mcp` | Deployments, entities, enrichment, public catalog, operator chat |
-| **Runtime builtin MCP** | Java Runtime `:8091` | `POST /mcp` JSON-RPC | `invoke` / `response`, campaign admin, runtime ontology |
-| **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` | FastAPI `/mcp` | MLFlow refresh, custom FastAPI |
+| **Runtime MCP** | Java Runtime (built in; same port as scoring) | `POST /mcp` JSON-RPC | `invoke` / `response`, campaign admin, runtime ontology |
 
 Protocol: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28). Runtime detail: [MCP Support](/docs/runtime/mcp).
 
@@ -6779,9 +6778,7 @@ Closed loop:
 
 `params` is a JSON string, never a nested object.
 
-## Sidecar
-
-The Python `ecosystem-runtime-mcp` image is for **custom FastAPI** and **MLFlow model download**. It is not the Java JSON-RPC server and not Workbench MCP.
+MLflow MOJO import on **0.9.7** is manual (download from MLflow, place on the runtime model path, then `/refresh`) — see [MLFlow integration](/docs/runtime/mlflowintegration). It is not part of `POST /mcp`.
 
 Related: [Agents](/docs/configuration/workbench_apis/agents), [Public APIs](/docs/configuration/workbench_apis/public), [Runtime MCP](/docs/runtime/mcp), [Ontology for agents](/docs/ontology/agents).
 
@@ -16260,7 +16257,7 @@ The YAML file is a Docker Compose configuration file which defines multiple Dock
 
 - [`ecosystem-server`](https://hub.docker.com/r/ecosystemai/ecosystem-server): Runs the `ecosystemai/ecosystem-server:arm64` Docker image. This service exposes several ports, uses several environment variables, and mounts the local directory specified by `DATA_PATH` to `/data` inside the container. Database files and other accessible data files are stored in this directory.
 
-- [`ecosystem-runtime-solo`](https://hub.docker.com/r/ecosystemai/ecosystem-runtime-solo), `ecosystem-runtime-solo2`, `ecosystem-runtime-solo3`, `ecosystem-runtime-solo4`, `ecosystem-runtime-solo5`: These five services use the `ecosystemai/ecosystem-runtime-solo:arm64` Docker image. Each one runs on its own unique port, and each one depends on the `ecosystem-server` service. This allows for 'permanently in production' runtime services to be run alongside the server.
+- [`ecosystem-runtime-solo`](https://hub.docker.com/r/ecosystemai/ecosystem-runtime-solo), `ecosystem-runtime-solo2`, `ecosystem-runtime-solo3`, `ecosystem-runtime-solo4`, `ecosystem-runtime-solo5`: These five services use the `ecosystemai/ecosystem-runtime-solo:097-arm64` Docker image. Each one runs on its own unique port, and each one depends on the `ecosystem-server` service. This allows for 'permanently in production' runtime services to be run alongside the server.
 
 - [`ecosystem-notebooks`](https://hub.docker.com/r/ecosystemai/ecosystem-notebooks): This service runs the `ecosystemai/ecosystem-notebooks:arm64` image, and mounts several directories from the host to the container.
 
@@ -16327,7 +16324,7 @@ services:
       - "54321:54321"
 
   ecosystem-runtime-solo:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime
     restart: unless-stopped
     environment:
@@ -16345,7 +16342,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo2:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime2
     restart: unless-stopped
     environment:
@@ -16364,7 +16361,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo3:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime3
     restart: unless-stopped
     environment:
@@ -16383,7 +16380,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo4:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime4
     restart: unless-stopped
     environment:
@@ -16402,7 +16399,7 @@ services:
       - ecosystem-server
 
   ecosystem-runtime-solo5:
-    image: ecosystemai/ecosystem-runtime-solo:arm64
+    image: ecosystemai/ecosystem-runtime-solo:097-arm64
     container_name: ecosystem-runtime5
     restart: unless-stopped
     environment:
@@ -16582,15 +16579,14 @@ Longer local guide: [Local Installation](/docs/local). Compose detail: [Docker C
 | Runtime | **8091** | Scoring; builtin MCP is `POST {RUNTIME}/mcp` on this port. Local debug often **8099** |
 | Grafana | **3000** | Optional infra charts — not the Runtime tester UI |
 
-**8092 is not MCP in the default compose file:** Default Docker Compose maps **8092–8095** to extra Runtime scoring instances (`ecosystem-runtime-solo2` …). Builtin MCP is on the **same** scoring port as `/invocations` (**8091**). A separate Python MCP **sidecar** image exists for MLFlow / custom FastAPI; do not confuse it with Runtime-solo2.
+**8092 is not MCP in the default compose file:** Default Docker Compose maps **8092–8095** to extra Runtime scoring instances (`ecosystem-runtime-solo2` …). Runtime MCP is on the **same** scoring port as `/invocations` (**8091** — `POST {RUNTIME}/mcp`); do not confuse extra runtime replicas with Workbench MCP on **8001**.
 
-There are **three** MCP-related surfaces. They share the path `/mcp` but are not interchangeable. See [MCP Support](/docs/runtime/mcp).
+There are **two** MCP servers. They share the path `/mcp` but are not interchangeable. See [MCP Support](/docs/runtime/mcp).
 
 | Surface | Where | Use |
 | --- | --- | --- |
-| Runtime builtin MCP | `POST {RUNTIME}/mcp` (0.9.7+) | Score, feedback, ontology validate, campaign admin |
+| Runtime MCP | `POST {RUNTIME}/mcp` (0.9.7+, built in) | Score, feedback, ontology validate, campaign admin |
 | Workbench MCP | Workbench API **8001** `POST /mcp` | Deployments, enrichment, operator tools |
-| Runtime MCP sidecar | Optional Python image | MLFlow refresh, custom FastAPI |
 
 ## Configure a campaign
 
@@ -17083,7 +17079,7 @@ spec:
     spec:
       containers:
       - name: ecosystem-runtime1
-        image: docker.io/ecosystemai/ecosystem-runtime-solo:arm64
+        image: docker.io/ecosystemai/ecosystem-runtime-solo:097-arm64
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: ecosystem-data
@@ -17788,7 +17784,7 @@ spec:
     spec:
       containers:
       - name: ecosystem-runtime1
-        image: docker.io/ecosystemai/ecosystem-runtime-solo:latest
+        image: docker.io/ecosystemai/ecosystem-runtime-solo:097-latest
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: ecosystem-data
@@ -18118,6 +18114,7 @@ Summary: API Access
 The ecosystem.Ai runtime exposes APIs that can be used to access and manage your deployed configuration.
 - The `/invocations` endpoint is used to access the deployment and receive a response based on the configured rules
 - The `/response` endpoint is used to send record successful interactions generated using the information returned by the `/invocations` call. This is used for logging and learning.
+- The `/mcp` endpoint exposes [Model Context Protocol](/docs/runtime/mcp) on the same runtime base URL — JSON-RPC `POST /mcp` for agent tools, prompts, and resources (built into the runtime from 0.9.7+).
 - The `/refresh` endpoint is used to refresh the runtime and reload any data held in memory
 - The `/refreshWithOptions` endpoint is used to regenerate the [Options Store](/docs/configuration/dynamic/options) and then refresh the runtime.
 - The `/learning` endpoint is used to manually trigger the learning process for a Dynamic Interaction deployment. This process is normally triggered based on the [MONITORING_DELAY environment variable](/docs/runtime/environment_variables). Manually triggering the learning is useful for testing and simulation purposes
@@ -19938,10 +19935,10 @@ spec:
   lookupPolicy:
     local: true
   tags:
-  - name: "0.9.5.0"
+  - name: "097-latest"
     from:
       kind: DockerImage
-      name: docker.io/ecosystemai/ecosystem-runtime-solo:0.9.5.0
+      name: docker.io/ecosystemai/ecosystem-runtime-solo:097-latest
     referencePolicy:
       type: Local
 
@@ -20227,7 +20224,7 @@ spec:
   - name: ecosystem-version
     value: "001"
   - name: runtime-version
-    value: "0.9.5.0"
+    value: "097-latest"
   - name: project
     value: "ecosystem"
   workspaces:
@@ -20287,7 +20284,7 @@ To be supported in the future:
 Variables can be set in the Docker run command like so:
 
 ```bash
-docker run --rm -d -p 8091:8091 --env MASTER_KEY=<from ecosystem.Ai> --env LOGGING_LEVEL_ROOT=ERROR ecosystemai/ecosystem-runtime-solo
+docker run --rm -d -p 8091:8091 --env MASTER_KEY=<from ecosystem.Ai> --env LOGGING_LEVEL_ROOT=ERROR ecosystemai/ecosystem-runtime-solo:097-latest
 ```
 
 ## IntelliJ Run Configuration Example
@@ -20388,10 +20385,11 @@ Default HTTP port is **8091**. Local `run_local.sh` often uses **8099**. Hosted 
 
 ## Start here
 
-- [API Access](/docs/runtime/access)
 - [Runtime Dashboard](/docs/runtime/dashboard)
+- [API Access](/docs/runtime/access) — `/invocations` and `/response`
+- [MCP Support](/docs/runtime/mcp) — native `POST /mcp`
+- [Push Your Deployment](/docs/runtime/deployment)
 - [Campaign testing](/docs/runtime/testing)
-- [MCP Support](/docs/runtime/mcp)
 - [Ontology for agents](/docs/ontology/agents)
 
 ---
@@ -20741,30 +20739,51 @@ On accepted return action this message will be logged in the system:
 
 Source: `docs/runtime/mcp.mdx`
 URL: https://developer.ecosystem.ai/docs/runtime/mcp
-Summary: Model Context Protocol surfaces for the Ecosystem Runtime and Workbench
+Summary: Model Context Protocol on the Java runtime — POST /mcp
 
-# Model Context Protocol (MCP)
+# Introduction
 
-Ecosystem exposes **three different MCP-related surfaces**. They share the path `/mcp` but are **not interchangeable**. Pick the surface that matches your integration.
+The ecosystem.Ai runtime serves **Model Context Protocol (MCP) natively** on the same base URL as [API Access](/docs/runtime/access) (`/invocations`, `/response`). There is no separate MCP container image.
 
-| Surface | Where | Transport | Primary use |
-| --- | --- | --- | --- |
-| **Runtime builtin MCP** | Java `ecosystem-runtime` | `POST /mcp` (JSON-RPC, dual-era) | Score campaigns, feedback loop, campaign admin from AI agents |
-| **Workbench MCP server** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` | Deployments, enrichment jobs, scoring via Workbench |
-| **Runtime MCP sidecar** | `ecosystemai/ecosystem-runtime-mcp` image | FastAPI `/mcp` + custom Python routers | MLFlow model refresh, custom FastAPI APIs |
+- **`POST /mcp`** — JSON-RPC 2.0 for agents: `tools/call`, `tools/list`, `prompts/list`, resources, and discovery (0.9.7+).
+- **Legacy clients** — omit `_meta` and use the 2024-11-05 method set.
+- **Modern clients** — send `MCP-Protocol-Version: 2026-07-28` (and related headers) with per-request `_meta` on discovery and tool calls.
+- **Streamable HTTP** — each `POST /mcp` may return `application/json` or a **per-request** `text/event-stream` body. Send `Accept: application/json, text/event-stream`.
+- **Older transport** — `GET /mcp` plus `POST /mcp/message?sessionId=…` (HTTP+SSE) remains for older clients only; new integrations should use Streamable HTTP on `POST /mcp`.
+- **Auth** — when `MASTER_KEY` is configured, **mutating tools** require `X-API-KEY` or `Authorization: Bearer {MASTER_KEY}` (same key as other secured runtime APIs).
+
+MLflow registry import on 0.9.7 is a **manual** MOJO copy plus `/refresh` — not an automatic runtime pull. See [MLFlow integration](/docs/runtime/mlflowintegration). Custom HTTP routes on the runtime use the [API Configuration](/docs/runtime/apiconfiguration/index) plugin (Java `/generateClass` / Workbench **Compile** where documented).
 
 Protocol reference: [MCP specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28).
 
----
+## `/mcp`
 
-## Runtime builtin MCP (Java, 0.9.7+)
+Use the runtime base URL (same host and port as `/invocations`). Example **`tools/call`** with the `invoke` tool:
 
-Built into the Java runtime. Stateless **Streamable HTTP-shaped** endpoint:
-
-```text
-POST {RUNTIME_BASE}/mcp
-Content-Type: application/json
+```bash
+curl -X POST "https://your-runtime-host/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "invoke",
+      "arguments": {
+        "campaign": "my_campaign",
+        "subcampaign": "default",
+        "customer": "customer-123",
+        "channel": "app",
+        "numberoffers": 3,
+        "userid": "mcp-user",
+        "params": "{}"
+      }
+    }
+  }'
 ```
+
+**params is a string:** `invoke` and REST `/invocations` use the same payload rules: `params` must be a JSON **string**, not a nested object. Closed-loop feedback uses the `response` tool or `POST /response` (singular).
 
 ### Protocol support
 
@@ -20839,6 +20858,7 @@ curl -X POST "$RUNTIME/mcp" \
       "name": "invoke",
       "arguments": {
         "campaign": "my_campaign",
+        "subcampaign": "default",
         "customer": "customer-123",
         "channel": "app",
         "numberoffers": 3,
@@ -20896,6 +20916,13 @@ Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `
 ---
 
 ## Workbench MCP server
+
+The Workbench product exposes a **separate** MCP server on its API port (`POST /mcp`). It is not the runtime JSON-RPC server above — do not point agent clients at the wrong host.
+
+| Surface | Where | Transport | Primary use |
+| --- | --- | --- | --- |
+| **Runtime MCP** | Java `ecosystem-runtime` (this page) | `POST /mcp` JSON-RPC | Score campaigns, feedback loop, campaign admin |
+| **Workbench MCP** | `ecosystem-workbench2` backend | Streamable HTTP `POST /mcp` | Deployments, enrichment, operator catalog |
 
 Operator-facing guide (credentials, auth, full tool list, public vs private APIs): [Public APIs, Agents & MCP](/docs/configuration/workbench_apis).
 
@@ -20960,72 +20987,15 @@ Per-deployment MCP snippets: `GET /api/v1/deployments/{name}/mcp`.
 
 ---
 
-## Runtime MCP sidecar (Python image)
-
-Separate container for **custom FastAPI APIs** and **MLFlow model download** — not the JSON-RPC builtin server above.
-
-```yaml
-ecosystem-runtime-mcp:
-  image: ecosystemai/ecosystem-runtime-mcp:arm64
-  environment:
-    RUNTIME_URL: "http://<runtime-host>:8081"
-    PORT: 8092
-    MLFLOW_TRACKING_URI: "http://<mlflow-host>:8085"
-    RUNTIME_CONFIG: "/data/config/runtime_config.json"
-    MONGO_CONNECT: ${MONGO_CONNECT_STRING}
-  ports:
-    - "8092:8092"
-```
-
-| Endpoint | Purpose |
-| --- | --- |
-| `/docs` | OpenAPI for custom Python routers |
-| `/mcp` | Sidecar MCP/FastAPI surface (not runtime JSON-RPC) |
-| `/refresh` | MLFlow model download into runtime |
-
-### Environment variables
-
-| Variable | Description |
-| --- | --- |
-| `RUNTIME_URL` | Base URL of the Java runtime backend |
-| `PORT` | Port exposed by the sidecar (default `8092` — do not collide with Runtime `8091`) |
-| `MLFLOW_TRACKING_URI` | MLFlow tracking server |
-| `RUNTIME_CONFIG` | JSON config listing models to pull |
-| `MONGO_CONNECT` | MongoDB connection string |
-
-### Custom APIs
-
-Author Python `APIRouter` modules and compile them from the Workbench deployment **API** tab. Template:
-
-```python
-from fastapi import APIRouter, Body
-from .custom_api_super import invocations, response
-from ..type_models import Invocation, Response
-
-router = APIRouter()
-
-@router.post("/myCustomInvocationsName", tags=["Predictors"])
-async def my_custom_invocations(
-    customer: str = Body(...),
-    params: str = Body(...),
-):
-    body = Invocation(customer=customer, params=params)
-    return await invocations(body)
-```
-
-See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via the sidecar.
-
----
-
 ## Client compatibility
 
-| Client | Runtime builtin `POST /mcp` | Workbench Streamable HTTP | Sidecar |
-| --- | --- | --- | --- |
-| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes | No |
-| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes | No |
-| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes | No |
-| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` | Custom FastAPI only |
-| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK | No |
+| Client | Runtime `POST /mcp` | Workbench Streamable HTTP |
+| --- | --- | --- |
+| **MCP Playground / browser testers** | Yes (HTTP transport only) | Yes |
+| **MCP Inspector (modern)** | Yes (dual-era, tools + prompts) | Yes |
+| **Cursor / Claude Desktop (remote)** | Yes (with `url`) | Yes |
+| **Custom cURL / Langflow HTTP/JSON** | Yes | REST `/api/v1/mcp/*` |
+| **Hermes / stdio** | No | Use `ecosystem_workbench_mcp` SDK |
 
 **stdio harness:** the `ecosystem_workbench_mcp` Python package exposes Workbench public APIs over stdio for local agent hosts (Hermes, Cursor `command` config). That is separate from the HTTP `/mcp` servers above.
 
@@ -21036,7 +21006,7 @@ See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via 
 - **Score runtime campaigns from an agent** → Runtime builtin MCP (`invoke` + `response`)
 - **Score Workbench deployments / run enrichment / catalog via `call_endpoint`** → Workbench MCP server
 - **In-app Operator or Campaign Management Claude turns** → [Claude Agent](/docs/workers/agent_framework/claude-agent)
-- **MLFlow model pull + custom Python APIs** → Runtime MCP sidecar
+- **Import H2O MOJOs from MLflow (manual)** → [MLFlow integration](/docs/runtime/mlflowintegration); custom HTTP on the runtime → [API Configuration](/docs/runtime/apiconfiguration/index)
 - **Local agent with full Workbench API** → `ecosystem_workbench_mcp` stdio SDK
 
 ---
@@ -21045,98 +21015,70 @@ See [MLFlow integration](/docs/runtime/mlflowintegration) for model refresh via 
 
 Source: `docs/runtime/mlflowintegration.mdx`
 URL: https://developer.ecosystem.ai/docs/runtime/mlflowintegration
-Summary: Import models from the MLFlow model registry
+Summary: Import H2O MOJO models from an MLFlow registry into the Java runtime (manual steps)
 
 # MLFlow Integration
-If models are not trained using the ecosystem Server, the trained models need to be made available to the ecosystem Runtime as part of the deployment process. The supported approach to do this is to use MLFlow as a model registry and import the models from MLFlow into the runtime.
 
-**Looking to train models in-platform?:** This page is for **importing** models from an external MLFlow
-  registry. To train sklearn / xgboost / lightgbm / pytorch models
-  directly from a MongoDB collection through the Workbench2 console
-  — and optionally deploy them onto Docker Desktop Kubernetes
-  alongside `ecosystem-runtime` — see the
-  [MLRun module](/docs/modules/mlrun).
+If models are not trained using the ecosystem Server, trained models must still be placed where the Java runtime can load them as part of deployment.
 
-**Note:** Integration is currently supported from models trained using H2O where either the mojo is stored as an artifact in MLFlow or the **Runtime MCP sidecar** has access to an h2o server used by MLFlow
+**Runtime 0.9.7:** **Automatic MLflow model pull is not built into runtime 0.9.7.** The sidecar-era registry sync (`MLFLOW_TRACKING_URI`, `RUNTIME_CONFIG`, `/update_runtime_config`) applied to **0.9.6.x** only. On 0.9.7, import MOJOs manually, then call [`/refresh`](/docs/runtime/access) to reload in-memory scoring state.
 
-## Configuration
-MLFlow integration requires the **Runtime MCP sidecar** (the Python `ecosystem-runtime-mcp` image — not the Java `POST /mcp` builtin server). See [MCP Support](/docs/runtime/mcp). The `MLFLOW_TRACKING_URI` environment variable should be configured, pointing to your MLFlow environment. The MLFlow security variables can also be configured if required. Specify the models required using the config file with the following format:
-```json
-{
-    "mlflow_models": [
-                    {"name":"recommender-demo","version":7,"type":"h2o_mojo","mojo_artifact_path":"mojo"},
-                    {"name":"recommender-demo","version":7,"type":"h2o_model","h2o_url":"http://localhost:54321"}
-                    ]
-}
-```
-The location of the config file is specified using the `RUNTIME_CONFIG` environment variables. Use the `/update_runtime_config` api to update the config file. The currently supported types in the config file are `h2o_mojo` and `h2o_model`. `h2o_mojo` is preferred and requires that the mojo is stored as an artifact in MLFlow. `h2o_model` can be used when the mojo is not stored in MLFlow but it requires that the Runtime MCP sidecar have access to the H2O server used by MLFlow so that the model can be loaded into MLFlow and the mojo can be downloaded.
+**Train in-platform:** To train sklearn / xgboost / lightgbm / pytorch models from MongoDB through **Workbench2** — and optionally deploy onto Docker Desktop Kubernetes alongside `ecosystem-runtime` — use the [MLRun module](/docs/modules/mlrun).
 
-Calling the `/refresh` API on the Runtime MCP will, in addition to the standard `/refresh` functionality, download and load the models from MLFlow.
+## Manual import (H2O MOJO)
 
-**Logging a mojo to MLFlow:** Below we give a minimal example showing how a mojo can be logged to MLFlow as part of the model logging process:
+Supported for models trained with **H2O** when the **MOJO is stored as an artifact** in MLflow.
+
+1. **Log the MOJO in MLflow** as part of model registration (see example below).
+2. **Download the MOJO** from the MLflow UI or MLflow client for the registered model version you need.
+3. **Place the MOJO** on the runtime host in the model directory your deployment expects (same layout you use when pushing model artifacts with Workbench — see [Push Your Deployment](/docs/runtime/deployment)).
+4. **Reload the runtime** with `POST /refresh` on the runtime base URL. [`/refresh`](/docs/runtime/access) clears and reloads scoring structures in memory; it does **not** download from MLflow.
+
+Agent scoring and MCP on 0.9.7+ use the built-in runtime [`POST /mcp`](/docs/runtime/mcp) endpoint; MCP is not a separate container.
+
+**Logging a MOJO to MLflow:** Minimal example — log the MOJO as an artifact when registering the H2O model:
+
 ```python
-# Import packages
 from pathlib import Path
 from h2o.estimators import H2OGradientBoostingEstimator
 
-# Train the model
-
-# Connect to H2O
 h2o.init()
 
-# Import the prostate dataset into H2O:
 prostate = h2o.import_file("http://s3.amazonaws.com/h2o-public-test-data/smalldata/prostate/prostate.csv")
-
-# Set the predictors and response; set the factors:
 prostate["CAPSULE"] = prostate["CAPSULE"].asfactor()
-predictors = ["ID","AGE","RACE","DPROS","DCAPS","PSA","VOL","GLEASON"]
+predictors = ["ID", "AGE", "RACE", "DPROS", "DCAPS", "PSA", "VOL", "GLEASON"]
 response = "CAPSULE"
 
-# Build and train the model:
-pros_gbm = H2OGradientBoostingEstimator(nfolds=5,
-                                        seed=1111,
-                                        keep_cross_validation_predictions = True)
+pros_gbm = H2OGradientBoostingEstimator(
+    nfolds=5,
+    seed=1111,
+    keep_cross_validation_predictions=True,
+)
 pros_gbm.train(x=predictors, y=response, training_frame=prostate)
-
-# Eval performance:
 perf = pros_gbm.model_performance()
 
-# Download the mojo the be logged as an artifact to MLFlow
 mojo_path = pros_gbm.download_mojo()
 
-# Log the model to MLFlow
-
-# Connect to MLFlow
-mlflow.set_tracking_uri(uri="http://localhost:8085")
-
-# Create a new MLflow Experiment
+mlflow.set_tracking_uri(uri="https://your-mlflow-host")
 mlflow.set_experiment("MLflow Quickstart")
 
-# Start an MLflow run
 with mlflow.start_run():
-    # Log the hyperparameters
     mlflow.log_param("nfolds", 5)
     mlflow.log_param("seed", 1111)
-
-    # Log the loss metric
-    mlflow.log_metric("accuracy",perf.accuracy()[0][1])
-
-    # Log the mojo for scoring
+    mlflow.log_metric("accuracy", perf.accuracy()[0][1])
     mlflow.log_artifact(Path(mojo_path))
-    
-    # Log the model, which inherits the parameters and metric
     model_info = mlflow.h2o.log_model(
         h2o_model=pros_gbm,
         name="prostate_model",
-        registered_model_name="tracking-quickstart"
+        registered_model_name="tracking-quickstart",
     )
-
-    # Set a tag that we can use to remind ourselves what this model was for
     mlflow.set_logged_model_tags(
-        model_info.model_id, {"Training Info": "Basic GBM model for prostate data"}
+        model_info.model_id,
+        {"Training Info": "Basic GBM model for prostate data"},
     )
 ```
-    When viewing the model in MLFlow you should now be able to see the mojo as well as the standard H2O artifacts.
+
+In MLflow you should see the MOJO artifact alongside the standard H2O model files. Download that artifact before step 3 above.
 
 ---
 
@@ -22510,9 +22452,9 @@ Current Runtime pin (`pom.xml` / Workbench `platform/versions.json`). Version op
 - `/refreshWithOptions` API call which updates the Options Store.
 - `/learning` API call which manually triggers the Dynamic Interaction learning.
 - `/updateCassandraConfig` API call which updates the cassandra.conf file.
-- MCP sidecar (Python image; builtin Java `POST /mcp` lands on 0.9.7)
-- Custom API configuration in python.
-- MLFlow integration
+- MCP sidecar (Python image) — **0.9.6.x only**; replaced in **0.9.7** by native [`POST /mcp`](/docs/runtime/mcp) on the Java runtime
+- Custom API configuration in Python (sidecar-era) — **0.9.6.x only**; use the [API Configuration](/docs/runtime/apiconfiguration/index) plugin and Workbench2 Custom API on 0.9.7+
+- MLFlow registry sync via sidecar config — **0.9.6.x only**; on **0.9.7** import MOJOs manually and call [`/refresh`](/docs/runtime/access) ([MLFlow integration](/docs/runtime/mlflowintegration))
 - Miscellaneous
   - Fixed issue where Dynamic Interaction configurations behind network runtimes would intermittently stop learning
   - Changed scaling of Bayesian Probabilistic scoring results
@@ -23125,13 +23067,11 @@ Building out and configuring your dynamic recommender project in the ecosystem.A
 
 ![Recommender introduction](/images/recommender/0_Introduction/Recommender.png)
 
-Two main interfaces can be used to access the ecosystem.Ai functionality: 
-- The Workbench graphical interface
-- Jupyter Notebooks. 
+Use the **Workbench2** graphical interface to configure recommenders and run closed-loop tests.
 
 #### This lesson takes you through the Workbench configuration for Recommenders.
 
-**Alternative interface:** If you would prefer to build your Recommender in a Notebook, head to <u>Dashboard</u> in your Workbench, and click on the <u>Jupyter Notebooks</u> icon. From there, navigate to <u>Documents</u>, <u>Get Started</u>> and find “Get Started Recommenders”.
+**Simulations in Workbench2:** To exercise a pushed deployment with closed-loop traffic (iterations, take-up, logs), use **Workbench2** **Simulation** and the process in [Simulations](/docs/configuration/simulations) and [Dynamic testing](/docs/user_guides/dynamic/testing).
 
 ---
 
@@ -24491,13 +24431,11 @@ Summary: Building out and configuring your recommender project in the ecosystem.
 # Introduction
 
 ![Recommender introduction](/images/recommender/0_Introduction/Recommender.png)
-In order to begin building out and configuring your recommender project in the Prediction Platform, two main interfaces can be used to access ecosystem.Ai functionality: 
-- The Workbench graphical interface
-- Jupyter Notebooks. 
+Begin building and configuring your recommender project in the Prediction Platform with the **Workbench2** graphical interface.
 
 #### This lesson takes you through the Workbench configuration for Recommenders.
 
-**Alternative interface:** If you would prefer to build your Recommender in a Notebook, head to <u>Dashboard</u> in your Workbench, and click on the <u>Jupyter Notebooks</u> icon. From there, navigate to <u>Documents</u>, <u>Get Started</u>> and find “Get Started Recommenders”.
+**Simulations in Workbench2:** For closed-loop testing of a pushed deployment, use **Workbench2** **Simulation** — see [Simulations](/docs/configuration/simulations).
 
 ---
 
@@ -27232,11 +27170,12 @@ Full selection tree: [Algorithms overview](/docs/configuration/algorithms).
 
 ## Agents, MCP, and Workbench 2 — shipped
 
-The 2025 note promised MCP as a unified tool surface. We shipped **three** MCP surfaces on purpose — they are not interchangeable ([MCP Support](/docs/runtime/mcp)):
+The 2025 note promised MCP as a unified tool surface. We shipped **two** MCP servers on purpose — they are not interchangeable ([MCP Support](/docs/runtime/mcp)):
 
-1. **Runtime builtin MCP** (`POST /mcp` on the Java Runtime, 0.9.7+) — score, close the loop, campaign admin from an agent. Dual-era JSON-RPC and 2026-07-28 Streamable HTTP.
+1. **Runtime MCP** (`POST /mcp` on the Java Runtime, 0.9.7+) — built into the scoring process; score, close the loop, campaign admin from an agent. Dual-era JSON-RPC and 2026-07-28 Streamable HTTP.
 2. **Workbench MCP** — deployments, enrichment, scoring through the operator API.
-3. **Runtime MCP sidecar** — MLFlow refresh and custom Python routers.
+
+MLflow MOJO import on 0.9.7 is manual ([MLFlow integration](/docs/runtime/mlflowintegration)); use Workbench2 MLRun for in-platform training.
 
 **Workbench 2.0** is the operator product (`platform/versions.json`). It pins Runtime; it does not replace it. Campaign manager, runtime push, simulations with visible failures, Spend/Money Personality (including **drift**), EcoGentic journeys, ontology-backed generation, and Claude/operator agents all sit here.
 
