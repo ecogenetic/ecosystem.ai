@@ -5,6 +5,21 @@ description: Setup ecosystem.Ai Platform in Azure
 
 # Guide to Setting up ecosystem.Ai Platform in Azure
 
+## ecosystem.Ai Platform 2.0 (v2.0.1)
+
+Version 2.0.1 is a new Azure Application. It is not an Azure Container (CNAB) offer, because that offer type accepts only AMD64 images. The package creates an AKS cluster on ARM64 node sizes (`Standard_D4ps_v5` and larger), Application Gateway ingress, and an Azure Premium Files NFSv4.1 share for the shared data volume.
+
+The same eight applications ship as on AWS: Workbench 2, Prediction Server with embedded MongoDB 8.3 (`ecosystem-server:54445`), Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, and Domain Catalog, plus Trino.
+
+Two plans are published with the offer:
+
+- **Solution template** for evaluation with your license key.
+- **Managed application** for enterprise purchase and Azure MACC drawdown.
+
+Install-time questions cover the license key, admin password, Cloud LLM provider and credentials, storage quota, automatic or custom DNS, and T0/T1/T2 node pools. Deleting the resource group or the managed application removes the cluster and the disks created for it.
+
+The closed loop is `POST /invocations` then `POST /response`. Terms: [Marketplace terms](/docs/marketplace/terms). The cards below are the earlier virtual-machine offers.
+
 <Cards>
     <Cards.Card href="https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai-platform" title="Platform Option" arrow>
         ![image](/images/install/azure-platform-vm.png)

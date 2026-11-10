@@ -86,6 +86,16 @@ If you have any questions about these Terms, please contact us at `}{' '}
           {' or call (650) 681-2779'}
           {`.
 
+8. Cloud Marketplace Deployments
+Purchases of ecosystem.Ai Platform 2.0 (version 2.0.1) on AWS Marketplace or Microsoft Marketplace are also governed by the AWS Marketplace Standard Contract or the Microsoft Standard Contract, and by the marketplace addendum published at `}{' '}
+          <Link href="https://developer.ecosystem.ai/docs/marketplace/terms">https://developer.ecosystem.ai/docs/marketplace/terms</Link>
+          {`. Each marketplace deployment runs in the buyer's own cloud account. A license key (MASTER_KEY) is required at install time. Subscriber data remains in that account. If a marketplace contract and these website Terms conflict for that purchase, the marketplace contract applies first, then the addendum, then these Terms.
+
+9. Contact for Marketplace Listings
+Marketplace listing questions: `}{' '}
+          <Link href="mailto:sales@ecosystem.ai">sales@ecosystem.ai</Link>
+          {`.
+
 By using the Website, you acknowledge that you have read these Terms of Service and agree to be bound by them.`}
         </pre>
       </div>

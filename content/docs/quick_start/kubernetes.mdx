@@ -1,5 +1,25 @@
 # Kubernetes
 
+## Platform 2.0.1
+
+**ecosystem.Ai Platform 2.0 (v2.0.1)** installs as one Helm release or one Kustomize overlay. The release contains Workbench 2, the Prediction Server, Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, Domain Catalog, and Trino.
+
+MongoDB 8.3 is embedded in the Prediction Server. Every other application uses `ecosystem-server:54445`. Do not deploy a second MongoDB for this release. Set `MONGO_RS_HOST=ecosystem-server:54445` and leave `NO_MONGODB` unset on the server container so the replica set starts. Runtime sets `NO_MONGODB=true` because it does not host the database.
+
+Shared files use a ReadWriteMany volume (Amazon EFS or Azure Premium Files NFSv4.1). License key, initial admin password, and Cloud LLM settings are injected before the pods start.
+
+After the ingress is ready:
+
+- Workbench 2: `https://<endpoint>/`
+- Health: `https://<endpoint>/ping`
+- Score: `POST https://<endpoint>/invocations` with `params` as a JSON string
+- Learn: `POST https://<endpoint>/response` using that recommendation’s `uuid` and `offer_name`
+- MCP: `POST https://<endpoint>/mcp`
+
+Marketplace install steps: [AWS](/docs/marketplace/aws) and [Azure](/docs/marketplace/azure).
+
+The manifests below are component examples for a local cluster such as Minikube. For the 2.0.1 stack, use the Helm chart `ecosystem-platform` version `2.0.1` instead of assembling these samples by hand.
+
 ecosystem.Ai can be installed on Kubernetes. This can be tested locally using Minikube. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
 
 The Runtime service in these samples listens on **8091**. After pods are ready, score with `POST /invocations` then `POST /response` (`params` is a JSON string). Grafana is optional. OpenShift-specific samples: [OpenShift](/docs/quick_start/openshift). Overview: [Quick Start](/docs/quick_start). Demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).

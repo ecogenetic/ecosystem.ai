@@ -5,6 +5,27 @@ description: Setup ecosystem.Ai Platform in AWS
 
 # Guide to Setting up ecosystem.Ai Platform in AWS
 
+## ecosystem.Ai Platform 2.0 (v2.0.1)
+
+Version 2.0.1 is a new Container product on AWS Marketplace. It deploys eight ARM64 applications into Amazon EKS with a Helm chart. MongoDB 8.3 runs inside `ecosystem-server` on port `54445`. There is no separate MongoDB container and no custom AMI.
+
+| Application | Role |
+|---|---|
+| Workbench 2 | Operator UI and APIs |
+| Prediction Server | Models, H2O, embedded MongoDB 8.3 |
+| Runtime 0.9.7 | `POST /invocations`, then `POST /response`, and `POST /mcp` |
+| Campaign Management | Agentic campaigns |
+| Data Agents | Analytic, Interactions, Personality, and Financial paths |
+| Notebooks | EcoGentic journeys and JupyterHub |
+| Custom GPTs | Specialist agents |
+| Domain Catalog | Governed ontologies, plus Trino SQL |
+
+At install time you provide the license key (`MASTER_KEY`), the initial admin password, Cloud LLM settings (provider, endpoint, model, embedding model, credential, max tokens, timeout, SSL), a T0/T1/T2 size, and either an automatic hostname or your own domain. Shared data uses Amazon EFS (ReadWriteMany). TLS uses ACM or the ingress controller.
+
+Sign in to Workbench 2 as `admin@ecosystem.ai`. Score with `POST /invocations` (`params` is a JSON string) and send the outcome to `POST /response`.
+
+Terms: [Marketplace terms](/docs/marketplace/terms). The sections below describe the earlier virtual-machine listings.
+
 <Cards>
     <Cards.Card href="https://aws.amazon.com/marketplace/pp/prodview-kr3eipc3hphes" title="Platform Option" arrow>
         ![image](/images/install/aws-platform-vm.png)
