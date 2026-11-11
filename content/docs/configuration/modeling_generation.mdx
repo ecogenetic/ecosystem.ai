@@ -51,6 +51,10 @@ Recent ontology work connects:
 
 When Ontology Management is enabled, prefer resolving business terms to mapped fields before generating queries or client payloads.
 
+## Repository link — Python file (latest Workbench)
+
+**Project Identity → Repositories** links the project to GitHub or GitLab (repository type, master flag, repository name, optional branch, optional project token). Builds from **10 Nov 2026** onward add a **Python file** selector on that panel: pick a `.py` file in the linked repo so **setup-python-generation** / app-generation jobs know which module to execute when generating Python client or package output. Java/plugin **Deployment → Generate** flows are unchanged; the Python file applies when the remote link drives Python-oriented generation.
+
 ## Docker images (reference only)
 
 Ecogenetic publishes refreshed **`ecosystem-server`**, **`ecosystem-modeling`**, and related images on Docker Hub (`ecosystemai/*`). Pin by digest or an explicit tag your install documents — do not assume `latest` matches a specific semver unless your release notes say so.

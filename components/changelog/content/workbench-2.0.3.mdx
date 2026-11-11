@@ -24,9 +24,16 @@ Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`321
 
 ## November 2026
 
-Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **5 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**, then again **10 Nov 2026 ~19:15 UTC**. **`ecosystem-server`** `arm64` was repushed **10 Nov 2026 ~08:24 UTC**. Runtime **`097-latest`** / **`097-arm64`** were repushed **9 Nov 2026 ~18:47 UTC** (same 0.9.7 train; pin by tag or digest in production).
 
 - **Voice Bot 1 (build 3216).** Hands-free **browser** voice on the Claude Agent composer (`/assistant` and the operator drawer): microphone via Web Speech recognition, spoken replies via synthesis, same session as typed chat — [Claude Agent — Hands-free voice](/docs/workers/agent_framework/claude-agent#hands-free-voice). No new backend route or operator env vars.
+
+**9–10 Nov 2026** (latest Workbench / Server / Runtime images on Docker Hub):
+
+- **Deployments table — Environment Status column.** The project Deployments list adds **Environment Status** beside existing columns (**Experiment Phase**, **Validate and Test Phase**, **Production**, **Archived**). The edit form already exposed these values; the column arrives with the **10 Nov** Workbench image ([Deployment parameters](/docs/configuration/deployment/parameters)).
+- **Repositories — Python file link.** **Project Identity → Repositories** gains an optional **Python file** selector for **setup-python-generation** when linking GitHub/GitLab ([Project](/docs/configuration/project), [Modeling generation](/docs/configuration/modeling_generation)).
+- **Apache Hive (server).** ecosystem-server exposes Hive Data Management over HiveServer2 JDBC ([Apache Hive](/docs/configuration/data/hive)).
+- **Operator reliability.** GitLab remote **inspect** handles gateway **504** responses cleanly; deployment **pull** no longer returns opaque **500** errors when Mongo is unavailable; deployment **push** uses an updated prevent-push timeout; Git push status messages include the acting user.
 
 Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides/campaigns), [Deployment Test](/docs/configuration/deployment/test), [Modeling & Code Generation](/docs/configuration/modeling_generation)):
 
@@ -53,7 +60,7 @@ Build **`3216`** is the published Workbench 2.0.3 train as of **2026-11-05** unl
 - MCP tools for the **algorithm catalog**.
 - Spend / Money Personality **drift**.
 - Post-score and data-connection fixes for new corpora.
-- SQL Server stored procedures (`097-latest` / `097-arm64` images; repushed Nov 2026).
+- SQL Server stored procedures (`097-latest` / `097-arm64` images; repushed Nov 2026, latest **9 Nov 2026**).
 
 ### What to pin
 ```json

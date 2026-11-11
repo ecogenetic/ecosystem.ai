@@ -20,6 +20,25 @@ Project assets that are used to create a module.
 Importing modules as projects.
 ![image](/images/configuration/project/project-import.png)
 
+## Project Identity — Repositories
+
+Under **Project Identity → Repositories**, link the Workbench project to a remote Git host for Generate/Build and modeling workflows. Each row includes:
+
+| Field | Purpose |
+| --- | --- |
+| **Repository type** | GitHub or GitLab |
+| **Master** | Primary repository for this link |
+| **Repository name** | Remote repository URL or name your admin pattern expects |
+| **Branch** (optional) | Branch for generated commits |
+| **Project token** (optional override) | PAT or deploy token when it should differ from the server default |
+
+On images **before** the **10 Nov 2026** `ecosystem-workbench2` refresh, that grid matches the fields above only.
+
+The latest Workbench image adds a **Python file** option on the same Repositories panel (**setup-python-generation**): choose a `.py` file in the repo (for example a package entrypoint or generator stub) so **Project Generate** and related modeling flows know which Python module to target when the remote link is not only Java/plugin output. You still configure GitHub/GitLab URL, branch, and token the same way; the Python file is an extra selector on supported builds.
+
+## Deployments list — Environment Status column
+
+Inside a project, the **Deployments** table lists each deployment step (for example **Deployment ID**, **Description**, **Version**, **Step Type**, **Algorithm**, **URL**, **Updated Date**, **Actions**). The deployment editor has long exposed **Environment Status** (**Experiment Phase**, **Validate and Test Phase**, **Production**, **Archived**). The latest **ecosystem-workbench2** image (**10 Nov 2026**) adds an **Environment Status** column on that table so operators see lifecycle at a glance. Older hosts (for example images predating that push) show Environment Status only on the edit form.
 
 **Properties**
 
