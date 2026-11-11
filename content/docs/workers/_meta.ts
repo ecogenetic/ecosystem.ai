@@ -7,5 +7,7 @@ export default {
     type: 'separator',
   },
   generative: 'Language Chat Models',
+  agents: 'Agents',
+  mcps: 'MCPs',
   agent_framework: 'Agent Framework'
 }

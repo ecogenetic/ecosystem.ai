@@ -1,0 +1,58 @@
+---
+title: Agents
+description: Product agent catalog on Workbench — personalities, campaigns, scoring helpers, and platform operators
+---
+
+import { Callout } from 'nextra/components'
+
+# Agents
+
+Product agents on ecosystem.Ai **call** Workbench APIs and MCP tools. They do **not** replace Runtime `POST /invocations` or `POST /response` for production scoring and learning. For operator journeys and EcoGentic configuration, see [Agent Framework](/docs/workers/agent_framework). For deeper Workbench API notes, see [Configuration → Public APIs, Agents](/docs/configuration/workbench_apis/agents).
+
+Calling the `agent_configs` endpoint (`GET /api/v1/entities/agent_configs` or `GET /public/v1/entities/agent_configs`, with a Workbench public key or JWT) is part of Ecogenetic functionality.
+
+<Callout type="info" title="Do not mix agent products">
+**Ecosystem Agent** (`/assistant`) is the Workbench operator. **EcoGentic** is customer conversational journeys. **Data Agents** specialists are a separate analytics product. Do not mix those chats.
+</Callout>
+
+## Product catalog (13 agents)
+
+Rows are shown in **Administration → Agents** on a live Workbench. Coverage is `wired` or `partial` as in the UI.
+
+| Name | Catalog id | Category | Coverage | What it does / how to reach it |
+| --- | --- | --- | --- | --- |
+| Spend Personality Agent | `spend-personality` | Personality | wired | Spend personality configs, runs, and drift. Public paths include `/public/v1/spend-personality/configs` and `/runs`. |
+| Money Personality Agent | `money-personality` | Personality | wired | Money-personality processing via Workbench `call_endpoint` to `POST /api/v1/algorithms/money-personality/process`. |
+| Predictive Personality Agent | `predictive-personality` | Personality | partial | Composes spend/money personality with a Runtime score. |
+| Conversational Agent | `conversational` | Conversational AI | wired | Customer conversational journeys through EcoGentic configs — not the operator `/assistant` chat. |
+| Interaction Science Agent | `interaction-science` | Customer Experience | wired | Engagement / sentimental-equilibrium process. |
+| Intelligent Sales Agent | `intelligent-sales` | Revenue Optimization | wired | List and trigger campaigns. Do not run live campaign sends from a discovery client without an explicit ask. |
+| Campaign Outreach Agent | — | Revenue Optimization | wired | Outreach setup via Workbench MCP outreach tools (`list_outreach_templates`, `inspect_outreach_campaign`, `build_outreach_campaign`, `configure_outreach_campaign`, `run_outreach_campaign`). Mutating tools need `confirm=true`. Do not run live email/WhatsApp/SMS sends. |
+| Real-Time Recommender Agent | `real-time-recommender` | Revenue Optimization | wired | Score a customer on a Workbench deployment (`score_customer`) and send feedback (`send_feedback`). Production apps should still use Runtime `POST /invocations` and `POST /response`. |
+| Network Selector Agent | — | Revenue Optimization | wired | Live Workbench MCP: `list_network_selector_configs`, `explain_network_selector`, `plan_network_selector`, `validate_network_selector`, `save_network_selector`, `fix_network_selector`, `assign_network_selector`, `unassign_network_selector`, `clone_network_selector`, `remove_network_selector`, `test_network_selector`. Mutating tools need `confirm=true`. |
+| Dynamic Experimentation Agent | `dynamic-experimentation` | Revenue Optimization | partial | Dynamic Engagement entities; `explain_algorithms` and `explain_convergence`. |
+| Runtime Testing Agent | `runtime-testing` | Runtime | wired | Isolated business test suites; MCP tools such as `start_runtime_testing_run` (`confirm=true`), `list_runtime_testing_runs`, `get_runtime_testing_run`. |
+| Ecosystem Agent | `claude-operator` | Platform | wired | In-app Workbench operator at `/assistant`. Uses in-process MCP (session JWT, no public key). External clients attach over HTTP `POST /mcp` instead. Model traffic goes through Workbench `POST /v1/messages` to the default LLM. See [Claude Operator](/docs/workers/agent_framework/claude-agent). |
+| EcoGentic | `ecogentic` | Platform | wired | Customer conversational journeys (the platform for Conversational Agent configs). See [Journeys](/docs/workers/agent_framework/journeys). |
+
+Individual agent configuration records are private to the server running them. The product catalog above and the [MCP tool list](/docs/workers/mcps) remain the public surface.
+
+## Discovery and operator APIs
+
+| Surface | URL / path | Auth |
+| --- | --- | --- |
+| Product catalog UI | `https://me.ecosystem.ai/admin/agents` | Workbench session JWT |
+| Ecosystem Agent chat | `https://me.ecosystem.ai/assistant` | Session JWT; no public API key |
+| Readiness | `GET https://me.ecosystem.ai/api/v1/claude-agent/status` | JWT |
+| Operator / Campaign Management turns | `POST /api/v1/claude-agent/…` | JWT; private, not on the public catalog |
+
+## Other documented agents (not in the 13-row catalog)
+
+These capabilities are documented elsewhere; they are **not** additional rows in **Administration → Agents**.
+
+- **Campaign Agent** — Campaign Management operator on Workbench, `tool_profile: campaign_management`. Uses a read-only Workbench MCP subset plus CM tools. Needs a Workbench public credential, not a private Grafana JWT. Documented in Campaign Management / Claude Agent guides.
+- **Data Agents** — A separate analytics product. Do not mix Data Agents specialist chats with Ecosystem Agent or EcoGentic. No public Data Agents chat or MCP URL was advertised on the live me / meserver / mewbserver / modelingserver hosts during catalog verification.
+- **Technical Assistant** — Modeling-server chat: `POST https://modelingserver.ecosystem.ai/api/modeling/assistant/technical-chat`. Platform JWT. Page-aware assistant with MCP-backed execution on the modeling host.
+- **Studio sessions** — Modeling-server studio chat: `POST https://modelingserver.ecosystem.ai/api/studio/sessions/{sessionId}/messages`. Platform JWT. Server-side intent routing and MCP tool execution.
+
+No additional product-agent catalog was found on meserver or modelingserver beyond the modeling-server assistants above and the OpenAI-compatible model list (models, not agents). See [MCPs](/docs/workers/mcps) for model list endpoints.

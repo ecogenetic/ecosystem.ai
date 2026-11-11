@@ -1,0 +1,148 @@
+---
+title: MCPs
+description: Workbench, Runtime, modeling-server, and Domain Catalog MCP surfaces — auth, endpoints, and live Workbench tool families
+---
+
+import { Callout } from 'nextra/components'
+
+# MCPs
+
+Several hosts expose MCP on the path `/mcp`. They are **not interchangeable**: a Workbench `ewb_public_…` key does not unlock Runtime scoring tools, and a modeling-server MCP OAuth token is not what MeWB accepts.
+
+| Surface | Doc depth |
+| --- | --- |
+| [Configuration → MCP](/docs/configuration/workbench_apis/mcp) | Workbench vs Runtime comparison, Cursor config, stdio harness |
+| [Runtime MCP](/docs/runtime/mcp) | Builtin Java MCP on the scoring engine |
+
+<Callout type="warning" title="Mutating tools">
+Workbench and related MCP tools that change data require **`confirm=true`**. Do not run live campaign or outreach sends from discovery clients without an explicit operator ask.
+</Callout>
+
+## Workbench MCP
+
+- **Name:** Workbench MCP (`ecosystem-workbench`)
+- **Live endpoints:** `POST https://mewbserver.ecosystem.ai/mcp` and `POST https://me.ecosystem.ai/mcp` (both return the same unauthenticated 401). Local default: `POST http://localhost:8001/mcp`.
+- **Transport:** Streamable HTTP. Docs describe MCP protocol 2026-07-28; the live server negotiated **`2025-11-25`** on initialize (11 Nov 2026, 13:16 SAST). Legacy SSE (`GET /mcp/sse/`, `POST /mcp/messages/`) was removed 26 October 2026.
+- **Auth:** HTTP headers only, not a query parameter. One credential: `X-API-Key: ewb_public_…`, or `Authorization: Bearer ewb_public_…`, or `Authorization: Bearer <Workbench JWT>`. If Authorization already holds the public key, a JWT may be sent as `X-User-Token`. Mint keys under **Administration → API Keys → Public API Access**; a public key used alone on the gateway needs a linked internal API key. MeWB does **not** advertise MCP OAuth (well-known OAuth URLs on mewbserver also return the credential 401).
+- **Unauthenticated error (live):** HTTP 401, `Content-Type: application/json`, body exactly `{"detail":"Missing credential. Send Authorization: Bearer <jwt> or X-API-Key: ewb_public_..."}`.
+- **What it does:** Operator and catalog access to deployments, entities, enrichment, outreach, ontology, runtime testing, simulations, and `call_endpoint` into `/api/v1` and `/public/v1`. Calls are logged to `mcp_access_log`.
+- **Live authenticated test (11 Nov 2026, 13:16 SAST):** `initialize` HTTP 200, `notifications/initialized` HTTP 202, `tools/list` HTTP 200. Server: **Ecosystem Workbench** 1.0.0. **`tools/list` returned 97 tools.** Server instructions: with no catalog agent selected, every tool is available; the operator can `list agents`, `use <agent id>`, then `clear` (`list_catalog_agents`, `select_catalog_agent`, `clear_catalog_agent`); how-to questions use `explain_catalog_agent`. Resource mentioned by the server: `ecosystem://agents`.
+- **Documented resources (not separately listed in that `tools/list` response):** `ecosystem://deployments`, `ecosystem://deployment/{name}`. Per-deployment snippets: `GET /api/v1/deployments/{name}/mcp`.
+- **Related:** REST info (JWT) `GET /api/v1/mcp/`. In-process mode is the Ecosystem Agent at `/assistant` (session JWT, no public key). stdio harness: Python package `ecosystem_workbench_mcp` for Hermes / desktop. Cursor config uses a `headers` map on the `/mcp` URL.
+- **Health (open):** `GET https://mewbserver.ecosystem.ai/public/v1/health` → `{"status":"healthy","version":"1.0.0"}`.
+- **Catalog UI:** [https://mewbserver.ecosystem.ai/](https://mewbserver.ecosystem.ai/).
+
+### Live Workbench tools (97)
+
+Grouped by family from live `tools/list` (11 Nov 2026, 13:16 SAST):
+
+**Catalog and environment:** `list_api_catalog`, `describe_environment`, `call_endpoint`
+
+**Explain and recommend:** `recommend_algorithm`, `explain_algorithms`, `explain_convergence`, `explain_runtime`, `explain_simulation`, `explain_workbench`, `describe_workbench`
+
+**Entities and records:** `entity`, `list_entities`, `count_records`, `explain_entity`, `search_product`, `get_record`, `get_related`, `inspect_entity`, `resolve_deep_link`, `update_current_form`
+
+**Campaign channels:** `list_campaign_channel_catalog`, `get_campaign_channels`, `set_campaign_channel_selection`, `list_custom_channel_modules`
+
+**Deployments and scoring:** `list_deployments`, `get_deployment_info`, `get_deployment_schema`, `score_customer`, `send_feedback`
+
+**Enrichment:** `date_enrich`, `mcc_enrich`, `get_enrichment_job`, `personality_drift`
+
+**Ontology and semantics:** `list_ontologies`, `describe_ontology`, `create_ontology`, `update_ontology`, `delete_ontology`, `create_ontology_from_data_source`, `list_ontology_mappings`, `suggest_ontology_mappings`, `suggest_ontology_mappings_multi`, `create_ontology_mapping`, `update_ontology_mapping`, `delete_ontology_mapping`, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology`, `get_ontology_session_manifest`, `browse_semantics`, `resolve_semantics`
+
+**Network selector:** `list_network_selector_configs`, `explain_network_selector`, `plan_network_selector`, `validate_network_selector`, `save_network_selector`, `fix_network_selector`, `assign_network_selector`, `unassign_network_selector`, `clone_network_selector`, `remove_network_selector`, `test_network_selector`
+
+**Runtime testing:** `list_runtime_testing_suites`, `get_runtime_testing_suite`, `analyze_runtime_testing`, `plan_runtime_testing`, `start_runtime_testing_run`, `list_runtime_testing_runs`, `get_runtime_testing_run`, `cancel_runtime_testing_run`, `close_runtime_testing_run`, `compare_runtime_testing_runs`, `get_runtime_testing_artifact`, `delete_runtime_testing_suite`
+
+**Simulations:** `start_simulation_run`, `cancel_simulation_run`, `get_simulation_run_status`, `get_simulation_logs`, `get_simulation_results`, `explain_simulation_result`, `get_simulation_config`, `upsert_simulation_config`
+
+**Generate:** `check_generate_intent`, `analyze_generate`, `execute_generate`, `generate_solution_template`, `generate_project_setup_notebook`
+
+**Outreach:** `list_outreach_templates`, `inspect_outreach_campaign`, `build_outreach_campaign`, `configure_outreach_campaign`, `run_outreach_campaign`, `get_outreach_run_status`
+
+**Catalog agents:** `list_catalog_agents`, `select_catalog_agent`, `clear_catalog_agent`, `explain_catalog_agent`
+
+## Runtime builtin MCP
+
+- **Name:** Runtime builtin MCP (Java `ecosystem-runtime`, 0.9.7+)
+- **Endpoint:** `POST {RUNTIME_BASE}/mcp` — typically port `8091`. Example: `POST http://localhost:8091/mcp`. **No hosted public Runtime MCP URL was found** on me, meserver, mewbserver, or modelingserver. Clients must point at the customer’s Runtime host.
+- **Transport:** JSON-RPC on `POST /mcp`. Send `Accept: application/json, text/event-stream`. Supports legacy (2024-11-05) and modern (2026-07-28, including `server/discover`). Per-request SSE is allowed; deprecated `GET /mcp` + `POST /mcp/message` still exists for old clients.
+- **Auth:** Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `response`) work without a key unless Spring `--security` is enabled. Mutating tools (`campaignCreate`, `campaignDelete`, `generateClass`, `updateProperties*`, `learningTrigger`) need Runtime `MASTER_KEY` as `X-API-KEY` or `Authorization: Bearer {MASTER_KEY}`. That key is **not** a Workbench `ewb_public_…` key.
+- **What it does:** Score campaigns and close the learning loop: `listCampaigns` → `validateInvokeRequest` → `invoke` → `validateResponseRequest` → `response`. Also campaign admin, runtime ontology, and `askAboutAlgorithms`.
+- **Tools (docs):** Scoring and campaigns — `listCampaigns`, `invoke`, `response`, `updateProperties`, `updatePropertiesJson`, `generateClass`, `campaignCreate`, `campaignGet`, `campaignDelete`, `configGet`, `learningTrigger`. Ontology — `lookupRuntimeConcept`, `getClosedLoopRecipe`, `validateInvokeRequest`, `validateResponseRequest`. Algorithms — `askAboutAlgorithms`. Resources include `ecosystem://campaigns`, `ecosystem://config`, `ontology://runtime`, `ecosystem://algorithms/selection-guide`.
+- **REST equivalents:** `POST {RUNTIME_BASE}/invocations`, `POST {RUNTIME_BASE}/response`, plus `/ontology/runtime` catalog and validators.
+
+## Runtime MCP sidecar
+
+- **Name:** Runtime MCP sidecar
+- **Image:** `ecosystemai/ecosystem-runtime-mcp` (example tag `arm64`)
+- **Endpoint:** FastAPI `/mcp` on the sidecar port (default `8092`). Not the Java JSON-RPC server and not Workbench MCP. **No public hosted sidecar URL** was found on the four live hosts checked.
+- **What it does:** MLFlow model download into Runtime (`/refresh`) and custom FastAPI routers compiled from a Workbench deployment API tab. OpenAPI at `/docs`.
+- **Auth / env:** Configured with `RUNTIME_URL`, `PORT`, `MLFLOW_TRACKING_URI`, `RUNTIME_CONFIG`, `MONGO_CONNECT`. Auth follows that sidecar deployment; it is not the Workbench public-key scheme.
+
+## Modeling-server MCP (Data, AI, Modeling, Algorithms)
+
+Host: [https://modelingserver.ecosystem.ai/api/](https://modelingserver.ecosystem.ai/api/) (OpenAPI 3.1, platform version 0.7.9). Base path `/api`. The same path set exists on [https://meserver.ecosystem.ai/](https://meserver.ecosystem.ai/) (`/api/mcp/…`), but meserver’s OAuth discovery currently advertises `http://localhost:3002/api`, which is not usable for external clients. **Prefer modelingserver for OAuth metadata.**
+
+Unauthenticated calls to these MCP paths return **HTTP 403** with an empty body (not MeWB’s JSON 401). OpenAPI marks a global JWT security scheme. MCP clients should use **MCP OAuth** (bearer token in the Authorization header) or a platform JWT. Scopes: `mcp:tools`, `mcp:read`, `mcp:write`. Bearer method: header only.
+
+| Name | What it does (OpenAPI tag) | Primary endpoints (prefix `https://modelingserver.ecosystem.ai/api`) |
+| --- | --- | --- |
+| MCP: Data Server | MongoDB, data munging, and transformations | `GET /mcp/data/info`, `GET /mcp/data/health`, `POST /mcp/data/tools/list`, `POST /mcp/data/tools/call`, SSE `GET\|POST /mcp/data/sse`, `POST /mcp/data/message` |
+| MCP: AI Server | Chat, embeddings, and predictions | `GET /mcp/ai/info`, `GET /mcp/ai/health`, `POST /mcp/ai/tools/list`, `POST /mcp/ai/tools/call`, SSE `GET\|POST /mcp/ai/sse`, `POST /mcp/ai/message` |
+| MCP: Modeling Server | UML modeling, code generation, and cloud deployment | Streamable HTTP JSON-RPC at `POST /mcp/modeling` (session id in `Mcp-Session-Id`); also `GET /mcp/modeling/info`, `GET /mcp/modeling/health`, `POST /mcp/modeling/tools/list`, `POST /mcp/modeling/tools/call`, SSE `GET\|POST /mcp/modeling/sse`, `POST /mcp/modeling/message` |
+| MCP: Algorithms Server | ML algorithms, forecasting, and pipeline processing | `GET /mcp/algorithms/info`, `GET /mcp/algorithms/health`, `POST /mcp/algorithms/tools/list`, `POST /mcp/algorithms/tools/call`, SSE `GET\|POST /mcp/algorithms/sse`, `POST /mcp/algorithms/message` |
+
+Live `/info` and `/health` were not readable without a token (403), so **individual tool names were not listed** from the running modeling MCP servers.
+
+## MCP OAuth (modeling / ecosystem-server)
+
+This is **not** Workbench MCP auth.
+
+- **Discovery:** [https://modelingserver.ecosystem.ai/api/.well-known/oauth-authorization-server](https://modelingserver.ecosystem.ai/api/.well-known/oauth-authorization-server) (200)
+- **Protected resource:** [https://modelingserver.ecosystem.ai/api/.well-known/oauth-protected-resource](https://modelingserver.ecosystem.ai/api/.well-known/oauth-protected-resource) (200)
+- **Issuer / resource:** `https://modelingserver.ecosystem.ai/api`
+- **Authorize:** `https://modelingserver.ecosystem.ai/api/oauth/authorize` (OAuth 2.1 authorization code + PKCE S256)
+- **Token:** `https://modelingserver.ecosystem.ai/api/oauth/token` (grants: `authorization_code`, `refresh_token`; client auth: `client_secret_post`, `client_secret_basic`, `none`)
+- **Register:** `https://modelingserver.ecosystem.ai/api/oauth/register` (RFC 7591 dynamic client registration)
+- **Scopes:** `mcp:tools`, `mcp:read`, `mcp:write`
+- **Token use:** `Authorization: Bearer <access_token>` against the modeling MCP resources above
+- **Docs:** [https://modelingserver.ecosystem.ai/api/docs](https://modelingserver.ecosystem.ai/api/docs)
+
+<Callout type="info" title="meserver OAuth caveat">
+`https://meserver.ecosystem.ai/api/.well-known/oauth-authorization-server` returns 200 but names issuer and endpoints at `http://localhost:3002/api`. Do not point external clients at those localhost URLs.
+</Callout>
+
+## Domain Catalog MCP
+
+- **Endpoints:** `POST https://ontology.ecosystem.ai/catalog/mcp` and `POST https://ontology.ecosystem.ai/data/mcp`
+- **Live check:** GET returns HTTP 405 with `Allow: POST` and `{"detail":"Method Not Allowed"}`, so the POST MCP routes exist. Authenticated `tools/list` was not run in catalog verification. Earlier code review found no inbound auth on these routes (CORS only); treat that as unverified against a live POST.
+- **What it does:** Domain Catalog / data ontology MCP used with the ontology download surface on ontology.ecosystem.ai. Related public (no JWT) modeling-server catalog APIs are tagged “Modeling: Domain Catalog” in the OpenAPI spec.
+
+## OpenAI-compatible model list and LLM gateway
+
+`GET /v1/models` is OpenAI-compatible.
+
+| Host | List endpoint (live) | Auth observed on GET | Models returned 11 Nov 2026 |
+| --- | --- | --- | --- |
+| Workbench app gateway | `GET https://me.ecosystem.ai/api/v1/models` and `GET https://me.ecosystem.ai/v1/models` (both 200) | Open on GET | `qwen.qwen3-coder-next` (`owned_by`: bedrock) |
+| MeWB catalog host | `GET https://mewbserver.ecosystem.ai/v1/models` | HTTP 401, same missing-credential message as Workbench MCP | Not listed without a Workbench JWT or public key |
+| meserver | `GET https://meserver.ecosystem.ai/api/v1/models` (200). `GET /v1/models` is 404; `GET /api/models` is 403 | Open on the `/api/v1/models` path | 35 models: `ecosystem.Ai`, `ecogentic-1.0`, plus Ollama models `nomic-embed-text:latest`, `gemma4:31b-mlx`, `qwen3.8:27b`, `qwen3.8:27b-mlx`, `qwen38-27b-m1-64k:latest`, `gemma4-64k:latest`, `sebdg/emotional_llama:latest`, `granite3.2-vision:2b`, `mistral-small3.2:latest`, `phi4-reasoning:latest`, `gpt-oss:20b`, `muse-glimmer:30b-mlx`, `qwen3.6:35b-a3b-coding-nvfp4`, `qwen3.6:latest`, `gemma4:31b`, `qwen3.6:27b`, `qwen3.6:35b-a3b-nvfp4`, `phi3:mini`, `mistral-small3.1:24b`, `llama3.1:latest`, `llama3.2:latest`, `qwen3:14b`, `mistral:latest`, `llama3.2-vision:11b`, `gemma3:12b`, `phi4:14b`, `deepseek-r1:8b`, `mistral:7b`, `phi3:3.8b`, `deepscaler:1.5b`, `deepseek-coder:6.7b`, `deepseek-coder-v2:16b`, `deepseek-r1:14b` |
+| modelingserver | `GET https://modelingserver.ecosystem.ai/api/v1/models` (200). `GET /api/models` is 403 | Open on the `/api/v1/models` path | `ecosystem.Ai`, `ecogentic-1.0` |
+
+Related LLM endpoints on modelingserver (documented; POST not tested in catalog compile):
+
+- `POST https://modelingserver.ecosystem.ai/api/v1/chat/completions` — OpenAI chat completions (streaming and non-streaming)
+- `POST https://modelingserver.ecosystem.ai/api/v1/responses` — OpenAI Responses API compatibility
+- `POST https://modelingserver.ecosystem.ai/api/v1/messages` — Anthropic Messages compatibility
+- `POST https://modelingserver.ecosystem.ai/api/v1/embeddings` — OpenAI embeddings (forwarded to Ollama `/api/embed`)
+- `POST https://modelingserver.ecosystem.ai/api/modeling/llm/chat/completions` — metered completions; docs say JWT and usage recording
+
+On Workbench, set `ANTHROPIC_BASE_URL` to the Workbench host root so `POST /v1/messages` uses the Workbench default LLM.
+
+## Gaps (label explicitly)
+
+- Authenticated Workbench `initialize` and `tools/list` succeeded on 11 Nov 2026 at 13:16 SAST against `POST https://mewbserver.ecosystem.ai/mcp` with a Workbench public key in the `X-API-Key` header: HTTP 200 / 202 / 200, **97 tools**, server protocol `2025-11-25`. `POST https://me.ecosystem.ai/mcp` was not re-tested with this key (it previously returned the same unauthenticated 401 as mewbserver).
+- Modeling Data / AI / Algorithms / Modeling **tool names were not live-listed** (403 without a token).
+- **No public Runtime or sidecar MCP host** is published on the four ecosystem.ai hosts checked.
+- Campaign Outreach Agent and Network Selector Agent appear in the live product catalog; see [Agents](/docs/workers/agents) for operator context.
