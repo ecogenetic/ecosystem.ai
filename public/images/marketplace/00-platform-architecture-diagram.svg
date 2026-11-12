@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" font-family="Helvetica, Arial, sans-serif">
+  <rect width="1400" height="860" fill="#F7F7F4"/>
+  <text x="40" y="45" font-size="24" font-weight="bold" fill="#151515">ecosystem.Ai Platform 2.0 (v2.0.5)  Google Cloud Marketplace GKE Architecture</text>
+  <text x="40" y="72" font-size="14" fill="#62625E">Partner: Ecogenetic LLC (Partner ID: hvU6a3j6HM) | Solution ID: ecosystemai-platform-2 | Pricing: BYOL | Deployment: 100% Customer-Hosted on GKE</text>
+
+  <rect x="40" y="100" width="320" height="320" rx="10" fill="#FFFFFF" stroke="#003B5C" stroke-width="2"/>
+  <rect x="40" y="100" width="320" height="42" rx="10" fill="#003B5C"/>
+  <text x="60" y="127" font-size="15" font-weight="bold" fill="#FFFFFF">Google Cloud Marketplace (Partner)</text>
+  <text x="60" y="170" font-size="13" font-weight="bold" fill="#151515">GCP Project: ecogenetic-public</text>
+  <rect x="60" y="190" width="280" height="95" rx="6" fill="#E0F4FA" stroke="#00A1E0"/>
+  <text x="75" y="215" font-size="13" font-weight="bold" fill="#003B5C">Artifact / Container Registry</text>
+  <text x="75" y="236" font-size="12" fill="#151515">marketplace.gcr.io/ecogenetic/</text>
+  <text x="75" y="254" font-size="12" fill="#151515">ecosystemai-platform-2:2.0.5</text>
+  <text x="75" y="272" font-size="11" fill="#62625E">" Helm Deployer + 9 ARM64 Images</text>
+  <rect x="60" y="300" width="280" height="95" rx="6" fill="#F0F1ED" stroke="#CFCFC7"/>
+  <text x="75" y="325" font-size="13" font-weight="bold" fill="#151515">No Partner-Hosted Runtime SaaS</text>
+  <text x="75" y="346" font-size="12" fill="#62625E">All customer data, scoring, and</text>
+  <text x="75" y="364" font-size="12" fill="#62625E">databases remain inside the</text>
+  <text x="75" y="382" font-size="12" fill="#62625E">customer's own GCP project.</text>
+
+  <rect x="40" y="450" width="320" height="360" rx="10" fill="#FFFFFF" stroke="#777771" stroke-width="2" stroke-dasharray="6,4"/>
+  <rect x="40" y="450" width="320" height="42" rx="10" fill="#62625E"/>
+  <text x="60" y="477" font-size="15" font-weight="bold" fill="#FFFFFF">External / Non-GCP Services</text>
+  <rect x="60" y="515" width="280" height="120" rx="6" fill="#F0F1ED" stroke="#CFCFC7"/>
+  <text x="75" y="540" font-size="13" font-weight="bold" fill="#151515">Enterprise Users &amp; Client Apps</text>
+  <text x="75" y="562" font-size="12" fill="#62625E">" Operator Browser (HTTPS :443)</text>
+  <text x="75" y="582" font-size="12" fill="#62625E">" Real-Time Scoring Clients:</text>
+  <text x="85" y="600" font-size="12" fill="#003B5C">POST /invocations &amp; POST /response</text>
+  <text x="85" y="618" font-size="12" fill="#003B5C">POST /mcp</text>
+
+  <rect x="60" y="655" width="280" height="130" rx="6" fill="#F0F1ED" stroke="#CFCFC7"/>
+  <text x="75" y="680" font-size="13" font-weight="bold" fill="#151515">Optional Outbound LLM Endpoint</text>
+  <text x="75" y="702" font-size="12" fill="#62625E">" Customer-configured API key</text>
+  <text x="75" y="722" font-size="12" fill="#62625E">" OpenAI (default gpt-5), Vertex AI,</text>
+  <text x="85" y="740" font-size="12" fill="#62625E">Anthropic, or self-hosted Ollama</text>
+  <text x="75" y="762" font-size="11" fill="#777771">HTTPS Egress (443) from GKE only</text>
+
+  <rect x="410" y="100" width="950" height="710" rx="12" fill="#FFFFFF" stroke="#00A1E0" stroke-width="3"/>
+  <rect x="410" y="100" width="950" height="46" rx="12" fill="#003B5C"/>
+  <text x="435" y="129" font-size="16" font-weight="bold" fill="#FFFFFF">Customer Google Cloud Project &amp; VPC (Customer-Hosted GKE Deployment)</text>
+
+  <rect x="440" y="170" width="890" height="80" rx="8" fill="#E0F4FA" stroke="#00A1E0" stroke-width="1.5"/>
+  <text x="460" y="198" font-size="14" font-weight="bold" fill="#003B5C">Google Cloud Load Balancing (GKE Ingress class: gce)</text>
+  <text x="460" y="220" font-size="12" fill="#151515">" Google-Managed SSL Certificate (networking.gke.io/v1 ManagedCertificate) + FrontendConfig (HTTP -&gt; HTTPS 301)</text>
+  <text x="460" y="238" font-size="12" fill="#62625E">" Routes: / (Workbench 2), /api (ecosystem-server), /invocations &amp; /response &amp; /mcp (Runtime), /campaign, /data-agents, /notebooks, /custom-gpts, /domain-catalog</text>
+
+  <rect x="440" y="270" width="890" height="390" rx="10" fill="#F7F7F4" stroke="#003B5C" stroke-width="2"/>
+  <text x="460" y="298" font-size="15" font-weight="bold" fill="#003B5C">Google Kubernetes Engine (GKE) Cluster  ARM64 Node Pool (c4a-standard-4, 4 vCPU, 16 GB)</text>
+  <text x="460" y="318" font-size="12" fill="#62625E">Kubernetes Application CR (app.k8s.io/v1beta1)  Release: ecosystem-platform v2.0.5</text>
+
+  <rect x="460" y="335" width="205" height="95" rx="6" fill="#FFFFFF" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="475" y="358" font-size="13" font-weight="bold" fill="#003B5C">ecosystem-server</text>
+  <text x="475" y="378" font-size="11" fill="#151515">" Spring API (:3001)</text>
+  <text x="475" y="395" font-size="11" fill="#151515">" Embedded MongoDB (:54445)</text>
+  <text x="475" y="412" font-size="11" fill="#151515">" H2O AutoML (:54321)</text>
+
+  <rect x="680" y="335" width="205" height="95" rx="6" fill="#FFFFFF" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="695" y="358" font-size="13" font-weight="bold" fill="#003B5C">ecosystem-workbench</text>
+  <text x="695" y="378" font-size="11" fill="#151515">" React Operator SPA (:5270)</text>
+  <text x="695" y="395" font-size="11" fill="#151515">" FastAPI Backend (:8001)</text>
+  <text x="695" y="412" font-size="11" fill="#151515">" Public API (:8004)</text>
+
+  <rect x="900" y="335" width="205" height="95" rx="6" fill="#FFFFFF" stroke="#00A1E0" stroke-width="2"/>
+  <text x="915" y="358" font-size="13" font-weight="bold" fill="#003B5C">ecosystem-runtime (HPA 1-6)</text>
+  <text x="915" y="378" font-size="11" fill="#151515">" Real-Time Scorer (:8091)</text>
+  <text x="915" y="395" font-size="11" fill="#151515">" POST /invocations</text>
+  <text x="915" y="412" font-size="11" fill="#151515">" POST /response &amp; /mcp</text>
+
+  <rect x="1120" y="335" width="190" height="95" rx="6" fill="#FFFFFF" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="1135" y="358" font-size="13" font-weight="bold" fill="#003B5C">trino</text>
+  <text x="1135" y="378" font-size="11" fill="#151515">" Distributed SQL (:8080)</text>
+  <text x="1135" y="395" font-size="11" fill="#151515">" MongoDB Connector</text>
+  <text x="1135" y="412" font-size="11" fill="#62625E">" Secret: trino-catalog</text>
+
+  <rect x="460" y="450" width="205" height="95" rx="6" fill="#FFFFFF" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="475" y="473" font-size="13" font-weight="bold" fill="#003B5C">ecosystem-campaign</text>
+  <text x="475" y="493" font-size="11" fill="#151515">" Campaign UI (:54310)</text>
+  <text x="475" y="510" font-size="11" fill="#151515">" Express API (:54311)</text>
+
+  <rect x="680" y="450" width="205" height="95" rx="6" fill="#FFFFFF" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="695" y="473" font-size="13" font-weight="bold" fill="#003B5C">ecosystem-data-agents</text>
+  <text x="695" y="493" font-size="11" fill="#151515">" Data Agents UI (:54325)</text>
+  <text x="695" y="510" font-size="11" fill="#151515">" LangGraph API (:54324)</text>
+
+  <rect x="900" y="450" width="205" height="95" rx="6" fill="#FFFFFF" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="915" y="473" font-size="13" font-weight="bold" fill="#003B5C">ecosystem-notebooks</text>
+  <text x="915" y="493" font-size="11" fill="#151515">" EcoGentic API (:8010)</text>
+  <text x="915" y="510" font-size="11" fill="#151515">" Notebooks (:8000)</text>
+
+  <rect x="1120" y="450" width="190" height="95" rx="6" fill="#FFFFFF" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="1135" y="473" font-size="12" font-weight="bold" fill="#003B5C">custom-gpts &amp; catalog</text>
+  <text x="1135" y="493" font-size="11" fill="#151515">" Custom GPTs (:54320)</text>
+  <text x="1135" y="510" font-size="11" fill="#151515">" Domain Catalog (:8080)</text>
+
+  <rect x="460" y="565" width="850" height="75" rx="6" fill="#F0F1ED" stroke="#CFCFC7"/>
+  <text x="480" y="590" font-size="13" font-weight="bold" fill="#151515">ClusterIP Internal Service Mesh &amp; Pod Affinity</text>
+  <text x="480" y="610" font-size="12" fill="#62625E">" Internal DNS: ecosystem-server:3001, ecosystem-server:54445 (MongoDB 9.0), workbench2:8001/8004, ecosystem-runtime-solo:8091, trino:8080</text>
+  <text x="480" y="628" font-size="12" fill="#62625E">" PodAffinity co-locates shared-data PVC workloads with ecosystem-server on standard-rwo</text>
+
+  <rect x="440" y="680" width="890" height="105" rx="8" fill="#E0F4FA" stroke="#003B5C" stroke-width="1.5"/>
+  <text x="460" y="708" font-size="14" font-weight="bold" fill="#003B5C">Compute Engine Persistent Disk / Filestore (StorageClass: standard-rwo, 250 GiB PVC: shared-data)</text>
+  <text x="460" y="730" font-size="12" fill="#151515">" Subpaths: /database (MongoDB data files), /data (H2O models, runtime plugins, notebooks), /modeling, /config, /var/log/supervisor, /app/backend/reports</text>
+  <text x="460" y="750" font-size="12" fill="#62625E">" Customer owns all persistent volumes and encryption keys inside their GCP project</text>
+
+  <line x1="340" y1="235" x2="440" y2="335" stroke="#00A1E0" stroke-width="2.5" stroke-dasharray="5,3"/>
+  <line x1="340" y1="560" x2="440" y2="210" stroke="#003B5C" stroke-width="2.5"/>
+  <line x1="440" y1="500" x2="340" y2="710" stroke="#62625E" stroke-width="2" stroke-dasharray="4,4"/>
+</svg>

@@ -1,87 +1,69 @@
 ---
 title: AWS Marketplace
-description: Setup ecosystem.Ai Platform in AWS
+description: Deploy ecosystem.Ai Platform 2.0 on Amazon Elastic Kubernetes Service (EKS)
 ---
 
-# Guide to Setting up ecosystem.Ai Platform in AWS
+# AWS Marketplace (Amazon EKS)
 
-## ecosystem.Ai Platform 2.0 (v2.0.1)
+**ecosystem.Ai Platform 2.0** (`prod-4nh6hedmim7vq`) is a multi-architecture (`ARM64` AWS Graviton & `AMD64` x86_64) **Container Product** on AWS Marketplace that deploys the complete 10-container platform into **Amazon EKS** using either our **1-Click AWS CloudFormation UI Installer** (zero CLI required) or standard **Helm** chart installation.
 
-Version 2.0.1 is a new Container product on AWS Marketplace. It deploys eight ARM64 applications into Amazon EKS with a Helm chart. MongoDB 8.3 runs inside `ecosystem-server` on port `54445`. There is no separate MongoDB container and no custom AMI.
+- **AWS Marketplace Product Page:** [https://aws.amazon.com/marketplace/pp/prodview-v3nxr6ziemwau](https://aws.amazon.com/marketplace/pp/prodview-v3nxr6ziemwau)
+- **AWS Marketplace Launch Page:** [https://aws.amazon.com/marketplace/launch?productId=prod-4nh6hedmim7vq](https://aws.amazon.com/marketplace/launch?productId=prod-4nh6hedmim7vq)
+- **1-Click AWS CloudFormation Browser UI Installer (Zero CLI):** [Launch CloudFormation Stack](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://ecosystempredictors.s3.af-south-1.amazonaws.com/marketplace/2.0.1/aws-eks-cloudformation-2.0.1.yaml&stackName=ecosystem-platform)
+- **Visual Tour & 10-Container Architecture Guide:** [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Marketplace Terms:** [Marketplace Terms](/docs/marketplace/terms)
 
-| Application | Role |
-|---|---|
-| Workbench 2 | Operator UI and APIs |
-| Prediction Server | Models, H2O, embedded MongoDB 8.3 |
-| Runtime 0.9.7 | `POST /invocations`, then `POST /response`, and `POST /mcp` |
-| Campaign Management | Agentic campaigns |
-| Data Agents | Analytic, Interactions, Personality, and Financial paths |
-| Notebooks | EcoGentic journeys and JupyterHub |
-| Custom GPTs | Specialist agents |
-| Domain Catalog | Governed ontologies, plus Trino SQL |
+---
 
-At install time you provide the license key (`MASTER_KEY`), the initial admin password, Cloud LLM settings (provider, endpoint, model, embedding model, credential, max tokens, timeout, SSL), a T0/T1/T2 size, and either an automatic hostname or your own domain. Shared data uses Amazon EFS (ReadWriteMany). TLS uses ACM or the ingress controller.
+## Option A: 1-Click Browser UI Install via AWS CloudFormation (Zero CLI)
 
-Sign in to Workbench 2 as `admin@ecosystem.ai`. Score with `POST /invocations` (`params` is a JSON string) and send the outcome to `POST /response`.
+The CloudFormation installer (`aws-eks-cloudformation-2.0.1.yaml`) provisions or reuses your AWS landing zone and automatically installs the umbrella Helm chart into your EKS cluster:
 
-Terms: [Marketplace terms](/docs/marketplace/terms). The sections below describe the earlier virtual-machine listings.
+1. Click **[Launch CloudFormation Stack](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://ecosystempredictors.s3.af-south-1.amazonaws.com/marketplace/2.0.1/aws-eks-cloudformation-2.0.1.yaml&stackName=ecosystem-platform)**.
+2. **Licensing & Admin Security**: Enter your `EcosystemMasterKey` (`MASTER_KEY`), `InitialAdminPassword` (for `admin@ecosystem.ai`), and `MongodbPassword` (or `ExternalMongodbUri`).
+3. **Architecture & Sizing**: Choose `NodeArchitecture` (`arm64` Graviton or `amd64` x86_64), instance type (e.g., `m7g.2xlarge`), and Runtime HPA max replicas.
+4. **Create New or Reuse Existing Infrastructure**:
+   - Leave `ExistingVpcId`, `ExistingPublicSubnetIds`, `ExistingPrivateSubnetIds`, `ExistingEfsFileSystemId`, and `ExistingSecretsBundleArn` blank to create a new VPC, Amazon EFS ReadWriteMany filesystem, and AWS Secrets Manager bundle automatically, or populate any of them to reuse your existing resources.
+5. **Subdomain Routing & TLS**:
+   - Set `CustomDomainName` (e.g., `ai.mycompany.com` or `<ALB_IP>.nip.io`) and optional `AcmCertificateArn`.
+6. Click **Create stack**.
 
-<Cards>
-    <Cards.Card href="https://aws.amazon.com/marketplace/pp/prodview-kr3eipc3hphes" title="Platform Option" arrow>
-        ![image](/images/install/aws-platform-vm.png)
-    </Cards.Card>
-    <Cards.Card href="https://aws.amazon.com/marketplace/pp/prodview-2kak2xwqqgd3w" title="Spend Personality Option" arrow>
-        ![image](/images/install/aws-platform-personality.png)
-    </Cards.Card>
-</Cards>
+---
 
-## ecosystem.Ai Platform (VM)
+## Option B: Install into an Existing Amazon EKS Cluster via Helm
 
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
+```bash
+# 1. Authenticate Helm to AWS Marketplace ECR
+aws ecr get-login-password --region us-east-1 | \
+  helm registry login --username AWS --password-stdin 709825985650.dkr.ecr.us-east-1.amazonaws.com
 
-![image](/images/install/aws-install-01.png)
+# 2. Install ecosystem.Ai Platform 2.0 (ARM64 default; add --set global.arch=amd64 or -f values-amd64.yaml on x86_64 nodes)
+helm upgrade --install ecosystem \
+  oci://709825985650.dkr.ecr.us-east-1.amazonaws.com/ecosystem-ai/ecosystem-platform \
+  --version 2.0.15 \
+  --namespace ecosystem --create-namespace \
+  --set-string global.masterKey="<YOUR_MASTER_KEY>" \
+  --set-string global.initialAdminPassword="<YOUR_ADMIN_PASSWORD>" \
+  --set-string global.mongodbPassword="<YOUR_MONGO_PASSWORD>" \
+  --set-string global.ingress.baseDomain="<YOUR_BASE_DOMAIN>" \
+  --set-string global.llm.provider="openai" \
+  --set-string global.llm.model="gpt-5" \
+  --set-string global.openaiApiKey="<OPTIONAL_LLM_API_KEY>"
+```
 
+---
 
-### Step 2: Setup Basic Settings
-- Select the correct subscription and ensure that you have app install rights.
-- Either use an existing group or create a new one.
-- Virtual machines in AWS have two distinct names: virtual machine name used as the AWS resource identifier, and in guest host name. When you create a VM in the portal, the same name is used for both the virtual machine name and the host name. The virtual machine name cannot be changed after the VM is created. You can change the host name when you log into the virtual machine.
-- Choose the AWS region that's right for you and your customers. Not all VM sizes are available in all regions.
-- The administrator username for the VM as ubuntu. Use the security credentials to access the VM.
+## Subdomain Endpoints on AWS ALB Ingress
 
-![image](/images/install/aws-install-02.png)
+The consolidated AWS ALB Ingress (`alb.ingress.kubernetes.io/group.name: ecosystem`) routes each of the 8 applications at root `path: /` on its own subdomain:
 
-- Additional settings for security and availability.
-
-[//]: # (![image]&#40;/images/install/aws-install-03.png&#41;)
-
-
-### Step 3: Setup Networking
-- Use default networking settings when possible.
-- Ensure that security group allows for access to ports: 80, 3001, 3000, etc.
-
-[//]: # (![image]&#40;/images/install/aws-install-04.png&#41;)
-
-
-### Step 4: Review Install Results
-- During install, all results can be reviewed.
-- When completed review the public IP address created and access via http://ip
-
-
-## ecosystem.Ai Platform for Spend Personality
-
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
-
-![image](/images/install/aws-install-spend.png)
-
-<Callout type="tip" title="Tip">
-    - Ensure that you update your algorithm from the ecosystem.Ai website when needed.
-</Callout>
-
-
-## Conclusion
-These options focus entirely on the cloud implementation. We also have other cloud types and on premise installations that can be done using various technologies.
+| Subdomain Host | Service & Port | Health / Entry Path |
+|---|---|---|
+| `workbench.<baseDomain>` | `workbench2:5270` (UI) & `:8004` (`/public/v1`) | `/` |
+| `server.<baseDomain>` | `ecosystem-server:3001` | `/api/v1/health` |
+| `runtime.<baseDomain>` | `ecosystem-runtime-solo:8091` | `/ping`, `POST /invocations`, `POST /response`, `POST /mcp` |
+| `campaign.<baseDomain>` | `ecosystem-campaign:54310` | `/` |
+| `data-agents.<baseDomain>` | `ecosystem-data-agents:54325` | `/` |
+| `notebooks.<baseDomain>` | `ecosystem-notebooks:8010` | `/` |
+| `custom-gpts.<baseDomain>` | `ecosystem-custom-gpts:54320` | `/` |
+| `domain-catalog.<baseDomain>` | `ecosystem-domain-catalog:8080` | `/v1/health` |

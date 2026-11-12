@@ -1,22 +1,56 @@
 ---
 title: Intro
-description: Introduction to deploying ecosystem.Ai in a Cloud Environment
+description: Deploying ecosystem.Ai Platform 2.0 across Microsoft Azure AKS, AWS EKS, and Google Cloud GKE
 ---
 
-# Deployment Introduction
+# Cloud Marketplace Deployment Overview
 
-Welcome to the introductory guide for deploying ecosystem.Ai. This document provides an initial overview, featuring a comparison table and references to detailed guides, ensuring a thorough understanding of cloud deployment strategies. Please contact ecosystem.Ai for additional information on enterprise deployment options.
+**ecosystem.Ai Platform 2.0** deploys as a unified 10-container Kubernetes stack inside your own cloud perimeter across all three major cloud marketplaces:
 
-In this guide, you will explore various options to efficiently deploy ecosystem.Ai in a variety of environments, customized to meet your specific requirements.
+- **[Visual Tour & 10-Container Architecture Guide](/docs/marketplace/visual-tour)** — Full 10-container breakdown, subdomain routing topology, and 10 live operator Workbench 2 screen clippings.
+- **[Microsoft Azure Marketplace (AKS)](/docs/marketplace/azure)** — Azure Application Solution Template & Managed Application deploying onto ARM64 Azure Kubernetes Service (`Standard_D4ps_v5`+) with Application Gateway Ingress, Let's Encrypt TLS, and Azure Files shared storage.
+- **[AWS Marketplace (EKS)](/docs/marketplace/aws)** — Multi-arch (`ARM64` Graviton & `AMD64` x86_64) Container Product (`prod-4nh6hedmim7vq`) with a 1-Click AWS CloudFormation UI installer and umbrella Helm chart (`ecosystem-platform`).
+- **[Google Cloud Marketplace (GKE)](/docs/marketplace/gcp)** — Kubernetes Application (`ecosystemai-platform-2`) deploying onto Google Kubernetes Engine (`c4a-standard-4` ARM64 or AMD64) with GKE `ManagedCertificate` HTTPS ingress.
+- **[Marketplace Terms](/docs/marketplace/terms)** — Standard marketplace contract hierarchy, license key (`MASTER_KEY`), data sovereignty, and resource cleanup guarantees.
 
-**ecosystem.Ai Platform 2.0 (v2.0.1)** is the current marketplace release. It is one Kubernetes install on Amazon EKS or Azure Kubernetes Service: Workbench 2, the Prediction Server with embedded MongoDB 8.3, Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, and Domain Catalog. The T0 size needs at least 8 vCPU and 32 GiB RAM. See [AWS](/docs/marketplace/aws), [Azure](/docs/marketplace/azure), and [Marketplace terms](/docs/marketplace/terms). The virtual-machine offers on those pages are the earlier listings.
+---
 
-## Minimum Requirements
+## What Ships in Platform 2.0
 
-The minimum requirements for running ecosystem.Ai for testing purposes:
+Every cloud marketplace install provisions the same 10-container stack with embedded MongoDB 9.0 (`ecosystem-server:54445`) and Trino SQL:
 
-- 16 GiB RAM
-- 4 vCPU
-- 48 GiB Minimum Storage
+| Service | Subdomain (`<baseDomain>` = `<IP>.nip.io` or `<dnsZone>`) | Ports | Purpose |
+|---|---|---|---|
+| **Workbench 2** | `workbench.<baseDomain>` | `:5270` UI, `:8004` Public API, `:8001` Private API, `:9090` Scorer | Primary operator SPA, Ecosystem Agent, Simulations Lab, Analytics (`/analytics/`), Network Graph (`/networks/`) |
+| **Prediction Server** | `server.<baseDomain>` | `:3001` API, `:54445` MongoDB 9.0, `:27028` `mongot`, `:54321` H2O | Modeling server, embedded MongoDB 9.0 replica set, vector search, H2O AutoML |
+| **Runtime 0.9.7 (HPA)** | `runtime.<baseDomain>` / `runtime1.<baseDomain>` | `:8091` | Closed-loop scoring: `POST /invocations` -> `POST /response`, `POST /mcp`, `GET /ping` |
+| **Campaign Management** | `campaign.<baseDomain>` | `:54310` UI, `:54311` API | Agentic multi-stage campaign planning, governance, and execution |
+| **Data Analysis Agents** | `data-agents.<baseDomain>` | `:54325` UI, `:54324` FastAPI | LangGraph extraction, preparation, categorical, actuarial, personality, and financial analytics |
+| **EcoGentic & Notebooks** | `notebooks.<baseDomain>` | `:8010` EcoGentic API, `:8000` Notebooks | Multi-channel conversational agent journeys and interactive notebooks |
+| **Custom GPTs** | `custom-gpts.<baseDomain>` | `:54320` UI, `:54349` API | Specialist RAG and domain-grounded managed agents |
+| **Domain Catalog** | `domain-catalog.<baseDomain>` | `:8080` | Governed OWL/SKOS domain ontologies and SHACL validation shapes |
+| **Trino SQL** | `trino.<baseDomain>` (internal `trino:8080`) | `:8080` | Distributed ANSI SQL federated over `ecosystem-server:54445` |
 
-**Note:** With everything enabled for basic usage, you might consider increasing the RAM to 24GB for smoother operation.
+---
+
+## Sizing Presets (`T0` / `T1` / `T2`)
+
+| Tier | Profile | Recommended Node Pool | Storage | Runtime HPA |
+|---|---|---|---|---|
+| **T0 — Evaluate** | Evaluation & sandbox testing | 2-3x 4 vCPU / 16 GiB RAM (`Standard_D4ps_v5` / `m7g.xlarge` / `c4a-standard-4`) | 100-250 GiB | `1..2` replicas |
+| **T1 — Starter Production** | Departmental & mid-scale production | 3-4x 8 vCPU / 32 GiB RAM (`Standard_D8ps_v5` / `m7g.2xlarge` / `c4a-standard-8`) | 250-500 GiB | `2..6` replicas |
+| **T2 — Enterprise** | High-throughput telco CVM & banking | Dedicated Base, Runtime & Notebooks node pools (`16+` vCPU / `64+` GiB RAM) | 1 TiB+ | `4..16` replicas |
+
+---
+
+## Create New vs. Reuse Existing Infrastructure
+
+All marketplace installers support either creating new cloud infrastructure or attaching your existing enterprise resources:
+
+| Resource | Azure AKS | AWS EKS | Google Cloud GKE |
+|---|---|---|---|
+| **VPC / VNet & Subnets** | Create new `/16` VNet + `/22` subnets or reuse existing VNet/subnets (including cross-resource-group) | Create new VPC/subnets or pass `ExistingVpcId`, `ExistingPublicSubnetIds`, `ExistingPrivateSubnetIds` | Deploy into any new or existing GKE cluster & VPC |
+| **Shared Storage (`ReadWriteMany` / PVC)** | Create new Storage Account & Azure File Share or reuse existing | Create new Amazon EFS or pass `ExistingEfsFileSystemId` / `global.sharedPvcName` | Create new PVC (`standard-rwo` / Filestore) or reuse existing PVC |
+| **Secrets & Credentials** | Pre-startup `ecosystem-secrets` + `azure-secret` | AWS Secrets Manager + Kubernetes Secret (`ExistingSecretsBundleArn` / `existingSecretName`) | Pre-startup or existing Kubernetes Secret (`existingSecretName`) |
+| **Ingress, Subdomains & TLS** | Automatic `*.<PUBLIC_IP>.nip.io` or Custom Azure DNS Zone with Let's Encrypt TLS | Consolidated ALB Ingress (`<app>.<baseDomain>`) with ACM TLS | Consolidated GCE Ingress (`<app>.<baseDomain>`) with 8-domain `ManagedCertificate` |
+| **MongoDB** | Embedded MongoDB 9.0 (`ecosystem-server:54445`) or `externalMongodbUri` | Embedded MongoDB 9.0 (`ecosystem-server:54445`) or `ExternalMongodbUri` | Embedded MongoDB 9.0 (`ecosystem-server:54445`) or `global.externalMongodbUri` |

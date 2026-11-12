@@ -1,0 +1,103 @@
+---
+title: Visual Tour & 10-Container Guide
+description: Visual Tour and 10-Container Architecture Guide for ecosystem.Ai Platform 2.0 across Microsoft Azure AKS, AWS EKS, Google Cloud GKE, and Self-Hosted Kubernetes
+---
+
+# ecosystem.Ai Platform 2.0 — Visual Tour & 10-Container Architecture Guide
+
+**Build Your Own Contextual Interactions — Inside Your Cloud Perimeter.**
+
+**ecosystem.Ai Platform 2.0** combines behavioral social science with real-time machine learning and agentic operations so enterprises can score, personalize, and learn from every customer interaction in the moment. Deployed entirely inside your Kubernetes cluster on **[Microsoft Azure AKS](/docs/marketplace/azure)**, **[Amazon EKS](/docs/marketplace/aws)**, **[Google Cloud GKE](/docs/marketplace/gcp)**, or **[Self-Hosted Kubernetes / Docker Compose](/docs/local)** (supporting both ARM64 and x86_64 AMD64 worker nodes), subscriber features, models, and interaction data remain inside your cloud perimeter.
+
+Purpose-built for telecommunications (CVM, next-best-offer, and MVNOs), retail and commercial banking, insurance, retail, and gaming, the platform covers Intelligent Discovery, Smart Engagement, Intelligent Activation, and Proactive Retention.
+
+![Platform 2.0 10-Container Architecture](/images/marketplace/00-platform-architecture-diagram.png)
+
+---
+
+## Complete 10-Container Architecture Explained
+
+| # | Container / Service | Ports & Endpoints | Role in the Platform |
+|---|---|---|---|
+| **1** | **`ecosystem-workbench2`**<br/>`ecosystemai/ecosystem-workbench2` | `:5270` SPA & Networks UI<br/>`:8001` Private FastAPI<br/>`:8004` Public API Gateway<br/>`:9090` Offline Scorer | Primary operator workbench. Hosts Projects, Offer Matrices, Dynamic Engagement, Ontology-mapped data queries, Interactive Analytics Dashboards (`/analytics/`), Computational Social Science Network Graphs (`/networks/`), Spend & Money Personalities, Simulations Lab, Runtime Console, Runtime Testing, and the Ecosystem Agent. |
+| **2** | **`ecosystem-server`**<br/>`ecosystemai/ecosystem-server` | `:3001` Core Server API<br/>`:54445` Embedded MongoDB 9.0<br/>`:27028` `mongot` Vector Search<br/>`:54321` H2O AutoML Engine | Core Java/Spring modeling, feature engineering, PlantUML/EcosystemCode generation, and central persistence engine. Runs self-contained MongoDB 9.0 replica set (`ecosystem-server:54445`), `mongot` community vector search, and H2O 3.46 AutoML for static model training. |
+| **3** | **`ecosystem-runtime-solo`**<br/>`ecosystemai/ecosystem-runtime-solo` | `:8091` Real-Time Scorer<br/>`POST /invocations`<br/>`POST /response`<br/>`POST /mcp` | Horizontally autoscaled (HPA `1..N` replicas) Java 25 low-latency scoring engine. Executes pre-score feature lookups, real-time ML/bandit convergence (Epsilon Greedy, Bayesian Probabilistic, Ecosystem Rewards, Q-Learning, Two-Tower, Spend/Money/Interaction Personality), post-score eligibility plugins, closed-loop feedback via `POST /response`, and Model Context Protocol (`POST /mcp`). |
+| **4** | **`ecosystem-campaign-management`**<br/>`ecosystemai/ecosystem-campaign-management` | `:54310` Campaign UI<br/>`:54311` Express REST/MCP API | Agentic Campaign Management platform. Plans, governs, schedules, activates, and measures multi-stage customer outreach campaigns wired directly to Workbench 2 projects and real-time runtime scoring. |
+| **5** | **`ecosystem-data-agents`**<br/>`ecosystemai/ecosystem-data-agents` | `:54325` Data Agents SPA<br/>`:54324` FastAPI / LangGraph | Autonomous LangGraph Data Analysis Agents. Runs multi-stage extraction, preparation, categorical, actuarial risk, feature engineering, personality, recommender, time-series, marketing-mix, and financial analytics across MongoDB and Trino. |
+| **6** | **`ecosystem-notebooks`**<br/>`ecosystemai/ecosystem-notebooks` | `:8010` EcoGentic Journey API<br/>`:8000` JupyterHub | Agentic conversational journey server (EcoGentic) and interactive Python data-science notebook environment connected to the shared `/data` volume and LLM gateway. |
+| **7** | **`ecosystem-custom-gpts`**<br/>`ecosystemai/ecosystem-custom-gpts` | `:54320` Specialist Agents UI<br/>`:54349` Managed Agents API | Domain-grounded specialist GPT and RAG agents with dedicated knowledge bases, custom tools, and live runtime scoring integration. |
+| **8** | **`ecosystem-domain-catalog`**<br/>`ecosystemai/ecosystem-domain-catalog` | `:8080` Catalog Service | Authoritative semantic catalog serving OWL/SKOS domain ontologies, SHACL validation shapes, and industry overlays (Telecommunications CVM, Banking, Insurance, Retail, Gaming). |
+| **9** | **`trino`**<br/>`ecosystemai/trino` | `:8080` Distributed SQL Engine | Distributed ANSI SQL query engine pre-configured with the MongoDB connector pointing to `ecosystem-server:54445` for high-speed analytical and ontology-mapped SQL queries. |
+| **10** | **`busybox`**<br/>`busybox:1.36` | Kubernetes `initContainer` | Lightweight startup dependency gate that waits for `ecosystem-server:3001` and embedded MongoDB `ecosystem-server:54445` to accept TCP connections before dependent pods start. |
+
+---
+
+## Subdomain Routing & Internal Container Communication
+
+Every application in **ecosystem.Ai Platform 2.0** runs at root `path: /` on its own dedicated subdomain (`https://<app>.<baseDomain>/` on Azure AKS, AWS EKS, and Google Cloud GKE, or `http://<app>.localhost/` locally). No sub-path prefixes are used, ensuring SPAs, static assets (`/assets/...`), OAuth callbacks, and API routes resolve cleanly at `/`:
+
+| Service | Subdomain Host (`<baseDomain>` = `<IP>.nip.io`, `<dnsZone>`, or `localhost`) | Pure Origin Env Var | Internal Container-to-Container DNS |
+|---|---|---|---|
+| **Workbench 2 (Operator UI & Public API)** | `workbench.<baseDomain>` (`/`, `/public/v1`) | `WORKBENCH_PUBLIC_URL`, `WORKBENCH_UI_URL`, `PUBLIC_BASE_URL` | `http://workbench2:5270`, `http://workbench2:8004/public/v1`, `http://workbench2:8001/api/v1` |
+| **Prediction Server & Modeling API** | `server.<baseDomain>` (`/`, `/api/v1/health`) | `SERVER_PUBLIC_URL`, `IP` | `http://ecosystem-server:3001`, MongoDB `ecosystem-server:54445`, H2O `http://ecosystem-server:54321` |
+| **Runtime 0.9.7 (Real-Time Scoring)** | `runtime.<baseDomain>` / `runtime1.<baseDomain>` (`/invocations`, `/response`, `/mcp`, `/ping`) | `RUNTIME_PUBLIC_URL` | `http://ecosystem-runtime-solo:8091` |
+| **Campaign Management** | `campaign.<baseDomain>` (`/`) | `CAMPAIGN_PUBLIC_URL` | `http://ecosystem-campaign:54310` |
+| **Data Analysis Agents** | `data-agents.<baseDomain>` (`/`) | `DATA_AGENTS_PUBLIC_URL` | `http://ecosystem-data-agents:54325` |
+| **EcoGentic & Notebooks** | `notebooks.<baseDomain>` (`/`) | `NOTEBOOKS_PUBLIC_URL`, `VITE_ECOGENTIC_AGENT_URL` | `http://ecosystem-notebooks:8010` |
+| **Custom GPTs / Managed Agents** | `custom-gpts.<baseDomain>` (`/`) | `CUSTOM_GPTS_PUBLIC_URL` | `http://ecosystem-custom-gpts:54320` |
+| **Domain Catalog** | `domain-catalog.<baseDomain>` (`/`, `/v1/health`) | `DOMAIN_CATALOG_PUBLIC_URL` | `http://ecosystem-domain-catalog:8080` |
+| **Trino SQL Engine** | `trino.<baseDomain>` (`/v1/info`) | — | `trino:8080` |
+
+---
+
+## Operator Workbench & Container Modules — Visual Tour
+
+### 1. Workbench 2 — Unified Operator Dashboard
+Central launchpad across all 523+ configurations: Projects, Network Selector, Offer Matrix, Contacts, Channels, Ontology, Data Management, Static/Dynamic/Generative Models, EcoGentic, Campaigns, Analytics, and Runtime Console.
+
+![Workbench 2 Dashboard Overview](/images/marketplace/01-workbench-dashboard-overview.png)
+
+### 2. Projects & Deployment Configuration
+End-to-end project configuration linking feature store lookups, H2O frames, dynamic engagement algorithms, offer matrices, pre/post-score Java plugins, and deployment steps.
+
+![Projects and Deployment Configuration](/images/marketplace/02-projects-management.png)
+
+### 3. Dynamic Engagement & Real-Time Bandit Learning
+Configure Thompson Sampling / Bayesian Probabilistic, Epsilon Greedy, Ecosystem Rewards, Loss Aversion, Prospect Theory, and Q-Learning recommenders with contextual variables and cold-start priors.
+
+![Dynamic Engagement and Bandit Learning](/images/marketplace/03-dynamic-engagement-algorithms.png)
+
+### 4. Agentic Campaign Management
+Author, generate, import/export, and execute multi-stage customer outreach and decisioning campaigns wired to real-time scoring and generative AI prompts.
+
+![Agentic Campaign Management](/images/marketplace/04-campaigns-management.png)
+
+### 5. Domain Ontology Catalog & Semantic Mappings
+Sync OWL/SKOS/SHACL domain ontologies from `ecosystem-domain-catalog`, infer ontologies from live MongoDB collections, and map business terms to physical data fields.
+
+![Domain Ontology Catalog](/images/marketplace/05-domain-ontology-catalog.png)
+
+### 6. EcoGentic Conversational Agent Journeys
+Build and version multi-channel conversational AI agents (WhatsApp, Web, API, CLI) backed by `ecosystem-notebooks` (`:8010`) and live runtime context.
+
+![EcoGentic Conversational Agent Journeys](/images/marketplace/06-ecogentic-agent-journeys.png)
+
+### 7. Simulations Lab & Convergence Testing
+Run closed-loop recommender and log-replay simulations to validate bandit convergence, reward lift, and behavioral drift prior to production rollout.
+
+![Simulations Lab](/images/marketplace/07-simulations-lab.png)
+
+### 8. Spend & Money Personalities Pipeline
+Guided 6-stage behavioral scoring pipeline (`SP-01` through `SP-06`) that extracts customer Spend and Money Personality traits from transaction histories.
+
+![Spend and Money Personalities](/images/marketplace/08-spend-money-personalities.png)
+
+### 9. Interactive Analytics Dashboards (`/analytics/`)
+Compile and explore multi-dashlet operational, financial, personality, and runtime performance boards powered by MongoDB 9.0 and Trino SQL.
+
+![Interactive Analytics Dashboards](/images/marketplace/09-analytics-dashboards.png)
+
+### 10. Computational Social Science Network Graph Analysis (`/networks/`)
+Interactive 2D/3D graph and social network topology explorer for customer segments, credit bureau bands, payment flows, and runtime offer affinities.
+
+![Computational Social Science Network Graph Analysis](/images/marketplace/10-network-graph-analysis.png)

@@ -1,83 +1,78 @@
 ---
 title: Azure Marketplace
-description: Setup ecosystem.Ai Platform in Azure
+description: Deploy ecosystem.Ai Platform 2.0 on Microsoft Azure Kubernetes Service (AKS)
 ---
 
-# Guide to Setting up ecosystem.Ai Platform in Azure
+# Microsoft Azure Marketplace (AKS)
 
-## ecosystem.Ai Platform 2.0 (v2.0.1)
+**ecosystem.Ai Platform 2.0** on Microsoft Azure Marketplace is delivered as an **Azure Application** (Solution Template & Managed Application) that provisions or reuses an ARM64 **Azure Kubernetes Service (AKS)** cluster, **Application Gateway Ingress Controller (AGIC)**, **Let's Encrypt multi-SAN TLS**, and **Azure Files** shared storage inside your subscription.
 
-Version 2.0.1 is a new Azure Application. It is not an Azure Container (CNAB) offer, because that offer type accepts only AMD64 images. The package creates an AKS cluster on ARM64 node sizes (`Standard_D4ps_v5` and larger), Application Gateway ingress, and an Azure Premium Files NFSv4.1 share for the shared data volume.
+- **Visual Tour & 10-Container Architecture Guide:** [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Marketplace Terms:** [Marketplace Terms](/docs/marketplace/terms)
 
-The same eight applications ship as on AWS: Workbench 2, Prediction Server with embedded MongoDB 8.3 (`ecosystem-server:54445`), Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, and Domain Catalog, plus Trino.
+---
 
-Two plans are published with the offer:
+## Marketplace Listings in Azure Portal
 
-- **Solution template** for evaluation with your license key.
-- **Managed application** for enterprise purchase and Azure MACC drawdown.
+- **ecosystem.Ai Platform 2.0 (`ecosystemai-platform-2`)**:
+  [Open in Azure Portal Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai-platform-2-preview)
+- **ecosystem.Ai Prediction Platform (`ecosystemai`)**:
+  [Open in Azure Portal Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai)
 
-Install-time questions cover the license key, admin password, Cloud LLM provider and credentials, storage quota, automatic or custom DNS, and T0/T1/T2 node pools. Deleting the resource group or the managed application removes the cluster and the disks created for it.
+Two plans are available:
+1. **Solution Template (`Evaluate`)** — Deploy directly into your own resource group using an evaluation or enterprise `MASTER_KEY`.
+2. **Managed Application (`Enterprise`)** — Enterprise procurement with Azure MACC drawdown.
 
-The closed loop is `POST /invocations` then `POST /response`. Terms: [Marketplace terms](/docs/marketplace/terms). The cards below are the earlier virtual-machine offers.
+---
 
-<Cards>
-    <Cards.Card href="https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai-platform" title="Platform Option" arrow>
-        ![image](/images/install/azure-platform-vm.png)
-    </Cards.Card>
-    <Cards.Card href="https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai" title="Full Option" arrow>
-        ![image](/images/install/azure-platform-full.png)
-    </Cards.Card>
-    <Cards.Card href="https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystem-spend-personality" title="Spend Personality Option" arrow>
-        ![image](/images/install/azure-platform-personality.png)
-    </Cards.Card>
-</Cards>
+## Step-by-Step Deployment Guide
 
-## ecosystem.Ai Platform (VM)
+### Step 1: Basics, Licensing & Initial Admin Credentials
+1. Open the offer in the Azure Portal and click **Create**.
+2. Select your **Subscription** and **Resource Group** (create a new resource group such as `ecosystem-rg` or select an existing group where your VNet/Storage resides), and choose an **Azure Region** that supports ARM64 `Standard_D4ps_v5` VMs (e.g., `East US`, `West Europe`, `North Europe`, `Central US`).
+3. Enter your **Installation Name** (prefix for Azure resources), **Administrator Email** (used for Let's Encrypt TLS certificate notifications), **License Key (`MASTER_KEY`)**, **Initial Admin Password** (sets the first-boot password for `admin@ecosystem.ai`), and **Embedded MongoDB Password**.
 
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
+### Step 2: Cloud LLM & Generative AI Settings
+Configure the default generative AI provider injected into all containers (`ecosystem-server`, `workbench2`, `ecosystem-notebooks`, `ecosystem-campaign-management`, `ecosystem-data-agents`, `ecosystem-custom-gpts`, and `ecosystem-domain-catalog`) before startup:
+- **LLM Provider**: `openai`, `azure_openai`, `bedrock`, `anthropic`, or `ollama`
+- **LLM Endpoint URL**: e.g., `https://api.openai.com/v1`
+- **Primary Model**: default `gpt-5`
+- **Embedding Model**: default `text-embedding-3-small`
+- **API Key / Credential**, **Max Tokens** (`64000`), and **Read Timeout** (`600000` ms)
 
-![image](/images/install/azure-install-01.png)
+### Step 3: Cluster Sizing (`T0` / `T1` / `T2`) & ARM64 Node Pools
+- Choose a deployment tier preset (`T0` Evaluate, `T1` Starter Production, or `T2` Enterprise) and ARM64 VM size (`Standard_D4ps_v5`, `Standard_D8ps_v5`, `Standard_D16ps_v5`, or `Standard_E8ps_v5`).
+- Set the **Runtime Instance Count** and **Runtime HPA Max Replicas**.
 
+### Step 4: Networking, Storage & Subdomain Routing (Create New or Reuse Existing)
+- **Virtual Network & Subnets**: Create a new `/16` VNet with `/22` AKS and Application Gateway subnets, or select an existing VNet and subnets (including from another resource group).
+- **Storage Account & Azure File Share**: Create a new Storage Account and File Share for `/data`, `/modeling`, `/config`, and `/database`, or attach an existing Storage Account and File Share.
+- **Public IP & Domain Mode**:
+  - **Automatic Mode (`useCustomDomain = false`, default)**: No DNS zone required. The installer automatically provisions a multi-SAN Let's Encrypt TLS certificate and routes all 8 applications on dedicated `*.<PUBLIC_IP>.nip.io` subdomains at root `path: /`:
+    - `https://workbench.<PUBLIC_IP>.nip.io/` (and `https://<PUBLIC_FQDN>/`)
+    - `https://server.<PUBLIC_IP>.nip.io/api/v1/health`
+    - `https://runtime1.<PUBLIC_IP>.nip.io/ping` (`POST /invocations`, `POST /response`, `POST /mcp`)
+    - `https://campaign.<PUBLIC_IP>.nip.io/`
+    - `https://data-agents.<PUBLIC_IP>.nip.io/`
+    - `https://notebooks.<PUBLIC_IP>.nip.io/`
+    - `https://custom-gpts.<PUBLIC_IP>.nip.io/`
+    - `https://domain-catalog.<PUBLIC_IP>.nip.io/v1/health`
+  - **Custom Domain Mode (`useCustomDomain = true`)**: Select your existing **Azure DNS Zone**; `external-dns` and `cert-manager` automatically create DNS records and issue a wildcard TLS certificate for `<hostName>.<dnsZone>`, `<hostName>server.<dnsZone>`, `<hostName>runtime1.<dnsZone>`, `<hostName>campaign.<dnsZone>`, `<hostName>dataagents.<dnsZone>`, `<hostName>notebooks.<dnsZone>`, `<hostName>customgpts.<dnsZone>`, and `<hostName>domaincatalog.<dnsZone>`.
 
-### Step 2: Setup Basic Settings
-- Select the correct subscription and ensure that you have app install rights.
-- Either use an existing group or create a new one.
-- Virtual machines in Azure have two distinct names: virtual machine name used as the Azure resource identifier, and in guest host name. When you create a VM in the portal, the same name is used for both the virtual machine name and the host name. The virtual machine name cannot be changed after the VM is created. You can change the host name when you log into the virtual machine.
-- Choose the Azure region that's right for you and your customers. Not all VM sizes are available in all regions.
-- The administrator username for the VM as azureuser. Use the security credentials to access the VM.
+---
 
-![image](/images/install/azure-install-02.png)
+## Verifying Your Deployment & Closed-Loop Scoring
 
-- Additional settings for security and availability.
+Once the deployment completes, open the **Outputs** tab in your Azure Deployment blade to view all 8 HTTPS URLs (`workbenchHttpsUrl`, `serverHttpsUrl`, `runtimeHttpsUrl`, `campaignHttpsUrl`, `dataAgentsHttpsUrl`, `notebooksHttpsUrl`, `customGptsHttpsUrl`, `domainCatalogHttpsUrl`).
 
-![image](/images/install/azure-install-03.png)
+Sign in to Workbench 2 at `workbenchHttpsUrl` with username `admin@ecosystem.ai` and the Initial Admin Password you configured.
 
+Real-time scoring follows the closed-loop contract against `runtimeHttpsUrl`:
+1. `POST /invocations` (`params` is a JSON string)
+2. `POST /response` (pass the accepted offer's `uuid` and `offer_name`)
 
-### Step 3: Setup Networking
-- Use default networking settings when possible.
-- Ensure that security group allows for access to ports: 80, 3001, 3000, etc.
+---
 
-![image](/images/install/azure-install-04.png)
+## Clean Uninstall
 
-
-### Step 4: Review Install Results
-- During install, all results can be reviewed.
-- When completed review the public IP address created and access via http://ip
-
-
-## ecosystem.Ai Platform (Kubernetes)
-
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
-
-
-<Callout type="tip" title="Tip">
-- Ensure that you update your algorithm from the ecosystem.Ai website when needed.
-</Callout>
-
-
-## Conclusion
-These options focus entirely on the cloud implementation. We also have other cloud types and on premise installations that can be done using various technologies.
+Deleting the Azure Resource Group (Solution Template) or the Managed Application removes the AKS cluster, the managed `MC_*` node resource group, Application Gateway, Public IP, VNet, Storage Account, and Managed Identities.

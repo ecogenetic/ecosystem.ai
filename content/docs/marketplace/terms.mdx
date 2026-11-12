@@ -1,29 +1,36 @@
 ---
 title: Marketplace Terms
-description: Terms for ecosystem.Ai Platform 2.0 on AWS Marketplace and Microsoft Marketplace
+description: Terms for ecosystem.Ai Platform 2.0 on Microsoft Azure Marketplace, AWS Marketplace, and Google Cloud Marketplace
 ---
 
-# Marketplace terms
+# Marketplace Terms
 
-Purchases of **ecosystem.Ai Platform 2.0 (v2.0.1)** on AWS Marketplace or Microsoft Marketplace are covered by three documents, in this order:
+Purchases and deployments of **ecosystem.Ai Platform 2.0** on **Microsoft Azure Marketplace**, **AWS Marketplace**, or **Google Cloud Marketplace** are covered by three documents, in this order:
 
-1. The AWS Marketplace Standard Contract, or the Microsoft Standard Contract, for that purchase.
-2. The marketplace EULA addendum packaged with version 2.0.1 (license key, in-account data, and deletion).
-3. The website [Terms of Service](https://ecosystem.ai/tos).
+1. The **Microsoft Standard Contract**, **AWS Marketplace Standard Contract (SCMP)**, or **Google Cloud Marketplace Vendor Agreement** for that marketplace transaction.
+2. The **ecosystem.Ai Marketplace EULA Addendum** packaged with Platform 2.0 (covering license key activation, in-perimeter data sovereignty, and resource deletion).
+3. The ecosystem.Ai website [Terms of Service](https://ecosystem.ai/tos) and [Privacy Policy](https://ecosystem.ai/privacy).
 
-## What you agree to at install time
+---
 
-- You supply a license key (`MASTER_KEY`). Evaluation keys are for the T0 preset. Production keys come from ecosystem.Ai or your certified partner.
-- The platform deploys into **your** AWS or Azure account. Subscriber data, models, and interaction logs stay there.
-- Cloud LLM calls use the provider, endpoint, model, and credential you enter. Those calls leave the cluster only to the endpoint you configured.
-- You can delete the CloudFormation stack, the Azure resource group, or the managed application. Resources created for that install, including disks with delete reclaim policy, are removed with it.
+## What You Agree to at Install Time
 
-## Scoring loop
+- **License Key (`MASTER_KEY`)**: You supply an ecosystem.Ai license key at deployment time. Evaluation keys are intended for the `T0` evaluation preset; production keys are issued by ecosystem.Ai (`sales@ecosystem.ai`) or your certified partner.
+- **In-Perimeter Data Sovereignty**: All 10 containers deploy into **your** Azure subscription, AWS account, or Google Cloud project. Customer features, embedded MongoDB 9.0 databases (`ecosystem-server:54445`), H2O models, and interaction logs remain inside your cloud perimeter.
+- **Cloud LLM Configuration**: Outbound generative AI calls use the provider, endpoint URL, model, and credential you configure at install time or in Workbench 2 Administration.
+- **Clean Resource Deletion**: Deleting the Azure Resource Group / Managed Application, AWS CloudFormation stack / Helm release, or Google Cloud GKE application + PVC removes the Kubernetes workloads, load balancers, and managed storage created for that deployment.
 
-Runtime scoring is `POST /invocations`, then `POST /response` for the recommendation the caller accepted. The `params` field on `/invocations` is a JSON string.
+---
 
-## Support
+## Runtime Closed-Loop Contract
 
-- sales@ecosystem.ai for private offers and license keys
-- support@ecosystem.ai for enterprise support
-- Documentation: [Marketplace](/docs/marketplace)
+Real-time scoring uses `POST /invocations` (`params` is a JSON string), followed by `POST /response` (singular) with the accepted offer's `uuid` and `offer_name`.
+
+---
+
+## Related Documentation & Support
+
+- **Visual Tour & 10-Container Architecture Guide**: [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Cloud Guides**: [Azure Marketplace](/docs/marketplace/azure) · [AWS Marketplace](/docs/marketplace/aws) · [Google Cloud Marketplace](/docs/marketplace/gcp)
+- **Sales & Licensing**: `sales@ecosystem.ai`
+- **Enterprise Support**: `support@ecosystem.ai`

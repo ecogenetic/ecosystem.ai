@@ -1,22 +1,23 @@
 # Kubernetes
 
-## Platform 2.0.1
+## Platform 2.0
 
-**ecosystem.Ai Platform 2.0 (v2.0.1)** installs as one Helm release or one Kustomize overlay. The release contains Workbench 2, the Prediction Server, Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, Domain Catalog, and Trino.
+**ecosystem.Ai Platform 2.0** installs as one Helm release or one Kustomize overlay across Azure AKS, AWS EKS, Google Cloud GKE, and local Kubernetes. The release contains Workbench 2, the Prediction Server, Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, Domain Catalog, and Trino.
 
-MongoDB 8.3 is embedded in the Prediction Server. Every other application uses `ecosystem-server:54445`. Do not deploy a second MongoDB for this release. Set `MONGO_RS_HOST=ecosystem-server:54445` and leave `NO_MONGODB` unset on the server container so the replica set starts. Runtime sets `NO_MONGODB=true` because it does not host the database.
+MongoDB 9.0 is embedded in the Prediction Server. Every other application uses `ecosystem-server:54445`. Do not deploy a second MongoDB for this release. Set `MONGO_RS_HOST=ecosystem-server:54445` and leave `NO_MONGODB` unset on the server container so the replica set starts. Runtime sets `NO_MONGODB=true` because it does not host the database.
 
-Shared files use a ReadWriteMany volume (Amazon EFS or Azure Premium Files NFSv4.1). License key, initial admin password, and Cloud LLM settings are injected before the pods start.
+Shared files use a ReadWriteMany volume (Amazon EFS, Azure Files, or GKE storage). License key, initial admin password, and Cloud LLM settings are injected before the pods start.
 
-After the ingress is ready:
+After the ingress is ready, each service runs at root `/` on its own dedicated subdomain (`<app>.<baseDomain>`):
 
-- Workbench 2: `https://<endpoint>/`
-- Health: `https://<endpoint>/ping`
-- Score: `POST https://<endpoint>/invocations` with `params` as a JSON string
-- Learn: `POST https://<endpoint>/response` using that recommendation’s `uuid` and `offer_name`
-- MCP: `POST https://<endpoint>/mcp`
+- Workbench 2: `https://workbench.<baseDomain>/`
+- Prediction Server Health: `https://server.<baseDomain>/api/v1/health`
+- Runtime Health: `https://runtime.<baseDomain>/ping` (or `runtime1.<baseDomain>`)
+- Score: `POST https://runtime.<baseDomain>/invocations` with `params` as a JSON string
+- Learn: `POST https://runtime.<baseDomain>/response` using that recommendation’s `uuid` and `offer_name`
+- MCP: `POST https://runtime.<baseDomain>/mcp`
 
-Marketplace install steps: [AWS](/docs/marketplace/aws) and [Azure](/docs/marketplace/azure).
+Marketplace install steps: [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour), [Azure](/docs/marketplace/azure), [AWS](/docs/marketplace/aws), and [Google Cloud](/docs/marketplace/gcp).
 
 The manifests below are component examples for a local cluster such as Minikube. For the 2.0.1 stack, use the Helm chart `ecosystem-platform` version `2.0.1` instead of assembling these samples by hand.
 

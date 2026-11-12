@@ -1,8 +1,77 @@
 ---
 title: GCP Marketplace
-description: Setup ecosystem.Ai Platform in GCP
+description: Deploy ecosystem.Ai Platform 2.0 on Google Kubernetes Engine (GKE)
 ---
 
-# Guide to Setting up ecosystem.Ai Platform in GCP
+# Google Cloud Marketplace (GKE)
 
-Coming Soon
+**ecosystem.Ai Platform 2.0** (`ecosystemai-platform-2`) is a **Google Cloud Marketplace Kubernetes Application** that deploys the complete 10-container platform onto **Google Kubernetes Engine (GKE)** with a consolidated GCE External HTTP(S) Load Balancer, an 8-domain Google-managed TLS certificate (`ManagedCertificate`), HTTP-to-HTTPS redirect (`FrontendConfig`), and persistent shared storage (`standard-rwo` or Filestore).
+
+- **Visual Tour & 10-Container Architecture Guide:** [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Marketplace Terms:** [Marketplace Terms](/docs/marketplace/terms)
+
+---
+
+## Step 1: Create or Select a GKE Cluster
+
+You can select an existing GKE cluster in the Google Cloud Marketplace deployment wizard or create a new ARM64 (`c4a-standard-4`) or AMD64 GKE cluster:
+
+```bash
+gcloud container clusters create ecosystem-cluster \
+  --zone=us-central1-a \
+  --machine-type=c4a-standard-4 \
+  --num-nodes=3 \
+  --addons=HttpLoadBalancing,HorizontalPodAutoscaling
+```
+
+---
+
+## Step 2: Deploy via Google Cloud Marketplace UI or Helm
+
+### Option A: Google Cloud Console Click-to-Deploy
+1. Select **ecosystem.Ai Platform 2.0** (`ecosystemai-platform-2`) in Google Cloud Marketplace and click **Configure**.
+2. Choose your **GKE Cluster**, **Namespace**, and **App Instance Name**.
+3. Enter your **ecosystem.Ai License Key (`MASTER_KEY`)**, **Initial Admin Password**, **Embedded MongoDB Password**, **Base Domain for Subdomain Routing** (`global.ingress.baseDomain`, e.g., `ai.mycompany.com` or `<GCE_STATIC_IP>.nip.io`), and optional **Cloud LLM Settings** (default model `gpt-5`).
+4. Click **Deploy**.
+
+### Option B: Direct Helm Install on GKE
+
+```bash
+helm upgrade --install ecosystem oci://gcr.io/ecogenetic-public/ecosystemai-platform-2/chart/ecosystem-platform \
+  --namespace default \
+  --set-string ecosystem-server.server.deployment.env.MASTER_KEY="<YOUR_MASTER_KEY>" \
+  --set-string global.initialAdminPassword="<YOUR_ADMIN_PASSWORD>" \
+  --set-string global.mongodbPassword="<YOUR_MONGO_PASSWORD>" \
+  --set-string global.ingress.baseDomain="<YOUR_BASE_DOMAIN>"
+```
+
+---
+
+## Subdomain Routing & Google-Managed TLS (`ManagedCertificate`)
+
+When `global.ingress.baseDomain` is set, the chart provisions a Google `ManagedCertificate` and GCE `Ingress` covering all 8 application subdomains at root `path: /`:
+
+- `https://workbench.<baseDomain>/` — Workbench 2 Operator UI (`:5270`) & Public API (`/public/v1` on `:8004`)
+- `https://server.<baseDomain>/api/v1/health` — Prediction Server (`:3001`) + Embedded MongoDB 9.0 (`:54445`) + H2O (`:54321`)
+- `https://runtime.<baseDomain>/ping` — Runtime 0.9.7 (`:8091` — `POST /invocations`, `POST /response`, `POST /mcp`)
+- `https://campaign.<baseDomain>/` — Agentic Campaign Management (`:54310`)
+- `https://data-agents.<baseDomain>/` — LangGraph Data Analysis Agents (`:54325`)
+- `https://notebooks.<baseDomain>/` — EcoGentic & Notebooks (`:8010`)
+- `https://custom-gpts.<baseDomain>/` — Custom GPTs / Managed Agents (`:54320`)
+- `https://domain-catalog.<baseDomain>/v1/health` — Domain Ontology Catalog (`:8080`)
+
+---
+
+## Clean 2-Step GKE Teardown (Preventing Orphaned Disks & Load Balancers)
+
+Before deleting a test GKE cluster, always uninstall the Helm release and delete the `PersistentVolumeClaim` first so the GKE Ingress controller removes external Compute Engine forwarding rules/NEGs and the Persistent Disk cleanly:
+
+```bash
+# 1. Uninstall the release and delete PVCs first
+helm uninstall ecosystem -n default
+kubectl delete pvc --all -n default
+# Wait ~60 seconds for GCE Ingress forwarding rules and NEGs to finish deleting
+
+# 2. Delete the GKE cluster
+gcloud container clusters delete ecosystem-cluster --zone=us-central1-a --quiet
+```
