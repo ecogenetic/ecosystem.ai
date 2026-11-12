@@ -36,11 +36,12 @@ Two plans are available:
 Configure the default generative AI provider injected into all containers (`ecosystem-server`, `workbench2`, `ecosystem-notebooks`, `ecosystem-campaign-management`, `ecosystem-data-agents`, `ecosystem-custom-gpts`, and `ecosystem-domain-catalog`) before startup:
 - **LLM Provider**: `openai`, `azure_openai`, `bedrock`, `anthropic`, or `ollama`
 - **LLM Endpoint URL**: e.g., `https://api.openai.com/v1`
-- **Primary Model**: default `gpt-5`
+- **Primary Model**: default `gpt-6`
 - **Embedding Model**: default `text-embedding-3-small`
 - **API Key / Credential**, **Max Tokens** (`64000`), and **Read Timeout** (`600000` ms)
 
-### Step 3: Cluster Sizing (`T0` / `T1` / `T2`) & ARM64 Node Pools
+### Step 3: Cluster Sizing (`T0` / `T1` / `T2`), Kubernetes 1.37 & ARM64 Node Pools
+- **Kubernetes Version**: Defaults to **Kubernetes `1.37`** (`1.37.1`).
 - Choose a deployment tier preset (`T0` Evaluate, `T1` Starter Production, or `T2` Enterprise) and ARM64 VM size (`Standard_D4ps_v5`, `Standard_D8ps_v5`, `Standard_D16ps_v5`, or `Standard_E8ps_v5`).
 - Set the **Runtime Instance Count** and **Runtime HPA Max Replicas**.
 

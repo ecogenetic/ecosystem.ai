@@ -8,9 +8,9 @@ description: Deploying ecosystem.Ai Platform 2.0 across Microsoft Azure AKS, AWS
 **ecosystem.Ai Platform 2.0** deploys as a unified 10-container Kubernetes stack inside your own cloud perimeter across all three major cloud marketplaces:
 
 - **[Visual Tour & 10-Container Architecture Guide](/docs/marketplace/visual-tour)** — Full 10-container breakdown, subdomain routing topology, and 10 live operator Workbench 2 screen clippings.
-- **[Microsoft Azure Marketplace (AKS)](/docs/marketplace/azure)** — Azure Application Solution Template & Managed Application deploying onto ARM64 Azure Kubernetes Service (`Standard_D4ps_v5`+) with Application Gateway Ingress, Let's Encrypt TLS, and Azure Files shared storage.
-- **[AWS Marketplace (EKS)](/docs/marketplace/aws)** — Multi-arch (`ARM64` Graviton & `AMD64` x86_64) Container Product (`prod-4nh6hedmim7vq`) with a 1-Click AWS CloudFormation UI installer and umbrella Helm chart (`ecosystem-platform`).
-- **[Google Cloud Marketplace (GKE)](/docs/marketplace/gcp)** — Kubernetes Application (`ecosystemai-platform-2`) deploying onto Google Kubernetes Engine (`c4a-standard-4` ARM64 or AMD64) with GKE `ManagedCertificate` HTTPS ingress.
+- **[Microsoft Azure Marketplace (AKS — Kubernetes 1.37)](/docs/marketplace/azure)** — Azure Application Solution Template & Managed Application deploying onto ARM64 Azure Kubernetes Service (Kubernetes `1.37`, `Standard_D4ps_v5`+, default LLM model `gpt-6`) with Application Gateway Ingress, Let's Encrypt TLS, and Azure Files shared storage.
+- **[AWS Marketplace (EKS — Kubernetes 1.37)](/docs/marketplace/aws)** — Multi-arch (`ARM64` Graviton & `AMD64` x86_64) Container Product (`prod-4nh6hedmim7vq`) with a 1-Click AWS CloudFormation UI installer (Kubernetes `1.37`, default LLM model `gpt-6`) and umbrella Helm chart (`ecosystem-platform`).
+- **[Google Cloud Marketplace (GKE — Kubernetes 1.37)](/docs/marketplace/gcp)** — Kubernetes Application (`ecosystemai-platform-2`) deploying onto Google Kubernetes Engine (Kubernetes `1.37`, `c4a-standard-4` ARM64 or AMD64, default LLM model `gpt-6`) with GKE `ManagedCertificate` HTTPS ingress.
 - **[Marketplace Terms](/docs/marketplace/terms)** — Standard marketplace contract hierarchy, license key (`MASTER_KEY`), data sovereignty, and resource cleanup guarantees.
 
 ---

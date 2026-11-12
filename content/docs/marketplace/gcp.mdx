@@ -14,10 +14,11 @@ description: Deploy ecosystem.Ai Platform 2.0 on Google Kubernetes Engine (GKE)
 
 ## Step 1: Create or Select a GKE Cluster
 
-You can select an existing GKE cluster in the Google Cloud Marketplace deployment wizard or create a new ARM64 (`c4a-standard-4`) or AMD64 GKE cluster:
+You can select an existing GKE cluster in the Google Cloud Marketplace deployment wizard or create a new **Kubernetes 1.37** ARM64 (`c4a-standard-4`) or AMD64 GKE cluster:
 
 ```bash
 gcloud container clusters create ecosystem-cluster \
+  --cluster-version=1.37 \
   --zone=us-central1-a \
   --machine-type=c4a-standard-4 \
   --num-nodes=3 \
@@ -31,7 +32,7 @@ gcloud container clusters create ecosystem-cluster \
 ### Option A: Google Cloud Console Click-to-Deploy
 1. Select **ecosystem.Ai Platform 2.0** (`ecosystemai-platform-2`) in Google Cloud Marketplace and click **Configure**.
 2. Choose your **GKE Cluster**, **Namespace**, and **App Instance Name**.
-3. Enter your **ecosystem.Ai License Key (`MASTER_KEY`)**, **Initial Admin Password**, **Embedded MongoDB Password**, **Base Domain for Subdomain Routing** (`global.ingress.baseDomain`, e.g., `ai.mycompany.com` or `<GCE_STATIC_IP>.nip.io`), and optional **Cloud LLM Settings** (default model `gpt-5`).
+3. Enter your **ecosystem.Ai License Key (`MASTER_KEY`)**, **Initial Admin Password**, **Embedded MongoDB Password**, **Base Domain for Subdomain Routing** (`global.ingress.baseDomain`, e.g., `ai.mycompany.com` or `<GCE_STATIC_IP>.nip.io`), and optional **Cloud LLM Settings** (default model `gpt-6`).
 4. Click **Deploy**.
 
 ### Option B: Direct Helm Install on GKE

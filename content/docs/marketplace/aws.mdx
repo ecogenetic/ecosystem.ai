@@ -20,8 +20,8 @@ description: Deploy ecosystem.Ai Platform 2.0 on Amazon Elastic Kubernetes Servi
 The CloudFormation installer (`aws-eks-cloudformation-2.0.1.yaml`) provisions or reuses your AWS landing zone and automatically installs the umbrella Helm chart into your EKS cluster:
 
 1. Click **[Launch CloudFormation Stack](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://ecosystempredictors.s3.af-south-1.amazonaws.com/marketplace/2.0.1/aws-eks-cloudformation-2.0.1.yaml&stackName=ecosystem-platform)**.
-2. **Licensing & Admin Security**: Enter your `EcosystemMasterKey` (`MASTER_KEY`), `InitialAdminPassword` (for `admin@ecosystem.ai`), and `MongodbPassword` (or `ExternalMongodbUri`).
-3. **Architecture & Sizing**: Choose `NodeArchitecture` (`arm64` Graviton or `amd64` x86_64), instance type (e.g., `m7g.2xlarge`), and Runtime HPA max replicas.
+2. **Licensing, Admin Security & LLM**: Enter your `EcosystemMasterKey` (`MASTER_KEY`), `InitialAdminPassword` (for `admin@ecosystem.ai`), `MongodbPassword` (or `ExternalMongodbUri`), and LLM settings (defaults to `LlmProvider = openai` and `LlmModel = gpt-6`).
+3. **Kubernetes 1.37, Architecture & Sizing**: `EksKubernetesVersion` defaults to **`1.37`**. Choose `NodeArchitecture` (`arm64` Graviton or `amd64` x86_64), instance type (e.g., `m7g.2xlarge`), and Runtime HPA max replicas.
 4. **Create New or Reuse Existing Infrastructure**:
    - Leave `ExistingVpcId`, `ExistingPublicSubnetIds`, `ExistingPrivateSubnetIds`, `ExistingEfsFileSystemId`, and `ExistingSecretsBundleArn` blank to create a new VPC, Amazon EFS ReadWriteMany filesystem, and AWS Secrets Manager bundle automatically, or populate any of them to reuse your existing resources.
 5. **Subdomain Routing & TLS**:
@@ -47,7 +47,7 @@ helm upgrade --install ecosystem \
   --set-string global.mongodbPassword="<YOUR_MONGO_PASSWORD>" \
   --set-string global.ingress.baseDomain="<YOUR_BASE_DOMAIN>" \
   --set-string global.llm.provider="openai" \
-  --set-string global.llm.model="gpt-5" \
+  --set-string global.llm.model="gpt-6" \
   --set-string global.openaiApiKey="<OPTIONAL_LLM_API_KEY>"
 ```
 
