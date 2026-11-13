@@ -1,0 +1,43 @@
+---
+title: Apache Hive
+description: Register HiveServer2 JDBC connections in Workbench Data Management and run SQL against warehouse tables.
+---
+
+import { Callout } from 'nextra/components'
+
+# Apache Hive
+
+**ecosystem-server** (Nov 2026) adds **Apache Hive** as a Data Management connector. Operators register a HiveServer2 **JDBC** connection, then run SQL to explore tables and prepare data — the same operator workflow as [Presto](/docs/configuration/data/presto) (connection registry plus a SQL work area).
+
+<Callout type="info" title="Build requirement">
+Hive Data Management requires a **ecosystem-server** image built after the Apache Hive integration landed (public **`ecosystemai/ecosystem-server`** images were refreshed **10 Nov 2026**). Upgrade server before expecting the Hive menu.
+</Callout>
+
+## Register a connection
+
+1. In Workbench, open **Data Management** → **Hive**.
+2. Create a connection and supply:
+   - A **connection name** (stored with your other server data sources).
+   - **JDBC URL** in HiveServer2 form, for example `jdbc:hive2://<host>:10000/<database>` (port and database match your cluster).
+   - **Username** and **password** (or other credentials your Hive deployment expects for JDBC).
+3. **Test** the connection, then **Save**.
+
+Kerberos, LDAP, and other enterprise Hive auth modes depend on how your cluster exposes HiveServer2; use the URL and principal formats documented by your Hive vendor. Do not commit production passwords into project exports.
+
+## Run SQL and read data
+
+Open the Hive **work** view (same pattern as Presto): enter SQL, execute, and page through result sets. Use this for ad hoc reads, schema checks, and validating tables before you reference them in pipelines or exports.
+
+Results stay on the server connection; they are not a replacement for Runtime **`POST /invocations`** scoring.
+
+## Deployments and the Runtime
+
+Runtime **parameter** and **offer-matrix** lookups configured in [Deployment parameters](/docs/configuration/deployment/parameters) still use the drivers documented there (**MongoDB**, **Cassandra**, **Trino** / Presto synonym, **API**, **Runtime**). Queries that target a Hive **catalog** through Trino continue to use fully qualified names such as `hive.default.<table>` in lookup JSON.
+
+The Hive Data Management connector is for **operator-side** JDBC access through ecosystem-server. If you need Hive tables inside live scoring, route through Trino/Presto where your platform already exposes the Hive catalog, or stage extracts into MongoDB/files using Data Management jobs.
+
+## Related
+
+- [Data Management overview](/docs/configuration/data)
+- [Feature Engineering](/docs/configuration/data/feature_engineering)
+- [Presto](/docs/configuration/data/presto)
