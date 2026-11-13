@@ -27,8 +27,10 @@ Purpose-built for telecommunications (CVM, next-best-offer, and MVNOs), retail a
 | **6** | **`ecosystem-notebooks`**<br/>`ecosystemai/ecosystem-notebooks` | `:8010` EcoGentic Journey API<br/>`:8000` JupyterHub | Agentic conversational journey server (EcoGentic) and interactive Python data-science notebook environment connected to the shared `/data` volume and LLM gateway. |
 | **7** | **`ecosystem-custom-gpts`**<br/>`ecosystemai/ecosystem-custom-gpts` | `:54320` Specialist Agents UI<br/>`:54349` Managed Agents API | Domain-grounded specialist GPT and RAG agents with dedicated knowledge bases, custom tools, and live runtime scoring integration. |
 | **8** | **`ecosystem-domain-catalog`**<br/>`ecosystemai/ecosystem-domain-catalog` | `:8080` Catalog Service | Authoritative semantic catalog serving OWL/SKOS domain ontologies, SHACL validation shapes, and industry overlays (Telecommunications CVM, Banking, Insurance, Retail, Gaming). |
-| **9** | **`trino`**<br/>`ecosystemai/trino` | `:8080` Distributed SQL Engine | Distributed ANSI SQL query engine pre-configured with the MongoDB connector pointing to `ecosystem-server:54445` for high-speed analytical and ontology-mapped SQL queries. |
-| **10** | **`busybox`**<br/>`busybox:1.36` | Kubernetes `initContainer` | Lightweight startup dependency gate that waits for `ecosystem-server:3001` and embedded MongoDB `ecosystem-server:54445` to accept TCP connections before dependent pods start. |
+| **9** | **`ecosystem-modeling` (`code`)**<br/>`ecosystemai/ecosystem-modeling` | `:5174` EcosystemCode & Modeling UI<br/>`GET /health` | UML & domain-driven application modeling SPA (`code.<baseDomain>`). Supports PlantUML diagramming, domain ontology alignment, and full-stack application generation (React/Vue + Node TS/Python FastAPI/Java Spring/C# .NET + MongoDB/PostgreSQL). |
+| **10** | **`ecosystem-app-builds` (`builds`)**<br/>`ecosystemai/ecosystem-app-builds` | `:9099` Supervisor API (`GET /health`)<br/>`:15100–15299` Hosted Generated Apps (`app-<port>.<baseDomain>`)<br/>`:27017` Sandbox Mongo 8.3<br/>`:5432` Sandbox Postgres 16 | Python 3.14 + Node 22 + JDK 17 + .NET 10/9/8 local hosting runtime (`builds.<baseDomain>`). Unpacks, builds, and supervises up to 100 generated full-stack applications on ports `15100–15299` backed by co-located `ecosystem-app-builds-mongo` (`mongo:8.3`) and `ecosystem-app-builds-postgres` (`postgres:16-alpine`) sandbox databases. |
+| **11** | **`trino`**<br/>`ecosystemai/trino` | `:8080` Distributed SQL Engine | Distributed ANSI SQL query engine pre-configured with the MongoDB connector pointing to `ecosystem-server:54445` for high-speed analytical and ontology-mapped SQL queries. |
+| **12** | **`busybox`**<br/>`busybox:1.36` | Kubernetes `initContainer` | Lightweight startup dependency gate that waits for `ecosystem-server:3001` and embedded MongoDB `ecosystem-server:54445` to accept TCP connections before dependent pods start. |
 
 ---
 
@@ -46,6 +48,8 @@ Every application in **ecosystem.Ai Platform 2.0** runs at root `path: /` on its
 | **EcoGentic & Notebooks** | `notebooks.<baseDomain>` (`/`) | `NOTEBOOKS_PUBLIC_URL`, `VITE_ECOGENTIC_AGENT_URL` | `http://ecosystem-notebooks:8010` |
 | **Custom GPTs / Managed Agents** | `custom-gpts.<baseDomain>` (`/`) | `CUSTOM_GPTS_PUBLIC_URL` | `http://ecosystem-custom-gpts:54320` |
 | **Domain Catalog** | `domain-catalog.<baseDomain>` (`/`, `/v1/health`) | `DOMAIN_CATALOG_PUBLIC_URL` | `http://ecosystem-domain-catalog:8080` |
+| **EcosystemCode & Modeling UI (`code`)** | `code.<baseDomain>` (`/`, `/health`) | `CODE_PUBLIC_URL`, `VITE_MAIN_SITE_URL` | `http://ecosystem-modeling:5174` |
+| **App Builds Supervisor (`builds`)** | `builds.<baseDomain>` (`/health`) + `app-15100..15299.<baseDomain>` | `BUILDS_PUBLIC_URL`, `MODELING_LOCAL_RUNTIME_URL` | `http://ecosystem-app-builds:9099` (`ecosystem-app-builds-mongo:27017`, `ecosystem-app-builds-postgres:5432`) |
 | **Trino SQL Engine** | `trino.<baseDomain>` (`/v1/info`) | — | `trino:8080` |
 
 ---

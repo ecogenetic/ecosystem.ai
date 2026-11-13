@@ -47,7 +47,7 @@ Configure the default generative AI provider injected into all containers (`ecos
 - **Virtual Network & Subnets**: Create a new `/16` VNet with `/22` AKS and Application Gateway subnets, or select an existing VNet and subnets (including from another resource group).
 - **Storage Account & Azure File Share**: Create a new Storage Account and File Share for `/data`, `/modeling`, `/config`, and `/database`, or attach an existing Storage Account and File Share.
 - **Public IP & Domain Mode**:
-  - **Automatic Mode (`useCustomDomain = false`, default)**: No DNS zone required. The installer automatically provisions a multi-SAN Let's Encrypt TLS certificate and routes all 8 applications on dedicated `*.<PUBLIC_IP>.nip.io` subdomains at root `path: /`:
+  - **Automatic Mode (`useCustomDomain = false`, default)**: No DNS zone required. The installer automatically provisions a multi-SAN Let's Encrypt TLS certificate and routes all 10 applications on dedicated `*.<PUBLIC_IP>.nip.io` subdomains at root `path: /`:
     - `https://workbench.<PUBLIC_IP>.nip.io/` (and `https://<PUBLIC_FQDN>/`)
     - `https://server.<PUBLIC_IP>.nip.io/api/v1/health`
     - `https://runtime1.<PUBLIC_IP>.nip.io/ping` (`POST /invocations`, `POST /response`, `POST /mcp`)
@@ -56,13 +56,15 @@ Configure the default generative AI provider injected into all containers (`ecos
     - `https://notebooks.<PUBLIC_IP>.nip.io/`
     - `https://custom-gpts.<PUBLIC_IP>.nip.io/`
     - `https://domain-catalog.<PUBLIC_IP>.nip.io/v1/health`
-  - **Custom Domain Mode (`useCustomDomain = true`)**: Select your existing **Azure DNS Zone**; `external-dns` and `cert-manager` automatically create DNS records and issue a wildcard TLS certificate for `<hostName>.<dnsZone>`, `<hostName>server.<dnsZone>`, `<hostName>runtime1.<dnsZone>`, `<hostName>campaign.<dnsZone>`, `<hostName>dataagents.<dnsZone>`, `<hostName>notebooks.<dnsZone>`, `<hostName>customgpts.<dnsZone>`, and `<hostName>domaincatalog.<dnsZone>`.
+    - `https://code.<PUBLIC_IP>.nip.io/` (EcosystemCode & Modeling UI)
+    - `https://builds.<PUBLIC_IP>.nip.io/health` (App Builds Supervisor + `app-15100..15299.<PUBLIC_IP>.nip.io`)
+  - **Custom Domain Mode (`useCustomDomain = true`)**: Select your existing **Azure DNS Zone**; `external-dns` and `cert-manager` automatically create DNS records and issue a wildcard TLS certificate for `<hostName>.<dnsZone>`, `<hostName>server.<dnsZone>`, `<hostName>runtime1.<dnsZone>`, `<hostName>campaign.<dnsZone>`, `<hostName>dataagents.<dnsZone>`, `<hostName>notebooks.<dnsZone>`, `<hostName>customgpts.<dnsZone>`, `<hostName>domaincatalog.<dnsZone>`, `<hostName>code.<dnsZone>`, and `<hostName>builds.<dnsZone>`.
 
 ---
 
 ## Verifying Your Deployment & Closed-Loop Scoring
 
-Once the deployment completes, open the **Outputs** tab in your Azure Deployment blade to view all 8 HTTPS URLs (`workbenchHttpsUrl`, `serverHttpsUrl`, `runtimeHttpsUrl`, `campaignHttpsUrl`, `dataAgentsHttpsUrl`, `notebooksHttpsUrl`, `customGptsHttpsUrl`, `domainCatalogHttpsUrl`).
+Once the deployment completes, open the **Outputs** tab in your Azure Deployment blade to view all 10 HTTPS URLs (`workbenchHttpsUrl`, `serverHttpsUrl`, `runtimeHttpsUrl`, `campaignHttpsUrl`, `dataAgentsHttpsUrl`, `notebooksHttpsUrl`, `customGptsHttpsUrl`, `domainCatalogHttpsUrl`, `codeHttpsUrl`, `buildsHttpsUrl`).
 
 Sign in to Workbench 2 at `workbenchHttpsUrl` with username `admin@ecosystem.ai` and the Initial Admin Password you configured.
 

@@ -29,6 +29,8 @@ Every cloud marketplace install provisions the same 10-container stack with embe
 | **EcoGentic & Notebooks** | `notebooks.<baseDomain>` | `:8010` EcoGentic API, `:8000` Notebooks | Multi-channel conversational agent journeys and interactive notebooks |
 | **Custom GPTs** | `custom-gpts.<baseDomain>` | `:54320` UI, `:54349` API | Specialist RAG and domain-grounded managed agents |
 | **Domain Catalog** | `domain-catalog.<baseDomain>` | `:8080` | Governed OWL/SKOS domain ontologies and SHACL validation shapes |
+| **EcosystemCode & Modeling UI (`code`)** | `code.<baseDomain>` | `:5174` | UML & domain-driven application modeling, PlantUML, and full-stack code generation |
+| **App Builds Supervisor (`builds`)** | `builds.<baseDomain>` + `app-15100..15299.<baseDomain>` | `:9099` (`:15100–15299`, Mongo `:27017`, Postgres `:5432`) | Python 3.14 supervisor hosting generated full-stack apps with sandboxed Mongo 8.3 & Postgres 16 |
 | **Trino SQL** | `trino.<baseDomain>` (internal `trino:8080`) | `:8080` | Distributed ANSI SQL federated over `ecosystem-server:54445` |
 
 ---

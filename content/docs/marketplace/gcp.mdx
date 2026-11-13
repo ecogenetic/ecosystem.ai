@@ -50,7 +50,7 @@ helm upgrade --install ecosystem oci://gcr.io/ecogenetic-public/ecosystemai-plat
 
 ## Subdomain Routing & Google-Managed TLS (`ManagedCertificate`)
 
-When `global.ingress.baseDomain` is set, the chart provisions a Google `ManagedCertificate` and GCE `Ingress` covering all 8 application subdomains at root `path: /`:
+When `global.ingress.baseDomain` is set, the chart provisions a Google `ManagedCertificate` and GCE `Ingress` covering all 10 application subdomains at root `path: /`:
 
 - `https://workbench.<baseDomain>/` — Workbench 2 Operator UI (`:5270`) & Public API (`/public/v1` on `:8004`)
 - `https://server.<baseDomain>/api/v1/health` — Prediction Server (`:3001`) + Embedded MongoDB 9.0 (`:54445`) + H2O (`:54321`)
@@ -60,6 +60,8 @@ When `global.ingress.baseDomain` is set, the chart provisions a Google `ManagedC
 - `https://notebooks.<baseDomain>/` — EcoGentic & Notebooks (`:8010`)
 - `https://custom-gpts.<baseDomain>/` — Custom GPTs / Managed Agents (`:54320`)
 - `https://domain-catalog.<baseDomain>/v1/health` — Domain Ontology Catalog (`:8080`)
+- `https://code.<baseDomain>/` — EcosystemCode & Modeling UI (`:5174`)
+- `https://builds.<baseDomain>/health` — App Builds Supervisor (`:9099` + generated apps `:15100–15299` + Mongo 8.3 `:27017` + Postgres 16 `:5432`)
 
 ---
 

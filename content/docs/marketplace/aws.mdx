@@ -55,7 +55,7 @@ helm upgrade --install ecosystem \
 
 ## Subdomain Endpoints on AWS ALB Ingress
 
-The consolidated AWS ALB Ingress (`alb.ingress.kubernetes.io/group.name: ecosystem`) routes each of the 8 applications at root `path: /` on its own subdomain:
+The consolidated AWS ALB Ingress (`alb.ingress.kubernetes.io/group.name: ecosystem`) routes each of the 10 applications at root `path: /` on its own subdomain:
 
 | Subdomain Host | Service & Port | Health / Entry Path |
 |---|---|---|
@@ -67,3 +67,5 @@ The consolidated AWS ALB Ingress (`alb.ingress.kubernetes.io/group.name: ecosyst
 | `notebooks.<baseDomain>` | `ecosystem-notebooks:8010` | `/` |
 | `custom-gpts.<baseDomain>` | `ecosystem-custom-gpts:54320` | `/` |
 | `domain-catalog.<baseDomain>` | `ecosystem-domain-catalog:8080` | `/v1/health` |
+| `code.<baseDomain>` | `ecosystem-modeling:5174` | `/`, `/health` |
+| `builds.<baseDomain>` | `ecosystem-app-builds:9099` (`:15100–15299`, Mongo `:27017`, Postgres `:5432`) | `/health` |
