@@ -6,6 +6,19 @@ After `start.sh` (or `docker compose up`), log in on port **80**, then follow [P
 
 **Ports in this file:** Workbench **80**, Server **3001**, first Runtime **8091**, extra Runtimes **8092–8095**, Notebooks **5111** / **8010**, Grafana **3000**. Port **8092** here is a second scoring Runtime, not MCP. Builtin MCP is `POST http://127.0.0.1:8091/mcp`. Overview: [Quick Start](/docs/quick_start).
 
+### Docker Hub tags (Nov 2026)
+
+Compose files in the [ecosystem](https://github.com/ecogenetic/ecosystem) install repo pin architecture tags (`arm64`, `amd64`, `097-arm64`, and so on). Hub **repushes** in this window refresh **`ecosystem-runtime-solo:097-arm64`** (11 Nov), **`ecosystem-server:latest`** / **`arm64`** (12 Nov), and **`ecosystem-workbench2:latest`** / **`amd64`** (12 Nov).
+
+For **Workbench 2** (`ecosystemai/ecosystem-workbench2`), the build scripts in **ecosystem-workbench2** publish two families:
+
+| Tag | Role |
+| --- | --- |
+| `latest` / `amd64` | **Quick** build: UI and Python overlay on top of a frozen flatten base (what most operators pull). |
+| `full` / `full-amd64` | **Full** multi-stage image (H2O, pip, OS packages, Claude CLI, UI). CI quick builds use this as the one-layer overlay base; operators normally stay on `latest` / `amd64`. |
+
+Run `./01-build.sh --full` locally when dependencies, H2O, or OS layers change; day-to-day UI work uses the default quick build (`./01-build.sh`).
+
 ## Service map
 
 The YAML file defines multiple Docker services on a common network named `ecosystem`. Here is a breakdown of what each segment of code means:

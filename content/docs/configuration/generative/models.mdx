@@ -55,3 +55,12 @@ OpenAI-compatible request fields that are not part of the core ecosystem.Ai rout
 ```
 
 Internal routing and secret fields are removed before the request is sent upstream.
+
+## Workbench Administration defaults
+
+**Administration → Generative Model** stores the platform default model and sampling parameters used by Workbench callers (distinct from per-deployment `prompt_parameters` on a Dynamic Engagement document).
+
+On images from **12 Nov 2026** onward:
+
+- **Temperature** can be cleared in the admin UI so the field is omitted on outbound LLM calls (models that reject `temperature` are handled via server-side param self-recovery on the remaining supported fields).
+- Marketplace and local installs that set **`gpt-6`** / **`gpt-6-luna`** at deploy time align with the defaults documented on [Marketplace Apps](/docs/marketplace) and the [Visual Tour](/docs/marketplace/visual-tour).
