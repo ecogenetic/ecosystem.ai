@@ -93,7 +93,7 @@ Workbench **API Management** (`/docs/configuration/api`) stores named Runtime te
 
 | Area | Typical prefix | Purpose |
 | --- | --- | --- |
-| Enrichment | `/enrichment` | Date, MCC, personality drift jobs |
+| Enrichment | `/enrichment` | Date, MCC, personality drift; Python run, pipelines, 1:N/N:1 (background jobs + `GET /enrichment/jobs/{job_id}`) |
 | Prompt enrichment | `/prompt-enrichment` | LLM document enrichment |
 | Filesystem | `/filesystem` | Browse worker files |
 | Search | `/search` | Global search |

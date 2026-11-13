@@ -65,3 +65,16 @@ Enrichment options are used to perform feature engineering related actions.
 Enrich data with date related features for example day of week, month, year etc.
 ![image](/images/configuration/data/enrichments-dates.png)
 
+## Python scripts, pipelines, and collection transforms
+
+On **Data → Enrichment**, operators can run **Python scripts**, **custom pipelines**, **Foreign Key 1:N**, and **Foreign Key N:1** against a selected `database.collection`.
+
+As of Workbench **2.0.3** build **3283** (12 Nov 2026):
+
+- **Run** starts a **background job** instead of blocking the browser until the gateway times out. The UI polls `GET /api/v1/enrichment/jobs/{job_id}` (and the header **Jobs** menu lists queued, running, and stalled work) until the job reaches `Completed` or `Failed`.
+- **Syntax check** (`dry_run: true` on `POST /api/v1/enrichment/python/run`) still returns on the same request.
+- Large batch runs may continue for up to **24 hours** on the worker (subprocess ceiling), suitable for multi-million-document passes.
+- **Generate Python** can revise the script already in the editor (`existing_script`) and accept optional **extra** `database.collection` targets when the prompt names additional sources.
+- Scripts should emit a JSON line containing `"SCRIPT_RESULT"` so the UI can report counts such as `documents_processed` and `documents_updated`.
+
+Date, MCC, and personality-drift enrichments already used the same detached job pattern; script run, custom pipeline, 1:N, and N:1 now match that flow. See [Private API — Enrichment](/docs/configuration/workbench_apis/private#enrichment-files-search).
