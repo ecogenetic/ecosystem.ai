@@ -56,52 +56,37 @@ Every application in **ecosystem.Ai Platform 2.0** runs at root `path: /` on its
 
 ## Operator Workbench & Container Modules — Visual Tour
 
-### 1. Workbench 2 — Unified Operator Dashboard
-Central launchpad across all 523+ configurations: Projects, Network Selector, Offer Matrix, Contacts, Channels, Ontology, Data Management, Static/Dynamic/Generative Models, EcoGentic, Campaigns, Analytics, and Runtime Console.
+### 1. AI Project Generation & Architecture Planner
+Describe your business goal in natural language — the Ecosystem Agent proposes the complete project configuration, linking feature store lookups, static/dynamic/generative models, offer matrices, and network of recommenders.
 
-![Workbench 2 Dashboard Overview](/images/marketplace/01-workbench-dashboard-overview.png)
+![AI Project Generation and Architecture Planner](/images/marketplace/01-generate-project-agent-plan.png)
 
-### 2. Projects & Deployment Configuration
-End-to-end project configuration linking feature store lookups, H2O frames, dynamic engagement algorithms, offer matrices, pre/post-score Java plugins, and deployment steps.
+### 2. Interactive Project Setup & Configuration Notebooks
+Inspect, rerun, and patch live project configurations, deployment steps, pre/post-score Java plugins (`DefaultPreScore.java`, `PlatformDynamicEngagement.java`, `DefaultReward.java`), dynamic engagements, and offer matrices directly from Workbench Notebooks.
 
-![Projects and Deployment Configuration](/images/marketplace/02-projects-management.png)
+![Interactive Project Setup Notebook](/images/marketplace/02-project-setup-interactive-notebook.png)
 
-### 3. Dynamic Engagement & Real-Time Bandit Learning
-Configure Thompson Sampling / Bayesian Probabilistic, Epsilon Greedy, Ecosystem Rewards, Loss Aversion, Prospect Theory, and Q-Learning recommenders with contextual variables and cold-start priors.
+### 3. Agentic Campaign Process Flow Designer
+Design and govern multi-stage customer outreach and decisioning pipelines on an interactive process canvas (e.g., `Load bank customers` → `Spend Personality 0.09.9` → `Dynamic message recommender`) with built-in GDPR/CASL/CAN-SPAM compliance controls.
 
-![Dynamic Engagement and Bandit Learning](/images/marketplace/03-dynamic-engagement-algorithms.png)
+![Agentic Campaign Process Flow Designer](/images/marketplace/03-campaign-process-flow-designer.png)
 
-### 4. Agentic Campaign Management
-Author, generate, import/export, and execute multi-stage customer outreach and decisioning campaigns wired to real-time scoring and generative AI prompts.
+### 4. Domain Ontology Hierarchy & Systems-of-Record Mapping
+Explore governed OWL/SKOS/SHACL domain ontologies (`CRM`, `CVM`, `Banking`, `Insurance`, `Retail`, `Gaming`), subclass/alignment graphs, and physical table/collection mappings (`owl:equivalentClass`) in `ecosystem-domain-catalog`.
 
-![Agentic Campaign Management](/images/marketplace/04-campaigns-management.png)
+![Domain Ontology Hierarchy and Systems-of-Record Mapping](/images/marketplace/04-domain-ontology-hierarchy-graph.png)
 
-### 5. Domain Ontology Catalog & Semantic Mappings
-Sync OWL/SKOS/SHACL domain ontologies from `ecosystem-domain-catalog`, infer ontologies from live MongoDB collections, and map business terms to physical data fields.
+### 5. Custom GPTs & Domain-Grounded Managed Agents
+Interact with specialist RAG and domain-grounded managed agents (such as `AI Posture Archetypes`) backed by custom knowledge bases and live runtime context.
 
-![Domain Ontology Catalog](/images/marketplace/05-domain-ontology-catalog.png)
+![Custom GPTs and Managed Agents](/images/marketplace/05-custom-gpts-managed-agents.png)
 
-### 6. EcoGentic Conversational Agent Journeys
-Build and version multi-channel conversational AI agents (WhatsApp, Web, API, CLI) backed by `ecosystem-notebooks` (`:8010`) and live runtime context.
+### 6. Spend & Money Personality Behavioral Drift Analytics (`/analytics/`)
+Track customer personality archetypes (`Intentional`, `Industrious`, `Experiential`, `Enthusiastic`), behavioral drift magnitude, label/trait transitions, and biggest movers across time windows.
 
-![EcoGentic Conversational Agent Journeys](/images/marketplace/06-ecogentic-agent-journeys.png)
+![Spend and Money Personality Analytics](/images/marketplace/06-spend-money-personality-analytics.png)
 
-### 7. Simulations Lab & Convergence Testing
-Run closed-loop recommender and log-replay simulations to validate bandit convergence, reward lift, and behavioral drift prior to production rollout.
+### 7. Computational Social Science Network Graph Analysis (`/networks/`)
+Run PageRank, Betweenness/Closeness/Degree/Eigenvector/Katz centrality, and Louvain community detection over customer segments, credit bureau bands, and runtime interaction topologies.
 
-![Simulations Lab](/images/marketplace/07-simulations-lab.png)
-
-### 8. Spend & Money Personalities Pipeline
-Guided 6-stage behavioral scoring pipeline (`SP-01` through `SP-06`) that extracts customer Spend and Money Personality traits from transaction histories.
-
-![Spend and Money Personalities](/images/marketplace/08-spend-money-personalities.png)
-
-### 9. Interactive Analytics Dashboards (`/analytics/`)
-Compile and explore multi-dashlet operational, financial, personality, and runtime performance boards powered by MongoDB 9.0 and Trino SQL.
-
-![Interactive Analytics Dashboards](/images/marketplace/09-analytics-dashboards.png)
-
-### 10. Computational Social Science Network Graph Analysis (`/networks/`)
-Interactive 2D/3D graph and social network topology explorer for customer segments, credit bureau bands, payment flows, and runtime offer affinities.
-
-![Computational Social Science Network Graph Analysis](/images/marketplace/10-network-graph-analysis.png)
+![Computational Social Science Network Graph Analysis](/images/marketplace/07-computational-social-science-network-graph.png)
