@@ -12,7 +12,7 @@ Case configuration contains the high level details of the deployment:
 - **Prediction Case Id**: The name of the prediction case. This is the name for the predictor that will be stored in the logs and, together with the version and project name, uniquely identifies a deployment configuration. When creating a deployment for a Dynamic Interaction configuration this should match the name of the Dynamic Interaction configuration.
 - **Description, Type, Purpose**: These fields are used to describe the deployment and the description is pushed to a commented section in the properties file to assist with maintenance.
 - **Version**: The version of the configuration. Together with the project name and deployment_id (Prediction Case Id) this uniquely identifies a deployment configuration. 
-- **Environment Status**: The environment to which the deployment confioguration should be pushed. Different endpoints and database settings can be configured for different environments.
+- **Environment Status**: The environment to which the deployment configuration should be pushed. Choose **Experiment Phase**, **Validate and Test Phase**, **Production**, or **Archived**. Different endpoints and database settings can be configured per environment. On the latest **ecosystem-workbench2** image (**10 Nov 2026** Docker Hub refresh), the project **Deployments** table also shows this value in an **Environment Status** column so you can scan lifecycle without opening each deployment (older builds only expose it on the deployment edit form).
 - **Performance Expectation, Complexity**: These are informational fields used to assist with maintenance.
 
 The details will be visible in the `properties` file with the following format:

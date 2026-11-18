@@ -2,7 +2,7 @@
 
 This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://developer.ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
 
-Corpus: 275 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
+Corpus: 277 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
 
 ## Document index
 
@@ -24,6 +24,7 @@ Corpus: 275 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Enrichment](#docs-configuration-data-enrichment) — `docs/configuration/data/enrichment.mdx` — https://developer.ecosystem.ai/docs/configuration/data/enrichment
 - [Feature Engineering](#docs-configuration-data-feature-engineering) — `docs/configuration/data/feature_engineering.mdx` — https://developer.ecosystem.ai/docs/configuration/data/feature_engineering
 - [Files](#docs-configuration-data-files) — `docs/configuration/data/files.mdx` — https://developer.ecosystem.ai/docs/configuration/data/files
+- [Apache Hive](#docs-configuration-data-hive) — `docs/configuration/data/hive.mdx` — https://developer.ecosystem.ai/docs/configuration/data/hive
 - [Data Management](#docs-configuration-data-index) — `docs/configuration/data/index.mdx` — https://developer.ecosystem.ai/docs/configuration/data
 - [Meta-Data](#docs-configuration-data-metadata) — `docs/configuration/data/metadata.mdx` — https://developer.ecosystem.ai/docs/configuration/data/metadata
 - [Presto](#docs-configuration-data-presto) — `docs/configuration/data/presto.mdx` — https://developer.ecosystem.ai/docs/configuration/data/presto
@@ -76,6 +77,7 @@ Corpus: 275 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Azure Marketplace](#docs-marketplace-azure) — `docs/marketplace/azure.mdx` — https://developer.ecosystem.ai/docs/marketplace/azure
 - [GCP Marketplace](#docs-marketplace-gcp) — `docs/marketplace/gcp.mdx` — https://developer.ecosystem.ai/docs/marketplace/gcp
 - [Intro](#docs-marketplace-index) — `docs/marketplace/index.mdx` — https://developer.ecosystem.ai/docs/marketplace
+- [Marketplace Terms](#docs-marketplace-terms) — `docs/marketplace/terms.mdx` — https://developer.ecosystem.ai/docs/marketplace/terms
 - [Data Agents Analysis Views](#docs-modules-data-agents-analysis) — `docs/modules/data_agents/analysis.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/analysis
 - [Data Agents](#docs-modules-data-agents-index) — `docs/modules/data_agents/index.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents
 - [Interactions Analytic](#docs-modules-data-agents-interactions) — `docs/modules/data_agents/interactions.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/interactions
@@ -2813,6 +2815,49 @@ Download files
 
 ---
 
+## Apache Hive
+
+Source: `docs/configuration/data/hive.mdx`
+URL: https://developer.ecosystem.ai/docs/configuration/data/hive
+Summary: Register HiveServer2 JDBC connections in Workbench Data Management and run SQL against warehouse tables.
+
+# Apache Hive
+
+**ecosystem-server** (Nov 2026) adds **Apache Hive** as a Data Management connector. Operators register a HiveServer2 **JDBC** connection, then run SQL to explore tables and prepare data — the same operator workflow as [Presto](/docs/configuration/data/presto) (connection registry plus a SQL work area).
+
+**Build requirement:** Hive Data Management requires a **ecosystem-server** image built after the Apache Hive integration landed (public **`ecosystemai/ecosystem-server`** images were refreshed **10 Nov 2026**). Upgrade server before expecting the Hive menu.
+
+## Register a connection
+
+1. In Workbench, open **Data Management** → **Hive**.
+2. Create a connection and supply:
+   - A **connection name** (stored with your other server data sources).
+   - **JDBC URL** in HiveServer2 form, for example `jdbc:hive2://<host>:10000/<database>` (port and database match your cluster).
+   - **Username** and **password** (or other credentials your Hive deployment expects for JDBC).
+3. **Test** the connection, then **Save**.
+
+Kerberos, LDAP, and other enterprise Hive auth modes depend on how your cluster exposes HiveServer2; use the URL and principal formats documented by your Hive vendor. Do not commit production passwords into project exports.
+
+## Run SQL and read data
+
+Open the Hive **work** view (same pattern as Presto): enter SQL, execute, and page through result sets. Use this for ad hoc reads, schema checks, and validating tables before you reference them in pipelines or exports.
+
+Results stay on the server connection; they are not a replacement for Runtime **`POST /invocations`** scoring.
+
+## Deployments and the Runtime
+
+Runtime **parameter** and **offer-matrix** lookups configured in [Deployment parameters](/docs/configuration/deployment/parameters) still use the drivers documented there (**MongoDB**, **Cassandra**, **Trino** / Presto synonym, **API**, **Runtime**). Queries that target a Hive **catalog** through Trino continue to use fully qualified names such as `hive.default.<table>` in lookup JSON.
+
+The Hive Data Management connector is for **operator-side** JDBC access through ecosystem-server. If you need Hive tables inside live scoring, route through Trino/Presto where your platform already exposes the Hive catalog, or stage extracts into MongoDB/files using Data Management jobs.
+
+## Related
+
+- [Data Management overview](/docs/configuration/data)
+- [Feature Engineering](/docs/configuration/data/feature_engineering)
+- [Presto](/docs/configuration/data/presto)
+
+---
+
 ## Data Management
 
 Source: `docs/configuration/data/index.mdx`
@@ -2826,6 +2871,7 @@ Summary: Data Management Capabilities.
 ecosystem.Ai offers a variety of data management options:
 - [**Feature Engineering**](/docs/configuration/data/feature_engineering): View and manage the data in the MongoDB instance connected to the ecosystem.Ai Server.
 - [**Presto**](/docs/configuration/data/presto): Integrate and access various data sources and targets.
+- [**Apache Hive**](/docs/configuration/data/hive): HiveServer2 JDBC connections and SQL exploration (ecosystem-server).
 - [**File Management**](/docs/configuration/data/files): Upload and download files.
 - [**Enrichment**](/docs/configuration/data/enrichment): Enrich your data using a variety of configurable enrichment functions.
 
@@ -3349,7 +3395,7 @@ Case configuration contains the high level details of the deployment:
 - **Prediction Case Id**: The name of the prediction case. This is the name for the predictor that will be stored in the logs and, together with the version and project name, uniquely identifies a deployment configuration. When creating a deployment for a Dynamic Interaction configuration this should match the name of the Dynamic Interaction configuration.
 - **Description, Type, Purpose**: These fields are used to describe the deployment and the description is pushed to a commented section in the properties file to assist with maintenance.
 - **Version**: The version of the configuration. Together with the project name and deployment_id (Prediction Case Id) this uniquely identifies a deployment configuration. 
-- **Environment Status**: The environment to which the deployment confioguration should be pushed. Different endpoints and database settings can be configured for different environments.
+- **Environment Status**: The environment to which the deployment configuration should be pushed. Choose **Experiment Phase**, **Validate and Test Phase**, **Production**, or **Archived**. Different endpoints and database settings can be configured per environment. On the latest **ecosystem-workbench2** image (**10 Nov 2026** Docker Hub refresh), the project **Deployments** table also shows this value in an **Environment Status** column so you can scan lifecycle without opening each deployment (older builds only expose it on the deployment edit form).
 - **Performance Expectation, Complexity**: These are informational fields used to assist with maintenance.
 
 The details will be visible in the `properties` file with the following format:
@@ -4488,6 +4534,10 @@ Recent ontology work connects:
 
 When Ontology Management is enabled, prefer resolving business terms to mapped fields before generating queries or client payloads.
 
+## Repository link — Python file (latest Workbench)
+
+**Project Identity → Repositories** links the project to GitHub or GitLab (repository type, master flag, repository name, optional branch, optional project token). Builds from **10 Nov 2026** onward add a **Python file** selector on that panel: pick a `.py` file in the linked repo so **setup-python-generation** / app-generation jobs know which module to execute when generating Python client or package output. Java/plugin **Deployment → Generate** flows are unchanged; the Python file applies when the remote link drives Python-oriented generation.
+
 ## Docker images (reference only)
 
 Ecogenetic publishes refreshed **`ecosystem-server`**, **`ecosystem-modeling`**, and related images on Docker Hub (`ecosystemai/*`). Pin by digest or an explicit tag your install documents — do not assume `latest` matches a specific semver unless your release notes say so.
@@ -4522,6 +4572,26 @@ Project assets that are used to create a module.
 
 Importing modules as projects.
 ![image](/images/configuration/project/project-import.png)
+
+## Project Identity — Repositories
+
+Under **Project Identity → Repositories**, link the Workbench project to a remote Git host for Generate/Build and modeling workflows. Each row includes:
+
+| Field | Purpose |
+| --- | --- |
+| **Repository type** | GitHub or GitLab |
+| **Master** | Primary repository for this link |
+| **Repository name** | Remote repository URL or name your admin pattern expects |
+| **Branch** (optional) | Branch for generated commits |
+| **Project token** (optional override) | PAT or deploy token when it should differ from the server default |
+
+On images **before** the **10 Nov 2026** `ecosystem-workbench2` refresh, that grid matches the fields above only.
+
+The latest Workbench image adds a **Python file** option on the same Repositories panel (**setup-python-generation**): choose a `.py` file in the repo (for example a package entrypoint or generator stub) so **Project Generate** and related modeling flows know which Python module to target when the remote link is not only Java/plugin output. You still configure GitHub/GitLab URL, branch, and token the same way; the Python file is an extra selector on supported builds.
+
+## Deployments list — Environment Status column
+
+Inside a project, the **Deployments** table lists each deployment step (for example **Deployment ID**, **Description**, **Version**, **Step Type**, **Algorithm**, **URL**, **Updated Date**, **Actions**). The deployment editor has long exposed **Environment Status** (**Experiment Phase**, **Validate and Test Phase**, **Production**, **Archived**). The latest **ecosystem-workbench2** image (**10 Nov 2026**) adds an **Environment Status** column on that table so operators see lifecycle at a glance. Older hosts (for example images predating that push) show Environment Status only on the edit form.
 
 **Properties**
 
@@ -7682,6 +7752,27 @@ Summary: Setup ecosystem.Ai Platform in AWS
 
 # Guide to Setting up ecosystem.Ai Platform in AWS
 
+## ecosystem.Ai Platform 2.0 (v2.0.1)
+
+Version 2.0.1 is a new Container product on AWS Marketplace. It deploys eight ARM64 applications into Amazon EKS with a Helm chart. MongoDB 8.3 runs inside `ecosystem-server` on port `54445`. There is no separate MongoDB container and no custom AMI.
+
+| Application | Role |
+|---|---|
+| Workbench 2 | Operator UI and APIs |
+| Prediction Server | Models, H2O, embedded MongoDB 8.3 |
+| Runtime 0.9.7 | `POST /invocations`, then `POST /response`, and `POST /mcp` |
+| Campaign Management | Agentic campaigns |
+| Data Agents | Analytic, Interactions, Personality, and Financial paths |
+| Notebooks | EcoGentic journeys and JupyterHub |
+| Custom GPTs | Specialist agents |
+| Domain Catalog | Governed ontologies, plus Trino SQL |
+
+At install time you provide the license key (`MASTER_KEY`), the initial admin password, Cloud LLM settings (provider, endpoint, model, embedding model, credential, max tokens, timeout, SSL), a T0/T1/T2 size, and either an automatic hostname or your own domain. Shared data uses Amazon EFS (ReadWriteMany). TLS uses ACM or the ingress controller.
+
+Sign in to Workbench 2 as `admin@ecosystem.ai`. Score with `POST /invocations` (`params` is a JSON string) and send the outcome to `POST /response`.
+
+Terms: [Marketplace terms](/docs/marketplace/terms). The sections below describe the earlier virtual-machine listings.
+
 - [Platform Option](https://aws.amazon.com/marketplace/pp/prodview-kr3eipc3hphes)
     - [Spend Personality Option](https://aws.amazon.com/marketplace/pp/prodview-2kak2xwqqgd3w)
 
@@ -7738,6 +7829,21 @@ URL: https://developer.ecosystem.ai/docs/marketplace/azure
 Summary: Setup ecosystem.Ai Platform in Azure
 
 # Guide to Setting up ecosystem.Ai Platform in Azure
+
+## ecosystem.Ai Platform 2.0 (v2.0.1)
+
+Version 2.0.1 is a new Azure Application. It is not an Azure Container (CNAB) offer, because that offer type accepts only AMD64 images. The package creates an AKS cluster on ARM64 node sizes (`Standard_D4ps_v5` and larger), Application Gateway ingress, and an Azure Premium Files NFSv4.1 share for the shared data volume.
+
+The same eight applications ship as on AWS: Workbench 2, Prediction Server with embedded MongoDB 8.3 (`ecosystem-server:54445`), Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, and Domain Catalog, plus Trino.
+
+Two plans are published with the offer:
+
+- **Solution template** for evaluation with your license key.
+- **Managed application** for enterprise purchase and Azure MACC drawdown.
+
+Install-time questions cover the license key, admin password, Cloud LLM provider and credentials, storage quota, automatic or custom DNS, and T0/T1/T2 node pools. Deleting the resource group or the managed application removes the cluster and the disks created for it.
+
+The closed loop is `POST /invocations` then `POST /response`. Terms: [Marketplace terms](/docs/marketplace/terms). The cards below are the earlier virtual-machine offers.
 
 - [Platform Option](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai-platform)
     - [Full Option](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai)
@@ -7811,6 +7917,8 @@ Welcome to the introductory guide for deploying ecosystem.Ai. This document prov
 
 In this guide, you will explore various options to efficiently deploy ecosystem.Ai in a variety of environments, customized to meet your specific requirements.
 
+**ecosystem.Ai Platform 2.0 (v2.0.1)** is the current marketplace release. It is one Kubernetes install on Amazon EKS or Azure Kubernetes Service: Workbench 2, the Prediction Server with embedded MongoDB 8.3, Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, and Domain Catalog. The T0 size needs at least 8 vCPU and 32 GiB RAM. See [AWS](/docs/marketplace/aws), [Azure](/docs/marketplace/azure), and [Marketplace terms](/docs/marketplace/terms). The virtual-machine offers on those pages are the earlier listings.
+
 ## Minimum Requirements
 
 The minimum requirements for running ecosystem.Ai for testing purposes:
@@ -7820,6 +7928,39 @@ The minimum requirements for running ecosystem.Ai for testing purposes:
 - 48 GiB Minimum Storage
 
 **Note:** With everything enabled for basic usage, you might consider increasing the RAM to 24GB for smoother operation.
+
+---
+
+## Marketplace Terms
+
+Source: `docs/marketplace/terms.mdx`
+URL: https://developer.ecosystem.ai/docs/marketplace/terms
+Summary: Terms for ecosystem.Ai Platform 2.0 on AWS Marketplace and Microsoft Marketplace
+
+# Marketplace terms
+
+Purchases of **ecosystem.Ai Platform 2.0 (v2.0.1)** on AWS Marketplace or Microsoft Marketplace are covered by three documents, in this order:
+
+1. The AWS Marketplace Standard Contract, or the Microsoft Standard Contract, for that purchase.
+2. The marketplace EULA addendum packaged with version 2.0.1 (license key, in-account data, and deletion).
+3. The website [Terms of Service](https://ecosystem.ai/tos).
+
+## What you agree to at install time
+
+- You supply a license key (`MASTER_KEY`). Evaluation keys are for the T0 preset. Production keys come from ecosystem.Ai or your certified partner.
+- The platform deploys into **your** AWS or Azure account. Subscriber data, models, and interaction logs stay there.
+- Cloud LLM calls use the provider, endpoint, model, and credential you enter. Those calls leave the cluster only to the endpoint you configured.
+- You can delete the CloudFormation stack, the Azure resource group, or the managed application. Resources created for that install, including disks with delete reclaim policy, are removed with it.
+
+## Scoring loop
+
+Runtime scoring is `POST /invocations`, then `POST /response` for the recommendation the caller accepted. The `params` field on `/invocations` is a JSON string.
+
+## Support
+
+- sales@ecosystem.ai for private offers and license keys
+- support@ecosystem.ai for enterprise support
+- Documentation: [Marketplace](/docs/marketplace)
 
 ---
 
@@ -16641,6 +16782,26 @@ URL: https://developer.ecosystem.ai/docs/quick_start/kubernetes
 
 # Kubernetes
 
+## Platform 2.0.1
+
+**ecosystem.Ai Platform 2.0 (v2.0.1)** installs as one Helm release or one Kustomize overlay. The release contains Workbench 2, the Prediction Server, Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, Domain Catalog, and Trino.
+
+MongoDB 8.3 is embedded in the Prediction Server. Every other application uses `ecosystem-server:54445`. Do not deploy a second MongoDB for this release. Set `MONGO_RS_HOST=ecosystem-server:54445` and leave `NO_MONGODB` unset on the server container so the replica set starts. Runtime sets `NO_MONGODB=true` because it does not host the database.
+
+Shared files use a ReadWriteMany volume (Amazon EFS or Azure Premium Files NFSv4.1). License key, initial admin password, and Cloud LLM settings are injected before the pods start.
+
+After the ingress is ready:
+
+- Workbench 2: `https://<endpoint>/`
+- Health: `https://<endpoint>/ping`
+- Score: `POST https://<endpoint>/invocations` with `params` as a JSON string
+- Learn: `POST https://<endpoint>/response` using that recommendation’s `uuid` and `offer_name`
+- MCP: `POST https://<endpoint>/mcp`
+
+Marketplace install steps: [AWS](/docs/marketplace/aws) and [Azure](/docs/marketplace/azure).
+
+The manifests below are component examples for a local cluster such as Minikube. For the 2.0.1 stack, use the Helm chart `ecosystem-platform` version `2.0.1` instead of assembling these samples by hand.
+
 ecosystem.Ai can be installed on Kubernetes. This can be tested locally using Minikube. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
 
 The Runtime service in these samples listens on **8091**. After pods are ready, score with `POST /invocations` then `POST /response` (`params` is a JSON string). Grafana is optional. OpenShift-specific samples: [OpenShift](/docs/quick_start/openshift). Overview: [Quick Start](/docs/quick_start). Demo: [https://medemo.ecosystem.ai](https://medemo.ecosystem.ai).
@@ -22451,7 +22612,7 @@ Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 
 ## 0.9.7.x (Oct 2026)
 
-Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed **5 Nov 2026** on Docker Hub; earlier pushes 24 Oct and 3 Nov 2026).
+Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed **9 Nov 2026** on Docker Hub; earlier pushes 24 Oct, 3 Nov, and 5 Nov 2026).
 
 ### New functionality
 - **SQL Server stored procedures** — `SqlServerWorker`, `POST /callSqlServerProcedure`, env `SQLSERVER_URL`, `SQLSERVER_USER`, `SQLSERVER_PASSWORD`, properties `sqlserver.*`, `mssql-jdbc` **13.6.0**. See [SQL Server](/docs/configuration/data/sqlserver).
@@ -22804,7 +22965,9 @@ Summary: Workbench campaign documents, delivery channels, runs, dry checks, and 
 
 # Campaign delivery
 
-Workbench manages **delivery campaigns** (email, SMS, WhatsApp, schedules, and agent-assisted outreach). That layer is separate from **Runtime scoring campaigns** (`campaign` / `subcampaign` on `POST /invocations`).
+**Workbench** holds the technical **master campaign record**: import/export, process graph, compile vs trigger or run, versions, and runs history (`/entities/campaigns` in the Workbench web app). **Campaign Management** (the Campaign Platform web app — for example **campaign.ecosystem.ai**) is a **business-user overlay** that **pulls campaigns from Workbench** for portfolio, design, operations, calendar, analytics, work queue, and **two-gate approvals** (Workbench technical approval, then Campaign Manager business approval). It includes **Campaign Agent** chat (see [Claude Agent — Campaign Management](/docs/workers/agent_framework/claude-agent#campaign-management)).
+
+Workbench also manages **delivery campaigns** (email, SMS, WhatsApp, schedules, and agent-assisted outreach) through the campaign document APIs. That layer is separate from **Runtime scoring campaigns** (`campaign` / `subcampaign` on `POST /invocations`).
 
 | Layer | What it is | Typical API |
 | --- | --- | --- |
@@ -22817,7 +22980,9 @@ Runtime `channel` values such as `app`, `web`, or `api` describe the scoring con
 
 | Surface | Use for |
 | --- | --- |
-| **Campaign manager** (Intelligent Sales) | Edit campaign documents, channels, schedules, and triggers |
+| **Workbench campaigns** (`/entities/campaigns`) | Master record: **Generate**, new campaign, **import/export** (campaign JSON), graph editor (**Extract**, **Recommend**, **Python**, **Branch**, **Defer**, **Write**, **Dispatch**, **State**, …), **Compile** vs **Trigger/Run**, **Versions**, **Runs** |
+| **Campaign Platform** (Campaign Management) | Overlay on Workbench: portfolio, campaigns, design, operations, calendar, analytics, work queue, **Approvals**, **Campaign Agent** — see [Claude Agent — Campaign Management](/docs/workers/agent_framework/claude-agent#campaign-management) |
+| **Campaign manager** (Intelligent Sales) | Edit campaign documents, channels, schedules, and triggers inside Workbench |
 | **Custom Forms** | Capture structured inputs linked to campaign workflows |
 | **Data Management & Campaign** | Join audience data with campaign entities |
 | **Time Process Campaign** | Time-based process steps on a campaign graph |
@@ -22843,7 +23008,7 @@ flowchart LR
   run --> learn
 ```
 
-1. **Plan** audience, content, and channels on the campaign document (or with the Campaign Agent / Outreach Agent where enabled).
+1. **Plan** audience, content, and channels on the campaign document (or with **Campaign Agent** / **Outreach Agent** where enabled). Campaign Agent can start and stop a Workbench run, just as an operator can from **Operations**. It can queue changes for **Approvals**. Run-calendar edits can remain draft until pushed; undo scope is limited to overlay and finance changes in the product UI.
 2. **Wire** delivery channels — `GET /public/v1/campaigns/channel-catalog`, then set selection with `PUT …/channel-selection` ([Public API](/docs/configuration/workbench_apis/public#campaigns)).
 3. **Validate before live send** — prefer a **dry or sample run** first:
    - Outreach MCP: `run_outreach_campaign` with `sample_run` and optional `test_target_email` ([MCP tool table](/docs/configuration/workbench_apis/mcp)).
@@ -22904,7 +23069,7 @@ Create a unique *Prediction Case ID* name. Add a *Description* that is relevant 
 
 Input the properties details and set the *Version* of the deployment step.
 
-This *Version* number should be updated every time you make changes to the deployment. Specify the *Environment Status* in which you will be deploying your configuration. Then input the *Performance Expectation* and *Complexity* settings for your set up. **Update** your deployment before proceeding to selecting and filling in the details in the settings dropdowns.
+This *Version* number should be updated every time you make changes to the deployment. Specify **Environment Status** — **Experiment Phase**, **Validate and Test Phase**, **Production**, or **Archived**. On the latest Workbench image, the project Deployments table also shows that status in a dedicated column; older builds only show it here on the edit form. Then input the *Performance Expectation* and *Complexity* settings for your set up. **Update** your deployment before proceeding to selecting and filling in the details in the settings dropdowns.
 
 ## Deployment Settings
 Selecting any of the checkboxes on the right, will reveal the <u>Settings</u> sections relevant to that option, at the bottom of the page.
@@ -24186,6 +24351,8 @@ In the <u>Deployment</u> section of the Workbench, you will find <u>Projects</u>
 This is where you will be able to configure the parameters of your deployment, and push it to the desired environment.
 Find your project in the list of projects and click on it to view or create the deployments for it.
 
+The project **Deployments** table lists **Deployment ID**, **Description**, **Version**, **Step Type**, **Algorithm**, **URL**, **Updated Date**, and **Actions**. On the latest **ecosystem-workbench2** Docker image (**refreshed 10 Nov 2026**), an **Environment Status** column is included so you can see **Experiment Phase**, **Validate and Test Phase**, **Production**, or **Archived** without opening each deployment. Older images omit that column; set **Environment Status** on the deployment edit form instead.
+
 ![deployments list](/images/recommender/6_Deployment/0_deployments.png)
 
 ## Add Deployment
@@ -24200,7 +24367,7 @@ Set the case configuration for your recommender deployment.
 - Add a *Description* that is relevant to the specific deployment you are configuring.
 - Add the *Type* and the *Purpose* of your deployment. You can leave the *Type* and *Purpose* blank if you are unsure of what to put there.
 - Input the properties details and set the *Version* of the deployment step. This *Version* number should be updated every time you make changes to the deployment.
-- Specify the *Environment Status* in which you will be deploying your configuration.
+- Specify **Environment Status**: **Experiment Phase**, **Validate and Test Phase**, **Production**, or **Archived**.
 - Then input the *Performance Expectation* and *Complexity* settings for your set up.
 
 ![Configure deployment](/images/recommender/6_Deployment/2_deployments_details.png)
@@ -26259,6 +26426,8 @@ POST /api/v1/algorithms/sentimental-equilibrium/process
 
 ## Campaign Management
 
+In the Campaign Platform (for example **campaign.ecosystem.ai**), **Campaign Agent** is the AI Assist chat. Campaign Agent can start and stop a Workbench run, just as an operator can from **Operations**. Proposals can queue for **Approvals**.
+
 Set:
 
 ```bash
@@ -26936,9 +27105,16 @@ Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`321
 
 ## November 2026
 
-Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **5 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**, then again **10 Nov 2026 ~19:15 UTC**. **`ecosystem-server`** `arm64` was repushed **10 Nov 2026 ~08:24 UTC**. Runtime **`097-latest`** / **`097-arm64`** were repushed **9 Nov 2026 ~18:47 UTC** (same 0.9.7 train; pin by tag or digest in production).
 
 - **Voice Bot 1 (build 3216).** Hands-free **browser** voice on the Claude Agent composer (`/assistant` and the operator drawer): microphone via Web Speech recognition, spoken replies via synthesis, same session as typed chat — [Claude Agent — Hands-free voice](/docs/workers/agent_framework/claude-agent#hands-free-voice). No new backend route or operator env vars.
+
+**9–10 Nov 2026** (latest Workbench / Server / Runtime images on Docker Hub):
+
+- **Deployments table — Environment Status column.** The project Deployments list adds **Environment Status** beside existing columns (**Experiment Phase**, **Validate and Test Phase**, **Production**, **Archived**). The edit form already exposed these values; the column arrives with the **10 Nov** Workbench image ([Deployment parameters](/docs/configuration/deployment/parameters)).
+- **Repositories — Python file link.** **Project Identity → Repositories** gains an optional **Python file** selector for **setup-python-generation** when linking GitHub/GitLab ([Project](/docs/configuration/project), [Modeling generation](/docs/configuration/modeling_generation)).
+- **Apache Hive (server).** ecosystem-server exposes Hive Data Management over HiveServer2 JDBC ([Apache Hive](/docs/configuration/data/hive)).
+- **Operator reliability.** GitLab remote **inspect** handles gateway **504** responses cleanly; deployment **pull** no longer returns opaque **500** errors when Mongo is unavailable; deployment **push** uses an updated prevent-push timeout; Git push status messages include the acting user.
 
 Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides/campaigns), [Deployment Test](/docs/configuration/deployment/test), [Modeling & Code Generation](/docs/configuration/modeling_generation)):
 
@@ -26965,7 +27141,7 @@ Build **`3216`** is the published Workbench 2.0.3 train as of **2026-11-05** unl
 - MCP tools for the **algorithm catalog**.
 - Spend / Money Personality **drift**.
 - Post-score and data-connection fixes for new corpora.
-- SQL Server stored procedures (`097-latest` / `097-arm64` images; repushed Nov 2026).
+- SQL Server stored procedures (`097-latest` / `097-arm64` images; repushed Nov 2026, latest **9 Nov 2026**).
 
 ### What to pin
 ```json
