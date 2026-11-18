@@ -2,7 +2,7 @@
 
 This file consolidates the ecosystem.Ai developer documentation for search indexing, LLM RAG, and offline reference. Content is derived from the published docs at https://developer.ecosystem.ai. MDX frontmatter, imports, and presentation components have been removed; technical prose, code, tables, and structure are preserved.
 
-Corpus: 275 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
+Corpus: 279 documents. Regenerate with `python3.14 scripts/generate_developer_content.py`.
 
 ## Document index
 
@@ -76,6 +76,8 @@ Corpus: 275 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Azure Marketplace](#docs-marketplace-azure) — `docs/marketplace/azure.mdx` — https://developer.ecosystem.ai/docs/marketplace/azure
 - [GCP Marketplace](#docs-marketplace-gcp) — `docs/marketplace/gcp.mdx` — https://developer.ecosystem.ai/docs/marketplace/gcp
 - [Intro](#docs-marketplace-index) — `docs/marketplace/index.mdx` — https://developer.ecosystem.ai/docs/marketplace
+- [Marketplace Terms](#docs-marketplace-terms) — `docs/marketplace/terms.mdx` — https://developer.ecosystem.ai/docs/marketplace/terms
+- [Visual Tour & 10-Container Guide](#docs-marketplace-visual-tour) — `docs/marketplace/visual-tour.mdx` — https://developer.ecosystem.ai/docs/marketplace/visual-tour
 - [Data Agents Analysis Views](#docs-modules-data-agents-analysis) — `docs/modules/data_agents/analysis.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/analysis
 - [Data Agents](#docs-modules-data-agents-index) — `docs/modules/data_agents/index.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents
 - [Interactions Analytic](#docs-modules-data-agents-interactions) — `docs/modules/data_agents/interactions.mdx` — https://developer.ecosystem.ai/docs/modules/data_agents/interactions
@@ -253,8 +255,10 @@ Corpus: 275 documents. Regenerate with `python3.14 scripts/generate_developer_co
 - [Claude Agent](#docs-workers-agent-framework-claude-agent) — `docs/workers/agent_framework/claude-agent.mdx` — https://developer.ecosystem.ai/docs/workers/agent_framework/claude-agent
 - [Agent Framework](#docs-workers-agent-framework-index) — `docs/workers/agent_framework/index.mdx` — https://developer.ecosystem.ai/docs/workers/agent_framework
 - [Journey Management](#docs-workers-agent-framework-journeys) — `docs/workers/agent_framework/journeys.mdx` — https://developer.ecosystem.ai/docs/workers/agent_framework/journeys
+- [Agents](#docs-workers-agents) — `docs/workers/agents.mdx` — https://developer.ecosystem.ai/docs/workers/agents
 - [Language Chat Models](#docs-workers-generative) — `docs/workers/generative.mdx` — https://developer.ecosystem.ai/docs/workers/generative
 - [Workers](#docs-workers-index) — `docs/workers/index.mdx` — https://developer.ecosystem.ai/docs/workers
+- [MCPs](#docs-workers-mcps) — `docs/workers/mcps.mdx` — https://developer.ecosystem.ai/docs/workers/mcps
 - [Python](#docs-workers-python) — `docs/workers/python.mdx` — https://developer.ecosystem.ai/docs/workers/python
 - [Worker Architecture](#docs-workers-worker-arch) — `docs/workers/worker_arch.mdx` — https://developer.ecosystem.ai/docs/workers/worker_arch
 - [Changelog](#changelog) — `changelog.mdx` — https://developer.ecosystem.ai/changelog
@@ -2766,6 +2770,20 @@ Enrichment options are used to perform feature engineering related actions.
 Enrich data with date related features for example day of week, month, year etc.
 ![image](/images/configuration/data/enrichments-dates.png)
 
+## Python scripts, pipelines, and collection transforms
+
+On **Data → Enrichment**, operators can run **Python scripts**, **custom pipelines**, **Foreign Key 1:N**, and **Foreign Key N:1** against a selected `database.collection`.
+
+As of Workbench **2.0.3** build **3283** (12 Nov 2026):
+
+- **Run** starts a **background job** instead of blocking the browser until the gateway times out. The UI polls `GET /api/v1/enrichment/jobs/{job_id}` (and the header **Jobs** menu lists queued, running, and stalled work) until the job reaches `Completed` or `Failed`.
+- **Syntax check** (`dry_run: true` on `POST /api/v1/enrichment/python/run`) still returns on the same request.
+- Large batch runs may continue for up to **24 hours** on the worker (subprocess ceiling), suitable for multi-million-document passes.
+- **Generate Python** can revise the script already in the editor (`existing_script`) and accept optional **extra** `database.collection` targets when the prompt names additional sources.
+- Scripts should emit a JSON line containing `"SCRIPT_RESULT"` so the UI can report counts such as `documents_processed` and `documents_updated`.
+
+Date, MCC, and personality-drift enrichments already used the same detached job pattern; script run, custom pipeline, 1:N, and N:1 now match that flow. See [Private API — Enrichment](/docs/configuration/workbench_apis/private#enrichment-files-search).
+
 ---
 
 ## Feature Engineering
@@ -4401,6 +4419,15 @@ OpenAI-compatible request fields that are not part of the core ecosystem.Ai rout
 ```
 
 Internal routing and secret fields are removed before the request is sent upstream.
+
+## Workbench Administration defaults
+
+**Administration → Generative Model** stores the platform default model and sampling parameters used by Workbench callers (distinct from per-deployment `prompt_parameters` on a Dynamic Engagement document).
+
+On images from **12 Nov 2026** onward:
+
+- **Temperature** can be cleared in the admin UI so the field is omitted on outbound LLM calls (models that reject `temperature` are handled via server-side param self-recovery on the remaining supported fields).
+- Marketplace and local installs that set **`gpt-6`** / **`gpt-6-luna`** at deploy time align with the defaults documented on [Marketplace Apps](/docs/marketplace) and the [Visual Tour](/docs/marketplace/visual-tour).
 
 ---
 
@@ -6879,7 +6906,7 @@ Workbench **API Management** (`/docs/configuration/api`) stores named Runtime te
 
 | Area | Typical prefix | Purpose |
 | --- | --- | --- |
-| Enrichment | `/enrichment` | Date, MCC, personality drift jobs |
+| Enrichment | `/enrichment` | Date, MCC, personality drift; Python run, pipelines, 1:N/N:1 (background jobs + `GET /enrichment/jobs/{job_id}`) |
 | Prompt enrichment | `/prompt-enrichment` | LLM document enrichment |
 | Filesystem | `/filesystem` | Browse worker files |
 | Search | `/search` | Global search |
@@ -7678,56 +7705,72 @@ Summary: How to install ecosystem.Ai locally
 
 Source: `docs/marketplace/aws.mdx`
 URL: https://developer.ecosystem.ai/docs/marketplace/aws
-Summary: Setup ecosystem.Ai Platform in AWS
+Summary: Deploy ecosystem.Ai Platform 2.0 on Amazon Elastic Kubernetes Service (EKS)
 
-# Guide to Setting up ecosystem.Ai Platform in AWS
+# AWS Marketplace (Amazon EKS)
 
-- [Platform Option](https://aws.amazon.com/marketplace/pp/prodview-kr3eipc3hphes)
-    - [Spend Personality Option](https://aws.amazon.com/marketplace/pp/prodview-2kak2xwqqgd3w)
+**ecosystem.Ai Platform 2.0** (`prod-4nh6hedmim7vq`) is a multi-architecture (`ARM64` AWS Graviton & `AMD64` x86_64) **Container Product** on AWS Marketplace that deploys the complete 10-container platform into **Amazon EKS** using either our **1-Click AWS CloudFormation UI Installer** (zero CLI required) or standard **Helm** chart installation.
 
-## ecosystem.Ai Platform (VM)
+- **AWS Marketplace Product Page:** [https://aws.amazon.com/marketplace/pp/prodview-v3nxr6ziemwau](https://aws.amazon.com/marketplace/pp/prodview-v3nxr6ziemwau)
+- **AWS Marketplace Launch Page:** [https://aws.amazon.com/marketplace/launch?productId=prod-4nh6hedmim7vq](https://aws.amazon.com/marketplace/launch?productId=prod-4nh6hedmim7vq)
+- **1-Click AWS CloudFormation Browser UI Installer (Zero CLI):** [Launch CloudFormation Stack](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://ecosystempredictors.s3.af-south-1.amazonaws.com/marketplace/2.0.1/aws-eks-cloudformation-2.0.1.yaml&stackName=ecosystem-platform)
+- **Visual Tour & 10-Container Architecture Guide:** [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Marketplace Terms:** [Marketplace Terms](/docs/marketplace/terms)
 
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
+---
 
-![image](/images/install/aws-install-01.png)
+## Option A: 1-Click Browser UI Install via AWS CloudFormation (Zero CLI)
 
-### Step 2: Setup Basic Settings
-- Select the correct subscription and ensure that you have app install rights.
-- Either use an existing group or create a new one.
-- Virtual machines in AWS have two distinct names: virtual machine name used as the AWS resource identifier, and in guest host name. When you create a VM in the portal, the same name is used for both the virtual machine name and the host name. The virtual machine name cannot be changed after the VM is created. You can change the host name when you log into the virtual machine.
-- Choose the AWS region that's right for you and your customers. Not all VM sizes are available in all regions.
-- The administrator username for the VM as ubuntu. Use the security credentials to access the VM.
+The CloudFormation installer (`aws-eks-cloudformation-2.0.1.yaml`) provisions or reuses your AWS landing zone and automatically installs the umbrella Helm chart into your EKS cluster:
 
-![image](/images/install/aws-install-02.png)
+1. Click **[Launch CloudFormation Stack](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://ecosystempredictors.s3.af-south-1.amazonaws.com/marketplace/2.0.1/aws-eks-cloudformation-2.0.1.yaml&stackName=ecosystem-platform)**.
+2. **Licensing, Admin Security & LLM**: Enter your `EcosystemMasterKey` (`MASTER_KEY`), `InitialAdminPassword` (for `admin@ecosystem.ai`), `MongodbPassword` (or `ExternalMongodbUri`), and LLM settings (defaults to `LlmProvider = openai` and `LlmModel = gpt-6-luna`).
+3. **Kubernetes 1.37, Architecture & Sizing**: `EksKubernetesVersion` defaults to **`1.37`**. Choose `NodeArchitecture` (`arm64` Graviton or `amd64` x86_64), instance type (e.g., `m7g.2xlarge`), and Runtime HPA max replicas.
+4. **Create New or Reuse Existing Infrastructure**:
+   - Leave `ExistingVpcId`, `ExistingPublicSubnetIds`, `ExistingPrivateSubnetIds`, `ExistingEfsFileSystemId`, and `ExistingSecretsBundleArn` blank to create a new VPC, Amazon EFS ReadWriteMany filesystem, and AWS Secrets Manager bundle automatically, or populate any of them to reuse your existing resources.
+5. **Subdomain Routing & TLS**:
+   - Set `CustomDomainName` (e.g., `ai.mycompany.com` or `<ALB_IP>.nip.io`) and optional `AcmCertificateArn`.
+6. Click **Create stack**.
 
-- Additional settings for security and availability.
+---
 
-[//]: # (![image]&#40;/images/install/aws-install-03.png&#41;)
+## Option B: Install into an Existing Amazon EKS Cluster via Helm
 
-### Step 3: Setup Networking
-- Use default networking settings when possible.
-- Ensure that security group allows for access to ports: 80, 3001, 3000, etc.
+```bash
+# 1. Authenticate Helm to AWS Marketplace ECR
+aws ecr get-login-password --region us-east-1 | \
+  helm registry login --username AWS --password-stdin 709825985650.dkr.ecr.us-east-1.amazonaws.com
 
-[//]: # (![image]&#40;/images/install/aws-install-04.png&#41;)
+# 2. Install ecosystem.Ai Platform 2.0 (ARM64 default; add --set global.arch=amd64 or -f values-amd64.yaml on x86_64 nodes)
+helm upgrade --install ecosystem \
+  oci://709825985650.dkr.ecr.us-east-1.amazonaws.com/ecosystem-ai/ecosystem-platform \
+  --version 2.0.15 \
+  --namespace ecosystem --create-namespace \
+  --set-string global.masterKey="<YOUR_MASTER_KEY>" \
+  --set-string global.initialAdminPassword="<YOUR_ADMIN_PASSWORD>" \
+  --set-string global.mongodbPassword="<YOUR_MONGO_PASSWORD>" \
+  --set-string global.ingress.baseDomain="<YOUR_BASE_DOMAIN>" \
+  --set-string global.llm.provider="openai" \
+  --set-string global.llm.model="gpt-6-luna" \
+  --set-string global.openaiApiKey="<OPTIONAL_LLM_API_KEY>"
+```
 
-### Step 4: Review Install Results
-- During install, all results can be reviewed.
-- When completed review the public IP address created and access via http://ip
+---
 
-## ecosystem.Ai Platform for Spend Personality
+## Subdomain Endpoints on AWS ALB Ingress
 
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
+The consolidated AWS ALB Ingress (`alb.ingress.kubernetes.io/group.name: ecosystem`) routes each of the 8 applications at root `path: /` on its own subdomain:
 
-![image](/images/install/aws-install-spend.png)
-
-**Tip:** - Ensure that you update your algorithm from the ecosystem.Ai website when needed.
-
-## Conclusion
-These options focus entirely on the cloud implementation. We also have other cloud types and on premise installations that can be done using various technologies.
+| Subdomain Host | Service & Port | Health / Entry Path |
+|---|---|---|
+| `workbench.<baseDomain>` | `workbench2:5270` (UI) & `:8004` (`/public/v1`) | `/` |
+| `server.<baseDomain>` | `ecosystem-server:3001` | `/api/v1/health` |
+| `runtime.<baseDomain>` | `ecosystem-runtime-solo:8091` | `/ping`, `POST /invocations`, `POST /response`, `POST /mcp` |
+| `campaign.<baseDomain>` | `ecosystem-campaign:54310` | `/` |
+| `data-agents.<baseDomain>` | `ecosystem-data-agents:54325` | `/` |
+| `notebooks.<baseDomain>` | `ecosystem-notebooks:8010` | `/` |
+| `custom-gpts.<baseDomain>` | `ecosystem-custom-gpts:54320` | `/` |
+| `domain-catalog.<baseDomain>` | `ecosystem-domain-catalog:8080` | `/v1/health` |
 
 ---
 
@@ -7735,55 +7778,80 @@ These options focus entirely on the cloud implementation. We also have other clo
 
 Source: `docs/marketplace/azure.mdx`
 URL: https://developer.ecosystem.ai/docs/marketplace/azure
-Summary: Setup ecosystem.Ai Platform in Azure
+Summary: Deploy ecosystem.Ai Platform 2.0 on Microsoft Azure Kubernetes Service (AKS)
 
-# Guide to Setting up ecosystem.Ai Platform in Azure
+# Microsoft Azure Marketplace (AKS)
 
-- [Platform Option](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai-platform)
-    - [Full Option](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai)
-    - [Spend Personality Option](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystem-spend-personality)
+**ecosystem.Ai Platform 2.0** on Microsoft Azure Marketplace is delivered as an **Azure Application** (Solution Template & Managed Application) that provisions or reuses an ARM64 **Azure Kubernetes Service (AKS)** cluster, **Application Gateway Ingress Controller (AGIC)**, **Let's Encrypt multi-SAN TLS**, and **Azure Files** shared storage inside your subscription.
 
-## ecosystem.Ai Platform (VM)
+- **Visual Tour & 10-Container Architecture Guide:** [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Marketplace Terms:** [Marketplace Terms](/docs/marketplace/terms)
 
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
+---
 
-![image](/images/install/azure-install-01.png)
+## Marketplace Listing in Azure Portal
 
-### Step 2: Setup Basic Settings
-- Select the correct subscription and ensure that you have app install rights.
-- Either use an existing group or create a new one.
-- Virtual machines in Azure have two distinct names: virtual machine name used as the Azure resource identifier, and in guest host name. When you create a VM in the portal, the same name is used for both the virtual machine name and the host name. The virtual machine name cannot be changed after the VM is created. You can change the host name when you log into the virtual machine.
-- Choose the Azure region that's right for you and your customers. Not all VM sizes are available in all regions.
-- The administrator username for the VM as azureuser. Use the security credentials to access the VM.
+- **ecosystem.Ai Platform 2.0 (`ecosystemai-platform-2`)**:
+  [Open in Azure Portal Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystemai-platform-2-preview)
 
-![image](/images/install/azure-install-02.png)
+Two plans are available:
+1. **Solution Template (`Evaluate`)** — Deploy directly into your own resource group using an evaluation or enterprise `MASTER_KEY`.
+2. **Managed Application (`Enterprise`)** — Enterprise procurement with Azure MACC drawdown.
 
-- Additional settings for security and availability.
+---
 
-![image](/images/install/azure-install-03.png)
+## Step-by-Step Deployment Guide
 
-### Step 3: Setup Networking
-- Use default networking settings when possible.
-- Ensure that security group allows for access to ports: 80, 3001, 3000, etc.
+### Step 1: Basics, Licensing & Initial Admin Credentials
+1. Open the offer in the Azure Portal and click **Create**.
+2. Select your **Subscription** and **Resource Group** (create a new resource group such as `ecosystem-rg` or select an existing group where your VNet/Storage resides), and choose an **Azure Region** that supports ARM64 `Standard_D4ps_v5` VMs (e.g., `East US`, `West Europe`, `North Europe`, `Central US`).
+3. Enter your **Installation Name** (prefix for Azure resources), **Administrator Email** (used for Let's Encrypt TLS certificate notifications), **License Key (`MASTER_KEY`)**, **Initial Admin Password** (sets the first-boot password for `admin@ecosystem.ai`), and **Embedded MongoDB Password**.
 
-![image](/images/install/azure-install-04.png)
+### Step 2: Cloud LLM & Generative AI Settings
+Configure the default generative AI provider injected into all containers (`ecosystem-server`, `workbench2`, `ecosystem-notebooks`, `ecosystem-campaign-management`, `ecosystem-data-agents`, `ecosystem-custom-gpts`, and `ecosystem-domain-catalog`) before startup:
+- **LLM Provider**: `openai`, `azure_openai`, `bedrock`, `anthropic`, or `ollama`
+- **LLM Endpoint URL**: e.g., `https://api.openai.com/v1`
+- **Primary Model**: default `gpt-6-luna`
+- **Embedding Model**: default `text-embedding-3-small`
+- **API Key / Credential**, **Max Tokens** (`64000`), and **Read Timeout** (`600000` ms)
 
-### Step 4: Review Install Results
-- During install, all results can be reviewed.
-- When completed review the public IP address created and access via http://ip
+### Step 3: Cluster Sizing (`T0` / `T1` / `T2`), Kubernetes 1.37 & ARM64 Node Pools
+- **Kubernetes Version**: Defaults to **Kubernetes `1.37`** (`1.37.1`).
+- Choose a deployment tier preset (`T0` Evaluate, `T1` Starter Production, or `T2` Enterprise) and ARM64 VM size (`Standard_D4ps_v5`, `Standard_D8ps_v5`, `Standard_D16ps_v5`, or `Standard_E8ps_v5`).
+- Set the **Runtime Instance Count** and **Runtime HPA Max Replicas**.
 
-## ecosystem.Ai Platform (Kubernetes)
+### Step 4: Networking, Storage & Subdomain Routing (Create New or Reuse Existing)
+- **Virtual Network & Subnets**: Create a new `/16` VNet with `/22` AKS and Application Gateway subnets, or select an existing VNet and subnets (including from another resource group).
+- **Storage Account & Azure File Share**: Create a new Storage Account and File Share for `/data`, `/modeling`, `/config`, and `/database`, or attach an existing Storage Account and File Share.
+- **Public IP & Domain Mode**:
+  - **Automatic Mode (`useCustomDomain = false`, default)**: No DNS zone required. The installer automatically provisions a multi-SAN Let's Encrypt TLS certificate and routes all 8 applications on dedicated `*.<PUBLIC_IP>.nip.io` subdomains at root `path: /`:
+    - `https://workbench.<PUBLIC_IP>.nip.io/` (and `https://<PUBLIC_FQDN>/`)
+    - `https://server.<PUBLIC_IP>.nip.io/api/v1/health`
+    - `https://runtime1.<PUBLIC_IP>.nip.io/ping` (`POST /invocations`, `POST /response`, `POST /mcp`)
+    - `https://campaign.<PUBLIC_IP>.nip.io/`
+    - `https://data-agents.<PUBLIC_IP>.nip.io/`
+    - `https://notebooks.<PUBLIC_IP>.nip.io/`
+    - `https://custom-gpts.<PUBLIC_IP>.nip.io/`
+    - `https://domain-catalog.<PUBLIC_IP>.nip.io/v1/health`
+  - **Custom Domain Mode (`useCustomDomain = true`)**: Select your existing **Azure DNS Zone**; `external-dns` and `cert-manager` automatically create DNS records and issue a wildcard TLS certificate for `<hostName>.<dnsZone>`, `<hostName>server.<dnsZone>`, `<hostName>runtime1.<dnsZone>`, `<hostName>campaign.<dnsZone>`, `<hostName>dataagents.<dnsZone>`, `<hostName>notebooks.<dnsZone>`, `<hostName>customgpts.<dnsZone>`, and `<hostName>domaincatalog.<dnsZone>`.
 
-### Step 1: Find the App in Marketplace
-- Select the App to install and review your dependencies.
-- Review base functionality and start install by clicking "Create".
+---
 
-**Tip:** - Ensure that you update your algorithm from the ecosystem.Ai website when needed.
+## Verifying Your Deployment & Closed-Loop Scoring
 
-## Conclusion
-These options focus entirely on the cloud implementation. We also have other cloud types and on premise installations that can be done using various technologies.
+Once the deployment completes, open the **Outputs** tab in your Azure Deployment blade to view all 8 HTTPS URLs (`workbenchHttpsUrl`, `serverHttpsUrl`, `runtimeHttpsUrl`, `campaignHttpsUrl`, `dataAgentsHttpsUrl`, `notebooksHttpsUrl`, `customGptsHttpsUrl`, `domainCatalogHttpsUrl`).
+
+Sign in to Workbench 2 at `workbenchHttpsUrl` with username `admin@ecosystem.ai` and the Initial Admin Password you configured.
+
+Real-time scoring follows the closed-loop contract against `runtimeHttpsUrl`:
+1. `POST /invocations` (`params` is a JSON string)
+2. `POST /response` (pass the accepted offer's `uuid` and `offer_name`)
+
+---
+
+## Clean Uninstall
+
+Deleting the Azure Resource Group (Solution Template) or the Managed Application removes the AKS cluster, the managed `MC_*` node resource group, Application Gateway, Public IP, VNet, Storage Account, and Managed Identities.
 
 ---
 
@@ -7791,11 +7859,81 @@ These options focus entirely on the cloud implementation. We also have other clo
 
 Source: `docs/marketplace/gcp.mdx`
 URL: https://developer.ecosystem.ai/docs/marketplace/gcp
-Summary: Setup ecosystem.Ai Platform in GCP
+Summary: Deploy ecosystem.Ai Platform 2.0 on Google Kubernetes Engine (GKE)
 
-# Guide to Setting up ecosystem.Ai Platform in GCP
+# Google Cloud Marketplace (GKE)
 
-Coming Soon
+**ecosystem.Ai Platform 2.0** (`ecosystemai-platform-2`) is a **Google Cloud Marketplace Kubernetes Application** that deploys the complete 10-container platform onto **Google Kubernetes Engine (GKE)** with a consolidated GCE External HTTP(S) Load Balancer, an 8-domain Google-managed TLS certificate (`ManagedCertificate`), HTTP-to-HTTPS redirect (`FrontendConfig`), and persistent shared storage (`standard-rwo` or Filestore).
+
+- **Visual Tour & 10-Container Architecture Guide:** [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Marketplace Terms:** [Marketplace Terms](/docs/marketplace/terms)
+
+---
+
+## Step 1: Create or Select a GKE Cluster
+
+You can select an existing GKE cluster in the Google Cloud Marketplace deployment wizard or create a new **Kubernetes 1.37** ARM64 (`c4a-standard-4`) or AMD64 GKE cluster:
+
+```bash
+gcloud container clusters create ecosystem-cluster \
+  --cluster-version=1.37 \
+  --zone=us-central1-a \
+  --machine-type=c4a-standard-4 \
+  --num-nodes=3 \
+  --addons=HttpLoadBalancing,HorizontalPodAutoscaling
+```
+
+---
+
+## Step 2: Deploy via Google Cloud Marketplace UI or Helm
+
+### Option A: Google Cloud Console Click-to-Deploy
+1. Select **ecosystem.Ai Platform 2.0** (`ecosystemai-platform-2`) in Google Cloud Marketplace and click **Configure**.
+2. Choose your **GKE Cluster**, **Namespace**, and **App Instance Name**.
+3. Enter your **ecosystem.Ai License Key (`MASTER_KEY`)**, **Initial Admin Password**, **Embedded MongoDB Password**, **Base Domain for Subdomain Routing** (`global.ingress.baseDomain`, e.g., `ai.mycompany.com` or `<GCE_STATIC_IP>.nip.io`), and optional **Cloud LLM Settings** (default model `gpt-6-luna`).
+4. Click **Deploy**.
+
+### Option B: Direct Helm Install on GKE
+
+```bash
+helm upgrade --install ecosystem oci://gcr.io/ecogenetic-public/ecosystemai-platform-2/chart/ecosystem-platform \
+  --namespace default \
+  --set-string ecosystem-server.server.deployment.env.MASTER_KEY="<YOUR_MASTER_KEY>" \
+  --set-string global.initialAdminPassword="<YOUR_ADMIN_PASSWORD>" \
+  --set-string global.mongodbPassword="<YOUR_MONGO_PASSWORD>" \
+  --set-string global.ingress.baseDomain="<YOUR_BASE_DOMAIN>"
+```
+
+---
+
+## Subdomain Routing & Google-Managed TLS (`ManagedCertificate`)
+
+When `global.ingress.baseDomain` is set, the chart provisions a Google `ManagedCertificate` and GCE `Ingress` covering all 8 application subdomains at root `path: /`:
+
+- `https://workbench.<baseDomain>/` — Workbench 2 Operator UI (`:5270`) & Public API (`/public/v1` on `:8004`)
+- `https://server.<baseDomain>/api/v1/health` — Prediction Server (`:3001`) + Embedded MongoDB 9.0 (`:54445`) + H2O (`:54321`)
+- `https://runtime.<baseDomain>/ping` — Runtime 0.9.7 (`:8091` — `POST /invocations`, `POST /response`, `POST /mcp`)
+- `https://campaign.<baseDomain>/` — Agentic Campaign Management (`:54310`)
+- `https://data-agents.<baseDomain>/` — LangGraph Data Analysis Agents (`:54325`)
+- `https://notebooks.<baseDomain>/` — EcoGentic & Notebooks (`:8010`)
+- `https://custom-gpts.<baseDomain>/` — Custom GPTs / Managed Agents (`:54320`)
+- `https://domain-catalog.<baseDomain>/v1/health` — Domain Ontology Catalog (`:8080`)
+
+---
+
+## Clean 2-Step GKE Teardown (Preventing Orphaned Disks & Load Balancers)
+
+Before deleting a test GKE cluster, always uninstall the Helm release and delete the `PersistentVolumeClaim` first so the GKE Ingress controller removes external Compute Engine forwarding rules/NEGs and the Persistent Disk cleanly:
+
+```bash
+# 1. Uninstall the release and delete PVCs first
+helm uninstall ecosystem -n default
+kubectl delete pvc --all -n default
+# Wait ~60 seconds for GCE Ingress forwarding rules and NEGs to finish deleting
+
+# 2. Delete the GKE cluster
+gcloud container clusters delete ecosystem-cluster --zone=us-central1-a --quiet
+```
 
 ---
 
@@ -7803,23 +7941,206 @@ Coming Soon
 
 Source: `docs/marketplace/index.mdx`
 URL: https://developer.ecosystem.ai/docs/marketplace
-Summary: Introduction to deploying ecosystem.Ai in a Cloud Environment
+Summary: Deploying ecosystem.Ai Platform 2.0 across Microsoft Azure AKS, AWS EKS, and Google Cloud GKE
 
-# Deployment Introduction
+# Cloud Marketplace Deployment Overview
 
-Welcome to the introductory guide for deploying ecosystem.Ai. This document provides an initial overview, featuring a comparison table and references to detailed guides, ensuring a thorough understanding of cloud deployment strategies. Please contact ecosystem.Ai for additional information on enterprise deployment options.
+**ecosystem.Ai Platform 2.0** deploys as a unified 10-container Kubernetes stack inside your own cloud perimeter across all three major cloud marketplaces:
 
-In this guide, you will explore various options to efficiently deploy ecosystem.Ai in a variety of environments, customized to meet your specific requirements.
+- **[Visual Tour & 10-Container Architecture Guide](/docs/marketplace/visual-tour)** — Full 10-container breakdown, subdomain routing topology, and 10 live operator Workbench 2 screen clippings.
+- **[Microsoft Azure Marketplace (AKS — Kubernetes 1.37)](/docs/marketplace/azure)** — Azure Application Solution Template & Managed Application deploying onto ARM64 Azure Kubernetes Service (Kubernetes `1.37`, `Standard_D4ps_v5`+, default LLM model `gpt-6-luna`) with Application Gateway Ingress, Let's Encrypt TLS, and Azure Files shared storage.
+- **[AWS Marketplace (EKS — Kubernetes 1.37)](/docs/marketplace/aws)** — Multi-arch (`ARM64` Graviton & `AMD64` x86_64) Container Product (`prod-4nh6hedmim7vq`) with a 1-Click AWS CloudFormation UI installer (Kubernetes `1.37`, default LLM model `gpt-6-luna`) and umbrella Helm chart (`ecosystem-platform`).
+- **[Google Cloud Marketplace (GKE — Kubernetes 1.37)](/docs/marketplace/gcp)** — Kubernetes Application (`ecosystemai-platform-2`) deploying onto Google Kubernetes Engine (Kubernetes `1.37`, `c4a-standard-4` ARM64 or AMD64, default LLM model `gpt-6-luna`) with GKE `ManagedCertificate` HTTPS ingress.
+- **[Marketplace Terms](/docs/marketplace/terms)** — Standard marketplace contract hierarchy, license key (`MASTER_KEY`), data sovereignty, and resource cleanup guarantees.
 
-## Minimum Requirements
+---
 
-The minimum requirements for running ecosystem.Ai for testing purposes:
+## What Ships in Platform 2.0
 
-- 16 GiB RAM
-- 4 vCPU
-- 48 GiB Minimum Storage
+Every cloud marketplace install provisions the same 10-container stack with embedded MongoDB 9.0 (`ecosystem-server:54445`) and Trino SQL:
 
-**Note:** With everything enabled for basic usage, you might consider increasing the RAM to 24GB for smoother operation.
+| Service | Subdomain (`<baseDomain>` = `.nip.io` or `<dnsZone>`) | Ports | Purpose |
+|---|---|---|---|
+| **Workbench 2** | `workbench.<baseDomain>` | `:5270` UI, `:8004` Public API, `:8001` Private API, `:9090` Scorer | Primary operator SPA, Ecosystem Agent, Simulations Lab, Analytics (`/analytics/`), Network Graph (`/networks/`) |
+| **Prediction Server** | `server.<baseDomain>` | `:3001` API, `:54445` MongoDB 9.0, `:27028` `mongot`, `:54321` H2O | Modeling server, embedded MongoDB 9.0 replica set, vector search, H2O AutoML |
+| **Runtime 0.9.7 (HPA)** | `runtime.<baseDomain>` / `runtime1.<baseDomain>` | `:8091` | Closed-loop scoring: `POST /invocations` -> `POST /response`, `POST /mcp`, `GET /ping` |
+| **Campaign Management** | `campaign.<baseDomain>` | `:54310` UI, `:54311` API | Agentic multi-stage campaign planning, governance, and execution |
+| **Data Analysis Agents** | `data-agents.<baseDomain>` | `:54325` UI, `:54324` FastAPI | LangGraph extraction, preparation, categorical, actuarial, personality, and financial analytics |
+| **EcoGentic & Notebooks** | `notebooks.<baseDomain>` | `:8010` EcoGentic API, `:8000` Notebooks | Multi-channel conversational agent journeys and interactive notebooks |
+| **Custom GPTs** | `custom-gpts.<baseDomain>` | `:54320` UI, `:54349` API | Specialist RAG and domain-grounded managed agents |
+| **Domain Catalog** | `domain-catalog.<baseDomain>` | `:8080` | Governed OWL/SKOS domain ontologies and SHACL validation shapes |
+| **Trino SQL** | `trino.<baseDomain>` (internal `trino:8080`) | `:8080` | Distributed ANSI SQL federated over `ecosystem-server:54445` |
+
+---
+
+## Sizing Presets (`T0` / `T1` / `T2`)
+
+| Tier | Profile | Recommended Node Pool | Storage | Runtime HPA |
+|---|---|---|---|---|
+| **T0 — Evaluate** | Evaluation & sandbox testing | 2-3x 4 vCPU / 16 GiB RAM (`Standard_D4ps_v5` / `m7g.xlarge` / `c4a-standard-4`) | 100-250 GiB | `1..2` replicas |
+| **T1 — Starter Production** | Departmental & mid-scale production | 3-4x 8 vCPU / 32 GiB RAM (`Standard_D8ps_v5` / `m7g.2xlarge` / `c4a-standard-8`) | 250-500 GiB | `2..6` replicas |
+| **T2 — Enterprise** | High-throughput telco CVM & banking | Dedicated Base, Runtime & Notebooks node pools (`16+` vCPU / `64+` GiB RAM) | 1 TiB+ | `4..16` replicas |
+
+---
+
+## Create New vs. Reuse Existing Infrastructure
+
+All marketplace installers support either creating new cloud infrastructure or attaching your existing enterprise resources:
+
+| Resource | Azure AKS | AWS EKS | Google Cloud GKE |
+|---|---|---|---|
+| **VPC / VNet & Subnets** | Create new `/16` VNet + `/22` subnets or reuse existing VNet/subnets (including cross-resource-group) | Create new VPC/subnets or pass `ExistingVpcId`, `ExistingPublicSubnetIds`, `ExistingPrivateSubnetIds` | Deploy into any new or existing GKE cluster & VPC |
+| **Shared Storage (`ReadWriteMany` / PVC)** | Create new Storage Account & Azure File Share or reuse existing | Create new Amazon EFS or pass `ExistingEfsFileSystemId` / `global.sharedPvcName` | Create new PVC (`standard-rwo` / Filestore) or reuse existing PVC |
+| **Secrets & Credentials** | Pre-startup `ecosystem-secrets` + `azure-secret` | AWS Secrets Manager + Kubernetes Secret (`ExistingSecretsBundleArn` / `existingSecretName`) | Pre-startup or existing Kubernetes Secret (`existingSecretName`) |
+| **Ingress, Subdomains & TLS** | Automatic `*.<PUBLIC_IP>.nip.io` or Custom Azure DNS Zone with Let's Encrypt TLS | Consolidated ALB Ingress (`<app>.<baseDomain>`) with ACM TLS | Consolidated GCE Ingress (`<app>.<baseDomain>`) with 8-domain `ManagedCertificate` |
+| **MongoDB** | Embedded MongoDB 9.0 (`ecosystem-server:54445`) or `externalMongodbUri` | Embedded MongoDB 9.0 (`ecosystem-server:54445`) or `ExternalMongodbUri` | Embedded MongoDB 9.0 (`ecosystem-server:54445`) or `global.externalMongodbUri` |
+
+---
+
+## Marketplace Terms
+
+Source: `docs/marketplace/terms.mdx`
+URL: https://developer.ecosystem.ai/docs/marketplace/terms
+Summary: Terms for ecosystem.Ai Platform 2.0 on Microsoft Azure Marketplace, AWS Marketplace, and Google Cloud Marketplace
+
+# Marketplace Terms
+
+Purchases and deployments of **ecosystem.Ai Platform 2.0** on **Microsoft Azure Marketplace**, **AWS Marketplace**, or **Google Cloud Marketplace** are covered by three documents, in this order:
+
+1. The **Microsoft Standard Contract**, **AWS Marketplace Standard Contract (SCMP)**, or **Google Cloud Marketplace Vendor Agreement** for that marketplace transaction.
+2. The **ecosystem.Ai Marketplace EULA Addendum** packaged with Platform 2.0 (covering license key activation, in-perimeter data sovereignty, and resource deletion).
+3. The ecosystem.Ai website [Terms of Service](https://ecosystem.ai/tos) and [Privacy Policy](https://ecosystem.ai/privacy-policy/).
+
+---
+
+## What You Agree to at Install Time
+
+- **License Key (`MASTER_KEY`)**: You supply an ecosystem.Ai license key at deployment time. Evaluation keys are intended for the `T0` evaluation preset; production keys are issued by ecosystem.Ai (`sales@ecosystem.ai`) or your certified partner.
+- **In-Perimeter Data Sovereignty**: All 10 containers deploy into **your** Azure subscription, AWS account, or Google Cloud project. Customer features, embedded MongoDB 9.0 databases (`ecosystem-server:54445`), H2O models, and interaction logs remain inside your cloud perimeter.
+- **Cloud LLM Configuration**: Outbound generative AI calls use the provider, endpoint URL, model, and credential you configure at install time or in Workbench 2 Administration.
+- **Clean Resource Deletion**: Deleting the Azure Resource Group / Managed Application, AWS CloudFormation stack / Helm release, or Google Cloud GKE application + PVC removes the Kubernetes workloads, load balancers, and managed storage created for that deployment.
+
+---
+
+## Runtime Closed-Loop Contract
+
+Real-time scoring uses `POST /invocations` (`params` is a JSON string), followed by `POST /response` (singular) with the accepted offer's `uuid` and `offer_name`.
+
+---
+
+## Related Documentation & Support
+
+- **Visual Tour & 10-Container Architecture Guide**: [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour)
+- **Cloud Guides**: [Azure Marketplace](/docs/marketplace/azure) · [AWS Marketplace](/docs/marketplace/aws) · [Google Cloud Marketplace](/docs/marketplace/gcp)
+- **Sales & Licensing**: `sales@ecosystem.ai`
+- **Enterprise Support**: `support@ecosystem.ai`
+
+---
+
+## Visual Tour & 10-Container Guide
+
+Source: `docs/marketplace/visual-tour.mdx`
+URL: https://developer.ecosystem.ai/docs/marketplace/visual-tour
+Summary: Visual Tour and 10-Container Architecture Guide for ecosystem.Ai Platform 2.0 across Microsoft Azure AKS, AWS EKS, Google Cloud GKE, and Self-Hosted Kubernetes
+
+# ecosystem.Ai Platform 2.0
+
+**Build Your Own Contextual Interactions — Inside Your Cloud Perimeter.**
+
+**ecosystem.Ai Platform 2.0** combines behavioral social science with real-time machine learning and agentic operations so enterprises can score, personalize, and learn from every customer interaction in the moment. Deployed entirely inside your **Kubernetes 1.37** cluster on **[Microsoft Azure AKS](/docs/marketplace/azure)**, **[Amazon EKS](/docs/marketplace/aws)**, **[Google Cloud GKE](/docs/marketplace/gcp)**, or **[Self-Hosted Kubernetes / Docker Compose](/docs/local)** (supporting both ARM64 and x86_64 AMD64 worker nodes, with **`gpt-6-luna`** configured as the default generative model across all containers), subscriber features, models, and interaction data remain inside your cloud perimeter.
+
+Purpose-built for telecommunications (CVM, next-best-offer, and MVNOs), retail and commercial banking, insurance, retail, and gaming, the platform covers Intelligent Discovery, Smart Engagement, Intelligent Activation, and Proactive Retention.
+
+![Platform 2.0 10-Container Architecture](/images/marketplace/00-platform-architecture-diagram.png)
+
+---
+
+## Complete 10-Container Architecture Explained
+
+| # | Container / Service | Ports & Endpoints | Role in the Platform |
+|---|---|---|---|
+| **1** | **`ecosystem-workbench2`**<br/>`ecosystemai/ecosystem-workbench2` | `:5270` SPA & Networks UI<br/>`:8001` Private FastAPI<br/>`:8004` Public API Gateway<br/>`:9090` Offline Scorer | Primary operator workbench. Hosts Projects, Offer Matrices, Dynamic Engagement, Ontology-mapped data queries, Interactive Analytics Dashboards (`/analytics/`), Computational Social Science Network Graphs (`/networks/`), Spend & Money Personalities, Simulations Lab, Runtime Console, Runtime Testing, and the Ecosystem Agent. |
+| **2** | **`ecosystem-server`**<br/>`ecosystemai/ecosystem-server` | `:3001` Core Server API<br/>`:54445` Embedded MongoDB 9.0<br/>`:27028` `mongot` Vector Search<br/>`:54321` H2O AutoML Engine | Core Java/Spring modeling, feature engineering, PlantUML/EcosystemCode generation, and central persistence engine. Runs self-contained MongoDB 9.0 replica set (`ecosystem-server:54445`), `mongot` community vector search, and H2O 3.46 AutoML for static model training. |
+| **3** | **`ecosystem-runtime-solo`**<br/>`ecosystemai/ecosystem-runtime-solo` | `:8091` Real-Time Scorer<br/>`POST /invocations`<br/>`POST /response`<br/>`POST /mcp` | Horizontally autoscaled (HPA `1..N` replicas) Java 25 low-latency scoring engine. Executes pre-score feature lookups, real-time ML/bandit convergence (Epsilon Greedy, Bayesian Probabilistic, Ecosystem Rewards, Q-Learning, Two-Tower, Spend/Money/Interaction Personality), post-score eligibility plugins, closed-loop feedback via `POST /response`, and Model Context Protocol (`POST /mcp`). |
+| **4** | **`ecosystem-campaign-management`**<br/>`ecosystemai/ecosystem-campaign-management` | `:54310` Campaign UI<br/>`:54311` Express REST/MCP API | Agentic Campaign Management platform. Plans, governs, schedules, activates, and measures multi-stage customer outreach campaigns wired directly to Workbench 2 projects and real-time runtime scoring. |
+| **5** | **`ecosystem-data-agents`**<br/>`ecosystemai/ecosystem-data-agents` | `:54325` Data Agents SPA<br/>`:54324` FastAPI / LangGraph | Autonomous LangGraph Data Analysis Agents. Runs multi-stage extraction, preparation, categorical, actuarial risk, feature engineering, personality, recommender, time-series, marketing-mix, and financial analytics across MongoDB and Trino. |
+| **6** | **`ecosystem-notebooks`**<br/>`ecosystemai/ecosystem-notebooks` | `:8010` EcoGentic Journey API<br/>`:8000` JupyterHub | Agentic conversational journey server (EcoGentic) and interactive Python data-science notebook environment connected to the shared `/data` volume and LLM gateway. |
+| **7** | **`ecosystem-custom-gpts`**<br/>`ecosystemai/ecosystem-custom-gpts` | `:54320` Specialist Agents UI<br/>`:54349` Managed Agents API | Domain-grounded specialist GPT and RAG agents with dedicated knowledge bases, custom tools, and live runtime scoring integration. |
+| **8** | **`ecosystem-domain-catalog`**<br/>`ecosystemai/ecosystem-domain-catalog` | `:8080` Catalog Service | Authoritative semantic catalog serving OWL/SKOS domain ontologies, SHACL validation shapes, and industry overlays (Telecommunications CVM, Banking, Insurance, Retail, Gaming). |
+| **9** | **`trino`**<br/>`ecosystemai/trino` | `:8080` Distributed SQL Engine | Distributed ANSI SQL query engine pre-configured with the MongoDB connector pointing to `ecosystem-server:54445` for high-speed analytical and ontology-mapped SQL queries. |
+| **10** | **`busybox`**<br/>`busybox:1.36` | Kubernetes `initContainer` | Lightweight startup dependency gate that waits for `ecosystem-server:3001` and embedded MongoDB `ecosystem-server:54445` to accept TCP connections before dependent pods start. |
+
+---
+
+## Subdomain Routing & Internal Container Communication
+
+Every application in **ecosystem.Ai Platform 2.0** runs at root `path: /` on its own dedicated subdomain (`https://<app>.<baseDomain>/` on Azure AKS, AWS EKS, and Google Cloud GKE, or `http://<app>.localhost/` locally). No sub-path prefixes are used, ensuring SPAs, static assets (`/assets/...`), OAuth callbacks, and API routes resolve cleanly at `/`:
+
+| Service | Subdomain Host (`<baseDomain>` = `.nip.io`, `<dnsZone>`, or `localhost`) | Pure Origin Env Var | Internal Container-to-Container DNS |
+|---|---|---|---|
+| **Workbench 2 (Operator UI & Public API)** | `workbench.<baseDomain>` (`/`, `/public/v1`) | `WORKBENCH_PUBLIC_URL`, `WORKBENCH_UI_URL`, `PUBLIC_BASE_URL` | `http://workbench2:5270`, `http://workbench2:8004/public/v1`, `http://workbench2:8001/api/v1` |
+| **Prediction Server & Modeling API** | `server.<baseDomain>` (`/`, `/api/v1/health`) | `SERVER_PUBLIC_URL`, `IP` | `http://ecosystem-server:3001`, MongoDB `ecosystem-server:54445`, H2O `http://ecosystem-server:54321` |
+| **Runtime 0.9.7 (Real-Time Scoring)** | `runtime.<baseDomain>` / `runtime1.<baseDomain>` (`/invocations`, `/response`, `/mcp`, `/ping`) | `RUNTIME_PUBLIC_URL` | `http://ecosystem-runtime-solo:8091` |
+| **Campaign Management** | `campaign.<baseDomain>` (`/`) | `CAMPAIGN_PUBLIC_URL` | `http://ecosystem-campaign:54310` |
+| **Data Analysis Agents** | `data-agents.<baseDomain>` (`/`) | `DATA_AGENTS_PUBLIC_URL` | `http://ecosystem-data-agents:54325` |
+| **EcoGentic & Notebooks** | `notebooks.<baseDomain>` (`/`) | `NOTEBOOKS_PUBLIC_URL`, `VITE_ECOGENTIC_AGENT_URL` | `http://ecosystem-notebooks:8010` |
+| **Custom GPTs / Managed Agents** | `custom-gpts.<baseDomain>` (`/`) | `CUSTOM_GPTS_PUBLIC_URL` | `http://ecosystem-custom-gpts:54320` |
+| **Domain Catalog** | `domain-catalog.<baseDomain>` (`/`, `/v1/health`) | `DOMAIN_CATALOG_PUBLIC_URL` | `http://ecosystem-domain-catalog:8080` |
+| **Trino SQL Engine** | `trino.<baseDomain>` (`/v1/info`) | — | `trino:8080` |
+
+---
+
+## Operator Workbench & Container Modules — Visual Tour
+
+### 1. Workbench 2 — Unified Operator Dashboard
+Central launchpad across all 523+ configurations: Projects, Network Selector, Offer Matrix, Contacts, Channels, Ontology, Data Management, Static/Dynamic/Generative Models, EcoGentic, Campaigns, Analytics, and Runtime Console.
+
+![Workbench 2 Dashboard Overview](/images/marketplace/01-workbench-dashboard-overview.png)
+
+### 2. Projects & Deployment Configuration
+End-to-end project configuration linking feature store lookups, H2O frames, dynamic engagement algorithms, offer matrices, pre/post-score Java plugins, and deployment steps.
+
+![Projects and Deployment Configuration](/images/marketplace/02-projects-management.png)
+
+### 3. Dynamic Engagement & Real-Time Bandit Learning
+Configure Thompson Sampling / Bayesian Probabilistic, Epsilon Greedy, Ecosystem Rewards, Loss Aversion, Prospect Theory, and Q-Learning recommenders with contextual variables and cold-start priors.
+
+![Dynamic Engagement and Bandit Learning](/images/marketplace/03-dynamic-engagement-algorithms.png)
+
+### 4. Agentic Campaign Management
+Author, generate, import/export, and execute multi-stage customer outreach and decisioning campaigns wired to real-time scoring and generative AI prompts.
+
+![Agentic Campaign Management](/images/marketplace/04-campaigns-management.png)
+
+### 5. Domain Ontology Catalog & Semantic Mappings
+Sync OWL/SKOS/SHACL domain ontologies from `ecosystem-domain-catalog`, infer ontologies from live MongoDB collections, and map business terms to physical data fields.
+
+![Domain Ontology Catalog](/images/marketplace/05-domain-ontology-catalog.png)
+
+### 6. EcoGentic Conversational Agent Journeys
+Build and version multi-channel conversational AI agents (WhatsApp, Web, API, CLI) backed by `ecosystem-notebooks` (`:8010`) and live runtime context.
+
+![EcoGentic Conversational Agent Journeys](/images/marketplace/06-ecogentic-agent-journeys.png)
+
+### 7. Simulations Lab & Convergence Testing
+Run closed-loop recommender and log-replay simulations to validate bandit convergence, reward lift, and behavioral drift prior to production rollout.
+
+![Simulations Lab](/images/marketplace/07-simulations-lab.png)
+
+### 8. Spend & Money Personalities Pipeline
+Guided 6-stage behavioral scoring pipeline (`SP-01` through `SP-06`) that extracts customer Spend and Money Personality traits from transaction histories.
+
+![Spend and Money Personalities](/images/marketplace/08-spend-money-personalities.png)
+
+### 9. Interactive Analytics Dashboards (`/analytics/`)
+Compile and explore multi-dashlet operational, financial, personality, and runtime performance boards powered by MongoDB 9.0 and Trino SQL.
+
+![Interactive Analytics Dashboards](/images/marketplace/09-analytics-dashboards.png)
+
+### 10. Computational Social Science Network Graph Analysis (`/networks/`)
+Interactive 2D/3D graph and social network topology explorer for customer segments, credit bureau bands, payment flows, and runtime offer affinities.
+
+![Computational Social Science Network Graph Analysis](/images/marketplace/10-network-graph-analysis.png)
 
 ---
 
@@ -12738,7 +13059,7 @@ Summary: AWS Spend Personality
 
 This guide will walk you through the process of setting up the ecosystem.Ai Spend Personality in AWS.
 
-[AWS Marketplace Install](https://aws.amazon.com/marketplace/pp/prodview-2kak2xwqqgd3w)
+Spend Personality is built directly into **ecosystem.Ai Platform 2.0** (`ecosystem-workbench2` and `ecosystem-runtime-solo`). Deploy the unified platform on Amazon EKS via the [AWS Marketplace Guide](/docs/marketplace/aws) (see also the [Visual Tour & 10-Container Architecture Guide](/docs/marketplace/visual-tour)).
 
 ### Step 1: Search for the Spend Personality App in Marketplace
 - Go to the AWS Marketplace and search for the ecosystem.Ai Spend Personality app.
@@ -12795,7 +13116,7 @@ Summary: Azure Spend Personality
 
 This guide will walk you through the process of setting up the ecosystem.Ai Spend Personality in Azure.
 
-[Azure Marketplace Install](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/GalleryItemDetailsBladeNopdl/id/ecogeneticllc1676924558438.ecosystem-spend-personality)
+Spend Personality is built directly into **ecosystem.Ai Platform 2.0** (`ecosystem-workbench2` and `ecosystem-runtime-solo`). Deploy the unified platform on Azure Kubernetes Service (AKS) via the [Azure Marketplace Guide](/docs/marketplace/azure) (see also the [Visual Tour & 10-Container Architecture Guide](/docs/marketplace/visual-tour)).
 
 ### Step 1: Search for the Spend Personality App in Marketplace
 - Go to the Azure Marketplace and search for the ecosystem.Ai Spend Personality app.
@@ -16248,6 +16569,19 @@ After `start.sh` (or `docker compose up`), log in on port **80**, then follow [P
 
 **Ports in this file:** Workbench **80**, Server **3001**, first Runtime **8091**, extra Runtimes **8092–8095**, Notebooks **5111** / **8010**, Grafana **3000**. Port **8092** here is a second scoring Runtime, not MCP. Builtin MCP is `POST http://127.0.0.1:8091/mcp`. Overview: [Quick Start](/docs/quick_start).
 
+### Docker Hub tags (Nov 2026)
+
+Compose files in the [ecosystem](https://github.com/ecogenetic/ecosystem) install repo pin architecture tags (`arm64`, `amd64`, `097-arm64`, and so on). Hub **repushes** in this window refresh **`ecosystem-runtime-solo:097-arm64`** (11 Nov), **`ecosystem-server:latest`** / **`arm64`** (12 Nov), and **`ecosystem-workbench2:latest`** / **`amd64`** (12 Nov).
+
+For **Workbench 2** (`ecosystemai/ecosystem-workbench2`), the build scripts in **ecosystem-workbench2** publish two families:
+
+| Tag | Role |
+| --- | --- |
+| `latest` / `amd64` | **Quick** build: UI and Python overlay on top of a frozen flatten base (what most operators pull). |
+| `full` / `full-amd64` | **Full** multi-stage image (H2O, pip, OS packages, Claude CLI, UI). CI quick builds use this as the one-layer overlay base; operators normally stay on `latest` / `amd64`. |
+
+Run `./01-build.sh --full` locally when dependencies, H2O, or OS layers change; day-to-day UI work uses the default quick build (`./01-build.sh`).
+
 ## Service map
 
 The YAML file defines multiple Docker services on a common network named `ecosystem`. Here is a breakdown of what each segment of code means:
@@ -16640,6 +16974,27 @@ Source: `docs/quick_start/kubernetes.mdx`
 URL: https://developer.ecosystem.ai/docs/quick_start/kubernetes
 
 # Kubernetes
+
+## Platform 2.0
+
+**ecosystem.Ai Platform 2.0** installs as one Helm release or one Kustomize overlay across Azure AKS, AWS EKS, Google Cloud GKE, and local Kubernetes. The release contains Workbench 2, the Prediction Server, Runtime 0.9.7, Campaign Management, Data Agents, Notebooks, Custom GPTs, Domain Catalog, and Trino.
+
+MongoDB 9.0 is embedded in the Prediction Server. Every other application uses `ecosystem-server:54445`. Do not deploy a second MongoDB for this release. Set `MONGO_RS_HOST=ecosystem-server:54445` and leave `NO_MONGODB` unset on the server container so the replica set starts. Runtime sets `NO_MONGODB=true` because it does not host the database.
+
+Shared files use a ReadWriteMany volume (Amazon EFS, Azure Files, or GKE storage). License key, initial admin password, and Cloud LLM settings are injected before the pods start.
+
+After the ingress is ready, each service runs at root `/` on its own dedicated subdomain (`<app>.<baseDomain>`):
+
+- Workbench 2: `https://workbench.<baseDomain>/`
+- Prediction Server Health: `https://server.<baseDomain>/api/v1/health`
+- Runtime Health: `https://runtime.<baseDomain>/ping` (or `runtime1.<baseDomain>`)
+- Score: `POST https://runtime.<baseDomain>/invocations` with `params` as a JSON string
+- Learn: `POST https://runtime.<baseDomain>/response` using that recommendation’s `uuid` and `offer_name`
+- MCP: `POST https://runtime.<baseDomain>/mcp`
+
+Marketplace install steps: [Visual Tour & 10-Container Guide](/docs/marketplace/visual-tour), [Azure](/docs/marketplace/azure), [AWS](/docs/marketplace/aws), and [Google Cloud](/docs/marketplace/gcp).
+
+The manifests below are component examples for a local cluster such as Minikube. For the 2.0.1 stack, use the Helm chart `ecosystem-platform` version `2.0.1` instead of assembling these samples by hand.
 
 ecosystem.Ai can be installed on Kubernetes. This can be tested locally using Minikube. Here we give example deployment configurations for the server, workbench, notebooks, runtime and grafana components.
 
@@ -22451,7 +22806,7 @@ Summary: The release notes of the ecosystem runtime from version 0.9.0.0
 
 ## 0.9.7.x (Oct 2026)
 
-Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed **5 Nov 2026** on Docker Hub; earlier pushes 24 Oct and 3 Nov 2026).
+Patch line on the 0.9.7 train (Workbench pins **0.9.7.0**; container tags **`097-latest`** / **`097-arm64`** refreshed **11 Nov 2026** on Docker Hub after earlier pushes 24 Oct, 3 Nov, and 5 Nov 2026).
 
 ### New functionality
 - **SQL Server stored procedures** — `SqlServerWorker`, `POST /callSqlServerProcedure`, env `SQLSERVER_URL`, `SQLSERVER_USER`, `SQLSERVER_PASSWORD`, properties `sqlserver.*`, `mssql-jdbc` **13.6.0**. See [SQL Server](/docs/configuration/data/sqlserver).
@@ -22804,7 +23159,9 @@ Summary: Workbench campaign documents, delivery channels, runs, dry checks, and 
 
 # Campaign delivery
 
-Workbench manages **delivery campaigns** (email, SMS, WhatsApp, schedules, and agent-assisted outreach). That layer is separate from **Runtime scoring campaigns** (`campaign` / `subcampaign` on `POST /invocations`).
+**Workbench** holds the technical **master campaign record**: import/export, process graph, compile vs trigger or run, versions, and runs history (`/entities/campaigns` in the Workbench web app). **Campaign Management** (the Campaign Platform web app — for example **campaign.ecosystem.ai**) is a **business-user overlay** that **pulls campaigns from Workbench** for portfolio, design, operations, calendar, analytics, work queue, and **two-gate approvals** (Workbench technical approval, then Campaign Manager business approval). It includes **Campaign Agent** chat (see [Claude Agent — Campaign Management](/docs/workers/agent_framework/claude-agent#campaign-management)).
+
+Workbench also manages **delivery campaigns** (email, SMS, WhatsApp, schedules, and agent-assisted outreach) through the campaign document APIs. That layer is separate from **Runtime scoring campaigns** (`campaign` / `subcampaign` on `POST /invocations`).
 
 | Layer | What it is | Typical API |
 | --- | --- | --- |
@@ -22817,7 +23174,9 @@ Runtime `channel` values such as `app`, `web`, or `api` describe the scoring con
 
 | Surface | Use for |
 | --- | --- |
-| **Campaign manager** (Intelligent Sales) | Edit campaign documents, channels, schedules, and triggers |
+| **Workbench campaigns** (`/entities/campaigns`) | Master record: **Generate**, new campaign, **import/export** (campaign JSON), graph editor (**Extract**, **Recommend**, **Python**, **Branch**, **Defer**, **Write**, **Dispatch**, **State**, …), **Compile** vs **Trigger/Run**, **Versions**, **Runs** |
+| **Campaign Platform** (Campaign Management) | Overlay on Workbench: portfolio, campaigns, design, operations, calendar, analytics, work queue, **Approvals**, **Campaign Agent** — see [Claude Agent — Campaign Management](/docs/workers/agent_framework/claude-agent#campaign-management) |
+| **Campaign manager** (Intelligent Sales) | Edit campaign documents, channels, schedules, and triggers inside Workbench |
 | **Custom Forms** | Capture structured inputs linked to campaign workflows |
 | **Data Management & Campaign** | Join audience data with campaign entities |
 | **Time Process Campaign** | Time-based process steps on a campaign graph |
@@ -22843,7 +23202,7 @@ flowchart LR
   run --> learn
 ```
 
-1. **Plan** audience, content, and channels on the campaign document (or with the Campaign Agent / Outreach Agent where enabled).
+1. **Plan** audience, content, and channels on the campaign document (or with **Campaign Agent** / **Outreach Agent** where enabled). Campaign Agent can start and stop a Workbench run, just as an operator can from **Operations**. It can queue changes for **Approvals**. Run-calendar edits can remain draft until pushed; undo scope is limited to overlay and finance changes in the product UI.
 2. **Wire** delivery channels — `GET /public/v1/campaigns/channel-catalog`, then set selection with `PUT …/channel-selection` ([Public API](/docs/configuration/workbench_apis/public#campaigns)).
 3. **Validate before live send** — prefer a **dry or sample run** first:
    - Outreach MCP: `run_outreach_campaign` with `sample_run` and optional `test_target_email` ([MCP tool table](/docs/configuration/workbench_apis/mcp)).
@@ -26259,6 +26618,8 @@ POST /api/v1/algorithms/sentimental-equilibrium/process
 
 ## Campaign Management
 
+In the Campaign Platform (for example **campaign.ecosystem.ai**), **Campaign Agent** is the AI Assist chat. Campaign Agent can start and stop a Workbench run, just as an operator can from **Operations**. Proposals can queue for **Approvals**.
+
 Set:
 
 ```bash
@@ -26390,6 +26751,64 @@ The URL for the workbench journey management system page is:
 
 ---
 
+## Agents
+
+Source: `docs/workers/agents.mdx`
+URL: https://developer.ecosystem.ai/docs/workers/agents
+Summary: Product agent catalog on Workbench — personalities, campaigns, scoring helpers, and platform operators
+
+# Agents
+
+Product agents on ecosystem.Ai **call** Workbench APIs and MCP tools. They do **not** replace Runtime `POST /invocations` or `POST /response` for production scoring and learning. For operator journeys and EcoGentic configuration, see [Agent Framework](/docs/workers/agent_framework). For deeper Workbench API notes, see [Configuration → Public APIs, Agents](/docs/configuration/workbench_apis/agents).
+
+Calling the `agent_configs` endpoint (`GET /api/v1/entities/agent_configs` or `GET /public/v1/entities/agent_configs`, with a Workbench public key or JWT) is part of Ecogenetic functionality.
+
+**Do not mix agent products:** **Ecosystem Agent** (`/assistant`) is the Workbench operator. **EcoGentic** is customer conversational journeys. **Data Agents** specialists are a separate analytics product. Do not mix those chats.
+
+## Product catalog (13 agents)
+
+Rows are shown in **Administration → Agents** on a live Workbench. Coverage is `wired` or `partial` as in the UI.
+
+| Name | Catalog id | Category | Coverage | What it does / how to reach it |
+| --- | --- | --- | --- | --- |
+| Spend Personality Agent | `spend-personality` | Personality | wired | Spend personality configs, runs, and drift. Public paths include `/public/v1/spend-personality/configs` and `/runs`. |
+| Money Personality Agent | `money-personality` | Personality | wired | Money-personality processing via Workbench `call_endpoint` to `POST /api/v1/algorithms/money-personality/process`. |
+| Predictive Personality Agent | `predictive-personality` | Personality | partial | Composes spend/money personality with a Runtime score. |
+| Conversational Agent | `conversational` | Conversational AI | wired | Customer conversational journeys through EcoGentic configs — not the operator `/assistant` chat. |
+| Interaction Science Agent | `interaction-science` | Customer Experience | wired | Engagement / sentimental-equilibrium process. |
+| Intelligent Sales Agent | `intelligent-sales` | Revenue Optimization | wired | List and trigger campaigns. Do not run live campaign sends from a discovery client without an explicit ask. |
+| Campaign Outreach Agent | — | Revenue Optimization | wired | Outreach setup via Workbench MCP outreach tools (`list_outreach_templates`, `inspect_outreach_campaign`, `build_outreach_campaign`, `configure_outreach_campaign`, `run_outreach_campaign`). Mutating tools need `confirm=true`. Do not run live email/WhatsApp/SMS sends. |
+| Real-Time Recommender Agent | `real-time-recommender` | Revenue Optimization | wired | Score a customer on a Workbench deployment (`score_customer`) and send feedback (`send_feedback`). Production apps should still use Runtime `POST /invocations` and `POST /response`. |
+| Network Selector Agent | — | Revenue Optimization | wired | Live Workbench MCP: `list_network_selector_configs`, `explain_network_selector`, `plan_network_selector`, `validate_network_selector`, `save_network_selector`, `fix_network_selector`, `assign_network_selector`, `unassign_network_selector`, `clone_network_selector`, `remove_network_selector`, `test_network_selector`. Mutating tools need `confirm=true`. |
+| Dynamic Experimentation Agent | `dynamic-experimentation` | Revenue Optimization | partial | Dynamic Engagement entities; `explain_algorithms` and `explain_convergence`. |
+| Runtime Testing Agent | `runtime-testing` | Runtime | wired | Isolated business test suites; MCP tools such as `start_runtime_testing_run` (`confirm=true`), `list_runtime_testing_runs`, `get_runtime_testing_run`. |
+| Ecosystem Agent | `claude-operator` | Platform | wired | In-app Workbench operator at `/assistant`. Uses in-process MCP (session JWT, no public key). External clients attach over HTTP `POST /mcp` instead. Model traffic goes through Workbench `POST /v1/messages` to the default LLM. See [Claude Operator](/docs/workers/agent_framework/claude-agent). |
+| EcoGentic | `ecogentic` | Platform | wired | Customer conversational journeys (the platform for Conversational Agent configs). See [Journeys](/docs/workers/agent_framework/journeys). |
+
+Individual agent configuration records are private to the server running them. The product catalog above and the [MCP tool list](/docs/workers/mcps) remain the public surface.
+
+## Discovery and operator APIs
+
+| Surface | URL / path | Auth |
+| --- | --- | --- |
+| Product catalog UI | `https://me.ecosystem.ai/admin/agents` | Workbench session JWT |
+| Ecosystem Agent chat | `https://me.ecosystem.ai/assistant` | Session JWT; no public API key |
+| Readiness | `GET https://me.ecosystem.ai/api/v1/claude-agent/status` | JWT |
+| Operator / Campaign Management turns | `POST /api/v1/claude-agent/…` | JWT; private, not on the public catalog |
+
+## Other documented agents (not in the 13-row catalog)
+
+These capabilities are documented elsewhere; they are **not** additional rows in **Administration → Agents**.
+
+- **Campaign Agent** — Campaign Management operator on Workbench, `tool_profile: campaign_management`. Uses a read-only Workbench MCP subset plus CM tools. Needs a Workbench public credential, not a private Grafana JWT. Documented in Campaign Management / Claude Agent guides.
+- **Data Agents** — A separate analytics product. Do not mix Data Agents specialist chats with Ecosystem Agent or EcoGentic. No public Data Agents chat or MCP URL was advertised on the live me / meserver / mewbserver / modelingserver hosts during catalog verification.
+- **Technical Assistant** — Modeling-server chat: `POST https://modelingserver.ecosystem.ai/api/modeling/assistant/technical-chat`. Platform JWT. Page-aware assistant with MCP-backed execution on the modeling host.
+- **Studio sessions** — Modeling-server studio chat: `POST https://modelingserver.ecosystem.ai/api/studio/sessions/{sessionId}/messages`. Platform JWT. Server-side intent routing and MCP tool execution.
+
+No additional product-agent catalog was found on meserver or modelingserver beyond the modeling-server assistants above and the OpenAI-compatible model list (models, not agents). See [MCPs](/docs/workers/mcps) for model list endpoints.
+
+---
+
 ## Language Chat Models
 
 Source: `docs/workers/generative.mdx`
@@ -26429,7 +26848,155 @@ Workers are integration and processing components around the Runtime and Server:
 - [Worker architecture](/docs/workers/worker_arch) — stack and integration points
 - [Python](/docs/workers/python) — packages and SDK usage
 - [Language chat models](/docs/workers/generative) — Ollama and chat serving
+- [Agents](/docs/workers/agents) — product catalog (13 agents), discovery APIs, and related assistants
+- [MCPs](/docs/workers/mcps) — Workbench, Runtime, modeling-server, and Domain Catalog MCP surfaces
 - [Agent framework](/docs/workers/agent_framework) — EcoGentic journeys and Claude Operator
+
+---
+
+## MCPs
+
+Source: `docs/workers/mcps.mdx`
+URL: https://developer.ecosystem.ai/docs/workers/mcps
+Summary: Workbench, Runtime, modeling-server, and Domain Catalog MCP surfaces — auth, endpoints, and live Workbench tool families
+
+# MCPs
+
+Several hosts expose MCP on the path `/mcp`. They are **not interchangeable**: a Workbench `ewb_public_…` key does not unlock Runtime scoring tools, and a modeling-server MCP OAuth token is not what MeWB accepts.
+
+| Surface | Doc depth |
+| --- | --- |
+| [Configuration → MCP](/docs/configuration/workbench_apis/mcp) | Workbench vs Runtime comparison, Cursor config, stdio harness |
+| [Runtime MCP](/docs/runtime/mcp) | Builtin Java MCP on the scoring engine |
+
+**Mutating tools:** Workbench and related MCP tools that change data require **`confirm=true`**. Do not run live campaign or outreach sends from discovery clients without an explicit operator ask.
+
+## Workbench MCP
+
+- **Name:** Workbench MCP (`ecosystem-workbench`)
+- **Live endpoints:** `POST https://mewbserver.ecosystem.ai/mcp` and `POST https://me.ecosystem.ai/mcp` (both return the same unauthenticated 401). Local default: `POST http://localhost:8001/mcp`.
+- **Transport:** Streamable HTTP. Docs describe MCP protocol 2026-07-28; the live server negotiated **`2025-11-25`** on initialize (11 Nov 2026, 13:16 SAST). Legacy SSE (`GET /mcp/sse/`, `POST /mcp/messages/`) was removed 26 October 2026.
+- **Auth:** HTTP headers only, not a query parameter. One credential: `X-API-Key: ewb_public_…`, or `Authorization: Bearer ewb_public_…`, or `Authorization: Bearer `. If Authorization already holds the public key, a JWT may be sent as `X-User-Token`. Mint keys under **Administration → API Keys → Public API Access**; a public key used alone on the gateway needs a linked internal API key. MeWB does **not** advertise MCP OAuth (well-known OAuth URLs on mewbserver also return the credential 401).
+- **Unauthenticated error (live):** HTTP 401, `Content-Type: application/json`, body exactly `{"detail":"Missing credential. Send Authorization: Bearer <jwt> or X-API-Key: ewb_public_..."}`.
+- **What it does:** Operator and catalog access to deployments, entities, enrichment, outreach, ontology, runtime testing, simulations, and `call_endpoint` into `/api/v1` and `/public/v1`. Calls are logged to `mcp_access_log`.
+- **Live authenticated test (11 Nov 2026, 13:16 SAST):** `initialize` HTTP 200, `notifications/initialized` HTTP 202, `tools/list` HTTP 200. Server: **Ecosystem Workbench** 1.0.0. **`tools/list` returned 97 tools.** Server instructions: with no catalog agent selected, every tool is available; the operator can `list agents`, `use <agent id>`, then `clear` (`list_catalog_agents`, `select_catalog_agent`, `clear_catalog_agent`); how-to questions use `explain_catalog_agent`. Resource mentioned by the server: `ecosystem://agents`.
+- **Documented resources (not separately listed in that `tools/list` response):** `ecosystem://deployments`, `ecosystem://deployment/{name}`. Per-deployment snippets: `GET /api/v1/deployments/{name}/mcp`.
+- **Related:** REST info (JWT) `GET /api/v1/mcp/`. In-process mode is the Ecosystem Agent at `/assistant` (session JWT, no public key). stdio harness: Python package `ecosystem_workbench_mcp` for Hermes / desktop. Cursor config uses a `headers` map on the `/mcp` URL.
+- **Health (open):** `GET https://mewbserver.ecosystem.ai/public/v1/health` → `{"status":"healthy","version":"1.0.0"}`.
+- **Catalog UI:** [https://mewbserver.ecosystem.ai/](https://mewbserver.ecosystem.ai/).
+
+### Live Workbench tools (97)
+
+Grouped by family from live `tools/list` (11 Nov 2026, 13:16 SAST):
+
+**Catalog and environment:** `list_api_catalog`, `describe_environment`, `call_endpoint`
+
+**Explain and recommend:** `recommend_algorithm`, `explain_algorithms`, `explain_convergence`, `explain_runtime`, `explain_simulation`, `explain_workbench`, `describe_workbench`
+
+**Entities and records:** `entity`, `list_entities`, `count_records`, `explain_entity`, `search_product`, `get_record`, `get_related`, `inspect_entity`, `resolve_deep_link`, `update_current_form`
+
+**Campaign channels:** `list_campaign_channel_catalog`, `get_campaign_channels`, `set_campaign_channel_selection`, `list_custom_channel_modules`
+
+**Deployments and scoring:** `list_deployments`, `get_deployment_info`, `get_deployment_schema`, `score_customer`, `send_feedback`
+
+**Enrichment:** `date_enrich`, `mcc_enrich`, `get_enrichment_job`, `personality_drift`
+
+**Ontology and semantics:** `list_ontologies`, `describe_ontology`, `create_ontology`, `update_ontology`, `delete_ontology`, `create_ontology_from_data_source`, `list_ontology_mappings`, `suggest_ontology_mappings`, `suggest_ontology_mappings_multi`, `create_ontology_mapping`, `update_ontology_mapping`, `delete_ontology_mapping`, `resolve_ontology_term`, `generate_ontology_query`, `query_data_via_ontology`, `get_ontology_session_manifest`, `browse_semantics`, `resolve_semantics`
+
+**Network selector:** `list_network_selector_configs`, `explain_network_selector`, `plan_network_selector`, `validate_network_selector`, `save_network_selector`, `fix_network_selector`, `assign_network_selector`, `unassign_network_selector`, `clone_network_selector`, `remove_network_selector`, `test_network_selector`
+
+**Runtime testing:** `list_runtime_testing_suites`, `get_runtime_testing_suite`, `analyze_runtime_testing`, `plan_runtime_testing`, `start_runtime_testing_run`, `list_runtime_testing_runs`, `get_runtime_testing_run`, `cancel_runtime_testing_run`, `close_runtime_testing_run`, `compare_runtime_testing_runs`, `get_runtime_testing_artifact`, `delete_runtime_testing_suite`
+
+**Simulations:** `start_simulation_run`, `cancel_simulation_run`, `get_simulation_run_status`, `get_simulation_logs`, `get_simulation_results`, `explain_simulation_result`, `get_simulation_config`, `upsert_simulation_config`
+
+**Generate:** `check_generate_intent`, `analyze_generate`, `execute_generate`, `generate_solution_template`, `generate_project_setup_notebook`
+
+**Outreach:** `list_outreach_templates`, `inspect_outreach_campaign`, `build_outreach_campaign`, `configure_outreach_campaign`, `run_outreach_campaign`, `get_outreach_run_status`
+
+**Catalog agents:** `list_catalog_agents`, `select_catalog_agent`, `clear_catalog_agent`, `explain_catalog_agent`
+
+## Runtime builtin MCP
+
+- **Name:** Runtime builtin MCP (Java `ecosystem-runtime`, 0.9.7+)
+- **Endpoint:** `POST {RUNTIME_BASE}/mcp` — typically port `8091`. Example: `POST http://localhost:8091/mcp`. **No hosted public Runtime MCP URL was found** on me, meserver, mewbserver, or modelingserver. Clients must point at the customer’s Runtime host.
+- **Transport:** JSON-RPC on `POST /mcp`. Send `Accept: application/json, text/event-stream`. Supports legacy (2024-11-05) and modern (2026-07-28, including `server/discover`). Per-request SSE is allowed; deprecated `GET /mcp` + `POST /mcp/message` still exists for old clients.
+- **Auth:** Read-only tools (`tools/list`, `listCampaigns`, ontology validators, `invoke`, `response`) work without a key unless Spring `--security` is enabled. Mutating tools (`campaignCreate`, `campaignDelete`, `generateClass`, `updateProperties*`, `learningTrigger`) need Runtime `MASTER_KEY` as `X-API-KEY` or `Authorization: Bearer {MASTER_KEY}`. That key is **not** a Workbench `ewb_public_…` key.
+- **What it does:** Score campaigns and close the learning loop: `listCampaigns` → `validateInvokeRequest` → `invoke` → `validateResponseRequest` → `response`. Also campaign admin, runtime ontology, and `askAboutAlgorithms`.
+- **Tools (docs):** Scoring and campaigns — `listCampaigns`, `invoke`, `response`, `updateProperties`, `updatePropertiesJson`, `generateClass`, `campaignCreate`, `campaignGet`, `campaignDelete`, `configGet`, `learningTrigger`. Ontology — `lookupRuntimeConcept`, `getClosedLoopRecipe`, `validateInvokeRequest`, `validateResponseRequest`. Algorithms — `askAboutAlgorithms`. Resources include `ecosystem://campaigns`, `ecosystem://config`, `ontology://runtime`, `ecosystem://algorithms/selection-guide`.
+- **REST equivalents:** `POST {RUNTIME_BASE}/invocations`, `POST {RUNTIME_BASE}/response`, plus `/ontology/runtime` catalog and validators.
+
+## Runtime MCP sidecar
+
+- **Name:** Runtime MCP sidecar
+- **Image:** `ecosystemai/ecosystem-runtime-mcp` (example tag `arm64`)
+- **Endpoint:** FastAPI `/mcp` on the sidecar port (default `8092`). Not the Java JSON-RPC server and not Workbench MCP. **No public hosted sidecar URL** was found on the four live hosts checked.
+- **What it does:** MLFlow model download into Runtime (`/refresh`) and custom FastAPI routers compiled from a Workbench deployment API tab. OpenAPI at `/docs`.
+- **Auth / env:** Configured with `RUNTIME_URL`, `PORT`, `MLFLOW_TRACKING_URI`, `RUNTIME_CONFIG`, `MONGO_CONNECT`. Auth follows that sidecar deployment; it is not the Workbench public-key scheme.
+
+## Modeling-server MCP (Data, AI, Modeling, Algorithms)
+
+Host: [https://modelingserver.ecosystem.ai/api/](https://modelingserver.ecosystem.ai/api/) (OpenAPI 3.1, platform version 0.7.9). Base path `/api`. The same path set exists on [https://meserver.ecosystem.ai/](https://meserver.ecosystem.ai/) (`/api/mcp/…`), but meserver’s OAuth discovery currently advertises `http://localhost:3002/api`, which is not usable for external clients. **Prefer modelingserver for OAuth metadata.**
+
+Unauthenticated calls to these MCP paths return **HTTP 403** with an empty body (not MeWB’s JSON 401). OpenAPI marks a global JWT security scheme. MCP clients should use **MCP OAuth** (bearer token in the Authorization header) or a platform JWT. Scopes: `mcp:tools`, `mcp:read`, `mcp:write`. Bearer method: header only.
+
+| Name | What it does (OpenAPI tag) | Primary endpoints (prefix `https://modelingserver.ecosystem.ai/api`) |
+| --- | --- | --- |
+| MCP: Data Server | MongoDB, data munging, and transformations | `GET /mcp/data/info`, `GET /mcp/data/health`, `POST /mcp/data/tools/list`, `POST /mcp/data/tools/call`, SSE `GET\|POST /mcp/data/sse`, `POST /mcp/data/message` |
+| MCP: AI Server | Chat, embeddings, and predictions | `GET /mcp/ai/info`, `GET /mcp/ai/health`, `POST /mcp/ai/tools/list`, `POST /mcp/ai/tools/call`, SSE `GET\|POST /mcp/ai/sse`, `POST /mcp/ai/message` |
+| MCP: Modeling Server | UML modeling, code generation, and cloud deployment | Streamable HTTP JSON-RPC at `POST /mcp/modeling` (session id in `Mcp-Session-Id`); also `GET /mcp/modeling/info`, `GET /mcp/modeling/health`, `POST /mcp/modeling/tools/list`, `POST /mcp/modeling/tools/call`, SSE `GET\|POST /mcp/modeling/sse`, `POST /mcp/modeling/message` |
+| MCP: Algorithms Server | ML algorithms, forecasting, and pipeline processing | `GET /mcp/algorithms/info`, `GET /mcp/algorithms/health`, `POST /mcp/algorithms/tools/list`, `POST /mcp/algorithms/tools/call`, SSE `GET\|POST /mcp/algorithms/sse`, `POST /mcp/algorithms/message` |
+
+Live `/info` and `/health` were not readable without a token (403), so **individual tool names were not listed** from the running modeling MCP servers.
+
+## MCP OAuth (modeling / ecosystem-server)
+
+This is **not** Workbench MCP auth.
+
+- **Discovery:** [https://modelingserver.ecosystem.ai/api/.well-known/oauth-authorization-server](https://modelingserver.ecosystem.ai/api/.well-known/oauth-authorization-server) (200)
+- **Protected resource:** [https://modelingserver.ecosystem.ai/api/.well-known/oauth-protected-resource](https://modelingserver.ecosystem.ai/api/.well-known/oauth-protected-resource) (200)
+- **Issuer / resource:** `https://modelingserver.ecosystem.ai/api`
+- **Authorize:** `https://modelingserver.ecosystem.ai/api/oauth/authorize` (OAuth 2.1 authorization code + PKCE S256)
+- **Token:** `https://modelingserver.ecosystem.ai/api/oauth/token` (grants: `authorization_code`, `refresh_token`; client auth: `client_secret_post`, `client_secret_basic`, `none`)
+- **Register:** `https://modelingserver.ecosystem.ai/api/oauth/register` (RFC 7591 dynamic client registration)
+- **Scopes:** `mcp:tools`, `mcp:read`, `mcp:write`
+- **Token use:** `Authorization: Bearer <access_token>` against the modeling MCP resources above
+- **Docs:** [https://modelingserver.ecosystem.ai/api/docs](https://modelingserver.ecosystem.ai/api/docs)
+
+**meserver OAuth caveat:** `https://meserver.ecosystem.ai/api/.well-known/oauth-authorization-server` returns 200 but names issuer and endpoints at `http://localhost:3002/api`. Do not point external clients at those localhost URLs.
+
+## Domain Catalog MCP
+
+- **Endpoints:** `POST https://ontology.ecosystem.ai/catalog/mcp` and `POST https://ontology.ecosystem.ai/data/mcp`
+- **Live check:** GET returns HTTP 405 with `Allow: POST` and `{"detail":"Method Not Allowed"}`, so the POST MCP routes exist. Authenticated `tools/list` was not run in catalog verification. Earlier code review found no inbound auth on these routes (CORS only); treat that as unverified against a live POST.
+- **What it does:** Domain Catalog / data ontology MCP used with the ontology download surface on ontology.ecosystem.ai. Related public (no JWT) modeling-server catalog APIs are tagged “Modeling: Domain Catalog” in the OpenAPI spec.
+
+## OpenAI-compatible model list and LLM gateway
+
+`GET /v1/models` is OpenAI-compatible.
+
+| Host | List endpoint (live) | Auth observed on GET | Models returned 11 Nov 2026 |
+| --- | --- | --- | --- |
+| Workbench app gateway | `GET https://me.ecosystem.ai/api/v1/models` and `GET https://me.ecosystem.ai/v1/models` (both 200) | Open on GET | `qwen.qwen3-coder-next` (`owned_by`: bedrock) |
+| MeWB catalog host | `GET https://mewbserver.ecosystem.ai/v1/models` | HTTP 401, same missing-credential message as Workbench MCP | Not listed without a Workbench JWT or public key |
+| meserver | `GET https://meserver.ecosystem.ai/api/v1/models` (200). `GET /v1/models` is 404; `GET /api/models` is 403 | Open on the `/api/v1/models` path | 35 models: `ecosystem.Ai`, `ecogentic-1.0`, plus Ollama models `nomic-embed-text:latest`, `gemma4:31b-mlx`, `qwen3.8:27b`, `qwen3.8:27b-mlx`, `qwen38-27b-m1-64k:latest`, `gemma4-64k:latest`, `sebdg/emotional_llama:latest`, `granite3.2-vision:2b`, `mistral-small3.2:latest`, `phi4-reasoning:latest`, `gpt-oss:20b`, `muse-glimmer:30b-mlx`, `qwen3.6:35b-a3b-coding-nvfp4`, `qwen3.6:latest`, `gemma4:31b`, `qwen3.6:27b`, `qwen3.6:35b-a3b-nvfp4`, `phi3:mini`, `mistral-small3.1:24b`, `llama3.1:latest`, `llama3.2:latest`, `qwen3:14b`, `mistral:latest`, `llama3.2-vision:11b`, `gemma3:12b`, `phi4:14b`, `deepseek-r1:8b`, `mistral:7b`, `phi3:3.8b`, `deepscaler:1.5b`, `deepseek-coder:6.7b`, `deepseek-coder-v2:16b`, `deepseek-r1:14b` |
+| modelingserver | `GET https://modelingserver.ecosystem.ai/api/v1/models` (200). `GET /api/models` is 403 | Open on the `/api/v1/models` path | `ecosystem.Ai`, `ecogentic-1.0` |
+
+Related LLM endpoints on modelingserver (documented; POST not tested in catalog compile):
+
+- `POST https://modelingserver.ecosystem.ai/api/v1/chat/completions` — OpenAI chat completions (streaming and non-streaming)
+- `POST https://modelingserver.ecosystem.ai/api/v1/responses` — OpenAI Responses API compatibility
+- `POST https://modelingserver.ecosystem.ai/api/v1/messages` — Anthropic Messages compatibility
+- `POST https://modelingserver.ecosystem.ai/api/v1/embeddings` — OpenAI embeddings (forwarded to Ollama `/api/embed`)
+- `POST https://modelingserver.ecosystem.ai/api/modeling/llm/chat/completions` — metered completions; docs say JWT and usage recording
+
+On Workbench, set `ANTHROPIC_BASE_URL` to the Workbench host root so `POST /v1/messages` uses the Workbench default LLM.
+
+## Gaps (label explicitly)
+
+- Authenticated Workbench `initialize` and `tools/list` succeeded on 11 Nov 2026 at 13:16 SAST against `POST https://mewbserver.ecosystem.ai/mcp` with a Workbench public key in the `X-API-Key` header: HTTP 200 / 202 / 200, **97 tools**, server protocol `2025-11-25`. `POST https://me.ecosystem.ai/mcp` was not re-tested with this key (it previously returned the same unauthenticated 401 as mewbserver).
+- Modeling Data / AI / Algorithms / Modeling **tool names were not live-listed** (403 without a token).
+- **No public Runtime or sidecar MCP host** is published on the four ecosystem.ai hosts checked.
+- Campaign Outreach Agent and Network Selector Agent appear in the live product catalog; see [Agents](/docs/workers/agents) for operator context.
 
 ---
 
@@ -26905,12 +27472,12 @@ Full notes: [Runtime release history](/docs/runtime/runtimeversion) · [MCP](/do
 
 Source: `changelog/workbench-2.0.3.mdx`
 URL: https://developer.ecosystem.ai/changelog/workbench-2.0.3
-Summary: Build 3216 — Voice Bot 1, campaigns, LoRA, MCP. Pins Runtime 0.9.7.0.
+Summary: Build 3283 — enrichment jobs, generative admin, Hub repushes. Pins Runtime 0.9.7.0.
 Date: 2026/11/05
 
 ---
 
-Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`3216`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+Current platform train as of **2026-11-12**: Workbench **`2.0.3`** (build **`3283`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
 
 ## October 2026
 
@@ -26936,7 +27503,7 @@ Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`321
 
 ## November 2026
 
-Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **5 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**, again **12 Nov 2026**, with new flatten bases **`full`** / **`full-amd64`**. Runtime **`097-arm64`** was repushed **11 Nov 2026**; **`ecosystem-server`** `latest` / `arm64` **12 Nov 2026** (same 0.9.7 train; pin by tag or digest in production). Tag roles: [Docker Compose — Hub tags](/docs/quick_start/docker#docker-hub-tags-nov-2026).
 
 - **Voice Bot 1 (build 3216).** Hands-free **browser** voice on the Claude Agent composer (`/assistant` and the operator drawer): microphone via Web Speech recognition, spoken replies via synthesis, same session as typed chat — [Claude Agent — Hands-free voice](/docs/workers/agent_framework/claude-agent#hands-free-voice). No new backend route or operator env vars.
 
@@ -26950,7 +27517,15 @@ Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides
 - **Application code generation** — ecosystem-server modeling jobs, including **Vue** client output alongside TS/JS/Python/React ([Modeling & Code Generation](/docs/configuration/modeling_generation))
 - **Workbench UI** — sorting stability fix for locale-sensitive lists (PR #20 in ecosystem-workbench2)
 
-Build **`3216`** is the published Workbench 2.0.3 train as of **2026-11-05** unless `platform/versions.json` on your deployment reports a newer build.
+Build **`3216`** introduced Voice Bot 1; build **`3283`** (**2026-11-12**) is the current published Workbench 2.0.3 train unless `platform/versions.json` on your deployment reports a newer build.
+
+### 11–12 Nov 2026 (build 3283)
+
+- **Data enrichment jobs** — Python script run, custom pipeline, Foreign Key **1:N**, and **N:1** start background jobs and poll to completion (24h worker ceiling); **Generate Python** can update the script in the editor and optional extra collections ([Enrichment](/docs/configuration/data/enrichment#python-scripts-pipelines-and-collection-transforms)).
+- **Generative admin** — optional clear **temperature** in **Administration → Generative Model**; unsupported LLM params self-recover on the server ([Generative Models](/docs/configuration/generative/models#workbench-administration-defaults)).
+- **Operator admin** — **About** lists all eight application subdomain URLs; container log browse falls back to shared `/data/logs` when pod logs are empty.
+- **Session hygiene** — expired or mismatched JWT responses sign the operator out of the SPA (Chrome DevTools `/json` probes return 404 instead of auth noise).
+- **Project bootstrap** — `setup_project.py` simplified (merged PR #28 in ecosystem-workbench2); properties write and repo-link flows updated in the same window ([Project configuration](/docs/configuration/project)).
 
 ## What's Changed (earlier 2.0.3 train)
 

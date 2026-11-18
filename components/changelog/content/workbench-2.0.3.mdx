@@ -1,4 +1,4 @@
-Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`3216`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
+Current platform train as of **2026-11-12**: Workbench **`2.0.3`** (build **`3283`**) pinning Runtime **`0.9.7.0`**, Server **`0.7.9.0`**, Notebooks **`0.3`**.
 
 ## October 2026
 
@@ -24,7 +24,7 @@ Current platform train as of **2026-11-05**: Workbench **`2.0.3`** (build **`321
 
 ## November 2026
 
-Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**. Runtime **`097-latest`** / **`097-arm64`** images were repushed **5 Nov 2026** (same 0.9.7 train; pin by tag or digest in production).
+Product images on Docker Hub (`ecosystem-workbench2`, `ecosystem-server`, `ecosystem-campaign-management`, and related services) were refreshed **2–3 Nov 2026**; **`ecosystem-workbench2`** `latest` / `amd64` were repushed **5 Nov 2026**, again **12 Nov 2026**, with new flatten bases **`full`** / **`full-amd64`**. Runtime **`097-arm64`** was repushed **11 Nov 2026**; **`ecosystem-server`** `latest` / `arm64` **12 Nov 2026** (same 0.9.7 train; pin by tag or digest in production). Tag roles: [Docker Compose — Hub tags](/docs/quick_start/docker#docker-hub-tags-nov-2026).
 
 - **Voice Bot 1 (build 3216).** Hands-free **browser** voice on the Claude Agent composer (`/assistant` and the operator drawer): microphone via Web Speech recognition, spoken replies via synthesis, same session as typed chat — [Claude Agent — Hands-free voice](/docs/workers/agent_framework/claude-agent#hands-free-voice). No new backend route or operator env vars.
 
@@ -38,7 +38,15 @@ Operator-facing themes in this window (see [Campaign delivery](/docs/user_guides
 - **Application code generation** — ecosystem-server modeling jobs, including **Vue** client output alongside TS/JS/Python/React ([Modeling & Code Generation](/docs/configuration/modeling_generation))
 - **Workbench UI** — sorting stability fix for locale-sensitive lists (PR #20 in ecosystem-workbench2)
 
-Build **`3216`** is the published Workbench 2.0.3 train as of **2026-11-05** unless `platform/versions.json` on your deployment reports a newer build.
+Build **`3216`** introduced Voice Bot 1; build **`3283`** (**2026-11-12**) is the current published Workbench 2.0.3 train unless `platform/versions.json` on your deployment reports a newer build.
+
+### 11–12 Nov 2026 (build 3283)
+
+- **Data enrichment jobs** — Python script run, custom pipeline, Foreign Key **1:N**, and **N:1** start background jobs and poll to completion (24h worker ceiling); **Generate Python** can update the script in the editor and optional extra collections ([Enrichment](/docs/configuration/data/enrichment#python-scripts-pipelines-and-collection-transforms)).
+- **Generative admin** — optional clear **temperature** in **Administration → Generative Model**; unsupported LLM params self-recover on the server ([Generative Models](/docs/configuration/generative/models#workbench-administration-defaults)).
+- **Operator admin** — **About** lists all eight application subdomain URLs; container log browse falls back to shared `/data/logs` when pod logs are empty.
+- **Session hygiene** — expired or mismatched JWT responses sign the operator out of the SPA (Chrome DevTools `/json` probes return 404 instead of auth noise).
+- **Project bootstrap** — `setup_project.py` simplified (merged PR #28 in ecosystem-workbench2); properties write and repo-link flows updated in the same window ([Project configuration](/docs/configuration/project)).
 
 ## What's Changed (earlier 2.0.3 train)
 
