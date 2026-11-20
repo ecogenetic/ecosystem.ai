@@ -152,16 +152,15 @@ Copy `ecosystem_env.txt` to `.env`. Set `ECOSYSTEM_API_KEY` (license). `OPENAI_A
 | Grafana | **3000** | Optional infra charts — not the Runtime tester UI |
 
 <Callout type="warning" title="8092 is not MCP in the default compose file">
-Default Docker Compose maps **8092–8095** to extra Runtime scoring instances (`ecosystem-runtime-solo2` …). Builtin MCP is on the **same** scoring port as `/invocations` (**8091**). A separate Python MCP **sidecar** image exists for MLFlow / custom FastAPI; do not confuse it with Runtime-solo2.
+Default Docker Compose maps **8092–8095** to extra Runtime scoring instances (`ecosystem-runtime-solo2` …). Runtime MCP is on the **same** scoring port as `/invocations` (**8091** — `POST {RUNTIME}/mcp`); do not confuse extra runtime replicas with Workbench MCP on **8001**.
 </Callout>
 
-There are **three** MCP-related surfaces. They share the path `/mcp` but are not interchangeable. See [MCP Support](/docs/runtime/mcp).
+There are **two** MCP servers. They share the path `/mcp` but are not interchangeable. See [MCP Support](/docs/runtime/mcp).
 
 | Surface | Where | Use |
 | --- | --- | --- |
-| Runtime builtin MCP | `POST {RUNTIME}/mcp` (0.9.7+) | Score, feedback, ontology validate, campaign admin |
+| Runtime MCP | `POST {RUNTIME}/mcp` (0.9.7+, built in) | Score, feedback, ontology validate, campaign admin |
 | Workbench MCP | Workbench API **8001** `POST /mcp` | Deployments, enrichment, operator tools |
-| Runtime MCP sidecar | Optional Python image | MLFlow refresh, custom FastAPI |
 
 ## Configure a campaign
 
