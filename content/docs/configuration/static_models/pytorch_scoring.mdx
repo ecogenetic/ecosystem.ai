@@ -1,0 +1,43 @@
+---
+title: PyTorch Static Scoring
+description: Train a tabular PyTorch MLP as a Predictor, push mojo.key=api:pytorch, and score through the runtime HTTP sidecar path.
+---
+
+import { Callout } from 'nextra/components'
+
+# PyTorch Static Scoring
+
+A generic PyTorch classifier or regressor uses the same campaign slot as an H2O MOJO. Workbench trains the model on a notebooks or MLRun trainer sidecar, stores the operator record on a **Predictor**, and a deployment of type `pytorch` pushes `mojo.key=api:pytorch:…`. The runtime scores that HTTP process through `ApiModelClient`. It does not load a `.pt` file into the JVM.
+
+Two-Tower and LoRA stay embedding models (`similarity` / `lora`). See the [Two-Tower PyTorch page](/docs/modules/two_tower/pytorch) for embedding export and the optional live user embed.
+
+## Train in Workbench
+
+1. Open a Predictor and select the **PyTorch** card.
+2. Choose a Training Frame (database.collection → text CSV). PyTorch does not import that Frame into H2O.
+3. Set the response column, ignored columns, problem type, and hyperparameters.
+4. Choose the sidecar (**Notebooks** or **MLRun trainer**) and click **Train PyTorch model**. The browser talks only to Workbench.
+5. Optionally **Generate Notebook** for an httpx train/score notebook that matches the sidecar.
+
+## Deployment type `pytorch`
+
+On the project deployment step, set Static Model to **PyTorch (Predictor)** and pick the trained Predictor. Push writes one of:
+
+```properties
+# Notebooks (local)
+mojo.key=api:pytorch:http://localhost:8011/pytorch:<model_id>
+
+# Notebooks (Docker network)
+mojo.key=api:pytorch:http://ecosystem-notebooks:8010/pytorch:<model_id>
+
+# MLRun trainer
+mojo.key=api:pytorch:http://localhost:8003:<model_id>
+```
+
+The `/pytorch` suffix is required for notebooks because the runtime posts to `{base}/invocations` and notebooks only mounts `POST /pytorch/invocations`. The trainer serves `/invocations` on the root.
+
+Lookup feature names on the step must match the trained columns. Closed loop stays `POST /invocations` then `POST /response` (singular).
+
+<Callout type="info" title="Custom request or response shapes">
+  Use the deployment API source editor (`mojo.key=api-ref:<id>`) with Request Template and Response Mapping. The `pytorch` type keeps the automatic body and `final_result` envelope.
+</Callout>

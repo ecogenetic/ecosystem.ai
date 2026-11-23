@@ -32,23 +32,25 @@ HTTP and keeps heavy ML dependencies out of the JVM.
 
 ### 1. General PyTorch model scoring
 
-Register an HTTP-served model directly in `mojo.key`:
+For a tabular MLP (not two-tower), register the notebooks score base **including**
+`/pytorch` so runtime’s `{base}/invocations` hits `POST /pytorch/invocations`.
+See [PyTorch Static Scoring](/docs/configuration/static_models/pytorch_scoring).
 
 ```properties
-mojo.key=api:pytorch:http://<notebooks-host>:8010:<model_id>
+mojo.key=api:pytorch:http://<notebooks-host>:<port>/pytorch:<model_id>
 ```
 
-The runtime sends feature instances to the sidecar and normalizes the response
-into the canonical score shape.
+Example (Docker network): `http://ecosystem-notebooks:8010/pytorch`. Local dev often
+uses `http://localhost:8011/pytorch`.
 
 ### 2. Two-tower user-tower embedding
 
 For two-tower, the user vector can be computed **live** by the sidecar when no
-precomputed vector exists:
+precomputed vector exists. The base must include `/pytorch` for the same reason:
 
 ```properties
 predictor.model.type=similarity
-predictor.twotower.user.embed=pytorch:http://<notebooks-host>:8010:<model_id>
+predictor.twotower.user.embed=pytorch:http://<notebooks-host>:<port>/pytorch:<model_id>
 ```
 
 **PrePredictTwoTower** requests a user embedding from the sidecar when needed.
