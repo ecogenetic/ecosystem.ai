@@ -11,10 +11,7 @@ async function dbConnect() {
 
     console.debug('Connecting to MongoDB...')
     mongoose.set('debug', true)
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+    await mongoose.connect(process.env.MONGODB_URI)
     console.debug('MongoDB connection successful.')
   } catch (error) {
     console.error('MongoDB connection error:', error)
