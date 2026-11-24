@@ -1,34 +1,108 @@
 ---
 title: PyTorch Static Scoring
-description: Train a tabular PyTorch MLP as a Predictor, push mojo.key=api:pytorch, and score through the runtime HTTP sidecar path.
+description: Set up a tabular PyTorch MLP on the notebooks sidecar or the MLRun trainer, then score it through the runtime.
 ---
 
 import { Callout } from 'nextra/components'
 
 # PyTorch Static Scoring
 
-A generic PyTorch classifier or regressor uses the same campaign slot as an H2O MOJO. Workbench trains the model on a notebooks or MLRun trainer sidecar, stores the operator record on a **Predictor**, and a deployment of type `pytorch` pushes `mojo.key=api:pytorch:…`. The runtime scores that HTTP process through `ApiModelClient`. It does not load a `.pt` file into the JVM.
+A generic PyTorch classifier or regressor uses the same campaign slot as an H2O MOJO. Workbench stores the operator record on a **Predictor**. A deployment of type `pytorch` pushes `mojo.key=api:pytorch:…`. The runtime scores that HTTP process through `ApiModelClient`. It does not load a `.pt` file into the JVM.
 
 Two-Tower and LoRA stay embedding models (`similarity` / `lora`). See the [Two-Tower PyTorch page](/docs/modules/two_tower/pytorch) for embedding export and the optional live user embed.
 
-## Train in Workbench
+There are two training engines. Both are chosen on the Predictor **PyTorch** card by the **Sidecar URL**. Workbench does not import PyTorch itself.
+
+| | ecosystem-notebooks | MLRun trainer |
+| --- | --- | --- |
+| Sidecar URL (train) | `http://ecosystem-notebooks:8010` (compose). Local process: `http://localhost:8011` | `http://localhost:8003` (compose container `ecosystem-mlrun-trainer`) |
+| Train call | `POST {sidecar}/pytorch/train` | `POST {sidecar}/train` |
+| Training rows | A CSV under the install data root. Workbench reads the file and posts the rows. Notebooks does not query Mongo for those rows. | A Frame whose `source_collection` is `database.collection`. The trainer reads that Mongo collection. |
+| Score base in `mojo.key` | Must end in `/pytorch`, for example `http://ecosystem-notebooks:8010/pytorch` | The trainer root, for example `http://localhost:8003` (no `/pytorch`) |
+| Continue a checkpoint | Checkbox **Continue from last checkpoint** on the Predictor | Not used by this path |
+| Cycle log in Workbench | Yes, when the notebooks process can reach Mongo | Trainer metrics come back on the train response |
+
+## 1. Open the Predictor
 
 1. Open a Predictor and select the **PyTorch** card.
-2. Choose a Training Frame (database.collection → text CSV). PyTorch does not import that Frame into H2O.
-3. Set the response column, ignored columns, problem type, and hyperparameters.
-4. Choose the sidecar (**Notebooks** or **MLRun trainer**) and click **Train PyTorch model**. The browser talks only to Workbench.
-5. Optionally **Generate Notebook** for an httpx train/score notebook that matches the sidecar.
+2. Set **Problem type** to Binary classification, Multiclass, or Regression.
+3. Set **Epochs**, **Batch size**, **Hidden size**, and **Learning rate**. Defaults are 25, 256, 64, and 0.001. The **Hyperparameters JSON** box is the object posted as `hyperparameters`. Tabular MLP reads those four keys. Two-Tower and LoRA keys in the same JSON are ignored by this MLP.
+4. **Response column** is required. There is no default. Load columns, then pick the target. Leave it empty and Train stays blocked.
 
-## Deployment type `pytorch`
+## 2. ecosystem-notebooks
+
+Use this when the training table is a CSV you exported yourself.
+
+### Start the sidecar
+
+- Compose (default **Use default** button): notebooks is already on the Docker network at `http://ecosystem-notebooks:8010`.
+- On the host, start the notebooks process so it listens on port **8011**, then click **Use local**. That sets the train URL to `http://localhost:8011`. Install CPU PyTorch before that process if `torch` is not already in the environment (`pip install torch --index-url https://download.pytorch.org/whl/cpu`). Swagger for the PyTorch routes is `http://localhost:8011/` under **PyTorch Workers**.
+
+The local Mongo URI for that host process is not the container URI. Leave each environment on the host it was given. Do not point a laptop process at `ecosystem-server`.
+
+### Put the CSV on the data root
+
+1. In Workbench open **Data Management** (`/data`).
+2. Export the collection to CSV and save it on the server data folder (the install `LOCAL_DATA_PATH`). Frames and Data Management write into that same root.
+3. On the Predictor set **Data source** to **CSV path**.
+4. Pick the file, or type a path **relative to that root**, for example `frames/training.csv`. An absolute path is accepted only when it is already inside the root, and Workbench stores it as the relative path.
+5. Click **Load columns**, then select the response column. Mark columns that must not be features as **Ignored columns**.
+
+A **Frame** is allowed for notebooks only when that Frame already has a `csv_path` or `source_path` under the same data root. A Frame that only names a Mongo collection is not a notebooks training source.
+
+There is no row cap. An empty file or a path outside the data root fails in Workbench with that reason. The notebooks process does not read Mongo to fill in the table.
+
+### Train
+
+Click **Train PyTorch model**. Workbench posts the full CSV to `POST {sidecar}/pytorch/train` with `model_type` `mlp`.
+
+After a successful train, the Predictor stores:
+
+- `model_id` (a new id such as `{predict_id}_mlp_v…` when you train again or click **Train new version**)
+- `version`
+- the relative `csv_path`
+- feature columns, hyperparameters, metrics, and the score base
+
+**Continue from last checkpoint** is off until a `model_id` exists. Turn it on to warm-start the next notebooks run from that checkpoint (weights and optimizer). A shape mismatch trains from scratch and returns a warning. The checkbox is separate from the hyperparameters JSON. Workbench sends it as `resume_from`.
+
+**Generate Notebook** writes a notebook that reads the same data-root CSV, then has cells to train, plot epoch loss and confusion, and score one row. It does not query Mongo.
+
+### When training fails
+
+The notebooks process stays up and returns a JSON body with `status: failed`, `error`, and `log` (the traceback). Workbench shows the error and those log lines on the Predictor card. A cycle-log or metadata write that fails after the model is trained does not cancel the model. That case comes back as a warning, and the model can still be scored. If the process is killed (for example it runs out of memory), there is no body to show.
+
+## 3. MLRun trainer
+
+Use this when the training table should stay in Mongo and you already have an MLRun trainer sidecar. See [MLRun access and scoring](/docs/modules/mlrun/access) for the trainer at port **8003**.
+
+### Start the sidecar
+
+The Predictor infers MLRun when **Sidecar URL** is the trainer, for example `http://localhost:8003`. Compose publishes that port from `ecosystem-mlrun-trainer`. Scoring on this path is `POST {sidecar}/invocations` on the trainer root. Do not append `/pytorch`.
+
+### Point at a Frame collection
+
+1. Set **Data source** to **Frame** and choose a Training Frame.
+2. That Frame must have `source_collection` set to `database.collection` (the same `database.collection` string Frames use elsewhere). Without it, Train returns: MLRun trainer needs Frame `source_collection` (`database.collection`).
+3. Load the Frame columns and select the **response column**. There is no default.
+
+Workbench then calls the trainer with framework `pytorch`, the feature columns, and that Mongo source. The trainer reads the collection. It does not use the notebooks CSV inline payload.
+
+If the Frame also has a CSV path and that file is missing or outside the data root, MLRun still trains from the collection. If you type a **CSV path** yourself and it does not resolve under the data root, Train fails before either engine runs.
+
+**Generate Notebook** still needs a CSV under the data root. The generated notebook posts those rows to `POST {trainer}/train` and scores `POST {trainer}/models/{model_id}/invocations`. The **Train PyTorch model** button on the card uses the Frame collection, not that notebook.
+
+Checkpoint continue is a notebooks control. Leave it off for the trainer.
+
+## 4. Deploy
 
 On the project deployment step, set Static Model to **PyTorch (Predictor)** and pick the trained Predictor. Push writes one of:
 
 ```properties
-# Notebooks (local)
-mojo.key=api:pytorch:http://localhost:8011/pytorch:<model_id>
-
-# Notebooks (Docker network)
+# Notebooks (compose)
 mojo.key=api:pytorch:http://ecosystem-notebooks:8010/pytorch:<model_id>
+
+# Notebooks (local process)
+mojo.key=api:pytorch:http://localhost:8011/pytorch:<model_id>
 
 # MLRun trainer
 mojo.key=api:pytorch:http://localhost:8003:<model_id>
@@ -36,7 +110,9 @@ mojo.key=api:pytorch:http://localhost:8003:<model_id>
 
 The `/pytorch` suffix is required for notebooks because the runtime posts to `{base}/invocations` and notebooks only mounts `POST /pytorch/invocations`. The trainer serves `/invocations` on the root.
 
-Lookup feature names on the step must match the trained columns. Closed loop stays `POST /invocations` then `POST /response` (singular).
+The **Score base URL** on the Predictor is what you want runtime to call. The default for in-container notebooks scoring is `http://ecosystem-notebooks:8010/pytorch`. A train that used **Use local** does not replace a score base you already saved.
+
+Lookup feature names on the step must match the trained columns. Closed loop stays `POST /invocations` then `POST /response` (singular). `params` on `/invocations` is a JSON string.
 
 <Callout type="info" title="Custom request or response shapes">
   Use the deployment API source editor (`mojo.key=api-ref:<id>`) with Request Template and Response Mapping. The `pytorch` type keeps the automatic body and `final_result` envelope.

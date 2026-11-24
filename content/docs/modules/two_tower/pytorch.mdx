@@ -65,6 +65,8 @@ flowchart LR
   vec --> sim["SimilarityScorer"]
 ```
 
+Tabular MLP setup (CSV on notebooks, or a Frame collection on the MLRun trainer) is [PyTorch Static Scoring](/docs/configuration/static_models/pytorch_scoring). The steps below are the two-tower embedding path only.
+
 ## Training and export in Workbench
 
 1. On **`/two-tower`**, set `engine` to **`pytorch_notebooks`** on the saved
