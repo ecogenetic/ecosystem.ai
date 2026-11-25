@@ -1,5 +1,15 @@
 .DS_Store
+**/.DS_Store
+.idea/
 .idea/**
+
+# Legacy Nextra pages router backup (content lives under content/)
+pages_backup/
+
+# Editor / local scratch files
+*.bak
+theme.config.tsx.bak
+tmp.txt
 
 # Logs
 logs
