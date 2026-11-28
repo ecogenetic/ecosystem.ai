@@ -10,6 +10,7 @@ import { Callout } from 'nextra/components'
 The ecosystem.Ai runtime exposes APIs that can be used to access and manage your deployed configuration.
 - The `/invocations` endpoint is used to access the deployment and receive a response based on the configured rules
 - The `/response` endpoint is used to send record successful interactions generated using the information returned by the `/invocations` call. This is used for logging and learning.
+- The `/mcp` endpoint exposes [Model Context Protocol](/docs/runtime/mcp) on the same runtime base URL — JSON-RPC `POST /mcp` for agent tools, prompts, and resources (built into the runtime from 0.9.7+).
 - The `/refresh` endpoint is used to refresh the runtime and reload any data held in memory
 - The `/refreshWithOptions` endpoint is used to regenerate the [Options Store](/docs/configuration/dynamic/options) and then refresh the runtime.
 - The `/learning` endpoint is used to manually trigger the learning process for a Dynamic Interaction deployment. This process is normally triggered based on the [MONITORING_DELAY environment variable](/docs/runtime/environment_variables). Manually triggering the learning is useful for testing and simulation purposes
